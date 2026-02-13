@@ -49,12 +49,14 @@ test('intake form has all required fields and submits', async ({ page }) => {
   await expect(btn).toContainText('Build Initiated', { timeout: 5000 });
 });
 
-test('external portfolio links have rel=noopener', async ({ page }) => {
+test('portfolio links point to local submodule paths', async ({ page }) => {
   await page.goto('/');
   const links = page.locator('#works a[target="_blank"]');
   const count = await links.count();
   expect(count).toBeGreaterThanOrEqual(3);
   for (let i = 0; i < count; i++) {
+    const href = await links.nth(i).getAttribute('href');
+    expect(href).toMatch(/^\/(chhayaphotography|ajayadahal|sanz-the-nanny)\//);
     await expect(links.nth(i)).toHaveAttribute('rel', /noopener/);
   }
 });

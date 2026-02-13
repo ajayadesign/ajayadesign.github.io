@@ -1,0 +1,9 @@
+[submodule "chhayaphotography"]
+	path = chhayaphotography
+	url = https://github.com/chhayaphotography/chhayaphotography.github.io.git
+[submodule "ajayadahal"]
+	path = ajayadahal
+	url = https://github.com/ajayadahal/ajayadahal.github.io.git
+[submodule "sanz-the-nanny"]
+	path = sanz-the-nanny
+	url = https://github.com/sanz-the-nanny/sanz-the-nanny.github.io.git
