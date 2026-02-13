@@ -1,0 +1,25 @@
+{
+  "name": "ajayadesign.github.io",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajayadesign/ajayadesign.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ajayadesign/ajayadesign.github.io/issues"
+  },
+  "homepage": "https://github.com/ajayadesign/ajayadesign.github.io#readme",
+  "dependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@playwright/test": "^1.58.2"
+  }
+}

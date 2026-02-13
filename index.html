@@ -23,6 +23,8 @@
         extend: {
           colors: {
             'amd-red': '#ED1C24',
+            'amd-red-text': '#FF6B6B',
+            'amd-red-btn': '#D91920',
             'electric-blue': '#00D4FF',
             'surface': '#0A0A0F',
             'surface-alt': '#111118',
@@ -69,7 +71,7 @@
       <!-- Logo -->
       <a href="#" class="flex items-center gap-2 group">
         <span class="inline-block w-3 h-3 rounded-full bg-amd-red animate-pulse-glow"></span>
-        <span class="font-mono font-bold text-white text-lg tracking-tight">Ajaya<span class="text-amd-red">Design</span></span>
+        <span class="font-mono font-bold text-white text-lg tracking-tight">Ajaya<span class="text-amd-red-text">Design</span></span>
       </a>
 
       <!-- Desktop Links -->
@@ -79,14 +81,14 @@
         <li><a href="#process" class="hover:text-amd-red transition-colors">Process</a></li>
         <li><a href="#works" class="hover:text-amd-red transition-colors">Works</a></li>
         <li>
-          <a href="#intake" class="inline-flex items-center gap-2 px-5 py-2 bg-amd-red text-white rounded font-mono text-sm hover:bg-red-700 transition-colors">
+          <a href="#intake" class="inline-flex items-center gap-2 px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">
             Initiate Your Build
           </a>
         </li>
       </ul>
 
       <!-- Status Indicator -->
-      <div id="telegram-bot-status" class="hidden md:flex items-center gap-2 text-xs font-mono text-gray-500">
+      <div id="telegram-bot-status" class="hidden md:flex items-center gap-2 text-xs font-mono text-gray-400">
         <span class="relative flex h-2 w-2">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
@@ -111,12 +113,12 @@
         <li><a href="#process" class="block py-2 hover:text-amd-red transition-colors">Process</a></li>
         <li><a href="#works" class="block py-2 hover:text-amd-red transition-colors">Works</a></li>
         <li class="pt-2">
-          <a href="#intake" class="block text-center px-5 py-2 bg-amd-red text-white rounded font-mono text-sm hover:bg-red-700 transition-colors">
+          <a href="#intake" class="block text-center px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">
             Initiate Your Build
           </a>
         </li>
         <li class="pt-2">
-          <div class="flex items-center gap-2 text-xs font-mono text-gray-500">
+          <div class="flex items-center gap-2 text-xs font-mono text-gray-400">
             <span class="relative flex h-2 w-2">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
@@ -136,7 +138,7 @@
 
     <div class="relative z-10 max-w-4xl mx-auto px-6 text-center py-32">
       <!-- Terminal tag -->
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 mb-8 rounded-full border border-border-dim bg-surface-alt/60 text-xs font-mono text-gray-500">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 mb-8 rounded-full border border-border-dim bg-surface-alt/60 text-xs font-mono text-gray-400">
         <span class="w-2 h-2 rounded-full bg-amd-red"></span>
         ~/ajayadesign <span class="text-amd-red">$</span> deploy --precision
       </div>
@@ -151,7 +153,7 @@
       </p>
 
       <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="#intake" class="inline-flex items-center gap-2 px-8 py-3.5 bg-amd-red text-white font-mono font-semibold rounded hover:bg-red-700 transition-all hover:shadow-lg hover:shadow-amd-red/20">
+        <a href="#intake" class="inline-flex items-center gap-2 px-8 py-3.5 bg-amd-red-btn text-white font-mono font-semibold rounded hover:bg-red-800 transition-all hover:shadow-lg hover:shadow-amd-red/20">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           Initiate Your Build
         </a>
@@ -165,21 +167,21 @@
       <div class="mt-16 grid grid-cols-3 gap-6 max-w-lg mx-auto">
         <div class="text-center">
           <p class="font-mono text-2xl sm:text-3xl font-bold text-white">&lt;1<span class="text-amd-red">s</span></p>
-          <p class="text-xs text-gray-500 mt-1">Load Time</p>
+          <p class="text-xs text-gray-400 mt-1">Load Time</p>
         </div>
         <div class="text-center">
           <p class="font-mono text-2xl sm:text-3xl font-bold text-white">100<span class="text-amd-red">%</span></p>
-          <p class="text-xs text-gray-500 mt-1">Mobile First</p>
+          <p class="text-xs text-gray-400 mt-1">Mobile First</p>
         </div>
         <div class="text-center">
           <p class="font-mono text-2xl sm:text-3xl font-bold text-white">24<span class="text-amd-red">hr</span></p>
-          <p class="text-xs text-gray-500 mt-1">Rapid Deploy</p>
+          <p class="text-xs text-gray-400 mt-1">Rapid Deploy</p>
         </div>
       </div>
     </div>
 
     <!-- Scroll indicator -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-600">
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-400">
       <span class="text-xs font-mono">scroll</span>
       <div class="w-px h-8 bg-gradient-to-b from-amd-red to-transparent"></div>
     </div>
@@ -192,7 +194,7 @@
   <section id="edge" class="py-24 sm:py-32">
     <div class="max-w-6xl mx-auto px-6">
       <div class="reveal text-center mb-16">
-        <p class="font-mono text-amd-red text-sm tracking-widest uppercase mb-3">// Features</p>
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Features</p>
         <h2 class="font-mono text-3xl sm:text-4xl font-bold text-white">The <span class="text-amd-red">Edge</span></h2>
         <p class="mt-4 text-gray-400 max-w-xl mx-auto">What separates an engineered site from a templated one.</p>
       </div>
@@ -200,42 +202,42 @@
       <div class="grid md:grid-cols-3 gap-6">
         <!-- Speed -->
         <div class="reveal group relative p-8 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/40 transition-all duration-300">
-          <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-amd-red/10 text-amd-red mb-6 group-hover:bg-amd-red/20 transition-colors">
+          <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-amd-red/10 text-amd-red-text mb-6 group-hover:bg-amd-red/20 transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           </div>
           <h3 class="font-mono text-lg font-bold text-white mb-3">Speed</h3>
           <p class="text-gray-400 text-sm leading-relaxed">
             Built for <span class="text-electric-blue font-semibold">sub-1-second load times</span>. Every kilobyte is audited. No bloated page builders — just lean, hand-tuned code that search engines and users love.
           </p>
-          <div class="mt-6 font-mono text-xs text-gray-600">
+          <div class="mt-6 font-mono text-xs text-gray-400">
             <span class="text-amd-red">▸</span> Lighthouse 95+ guaranteed
           </div>
         </div>
 
         <!-- Systems Logic -->
         <div class="reveal group relative p-8 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/40 transition-all duration-300" style="animation-delay: 0.15s">
-          <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-amd-red/10 text-amd-red mb-6 group-hover:bg-amd-red/20 transition-colors">
+          <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-amd-red/10 text-amd-red-text mb-6 group-hover:bg-amd-red/20 transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
           </div>
           <h3 class="font-mono text-lg font-bold text-white mb-3">Systems Logic</h3>
           <p class="text-gray-400 text-sm leading-relaxed">
             Every launch follows the <span class="text-electric-blue font-semibold">"Drone Builder Checklist"</span> — a zero-defect pre-flight protocol adapted from hardware engineering for pixel-perfect deployments.
           </p>
-          <div class="mt-6 font-mono text-xs text-gray-600">
+          <div class="mt-6 font-mono text-xs text-gray-400">
             <span class="text-amd-red">▸</span> Zero-defect methodology
           </div>
         </div>
 
         <!-- Automation -->
         <div class="reveal group relative p-8 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/40 transition-all duration-300" style="animation-delay: 0.3s">
-          <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-amd-red/10 text-amd-red mb-6 group-hover:bg-amd-red/20 transition-colors">
+          <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-amd-red/10 text-amd-red-text mb-6 group-hover:bg-amd-red/20 transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
           </div>
           <h3 class="font-mono text-lg font-bold text-white mb-3">Automation</h3>
           <p class="text-gray-400 text-sm leading-relaxed">
             <span class="text-electric-blue font-semibold">Streamlined build pipelines</span> handle scaffolding, testing, and deployment — shipping sites faster than traditional agencies while maintaining engineering rigor.
           </p>
-          <div class="mt-6 font-mono text-xs text-gray-600">
+          <div class="mt-6 font-mono text-xs text-gray-400">
             <span class="text-amd-red">▸</span> Automated CI/CD pipeline
           </div>
         </div>
@@ -269,7 +271,7 @@
           </div>
 
           <div>
-            <p class="font-mono text-amd-red text-sm tracking-widest uppercase mb-3">// Origin Story</p>
+            <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Origin Story</p>
             <h2 class="font-mono text-2xl sm:text-3xl font-bold text-white mb-4">
               The <span class="text-amd-red">Gadget Den</span> Legacy
             </h2>
@@ -281,9 +283,9 @@
             </p>
 
             <div class="mt-8 flex flex-wrap gap-3 font-mono text-xs">
-              <span class="px-3 py-1.5 rounded bg-surface-alt border border-border-dim text-gray-500">Hardware → Software</span>
-              <span class="px-3 py-1.5 rounded bg-surface-alt border border-border-dim text-gray-500">Manor, TX</span>
-              <span class="px-3 py-1.5 rounded bg-surface-alt border border-border-dim text-gray-500">Est. Reliability</span>
+              <span class="px-3 py-1.5 rounded bg-surface-alt border border-border-dim text-gray-400">Hardware → Software</span>
+              <span class="px-3 py-1.5 rounded bg-surface-alt border border-border-dim text-gray-400">Manor, TX</span>
+              <span class="px-3 py-1.5 rounded bg-surface-alt border border-border-dim text-gray-400">Est. Reliability</span>
             </div>
           </div>
         </div>
@@ -298,7 +300,7 @@
   <section id="process" class="py-24 sm:py-32">
     <div class="max-w-5xl mx-auto px-6">
       <div class="reveal text-center mb-16">
-        <p class="font-mono text-amd-red text-sm tracking-widest uppercase mb-3">// Workflow</p>
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Workflow</p>
         <h2 class="font-mono text-3xl sm:text-4xl font-bold text-white">My <span class="text-amd-red">Process</span></h2>
         <p class="mt-4 text-gray-400 max-w-xl mx-auto">Three phases. No guesswork. Engineered outcomes.</p>
       </div>
@@ -310,7 +312,7 @@
         <!-- Step 1 -->
         <div class="reveal relative flex flex-col md:flex-row items-center gap-8 mb-16">
           <div class="md:w-1/2 md:text-right md:pr-12">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amd-red/10 border border-amd-red/20 font-mono text-xs text-amd-red mb-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amd-red/10 border border-amd-red/20 font-mono text-xs text-amd-red-text mb-4">
               PHASE 01
             </div>
             <h3 class="font-mono text-xl font-bold text-white mb-3">Technical Intake</h3>
@@ -318,7 +320,7 @@
               We start with a structured diagnostic — your business goals, target audience, competitors, and technical requirements are mapped into an engineering brief. No fluff, just signal.
             </p>
           </div>
-          <div class="relative z-10 w-12 h-12 flex items-center justify-center rounded-full bg-surface border-2 border-amd-red text-amd-red font-mono font-bold text-sm flex-shrink-0">
+          <div class="relative z-10 w-12 h-12 flex items-center justify-center rounded-full bg-surface border-2 border-amd-red text-amd-red-text font-mono font-bold text-sm flex-shrink-0">
             01
           </div>
           <div class="md:w-1/2 md:pl-12"></div>
@@ -344,7 +346,7 @@
         <!-- Step 3 -->
         <div class="reveal relative flex flex-col md:flex-row items-center gap-8">
           <div class="md:w-1/2 md:text-right md:pr-12">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amd-red/10 border border-amd-red/20 font-mono text-xs text-amd-red mb-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amd-red/10 border border-amd-red/20 font-mono text-xs text-amd-red-text mb-4">
               PHASE 03
             </div>
             <h3 class="font-mono text-xl font-bold text-white mb-3">Engineering QA &amp; Launch</h3>
@@ -352,7 +354,7 @@
               Performance audits, cross-browser testing, accessibility checks, and SEO validation. Every launch goes through the full checklist before going live. Zero-defect or it doesn't ship.
             </p>
           </div>
-          <div class="relative z-10 w-12 h-12 flex items-center justify-center rounded-full bg-surface border-2 border-amd-red text-amd-red font-mono font-bold text-sm flex-shrink-0">
+          <div class="relative z-10 w-12 h-12 flex items-center justify-center rounded-full bg-surface border-2 border-amd-red text-amd-red-text font-mono font-bold text-sm flex-shrink-0">
             03
           </div>
           <div class="md:w-1/2 md:pl-12"></div>
@@ -368,7 +370,7 @@
   <section id="works" class="py-24 sm:py-32">
     <div class="max-w-6xl mx-auto px-6">
       <div class="reveal text-center mb-16">
-        <p class="font-mono text-amd-red text-sm tracking-widest uppercase mb-3">// Portfolio</p>
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Portfolio</p>
         <h2 class="font-mono text-3xl sm:text-4xl font-bold text-white">Previous <span class="text-amd-red">Works</span></h2>
         <p class="mt-4 text-gray-400 max-w-xl mx-auto">Live sites engineered and deployed through the AjayaDesign pipeline.</p>
       </div>
@@ -382,14 +384,14 @@
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-green-500/60"></span>
-            <span class="ml-2 flex-1 text-center font-mono text-[10px] text-gray-600 truncate">chhayaphotography.github.io</span>
+            <span class="ml-2 flex-1 text-center font-mono text-xs text-gray-400 truncate">chhayaphotography.github.io</span>
           </div>
           <!-- Preview area -->
           <div class="relative h-44 bg-gradient-to-br from-surface via-surface-alt to-surface-card flex items-center justify-center overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-br from-amber-900/10 via-transparent to-amd-red/5"></div>
             <div class="relative text-center px-4">
               <span class="text-3xl">📸</span>
-              <p class="mt-2 font-mono text-xs text-gray-500">Capturing Moments, Creating Memories</p>
+              <p class="mt-2 font-mono text-xs text-gray-400">Capturing Moments, Creating Memories</p>
             </div>
             <!-- Hover overlay -->
             <div class="absolute inset-0 bg-amd-red/0 group-hover:bg-amd-red/10 transition-colors duration-300 flex items-center justify-center">
@@ -400,10 +402,10 @@
           <div class="p-5">
             <h3 class="font-mono text-base font-bold text-white mb-2 group-hover:text-amd-red transition-colors">Chhaya Photography</h3>
             <p class="text-gray-400 text-sm leading-relaxed mb-4">Full-service wedding photography, cinematic videography &amp; décor studio. Serving Nepali, Indian &amp; multicultural weddings across Texas.</p>
-            <div class="flex flex-wrap gap-2 font-mono text-[10px]">
-              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-500">Photography</span>
-              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-500">Weddings</span>
-              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-500">Texas</span>
+            <div class="flex flex-wrap gap-2 font-mono text-xs">
+              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-400">Photography</span>
+              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-400">Weddings</span>
+              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-400">Texas</span>
             </div>
           </div>
         </a>
@@ -415,14 +417,14 @@
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-green-500/60"></span>
-            <span class="ml-2 flex-1 text-center font-mono text-[10px] text-gray-600 truncate">ajayadahal.github.io</span>
+            <span class="ml-2 flex-1 text-center font-mono text-xs text-gray-400 truncate">ajayadahal.github.io</span>
           </div>
           <!-- Preview area -->
           <div class="relative h-44 bg-gradient-to-br from-surface via-surface-alt to-surface-card flex items-center justify-center overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-br from-electric-blue/10 via-transparent to-amd-red/5"></div>
             <div class="relative text-center px-4">
               <span class="text-3xl">⚡</span>
-              <p class="mt-2 font-mono text-xs text-gray-500">Personal Portfolio &amp; Engineering Hub</p>
+              <p class="mt-2 font-mono text-xs text-gray-400">Personal Portfolio &amp; Engineering Hub</p>
             </div>
             <!-- Hover overlay -->
             <div class="absolute inset-0 bg-amd-red/0 group-hover:bg-amd-red/10 transition-colors duration-300 flex items-center justify-center">
@@ -433,10 +435,10 @@
           <div class="p-5">
             <h3 class="font-mono text-base font-bold text-white mb-2 group-hover:text-amd-red transition-colors">Ajaya Dahal</h3>
             <p class="text-gray-400 text-sm leading-relaxed mb-4">Personal portfolio for an Electrical &amp; Computer Systems Engineer — showcasing projects, skills, and the technical mind behind AjayaDesign.</p>
-            <div class="flex flex-wrap gap-2 font-mono text-[10px]">
-              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-500">Portfolio</span>
-              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-500">Engineering</span>
-              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-500">Personal</span>
+            <div class="flex flex-wrap gap-2 font-mono text-xs">
+              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-400">Portfolio</span>
+              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-400">Engineering</span>
+              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-400">Personal</span>
             </div>
           </div>
         </a>
@@ -448,14 +450,14 @@
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-green-500/60"></span>
-            <span class="ml-2 flex-1 text-center font-mono text-[10px] text-gray-600 truncate">sanz-the-nanny.github.io</span>
+            <span class="ml-2 flex-1 text-center font-mono text-xs text-gray-400 truncate">sanz-the-nanny.github.io</span>
           </div>
           <!-- Preview area -->
           <div class="relative h-44 bg-gradient-to-br from-surface via-surface-alt to-surface-card flex items-center justify-center overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-br from-green-900/10 via-transparent to-amd-red/5"></div>
             <div class="relative text-center px-4">
               <span class="text-3xl">👶</span>
-              <p class="mt-2 font-mono text-xs text-gray-500">Professional Childcare with Heart</p>
+              <p class="mt-2 font-mono text-xs text-gray-400">Professional Childcare with Heart</p>
             </div>
             <!-- Hover overlay -->
             <div class="absolute inset-0 bg-amd-red/0 group-hover:bg-amd-red/10 transition-colors duration-300 flex items-center justify-center">
@@ -466,10 +468,10 @@
           <div class="p-5">
             <h3 class="font-mono text-base font-bold text-white mb-2 group-hover:text-amd-red transition-colors">Sanz the Nanny</h3>
             <p class="text-gray-400 text-sm leading-relaxed mb-4">Professional nanny services site for Sanskriti Chaulagain — CPR-certified childcare from newborns to teens, serving Austin, TX families.</p>
-            <div class="flex flex-wrap gap-2 font-mono text-[10px]">
-              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-500">Childcare</span>
-              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-500">Services</span>
-              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-500">Austin, TX</span>
+            <div class="flex flex-wrap gap-2 font-mono text-xs">
+              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-400">Childcare</span>
+              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-400">Services</span>
+              <span class="px-2 py-1 rounded bg-surface-alt border border-border-dim text-gray-400">Austin, TX</span>
             </div>
           </div>
         </a>
@@ -485,7 +487,7 @@
   <section id="intake" class="py-24 sm:py-32">
     <div class="max-w-3xl mx-auto px-6">
       <div class="reveal text-center mb-12">
-        <p class="font-mono text-amd-red text-sm tracking-widest uppercase mb-3">// Start</p>
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Start</p>
         <h2 class="font-mono text-3xl sm:text-4xl font-bold text-white">Start Your <span class="text-amd-red">Build</span></h2>
         <p class="mt-4 text-gray-400 max-w-lg mx-auto">Fill out the intake form below and I'll respond within 24 hours.</p>
       </div>
@@ -496,7 +498,7 @@
           <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
           <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
           <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
-          <span class="ml-4 font-mono text-xs text-gray-600">intake_form.sh</span>
+          <span class="ml-4 font-mono text-xs text-gray-400">intake_form.sh</span>
         </div>
 
         <form id="ajayadesign-intake-form" class="p-6 sm:p-10 space-y-6" action="#" method="POST">
@@ -563,13 +565,13 @@
           <!-- Submit -->
           <button
             type="submit"
-            class="w-full flex items-center justify-center gap-3 px-8 py-4 bg-amd-red text-white font-mono font-bold rounded-lg hover:bg-red-700 transition-all hover:shadow-lg hover:shadow-amd-red/25 focus:outline-none focus:ring-2 focus:ring-amd-red/50"
+            class="w-full flex items-center justify-center gap-3 px-8 py-4 bg-amd-red-btn text-white font-mono font-bold rounded-lg hover:bg-red-800 transition-all hover:shadow-lg hover:shadow-amd-red/25 focus:outline-none focus:ring-2 focus:ring-amd-red/50"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             Initiate Your Build
           </button>
 
-          <p class="text-center text-xs text-gray-600 font-mono mt-4">
+          <p class="text-center text-xs text-gray-400 font-mono mt-4">
             Secured by engineering-grade encryption. Your data stays yours.
           </p>
         </form>
@@ -584,14 +586,14 @@
       <div class="flex flex-col md:flex-row items-center justify-between gap-6">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-amd-red"></span>
-          <span class="font-mono font-bold text-white text-sm">Ajaya<span class="text-amd-red">Design</span></span>
+          <span class="font-mono font-bold text-white text-sm">Ajaya<span class="text-amd-red-text">Design</span></span>
         </div>
 
-        <p class="font-mono text-xs text-gray-600 text-center">
+        <p class="font-mono text-xs text-gray-400 text-center">
           Built with engineering precision in Manor, TX &nbsp;·&nbsp; &copy; <span id="footer-year"></span> AjayaDesign
         </p>
 
-        <div id="footer-bot-status" class="flex items-center gap-2 text-xs font-mono text-gray-600">
+        <div id="footer-bot-status" class="flex items-center gap-2 text-xs font-mono text-gray-400">
           <span class="relative flex h-2 w-2">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
