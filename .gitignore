@@ -1,9 +1,19 @@
 # Dependencies
 node_modules/
 
+# Python virtual env
+.venv/
+
 # Test artifacts
 test-results/
 playwright-report/
+
+# Build / cache
+*.log
+.cache/
+
+# Editor
+.vscode/
 
 # OS files
 .DS_Store

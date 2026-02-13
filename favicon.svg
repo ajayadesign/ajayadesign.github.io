@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#0A0A0F"/>
+  <rect x="2" y="2" width="60" height="60" rx="10" fill="none" stroke="#ED1C24" stroke-width="2.5"/>
+  <!-- Stylised "A" monogram -->
+  <path d="M32 12 L48 50 L42 50 L38.5 40 L25.5 40 L22 50 L16 50 Z M27.5 35 L36.5 35 L32 22 Z" fill="#ED1C24"/>
+  <!-- Engineering accent — small circuit node -->
+  <circle cx="52" cy="12" r="3" fill="#00D4FF"/>
+  <line x1="52" y1="15" x2="52" y2="22" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="49" y1="12" x2="42" y2="12" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
