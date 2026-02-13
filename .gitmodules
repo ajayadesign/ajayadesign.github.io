@@ -7,3 +7,6 @@
 [submodule "sanz-the-nanny"]
 	path = sanz-the-nanny
 	url = https://github.com/sanz-the-nanny/sanz-the-nanny.github.io.git
+[submodule "magnetmomentsco"]
+	path = magnetmomentsco
+	url = https://github.com/magnetmomentsco/magnetmomentsco.github.io.git
