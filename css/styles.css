@@ -1,0 +1,66 @@
+/* ═══════════════════════════════════════════════
+   AjayaDesign — Main Stylesheet
+   ═══════════════════════════════════════════════ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #0A0A0F;
+}
+
+/* ── Custom Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0F;
+}
+::-webkit-scrollbar-thumb {
+  background: #ED1C24;
+  border-radius: 3px;
+}
+
+/* ── Grid Overlay (Hero) ── */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(237,28,36,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(237,28,36,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ── Animated Gradient Divider ── */
+.gradient-line {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ED1C24, #00D4FF, transparent);
+  background-size: 200% 100%;
+  animation: gradientSlide 3s linear infinite;
+}
+
+@keyframes gradientSlide {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Section Reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Blinking Cursor ── */
+.cursor-blink::after {
+  content: '▍';
+  animation: blink 1s step-end infinite;
+  color: #ED1C24;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
