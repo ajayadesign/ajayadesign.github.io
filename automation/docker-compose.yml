@@ -39,8 +39,6 @@ services:
     volumes:
       # Mount the entire website workspace
       - /home/aj/website:/workspace
-      # Share git credentials from host
-      - ~/.gitconfig:/root/.gitconfig:ro
       # Share gh CLI auth from host
       - ~/.config/gh:/root/.config/gh:ro
 

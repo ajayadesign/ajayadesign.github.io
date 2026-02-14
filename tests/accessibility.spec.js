@@ -56,7 +56,8 @@ test('portfolio links point to local submodule paths', async ({ page }) => {
   expect(count).toBeGreaterThanOrEqual(4);
   for (let i = 0; i < count; i++) {
     const href = await links.nth(i).getAttribute('href');
-    expect(href).toMatch(/^\/(chhayaphotography|ajayadahal|sanz-the-nanny|magnetmomentsco)\//);
+    // Each portfolio card links to /<submodule-name>/
+    expect(href).toMatch(/^\/[a-z0-9-]+\//);
     await expect(links.nth(i)).toHaveAttribute('rel', /noopener/);
   }
 });

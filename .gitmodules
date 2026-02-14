@@ -10,3 +10,6 @@
 [submodule "magnetmomentsco"]
 	path = magnetmomentsco
 	url = https://github.com/magnetmomentsco/magnetmomentsco.github.io.git
+[submodule "test-bakery"]
+	path = test-bakery
+	url = https://github.com/ajayadesign/test-bakery.git

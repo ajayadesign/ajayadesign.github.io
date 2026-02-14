@@ -10,7 +10,7 @@ set -euo pipefail
 # ── Configuration ──────────────────────────────────────────────────
 GITHUB_ORG="ajayadesign"
 BASE_DIR="/workspace/builds"
-TEMPLATE_DIR="/workspace/automation/template"
+TEMPLATE_DIR="/workspace/ajayadesign.github.io/automation/template"
 TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}"
 TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID:-}"
 
@@ -28,6 +28,16 @@ LIVE_URL="https://ajayadesign.github.io/${REPO_NAME}"
 
 log() { echo "[$(date '+%H:%M:%S')] $*"; }
 
+# Ensure git identity is set (needed inside Docker containers)
+git config --global user.email "ajayadahal1000@gmail.com"
+git config --global user.name "Ajaya Dahal"
+git config --global --add safe.directory '*'
+
+# Configure git to use GH_TOKEN for HTTPS auth
+if [ -n "${GH_TOKEN}" ]; then
+  git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+fi
+
 # Ensure builds directory exists
 mkdir -p "${BASE_DIR}"
 
@@ -38,7 +48,14 @@ if gh repo view "${REPO_FULL}" &>/dev/null; then
   log "⚠️  Repo ${REPO_FULL} already exists, cloning..."
   git clone "https://github.com/${REPO_FULL}.git" "${PROJECT_DIR}" 2>/dev/null || true
 else
-  gh repo create "${REPO_FULL}" --public --add-readme --clone --description "Client site for ${CLIENT_NAME} — built by AjayaDesign" -- "${PROJECT_DIR}"
+  log "Creating repo under org ${GITHUB_ORG}..."
+  gh repo create "${REPO_FULL}" --public --add-readme \
+    --description "Client site for ${CLIENT_NAME} — built by AjayaDesign" || {
+    log "❌ Failed to create repo. Check GH_TOKEN permissions (needs Administration: Write for org repos)."
+    exit 1
+  }
+  sleep 3  # Give GitHub API a moment
+  git clone "https://github.com/${REPO_FULL}.git" "${PROJECT_DIR}"
 fi
 
 cd "${PROJECT_DIR}"
@@ -161,7 +178,7 @@ if [ "${ai_generated}" = false ]; then
       theme: {
         extend: {
           fontFamily: { mono: ['JetBrains Mono', 'monospace'], sans: ['Inter', 'sans-serif'] },
-          colors: { brand: '#ED1C24', surface: '#0A0A0F', 'surface-alt': '#111118' }
+          colors: { brand: '#ED1C24', 'brand-btn': '#991B1B', 'brand-link': '#FF6B6B', surface: '#0A0A0F', 'surface-alt': '#111118' }
         }
       }
     }
@@ -171,7 +188,7 @@ if [ "${ai_generated}" = false ]; then
   <header class="fixed top-0 w-full bg-surface/80 backdrop-blur border-b border-gray-800 z-50">
     <nav class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
       <span class="font-mono font-bold text-white">${CLIENT_NAME}</span>
-      <a href="#contact" class="px-4 py-2 bg-brand text-white font-mono text-sm rounded hover:opacity-90 transition">Contact</a>
+      <a href="#contact" class="px-4 py-2 bg-brand-btn text-white font-mono text-sm rounded hover:opacity-90 transition">Contact</a>
     </nav>
   </header>
   <main>
@@ -179,7 +196,7 @@ if [ "${ai_generated}" = false ]; then
       <div class="text-center max-w-3xl">
         <h1 class="font-mono text-4xl md:text-6xl font-bold text-white mb-6">${CLIENT_NAME}</h1>
         <p class="text-xl text-gray-400 mb-8">${GOALS}</p>
-        <a href="#contact" class="inline-block px-8 py-3 bg-brand text-white font-mono font-bold rounded hover:opacity-90 transition">Get Started</a>
+        <a href="#contact" class="inline-block px-8 py-3 bg-brand-btn text-white font-mono font-bold rounded hover:opacity-90 transition">Get Started</a>
       </div>
     </section>
     <section class="py-24 px-6 bg-surface-alt">
@@ -214,14 +231,14 @@ if [ "${ai_generated}" = false ]; then
       <div class="max-w-xl mx-auto text-center">
         <h2 class="font-mono text-3xl font-bold text-white mb-6">Get in Touch</h2>
         <p class="text-gray-400 mb-8">Ready to work together? Reach out today.</p>
-        <a href="mailto:${EMAIL}" class="inline-block px-8 py-3 bg-brand text-white font-mono font-bold rounded hover:opacity-90 transition">${EMAIL}</a>
+        <a href="mailto:${EMAIL}" class="inline-block px-8 py-3 bg-brand-btn text-white font-mono font-bold rounded hover:opacity-90 transition">${EMAIL}</a>
       </div>
     </section>
   </main>
   <footer class="py-8 border-t border-gray-800 text-center">
     <p class="text-gray-400 text-sm font-mono">
       &copy; ${YEAR} ${CLIENT_NAME} &middot;
-      Built by <a href="https://ajayadesign.github.io" class="text-brand hover:underline">AjayaDesign</a>
+      Built by <a href="https://ajayadesign.github.io" class="text-brand-link underline hover:text-white">AjayaDesign</a>
     </p>
   </footer>
 </body>
@@ -237,9 +254,18 @@ log "🧪  Step 3 — Running Playwright + axe accessibility tests"
 cd "${PROJECT_DIR}"
 
 # Initialize package.json and install test deps
-npm init -y --silent
-npm install --save-dev @playwright/test @axe-core/playwright --silent
-npx playwright install --with-deps chromium --silent
+npm init -y > /dev/null 2>&1
+
+# Use globally pre-installed playwright & axe from the Docker image
+# Only install serve locally for the webServer config
+npm install --save-dev serve --loglevel=silent
+
+# Link global packages so they resolve in this project
+npm link @playwright/test @axe-core/playwright 2>/dev/null || {
+  log "  Global link failed, installing locally..."
+  npm install --save-dev @playwright/test @axe-core/playwright --loglevel=silent
+  npx playwright install --with-deps chromium 2>/dev/null
+}
 
 # Create Playwright config
 cat > "${PROJECT_DIR}/playwright.config.js" << 'PWCONFIG'
@@ -318,9 +344,6 @@ test('all links have valid href', async ({ page }) => {
 });
 TESTEOF
 
-# Install serve for the test web server
-npm install --save-dev serve --silent
-
 # ── GATEKEEPER: Run tests ──
 log "  Running tests..."
 if ! npx playwright test; then
@@ -369,21 +392,72 @@ gh api -X PUT "repos/${REPO_FULL}/pages" \
   2>/dev/null || \
 log "  ⚠️  Pages may already be enabled or needs manual setup"
 
-# ── Step 5: Add as submodule to main AjayaDesign site ──────────────
-log "📎  Step 5 — Adding as submodule to ajayadesign.github.io"
+# ── Step 5: Add as submodule + portfolio card to main site ─────────
+log "📎  Step 5 — Adding to ajayadesign.github.io (submodule + portfolio card)"
 
 MAIN_SITE="/workspace/ajayadesign.github.io"
+INJECT_SCRIPT="${MAIN_SITE}/automation/inject_card.js"
+
 if [ -d "${MAIN_SITE}" ]; then
   cd "${MAIN_SITE}"
+
+  # 5a: Add submodule
   if [ ! -d "${REPO_NAME}" ]; then
     git submodule add "https://github.com/${REPO_FULL}.git" "${REPO_NAME}"
-    git add -A
-    git commit -m "feat: add ${CLIENT_NAME} portfolio as submodule"
-    git push
-    log "  ✅ Submodule added to main site"
+    log "  ✅ Submodule added"
   else
-    log "  ⚠️  Submodule ${REPO_NAME} already exists"
+    log "  ⚠️  Submodule ${REPO_NAME} already exists, updating..."
+    git submodule update --remote "${REPO_NAME}" || true
   fi
+
+  # 5b: Pick emoji based on niche
+  NICHE_LOWER=$(echo "${NICHE}" | tr '[:upper:]' '[:lower:]')
+  case "${NICHE_LOWER}" in
+    *photo*|*camera*)                          EMOJI="📸" ;;
+    *food*|*bakery*|*restaurant*|*cafe*|*cook*) EMOJI="🍰" ;;
+    *tech*|*engineer*|*software*|*dev*)         EMOJI="⚡" ;;
+    *child*|*nanny*|*baby*|*daycare*)           EMOJI="👶" ;;
+    *health*|*fitness*|*gym*|*yoga*)            EMOJI="💪" ;;
+    *music*|*band*|*dj*)                        EMOJI="🎵" ;;
+    *art*|*design*|*creative*)                  EMOJI="🎨" ;;
+    *shop*|*store*|*retail*|*ecommerce*)        EMOJI="🛍️" ;;
+    *real?estate*|*property*)                   EMOJI="🏠" ;;
+    *law*|*legal*|*attorney*)                   EMOJI="⚖️" ;;
+    *pet*|*animal*|*vet*)                       EMOJI="🐾" ;;
+    *beauty*|*salon*|*spa*)                     EMOJI="💅" ;;
+    *auto*|*car*|*mechanic*)                    EMOJI="🔧" ;;
+    *construct*|*plumb*)                        EMOJI="🏗️" ;;
+    *education*|*tutor*|*school*)               EMOJI="📚" ;;
+    *travel*|*tour*)                            EMOJI="✈️" ;;
+    *wedding*|*event*)                          EMOJI="💍" ;;
+    *clean*|*maid*)                             EMOJI="✨" ;;
+    *garden*|*landscape*|*lawn*)                EMOJI="🌿" ;;
+    *)                                          EMOJI="🌐" ;;
+  esac
+
+  # 5c: Inject portfolio card into index.html
+  if [ -f "${INJECT_SCRIPT}" ] && grep -q "%%PORTFOLIO_INJECT%%" "${MAIN_SITE}/index.html"; then
+    log "  Injecting portfolio card into index.html..."
+    jq -n \
+      --arg repoName "${REPO_NAME}" \
+      --arg clientName "${CLIENT_NAME}" \
+      --arg niche "${NICHE}" \
+      --arg goals "${GOALS}" \
+      --arg emoji "${EMOJI}" \
+      --arg indexPath "${MAIN_SITE}/index.html" \
+      '{repoName:$repoName,clientName:$clientName,niche:$niche,goals:$goals,emoji:$emoji,indexPath:$indexPath}' \
+      | node "${INJECT_SCRIPT}"
+    log "  ✅ Portfolio card injected"
+  else
+    log "  ⚠️  inject_card.js or portfolio marker not found, skipping card injection"
+  fi
+
+  git add -A
+  git commit -m "feat: add ${CLIENT_NAME} portfolio (submodule + card)"
+  git push
+  log "  ✅ Main site updated and pushed"
+else
+  log "  ⚠️  Main site not found at ${MAIN_SITE}, skipping submodule step"
 fi
 
 # ── Step 6: Notification ──────────────────────────────────────────
