@@ -26,6 +26,11 @@ module.exports = async function deploy(repo, orch) {
   exec('git push -u origin main', { cwd: projectDir });
   orch.log('  ✅ Pushed to GitHub');
 
+  // Fix project dir ownership for host user
+  const hostUid = process.env.HOST_UID || '1000';
+  const hostGid = process.env.HOST_GID || '1000';
+  tryExec(`chown -R ${hostUid}:${hostGid} "${projectDir}" 2>/dev/null`);
+
   // ── Enable GitHub Pages ───────────────────────────────────
   orch.log('  Enabling GitHub Pages...');
   const pagesPayload = '{"source":{"branch":"main","path":"/"}}';
@@ -116,6 +121,12 @@ module.exports = async function deploy(repo, orch) {
     );
     tryExec('git push', { cwd: mainSiteDir });
     orch.log('  ✅ Main site updated and pushed');
+
+    // Fix ownership — Docker runs as root, host user needs access
+    const hostUid = process.env.HOST_UID || '1000';
+    const hostGid = process.env.HOST_GID || '1000';
+    tryExec(`chown -R ${hostUid}:${hostGid} "${mainSiteDir}/.git" 2>/dev/null`);
+    tryExec(`chown -R ${hostUid}:${hostGid} "${mainSiteDir}/${repoName}" 2>/dev/null`);
   } else {
     orch.log(`  ⚠️ Main site not found at ${mainSiteDir}, skipping submodule`);
   }
