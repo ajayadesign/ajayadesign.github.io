@@ -29,10 +29,13 @@ RUN npm install -g serve
 RUN npm install -g @playwright/test @axe-core/playwright \
     && npx playwright install --with-deps chromium
 
-WORKDIR /runner
+WORKDIR /app
 
-COPY server.js /runner/server.js
+COPY runner/server.js /app/runner/server.js
+COPY orchestrator/ /app/orchestrator/
+
+WORKDIR /app/runner
 
 EXPOSE 3456
 
-CMD ["node", "/runner/server.js"]
+CMD ["node", "/app/runner/server.js"]

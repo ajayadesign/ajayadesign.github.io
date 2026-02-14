@@ -25,8 +25,8 @@ services:
   # ── Runner — Build & deploy sidecar ──
   runner:
     build:
-      context: ./runner
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: runner/Dockerfile
     container_name: ajayadesign-runner
     restart: unless-stopped
     ports:
