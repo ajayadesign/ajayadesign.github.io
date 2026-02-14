@@ -42,7 +42,7 @@ fi
 mkdir -p "${BASE_DIR}"
 
 # ── Step 1: Create GitHub Repo ─────────────────────────────────────
-log "🏗️  Step 1 — Creating GitHub repo: ${REPO_FULL}"
+log "[STEP:1:6:repo] 🏗️ Creating GitHub repo: ${REPO_FULL}"
 
 if gh repo view "${REPO_FULL}" &>/dev/null; then
   log "⚠️  Repo ${REPO_FULL} already exists, cloning..."
@@ -61,7 +61,7 @@ fi
 cd "${PROJECT_DIR}"
 
 # ── Step 2: AI Build — Generate Landing Page ───────────────────────
-log "🤖  Step 2 — Generating landing page for ${CLIENT_NAME} (${NICHE})"
+log "[STEP:2:6:generate] 🤖 Generating landing page for ${CLIENT_NAME} (${NICHE})"
 
 GH_TOKEN="${GH_TOKEN:-}"
 AI_MODEL="${AI_MODEL:-gpt-4o}"
@@ -104,7 +104,7 @@ ai_generated=false
 
 # ── Method 1: GitHub Models API (free with GH_TOKEN) ──
 if [ -n "${GH_TOKEN}" ]; then
-  log "  Calling GitHub Models API (${AI_MODEL})..."
+  log "[AI:CALL] Calling GitHub Models API (${AI_MODEL})..."
 
   # Build JSON payload with jq to handle escaping safely
   PAYLOAD=$(jq -n \
@@ -136,20 +136,20 @@ if [ -n "${GH_TOKEN}" ]; then
     # Verify we got valid HTML
     if grep -q '<!DOCTYPE\|<html' "${PROJECT_DIR}/index.html"; then
       FILESIZE=$(wc -c < "${PROJECT_DIR}/index.html")
-      log "  ✅ AI generated index.html (${FILESIZE} bytes)"
+      log "[AI:DONE] ✅ AI generated index.html (${FILESIZE} bytes)"
       ai_generated=true
     else
-      log "  ⚠️  AI response didn't contain valid HTML, falling back..."
+      log "[AI:ERROR] ⚠️ AI response didn't contain valid HTML, falling back..."
     fi
   else
-    log "  ⚠️  GitHub Models API returned HTTP ${HTTP_CODE}, falling back..."
+    log "[AI:ERROR] ⚠️ GitHub Models API returned HTTP ${HTTP_CODE}, falling back..."
     [ -f /tmp/ai_response.json ] && cat /tmp/ai_response.json | head -5
   fi
 fi
 
 # ── Method 2: Template fallback ──
 if [ "${ai_generated}" = false ] && [ -f "${TEMPLATE_DIR}/index.html" ]; then
-  log "  Using template with variable substitution..."
+  log "[AI:FALLBACK] Using template with variable substitution..."
   sed \
     -e "s/{{CLIENT_NAME}}/${CLIENT_NAME}/g" \
     -e "s/{{NICHE}}/${NICHE}/g" \
@@ -161,7 +161,7 @@ fi
 
 # ── Method 3: Inline fallback (always works) ──
 if [ "${ai_generated}" = false ]; then
-  log "  ⚠️  Using inline fallback page..."
+  log "[AI:FALLBACK] ⚠️ Using inline fallback page..."
   YEAR=$(date +%Y)
   cat > "${PROJECT_DIR}/index.html" << HTMLEOF
 <!DOCTYPE html>
@@ -252,7 +252,7 @@ fi
 log "  ✅ index.html generated ($(wc -c < "${PROJECT_DIR}/index.html") bytes)"
 
 # ── Step 3: Engineering Checklist (QA) ─────────────────────────────
-log "🧪  Step 3 — Running Playwright + axe accessibility tests"
+log "[STEP:3:6:test] 🧪 Running Playwright + axe accessibility tests"
 
 cd "${PROJECT_DIR}"
 
@@ -352,7 +352,7 @@ MAX_ATTEMPTS=3
 ATTEMPT=1
 
 while [ ${ATTEMPT} -le ${MAX_ATTEMPTS} ]; do
-  log "  ▶ Attempt ${ATTEMPT}/${MAX_ATTEMPTS} — running tests..."
+  log "[TEST:RUN:${ATTEMPT}] ▶ Attempt ${ATTEMPT}/${MAX_ATTEMPTS} — running tests..."
 
   TEST_OUTPUT=$(npx playwright test 2>&1) || true
   TEST_EXIT=$?
@@ -362,11 +362,11 @@ while [ ${ATTEMPT} -le ${MAX_ATTEMPTS} ]; do
   fi
 
   if [ ${TEST_EXIT} -eq 0 ] && ! echo "${TEST_OUTPUT}" | grep -q "failed"; then
-    log "  ✅ All tests passed on attempt ${ATTEMPT}!"
+    log "[TEST:PASS:${ATTEMPT}] ✅ All tests passed on attempt ${ATTEMPT}!"
     break
   fi
 
-  log "  ⚠️  Tests failed on attempt ${ATTEMPT}"
+  log "[TEST:FAIL:${ATTEMPT}] ⚠️ Tests failed on attempt ${ATTEMPT}"
 
   # If we've exhausted retries, abort
   if [ ${ATTEMPT} -ge ${MAX_ATTEMPTS} ]; then
@@ -384,7 +384,7 @@ while [ ${ATTEMPT} -le ${MAX_ATTEMPTS} ]; do
 
   # ── Agentic fix: send errors back to AI ──
   if [ -n "${GH_TOKEN}" ]; then
-    log "  🔄 Sending errors to AI for auto-fix (attempt $((ATTEMPT + 1)))..."
+    log "[AI:FIX:$((ATTEMPT + 1))] 🔄 Sending errors to AI for auto-fix..."
 
     CURRENT_HTML=$(cat "${PROJECT_DIR}/index.html")
 
@@ -452,7 +452,7 @@ Output ONLY the fixed, complete HTML. No explanations, no markdown fences."
 done
 
 # ── Step 4: Deploy ─────────────────────────────────────────────────
-log "🚀  Step 4 — Deploying to GitHub Pages"
+log "[STEP:4:6:deploy] 🚀 Deploying to GitHub Pages"
 
 cd "${PROJECT_DIR}"
 
@@ -471,9 +471,10 @@ Goals: ${GOALS}
 Built by AjayaDesign automation pipeline"
 
 git push -u origin main
+log "[DEPLOY] Pushed to GitHub"
 
 # Enable GitHub Pages on main branch
-log "  Enabling GitHub Pages..."
+log "[DEPLOY] Enabling GitHub Pages..."
 gh api -X POST "repos/${REPO_FULL}/pages" \
   --input - <<< '{"source":{"branch":"main","path":"/"}}' \
   2>/dev/null || \
@@ -483,7 +484,7 @@ gh api -X PUT "repos/${REPO_FULL}/pages" \
 log "  ⚠️  Pages may already be enabled or needs manual setup"
 
 # ── Step 5: Add as submodule + portfolio card to main site ─────────
-log "📎  Step 5 — Adding to ajayadesign.github.io (submodule + portfolio card)"
+log "[STEP:5:6:integrate] 📎 Adding to ajayadesign.github.io (submodule + portfolio card)"
 
 MAIN_SITE="/workspace/ajayadesign.github.io"
 INJECT_SCRIPT="${MAIN_SITE}/automation/inject_card.js"
@@ -552,7 +553,7 @@ else
 fi
 
 # ── Step 6: Notification ──────────────────────────────────────────
-log "📬  Step 6 — Sending Telegram notification"
+log "[STEP:6:6:notify] 📬 Sending Telegram notification"
 
 if [ -n "${TELEGRAM_BOT_TOKEN}" ] && [ -n "${TELEGRAM_CHAT_ID}" ]; then
   MESSAGE="✅ *AjayaDesign — New Site Deployed!*

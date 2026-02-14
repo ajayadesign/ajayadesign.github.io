@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AjayaDesign — Admin Dashboard</title>
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            'surface':     '#06060A',
+            'surface-1':   '#0C0C12',
+            'surface-2':   '#12121A',
+            'surface-3':   '#1A1A24',
+            'border':      '#2A2A3A',
+            'border-glow': '#3A3A5A',
+            'amd-red':     '#ED1C24',
+            'brand-btn':   '#991B1B',
+            'brand-link':  '#FF6B6B',
+            'electric':    '#00D4FF',
+            'electric-dim':'#0099BB',
+            'neon-green':  '#00FF88',
+            'neon-yellow': '#FFD600',
+            'neon-orange': '#FF8A00',
+            'neon-purple': '#A855F7',
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'glow': 'glow 2s ease-in-out infinite alternate',
+            'slide-up': 'slideUp 0.3s ease-out',
+            'fade-in': 'fadeIn 0.4s ease-out',
+          },
+          keyframes: {
+            glow: {
+              '0%': { boxShadow: '0 0 5px rgba(0,212,255,0.2)' },
+              '100%': { boxShadow: '0 0 20px rgba(0,212,255,0.4)' },
+            },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0C0C12; }
+    ::-webkit-scrollbar-thumb { background: #2A2A3A; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3A3A5A; }
+
+    /* Terminal log styles */
+    .log-line { font-size: 0.8rem; line-height: 1.6; }
+    .log-line:hover { background: rgba(255,255,255,0.03); }
+    .log-step { color: #00D4FF; font-weight: 600; }
+    .log-ai { color: #A855F7; }
+    .log-test-pass { color: #00FF88; }
+    .log-test-fail { color: #FF6B6B; }
+    .log-deploy { color: #FFD600; }
+    .log-error { color: #FF6B6B; opacity: 0.9; }
+    .log-dim { opacity: 0.5; }
+
+    /* Step progress */
+    .step-dot { transition: all 0.3s ease; }
+    .step-dot.active { box-shadow: 0 0 12px rgba(0,212,255,0.6); }
+    .step-dot.done { box-shadow: 0 0 8px rgba(0,255,136,0.4); }
+    .step-connector { transition: background 0.5s ease; }
+
+    /* AI chat bubbles */
+    .ai-bubble { animation: slideUp 0.3s ease-out; }
+
+    /* Glass effect */
+    .glass { background: rgba(12,12,18,0.8); backdrop-filter: blur(12px); }
+
+    /* Sidebar item hover */
+    .build-item { transition: all 0.15s ease; }
+    .build-item:hover { background: rgba(255,255,255,0.04); }
+    .build-item.selected { background: rgba(0,212,255,0.08); border-color: #00D4FF; }
+
+    /* Hide scrollbar for sidebar on mobile */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Pulsing dot for active builds */
+    @keyframes live-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.5); }
+    }
+    .live-dot { animation: live-pulse 1.5s ease-in-out infinite; }
+  </style>
+</head>
+<body class="bg-surface text-gray-300 font-sans antialiased h-screen overflow-hidden">
+
+  <!-- ═══ Top Bar ═══ -->
+  <header class="h-14 bg-surface-1 border-b border-border flex items-center justify-between px-4 z-50 relative">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amd-red to-electric flex items-center justify-center">
+        <span class="text-white font-mono font-bold text-sm">A</span>
+      </div>
+      <h1 class="font-mono font-semibold text-white text-sm tracking-wide">AjayaDesign<span class="text-electric">::</span>Admin</h1>
+    </div>
+    <div class="flex items-center gap-4">
+      <div id="connection-status" class="flex items-center gap-2 text-xs font-mono">
+        <span class="w-2 h-2 rounded-full bg-gray-600" id="conn-dot"></span>
+        <span id="conn-text" class="text-gray-500">Disconnected</span>
+      </div>
+      <a href="/" class="text-xs font-mono text-gray-500 hover:text-electric transition">← Site</a>
+      <button onclick="signOut()" class="text-xs font-mono text-gray-500 hover:text-brand-link transition">Sign Out</button>
+    </div>
+  </header>
+
+  <!-- ═══ Main Layout ═══ -->
+  <div class="flex h-[calc(100vh-3.5rem)]">
+
+    <!-- ═══ Sidebar ═══ -->
+    <aside id="sidebar" class="w-72 min-w-[18rem] bg-surface-1 border-r border-border flex flex-col">
+      <!-- Tab Switcher -->
+      <div class="flex border-b border-border">
+        <button onclick="switchTab('builds')" id="tab-builds"
+          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition">
+          🔨 Builds
+        </button>
+        <button onclick="switchTab('leads')" id="tab-leads"
+          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+          📬 Leads <span id="stat-leads" class="ml-1 px-1.5 py-0.5 rounded-full bg-electric/20 text-electric text-[0.6rem]">0</span>
+        </button>
+      </div>
+
+      <!-- Builds Tab -->
+      <div id="builds-tab" class="flex-1 flex flex-col overflow-hidden">
+        <!-- Stats -->
+        <div class="p-4 border-b border-border">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">History</h2>
+            <button onclick="refreshBuilds()" class="text-gray-500 hover:text-electric transition" title="Refresh">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div class="bg-surface-2 rounded-lg p-2 text-center">
+              <div id="stat-total" class="font-mono text-lg font-bold text-white">0</div>
+              <div class="text-[0.65rem] text-gray-500 uppercase">Total</div>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-2 text-center">
+              <div id="stat-success" class="font-mono text-lg font-bold text-neon-green">0</div>
+              <div class="text-[0.65rem] text-gray-500 uppercase">Pass</div>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-2 text-center">
+              <div id="stat-failed" class="font-mono text-lg font-bold text-brand-link">0</div>
+              <div class="text-[0.65rem] text-gray-500 uppercase">Fail</div>
+            </div>
+          </div>
+        </div>
+        <!-- Build List -->
+        <div id="build-list" class="flex-1 overflow-y-auto no-scrollbar p-2 space-y-1">
+          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading builds...</div>
+        </div>
+      </div>
+
+      <!-- Leads Tab (hidden initially) -->
+      <div id="leads-panel" class="flex-1 overflow-hidden hidden flex flex-col">
+        <div class="p-4 border-b border-border">
+          <h2 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">Client Requests</h2>
+        </div>
+        <div id="leads-panel-content" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3">
+          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading leads...</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══ Main Content ═══ -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+
+      <!-- No Build Selected State -->
+      <div id="empty-state" class="flex-1 flex items-center justify-center">
+        <div class="text-center">
+          <div class="text-6xl mb-4 opacity-20">🔧</div>
+          <h2 class="font-mono text-xl text-gray-500 mb-2">No build selected</h2>
+          <p class="text-sm text-gray-600">Select a build from the sidebar or wait for a new one</p>
+        </div>
+      </div>
+
+      <!-- Build Detail (hidden initially) -->
+      <div id="build-detail" class="flex-1 flex flex-col overflow-hidden hidden">
+
+        <!-- Build Header -->
+        <div id="build-header" class="p-4 bg-surface-1 border-b border-border">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <span id="build-status-badge" class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold"></span>
+              <h2 id="build-client" class="font-mono text-lg font-bold text-white"></h2>
+            </div>
+            <div class="flex items-center gap-3 text-xs font-mono text-gray-500">
+              <span id="build-id-display"></span>
+              <span id="build-time"></span>
+            </div>
+          </div>
+          <div id="build-meta" class="flex gap-4 text-xs text-gray-400"></div>
+        </div>
+
+        <!-- Step Progress Bar -->
+        <div id="step-progress" class="px-6 py-4 bg-surface-2 border-b border-border">
+          <div class="flex items-center justify-between max-w-3xl mx-auto">
+            <!-- Steps rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Content Area: AI + Logs split -->
+        <div class="flex-1 flex overflow-hidden">
+
+          <!-- AI Conversation Panel -->
+          <div class="w-[380px] min-w-[320px] border-r border-border flex flex-col bg-surface-1">
+            <div class="px-4 py-3 border-b border-border flex items-center gap-2">
+              <svg class="w-4 h-4 text-neon-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">AI Activity</h3>
+            </div>
+            <div id="ai-panel" class="flex-1 overflow-y-auto p-3 space-y-3">
+              <div class="text-center text-gray-600 text-xs font-mono py-8">No AI activity yet</div>
+            </div>
+          </div>
+
+          <!-- Terminal Log Panel -->
+          <div class="flex-1 flex flex-col bg-surface">
+            <div class="px-4 py-3 border-b border-border flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-neon-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">Build Log</h3>
+              </div>
+              <div class="flex items-center gap-2">
+                <span id="log-count" class="text-xs font-mono text-gray-600">0 lines</span>
+                <label class="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer">
+                  <input type="checkbox" id="auto-scroll" checked class="rounded border-border bg-surface-2 text-electric focus:ring-electric focus:ring-offset-0 w-3.5 h-3.5">
+                  Auto-scroll
+                </label>
+              </div>
+            </div>
+            <div id="log-panel" class="flex-1 overflow-y-auto p-4 font-mono text-xs leading-relaxed">
+              <div class="text-gray-600">Waiting for build output...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ═══ Login Screen (shown when not authenticated) ═══ -->
+  <div id="login-screen" class="fixed inset-0 bg-surface z-[100] flex items-center justify-center">
+    <div class="text-center">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amd-red to-electric flex items-center justify-center mx-auto mb-6">
+        <span class="text-white font-mono font-bold text-2xl">A</span>
+      </div>
+      <h1 class="font-mono text-2xl font-bold text-white mb-2">AjayaDesign<span class="text-electric">::</span>Admin</h1>
+      <p class="text-gray-500 text-sm mb-8">Sign in to access the dashboard</p>
+      <button id="google-login-btn" class="inline-flex items-center gap-3 px-6 py-3 bg-white text-gray-800 font-semibold rounded-lg hover:bg-gray-100 transition shadow-lg">
+        <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Sign in with Google
+      </button>
+      <p id="login-error" class="text-brand-link text-xs mt-4 hidden"></p>
+    </div>
+  </div>
+
+  <!-- ═══ Firebase SDK ═══ -->
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-database-compat.js"></script>
+  <script>
+    window.__firebaseApp = firebase.initializeApp({
+      apiKey: "AIzaSyDBN3S_dlBXkn75YM0aMyuOq27SGWfwOGs",
+      authDomain: "ajayadesign-6d739.firebaseapp.com",
+      databaseURL: "https://ajayadesign-6d739-default-rtdb.firebaseio.com",
+      projectId: "ajayadesign-6d739",
+      storageBucket: "ajayadesign-6d739.firebasestorage.app",
+      messagingSenderId: "205086844916",
+      appId: "1:205086844916:web:840ad399f95f20ee1bfba1",
+    });
+    window.__auth = firebase.auth();
+    window.__db = firebase.database();
+  </script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

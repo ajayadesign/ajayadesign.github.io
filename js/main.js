@@ -51,9 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Intake Form Submission ──
-  // Hook ID: #ajayadesign-intake-form
-  // POSTs to n8n webhook running on the local automation stack.
+  // Dual-send: FormSubmit.co (email — always works) + n8n (automation pipeline).
+  // n8n only fires when browsing from the same machine running Docker.
+  // From production (GitHub Pages), n8n silently fails and email still delivers.
   const N8N_WEBHOOK = 'http://localhost:5678/webhook/ajayadesign-intake';
+  const FORMSUBMIT_URL = 'https://formsubmit.co/ajax/9dc23f5c5eb6fba941487190ff80294b';
+  const N8N_TIMEOUT_MS = 3000; // fail fast from production
   const intakeForm = document.getElementById('ajayadesign-intake-form');
 
   intakeForm.addEventListener('submit', async (e) => {
@@ -74,20 +77,50 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     btn.disabled = true;
 
-    try {
-      await fetch(N8N_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-    } catch (err) {
-      console.warn('[AjayaDesign] Webhook unreachable, submission logged to console.', err);
-    }
+    // Send to all three: Firebase (DB) + FormSubmit (email) + n8n (automation)
+    const emailPayload = new FormData(intakeForm);
+    emailPayload.append('_subject', 'New AjayaDesign Client Request');
+    emailPayload.append('_captcha', 'false');
+    emailPayload.append('_template', 'box');
+
+    // 1. Firebase RTDB — persistent lead storage
+    const firebasePromise = (window.__db
+      ? window.__db.ref('leads').push({
+          ...data,
+          timestamp: Date.now(),
+          submitted_at: new Date().toISOString(),
+          source: window.location.hostname,
+          status: 'new',
+        }).then(() => console.log('[AjayaDesign] ✅ Lead saved to Firebase'))
+        .catch(err => console.warn('[AjayaDesign] ⚠️ Firebase save failed:', err))
+      : Promise.resolve()
+    );
+
+    // 2. FormSubmit — email backup
+    const emailPromise = fetch(FORMSUBMIT_URL, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: emailPayload,
+    }).then(() => console.log('[AjayaDesign] ✅ Email sent via FormSubmit'))
+      .catch(err => console.warn('[AjayaDesign] ⚠️ FormSubmit failed:', err));
+
+    const n8nCtrl = new AbortController();
+    const n8nTimer = setTimeout(() => n8nCtrl.abort(), N8N_TIMEOUT_MS);
+    const n8nPromise = fetch(N8N_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+      signal: n8nCtrl.signal,
+    }).then(() => console.log('[AjayaDesign] ✅ n8n webhook triggered'))
+      .catch(err => console.warn('[AjayaDesign] ⚠️ n8n unreachable (email still sent):', err))
+      .finally(() => clearTimeout(n8nTimer));
+
+    await Promise.allSettled([firebasePromise, emailPromise, n8nPromise]);
 
     // Visual feedback — success
     btn.innerHTML = `
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-      Build Initiated — We'll be in touch.
+      Request Received — We'll be in touch!
     `;
     btn.classList.remove('bg-amd-red', 'hover:bg-red-700');
     btn.classList.add('bg-green-600');
