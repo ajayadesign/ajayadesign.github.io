@@ -473,16 +473,9 @@
   <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-database-compat.js"></script>
+  <script src="../js/firebase-config.js"></script>
   <script>
-    window.__firebaseApp = firebase.initializeApp({
-      apiKey: "AIzaSyDBN3S_dlBXkn75YM0aMyuOq27SGWfwOGs",
-      authDomain: "ajayadesign-6d739.firebaseapp.com",
-      databaseURL: "https://ajayadesign-6d739-default-rtdb.firebaseio.com",
-      projectId: "ajayadesign-6d739",
-      storageBucket: "ajayadesign-6d739.firebasestorage.app",
-      messagingSenderId: "205086844916",
-      appId: "1:205086844916:web:840ad399f95f20ee1bfba1",
-    });
+    window.__firebaseApp = firebase.initializeApp(window.__firebaseConfig);
     window.__auth = firebase.auth();
     window.__db = firebase.database();
   </script>
