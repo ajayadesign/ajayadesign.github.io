@@ -4,6 +4,7 @@
 //  No dependencies — pure Node.js http module
 // ═══════════════════════════════════════════════════════════════
 const http = require('http');
+const https = require('https');
 const { spawn } = require('child_process');
 const { randomUUID } = require('crypto');
 
@@ -12,6 +13,57 @@ const SCRIPT = '/workspace/ajayadesign.github.io/automation/build_and_deploy.sh'
 
 // Track running builds
 const builds = new Map();
+
+// ── Telegram: instant notification on new client request ───────
+function sendTelegramNotification({ clientName, niche, goals, email, buildId }) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) {
+    console.log(`[${buildId}] ⚠️ Telegram env vars missing — skipping intake notification`);
+    return;
+  }
+
+  const text = [
+    '📬 *New Client Request*',
+    '',
+    `🏢 *Business:* ${esc(clientName)}`,
+    `🏷 *Niche:* ${esc(niche)}`,
+    `🎯 *Goals:* ${esc(goals)}`,
+    `📧 *Email:* ${esc(email || 'not provided')}`,
+    '',
+    `🔨 Build \`${buildId}\` has been queued\\.`,
+  ].join('\n');
+
+  const payload = JSON.stringify({
+    chat_id: chatId,
+    text,
+    parse_mode: 'MarkdownV2',
+  });
+
+  const options = {
+    hostname: 'api.telegram.org',
+    path: `/bot${token}/sendMessage`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) },
+  };
+
+  const req = https.request(options, (res) => {
+    let body = '';
+    res.on('data', (d) => { body += d; });
+    res.on('end', () => {
+      if (res.statusCode !== 200) console.error(`[${buildId}] Telegram error: ${body}`);
+      else console.log(`[${buildId}] 📬 Intake notification sent to Telegram`);
+    });
+  });
+  req.on('error', (e) => console.error(`[${buildId}] Telegram request failed: ${e.message}`));
+  req.write(payload);
+  req.end();
+}
+
+// Escape MarkdownV2 special chars
+function esc(str) {
+  return String(str).replace(/([_*\[\]()~`>#+\-=|{}.!\\])/g, '\\$1');
+}
 
 const server = http.createServer((req, res) => {
   // Health check
@@ -66,6 +118,9 @@ const server = http.createServer((req, res) => {
       builds.set(buildId, buildState);
 
       console.log(`[${buildId}] 🚀 Starting build for: ${clientName}`);
+
+      // Instant Telegram notification with client details
+      sendTelegramNotification({ clientName, niche, goals, email, buildId });
 
       const child = spawn('bash', [SCRIPT, clientName, niche, goals, email], {
         cwd: '/workspace',
