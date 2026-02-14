@@ -27,12 +27,14 @@ let currentUser = null;
 
 // ── Step definitions ───────────────────────────────────
 const STEPS = [
-  { key: 'repo',      label: 'Repo',      icon: '🏗️', short: 'Create Repo' },
-  { key: 'generate',  label: 'AI Build',   icon: '🤖', short: 'Generate' },
-  { key: 'test',      label: 'QA Tests',   icon: '🧪', short: 'Test' },
-  { key: 'deploy',    label: 'Deploy',     icon: '🚀', short: 'Deploy' },
-  { key: 'integrate', label: 'Integrate',  icon: '📎', short: 'Integrate' },
-  { key: 'notify',    label: 'Notify',     icon: '📬', short: 'Notify' },
+  { key: 'repo',      label: 'Repo',      icon: '🏗️', short: 'Repo' },
+  { key: 'council',   label: 'Council',   icon: '🏛️', short: 'Council' },
+  { key: 'design',    label: 'Design',    icon: '🎨', short: 'Design' },
+  { key: 'generate',  label: 'Generate',  icon: '🤖', short: 'Pages' },
+  { key: 'assemble',  label: 'Assemble',  icon: '📎', short: 'Assemble' },
+  { key: 'test',      label: 'Test',      icon: '🧪', short: 'Test' },
+  { key: 'deploy',    label: 'Deploy',    icon: '🚀', short: 'Deploy' },
+  { key: 'notify',    label: 'Notify',    icon: '📬', short: 'Notify' },
 ];
 
 // ── DOM refs ───────────────────────────────────────────
@@ -50,6 +52,12 @@ const $aiPanel       = document.getElementById('ai-panel');
 const $logPanel      = document.getElementById('log-panel');
 const $logCount      = document.getElementById('log-count');
 const $autoScroll    = document.getElementById('auto-scroll');
+
+// Content tab panels
+const $contentPipeline = document.getElementById('content-pipeline');
+const $contentAI       = document.getElementById('content-ai');
+const $contentLog      = document.getElementById('content-log');
+let activeContentTab   = 'pipeline';
 const $connDot       = document.getElementById('conn-dot');
 const $connText      = document.getElementById('conn-text');
 const $statTotal     = document.getElementById('stat-total');
@@ -138,6 +146,23 @@ function switchTab(tab) {
       $emptyState.classList.remove('hidden');
     }
   }
+}
+
+// ── Content tab switching (Pipeline / AI / Log) ────────
+function switchContentTab(tab) {
+  activeContentTab = tab;
+  const tabs = ['pipeline', 'ai', 'log'];
+  tabs.forEach(t => {
+    const $tab = document.getElementById('ctab-' + t);
+    const $panel = document.getElementById('content-' + t);
+    if (t === tab) {
+      $tab.className = 'px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-widest border-b-2 border-electric text-electric transition';
+      $panel.classList.remove('hidden');
+    } else {
+      $tab.className = 'px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition';
+      $panel.classList.add('hidden');
+    }
+  });
 }
 
 // ── Connection check ───────────────────────────────────
@@ -229,6 +254,12 @@ async function selectBuild(buildId) {
   logLines = [];
   currentStepData = { current: 0, total: 6 };
 
+  // Reset pipeline graph
+  if (typeof resetPipeline === 'function') {
+    resetPipeline();
+    renderPipeline();
+  }
+
   // Show detail panel
   $emptyState.classList.add('hidden');
   $buildDetail.classList.remove('hidden');
@@ -293,6 +324,8 @@ function connectSSE(buildId) {
   eventSource.addEventListener('log', (e) => {
     const data = JSON.parse(e.data);
     processLogLine(data.raw || data.line, true);
+    // Feed to pipeline graph for metadata extraction
+    if (typeof pipelineHandleLog === 'function') pipelineHandleLog(data.raw || data.line);
     renderLog();
     if ($autoScroll.checked) scrollLogToBottom();
   });
@@ -301,6 +334,8 @@ function connectSSE(buildId) {
     const data = JSON.parse(e.data);
     currentStepData = { current: data.current, total: data.total };
     renderStepProgress(data.current);
+    // Feed to pipeline graph
+    if (typeof pipelineHandleStep === 'function') pipelineHandleStep(data);
     // Also add as log line
     processLogLine(data.raw || `[STEP:${data.current}:${data.total}:${data.stepName}] ${data.message}`, true);
     renderLog();
@@ -311,6 +346,8 @@ function connectSSE(buildId) {
     const data = JSON.parse(e.data);
     aiEvents.push(data);
     renderAI();
+    // Feed to pipeline graph
+    if (typeof pipelineHandleAI === 'function') pipelineHandleAI(data);
   });
 
   eventSource.addEventListener('test', (e) => {
@@ -318,6 +355,8 @@ function connectSSE(buildId) {
     // Add to AI panel as well for visibility
     aiEvents.push({ ...data, type: 'test' });
     renderAI();
+    // Feed to pipeline graph
+    if (typeof pipelineHandleTest === 'function') pipelineHandleTest(data);
     processLogLine(data.raw || `[TEST:${data.action}] ${data.message}`, true);
     renderLog();
     if ($autoScroll.checked) scrollLogToBottom();
@@ -333,6 +372,8 @@ function connectSSE(buildId) {
     $buildStatus.className = `px-2.5 py-1 rounded-full text-xs font-mono font-semibold ${s.cls}`;
 
     if (data.status === 'success') renderStepProgress(6);
+    // Feed to pipeline graph
+    if (typeof pipelineHandleDone === 'function') pipelineHandleDone(data);
     refreshBuilds();
     eventSource.close();
   });
@@ -450,8 +491,8 @@ function renderLog() {
   const html = logLines.map((entry, i) => {
     return `<div class="log-line ${entry.cssClass} py-0.5 px-2 rounded">${escHTML(entry.raw)}</div>`;
   }).join('');
-  $logPanel.innerHTML = html || '<div class="text-gray-600">Waiting for build output...</div>';
-  $logCount.textContent = `${logLines.length} lines`;
+  if ($logPanel) $logPanel.innerHTML = html || '<div class="text-gray-600">Waiting for build output...</div>';
+  if ($logCount) $logCount.textContent = logLines.length;
 }
 
 function renderAI() {
@@ -497,13 +538,17 @@ function renderAI() {
       </div>`;
   }).join('');
 
-  $aiPanel.innerHTML = html;
-  $aiPanel.scrollTop = $aiPanel.scrollHeight;
+  if ($aiPanel) $aiPanel.innerHTML = html;
 }
 
 function scrollLogToBottom() {
   requestAnimationFrame(() => {
-    $logPanel.scrollTop = $logPanel.scrollHeight;
+    // Scroll the log container
+    const $logContainer = document.getElementById('content-log');
+    if ($logContainer) $logContainer.scrollTop = $logContainer.scrollHeight;
+    // Also scroll AI panel
+    const $aiContainer = document.getElementById('content-ai');
+    if ($aiContainer) $aiContainer.scrollTop = $aiContainer.scrollHeight;
   });
 }
 

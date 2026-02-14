@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════
-//  AjayaDesign Runner — HTTP-to-Shell bridge with live streaming
-//  POST /build → spawns build_and_deploy.sh
+//  AjayaDesign Runner v2 — HTTP bridge with live streaming
+//  POST /build → orchestrator (multi-agent site factory)
 //  GET  /builds → build history (persistent JSON)
 //  GET  /builds/:id → build detail + log
 //  GET  /builds/:id/stream → SSE live log stream
@@ -12,6 +12,16 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 const { randomUUID } = require('crypto');
+
+// v2 Orchestrator
+let BuildOrchestrator;
+try {
+  BuildOrchestrator = require('../orchestrator');
+  console.log('✅ v2 Orchestrator loaded');
+} catch (err) {
+  console.warn('⚠️ v2 Orchestrator not available, falling back to v1 bash:', err.message);
+  BuildOrchestrator = null;
+}
 
 const PORT = 3456;
 const SCRIPT = '/workspace/ajayadesign.github.io/automation/build_and_deploy.sh';
@@ -284,68 +294,17 @@ const server = http.createServer((req, res) => {
       console.log(`[${buildId}] 🚀 Starting build for: ${clientName}`);
       sendTelegramNotification({ clientName, niche, goals, email, buildId });
 
-      // ── Spawn the build script ──
-      const child = spawn('bash', [SCRIPT, clientName, niche, goals, email], {
-        cwd: '/workspace',
-        env: { ...process.env, HOME: '/root', PATH: process.env.PATH },
-        stdio: ['ignore', 'pipe', 'pipe'],
-      });
-
-      // Process stdout line-by-line
-      let stdoutBuf = '';
-      child.stdout.on('data', (chunk) => {
-        stdoutBuf += chunk.toString();
-        const lines = stdoutBuf.split('\n');
-        stdoutBuf = lines.pop(); // keep incomplete line in buffer
-        for (const raw of lines) {
-          const line = raw.trim();
-          if (!line) continue;
-          console.log(`[${buildId}] ${line}`);
-          buildState.log.push(line);
-          // Parse and broadcast
-          const parsed = parseLogLine(line);
-          broadcastSSE(buildId, parsed.type, parsed);
-        }
-      });
-
-      child.stderr.on('data', (chunk) => {
-        const lines = chunk.toString().trim().split('\n');
-        for (const raw of lines) {
-          const line = `STDERR: ${raw.trim()}`;
-          if (!raw.trim()) continue;
-          console.error(`[${buildId}] ⚠️ ${raw.trim()}`);
-          buildState.log.push(line);
-          broadcastSSE(buildId, 'log', { raw: line, type: 'log', timestamp: new Date().toISOString() });
-        }
-      });
-
-      child.on('close', (code) => {
-        // Flush remaining stdout
-        if (stdoutBuf.trim()) {
-          const line = stdoutBuf.trim();
-          buildState.log.push(line);
-          const parsed = parseLogLine(line);
-          broadcastSSE(buildId, parsed.type, parsed);
-        }
-
-        buildState.status = code === 0 ? 'success' : 'failed';
-        buildState.exitCode = code;
-        buildState.finished = new Date().toISOString();
-        console.log(`[${buildId}] ${code === 0 ? '✅' : '❌'} Build finished (exit ${code})`);
-
-        // Persist final state
-        persistBuild(buildState);
-
-        // Notify all SSE clients
-        broadcastSSE(buildId, 'done', { status: buildState.status, exitCode: code });
-
-        // Move from active to history
-        activeBuilds.delete(buildId);
-      });
+      // ── Use v2 Orchestrator if available, else fall back to v1 bash ──
+      if (BuildOrchestrator) {
+        startV2Build(buildId, buildState, { clientName, niche, goals, email });
+      } else {
+        startV1Build(buildId, buildState, { clientName, niche, goals, email });
+      }
 
       return json(res, 202, {
         message: `Build started for ${clientName}`,
         buildId,
+        version: BuildOrchestrator ? 'v2' : 'v1',
         statusUrl: `/status/${buildId}`,
         streamUrl: `/builds/${buildId}/stream`,
         dashboardUrl: `/builds/${buildId}`,
@@ -367,8 +326,175 @@ const server = http.createServer((req, res) => {
   });
 });
 
+// ═══════════════════════════════════════════════════════════════
+//  v2 Build — Node.js Orchestrator (multi-agent site factory)
+// ═══════════════════════════════════════════════════════════════
+function startV2Build(buildId, buildState, { clientName, niche, goals, email }) {
+  const orch = new BuildOrchestrator({
+    githubOrg: 'ajayadesign',
+    baseDir: '/workspace/builds',
+    mainSiteDir: '/workspace/ajayadesign.github.io',
+  });
+
+  // ── Wire orchestrator events → SSE ──
+
+  // Phase events → mapped to 'step' for admin dashboard compatibility
+  orch.on('phase', (data) => {
+    const logLine = `[STEP:${data.step}:${data.total}:${data.name}] ${data.status}`;
+    console.log(`[${buildId}] ${logLine}`);
+    buildState.log.push(logLine);
+    broadcastSSE(buildId, 'step', {
+      ...data,
+      current: data.step,
+      raw: logLine,
+      timestamp: new Date().toISOString(),
+    });
+    persistBuild(buildState);
+  });
+
+  // Council events → mapped to 'ai' for admin dashboard
+  orch.on('council', (data) => {
+    const logLine = `[AI:${data.action.toUpperCase()}] ${data.speaker} R${data.round}: ${data.message}`;
+    console.log(`[${buildId}] ${logLine}`);
+    buildState.log.push(logLine);
+    broadcastSSE(buildId, 'ai', {
+      type: 'ai',
+      action: data.action,
+      message: `${data.speaker} (Round ${data.round}): ${data.message}`,
+      raw: logLine,
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  // Agent events → mapped to 'ai' for admin dashboard
+  orch.on('agent', (data) => {
+    const logLine = `[AI:${data.action.toUpperCase()}] ${data.page}: ${data.detail || ''}`;
+    console.log(`[${buildId}] ${logLine}`);
+    buildState.log.push(logLine);
+    broadcastSSE(buildId, 'ai', {
+      type: 'ai',
+      action: data.action,
+      message: `${data.page}: ${data.detail || ''}`,
+      raw: logLine,
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  // Test events → forwarded directly
+  orch.on('test', (data) => {
+    const logLine = `[TEST:${(data.action || 'RUN').toUpperCase()}:${data.attempt || 1}] ${data.message}`;
+    console.log(`[${buildId}] ${logLine}`);
+    buildState.log.push(logLine);
+    broadcastSSE(buildId, 'test', {
+      ...data,
+      raw: logLine,
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  // Log events → forwarded directly
+  orch.on('log', (data) => {
+    const line = data.raw || data.message || '';
+    console.log(`[${buildId}] ${line}`);
+    buildState.log.push(line);
+    broadcastSSE(buildId, 'log', {
+      raw: line,
+      type: 'log',
+      timestamp: data.timestamp || new Date().toISOString(),
+    });
+  });
+
+  // Error events
+  orch.on('error', (data) => {
+    const line = `ERROR: ${data.message}`;
+    console.error(`[${buildId}] ❌ ${data.message}`);
+    buildState.log.push(line);
+    broadcastSSE(buildId, 'log', {
+      raw: line,
+      type: 'log',
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  // Run the orchestrator
+  orch.run({ businessName: clientName, niche, goals, email })
+    .then((state) => {
+      buildState.status = 'success';
+      buildState.finished = new Date().toISOString();
+      buildState.liveUrl = state.repo?.liveUrl || buildState.liveUrl;
+      buildState.pages = state.pages?.length || 1;
+      console.log(`[${buildId}] ✅ v2 build complete`);
+      persistBuild(buildState);
+      broadcastSSE(buildId, 'done', { status: 'success' });
+      activeBuilds.delete(buildId);
+    })
+    .catch((err) => {
+      buildState.status = 'failed';
+      buildState.finished = new Date().toISOString();
+      buildState.error = err.message;
+      console.error(`[${buildId}] ❌ v2 build failed: ${err.message}`);
+      persistBuild(buildState);
+      broadcastSSE(buildId, 'done', { status: 'failed', error: err.message });
+      activeBuilds.delete(buildId);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  v1 Build — Bash script (fallback)
+// ═══════════════════════════════════════════════════════════════
+function startV1Build(buildId, buildState, { clientName, niche, goals, email }) {
+  const child = spawn('bash', [SCRIPT, clientName, niche, goals, email], {
+    cwd: '/workspace',
+    env: { ...process.env, HOME: '/root', PATH: process.env.PATH },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+
+  let stdoutBuf = '';
+  child.stdout.on('data', (chunk) => {
+    stdoutBuf += chunk.toString();
+    const lines = stdoutBuf.split('\n');
+    stdoutBuf = lines.pop();
+    for (const raw of lines) {
+      const line = raw.trim();
+      if (!line) continue;
+      console.log(`[${buildId}] ${line}`);
+      buildState.log.push(line);
+      const parsed = parseLogLine(line);
+      broadcastSSE(buildId, parsed.type, parsed);
+    }
+  });
+
+  child.stderr.on('data', (chunk) => {
+    const lines = chunk.toString().trim().split('\n');
+    for (const raw of lines) {
+      const line = `STDERR: ${raw.trim()}`;
+      if (!raw.trim()) continue;
+      console.error(`[${buildId}] ⚠️ ${raw.trim()}`);
+      buildState.log.push(line);
+      broadcastSSE(buildId, 'log', { raw: line, type: 'log', timestamp: new Date().toISOString() });
+    }
+  });
+
+  child.on('close', (code) => {
+    if (stdoutBuf.trim()) {
+      const line = stdoutBuf.trim();
+      buildState.log.push(line);
+      const parsed = parseLogLine(line);
+      broadcastSSE(buildId, parsed.type, parsed);
+    }
+    buildState.status = code === 0 ? 'success' : 'failed';
+    buildState.exitCode = code;
+    buildState.finished = new Date().toISOString();
+    console.log(`[${buildId}] ${code === 0 ? '✅' : '❌'} v1 build finished (exit ${code})`);
+    persistBuild(buildState);
+    broadcastSSE(buildId, 'done', { status: buildState.status, exitCode: code });
+    activeBuilds.delete(buildId);
+  });
+}
+
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`🔧 AjayaDesign Runner v2 — listening on port ${PORT}`);
+  console.log(`   Engine: ${BuildOrchestrator ? 'v2 Multi-Agent Orchestrator' : 'v1 Bash Script'}`);
   console.log(`   POST /build             — trigger a build`);
   console.log(`   GET  /builds            — build history`);
   console.log(`   GET  /builds/:id        — build detail`);
