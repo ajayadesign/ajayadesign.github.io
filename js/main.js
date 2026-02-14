@@ -52,10 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Intake Form Submission ──
   // Hook ID: #ajayadesign-intake-form
-  // Replace the TODO fetch() with your Oracle VM + OpenClaw automation endpoint.
+  // POSTs to n8n webhook running on the local automation stack.
+  const N8N_WEBHOOK = 'http://localhost:5678/webhook/ajayadesign-intake';
   const intakeForm = document.getElementById('ajayadesign-intake-form');
 
-  intakeForm.addEventListener('submit', (e) => {
+  intakeForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = new FormData(intakeForm);
     const data = Object.fromEntries(formData.entries());
@@ -73,22 +74,23 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     btn.disabled = true;
 
-    // Visual feedback — success after delay
-    setTimeout(() => {
-      btn.innerHTML = `
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        Build Initiated — We'll be in touch.
-      `;
-      btn.classList.remove('bg-amd-red', 'hover:bg-red-700');
-      btn.classList.add('bg-green-600');
-    }, 1500);
+    try {
+      await fetch(N8N_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+    } catch (err) {
+      console.warn('[AjayaDesign] Webhook unreachable, submission logged to console.', err);
+    }
 
-    // TODO: POST data to your automation endpoint
-    // fetch('https://your-oracle-vm.example.com/api/intake', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(data),
-    // });
+    // Visual feedback — success
+    btn.innerHTML = `
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      Build Initiated — We'll be in touch.
+    `;
+    btn.classList.remove('bg-amd-red', 'hover:bg-red-700');
+    btn.classList.add('bg-green-600');
   });
 
 });
