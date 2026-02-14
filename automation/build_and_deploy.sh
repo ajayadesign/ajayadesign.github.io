@@ -28,6 +28,9 @@ LIVE_URL="https://ajayadesign.github.io/${REPO_NAME}"
 
 log() { echo "[$(date '+%H:%M:%S')] $*"; }
 
+# Ensure builds directory exists
+mkdir -p "${BASE_DIR}"
+
 # ── Step 1: Create GitHub Repo ─────────────────────────────────────
 log "🏗️  Step 1 — Creating GitHub repo: ${REPO_FULL}"
 
@@ -43,32 +46,89 @@ cd "${PROJECT_DIR}"
 # ── Step 2: AI Build — Generate Landing Page ───────────────────────
 log "🤖  Step 2 — Generating landing page for ${CLIENT_NAME} (${NICHE})"
 
-AI_PROMPT="You are building a professional landing page for a client of AjayaDesign.
+GH_TOKEN="${GH_TOKEN:-}"
+AI_MODEL="${AI_MODEL:-gpt-4o}"
+AI_API="https://models.inference.ai.azure.com/chat/completions"
 
-Client: ${CLIENT_NAME}
+SYSTEM_PROMPT='You are the Lead Web Designer at AjayaDesign, a web design studio known for high-performance, dark-themed, engineering-precision sites.
+
+You output ONLY raw HTML. No markdown fences, no explanations, no commentary.
+
+Design rules you MUST follow:
+- Single complete index.html file using Tailwind CSS CDN (<script src="https://cdn.tailwindcss.com"></script>)
+- Inline Tailwind config with custom colors: brand (#ED1C24), surface (#0A0A0F), surface-alt (#111118), electric-blue (#00D4FF)
+- Google Fonts: JetBrains Mono for headings/mono, Inter for body
+- Dark background (bg-surface), light text (text-gray-200)
+- WCAG 2 AA accessible: contrast ratios ≥ 4.5:1 for normal text, ≥ 3:1 for large text
+- Do NOT use text-gray-600 or text-gray-500 on dark backgrounds — use text-gray-400 minimum
+- All interactive elements must have visible focus states
+- Mobile-responsive with proper viewport meta tag
+- Smooth scroll (class="scroll-smooth" on html)
+- Semantic HTML5 (header, main, section, footer)
+- SEO: title, meta description, Open Graph tags
+- Sections: Hero with CTA, About/Services, Features/Benefits (3-column grid), Contact/CTA, Footer
+- Footer must include: "Built by <a href=https://ajayadesign.github.io>AjayaDesign</a>"
+- All copy must be real, compelling, tailored to the client — NO placeholder text like Lorem ipsum
+- Subtle CSS animations for visual polish'
+
+USER_PROMPT="Build a professional landing page for this client:
+
+Business Name: ${CLIENT_NAME}
 Industry/Niche: ${NICHE}
 Goals: ${GOALS}
 Contact Email: ${EMAIL}
 
-Requirements:
-- Single-page index.html using Tailwind CSS CDN
-- Dark, modern, high-performance design matching AjayaDesign's engineering aesthetic
-- Sections: Hero, About/Services, Features/Benefits, Contact/CTA
-- Mobile-responsive, accessible (WCAG 2 AA), semantic HTML
-- JetBrains Mono for headings, Inter for body text (Google Fonts)
-- SEO meta tags, Open Graph tags
-- Smooth scroll, subtle animations
-- Footer crediting 'Built by AjayaDesign'
-- All text content tailored to the client's niche and goals
-- Do NOT use any placeholder text — write real, compelling copy
+Output the complete index.html file. Nothing else."
 
-Output ONLY the complete index.html file content, nothing else."
+ai_generated=false
 
-# Try opencode first, fall back to writing a template-based page
-if command -v opencode &>/dev/null; then
-  log "  Using opencode for AI generation..."
-  echo "${AI_PROMPT}" | opencode -p "Generate the complete index.html" > "${PROJECT_DIR}/index.html"
-elif [ -f "${TEMPLATE_DIR}/index.html" ]; then
+# ── Method 1: GitHub Models API (free with GH_TOKEN) ──
+if [ -n "${GH_TOKEN}" ]; then
+  log "  Calling GitHub Models API (${AI_MODEL})..."
+
+  # Build JSON payload with jq to handle escaping safely
+  PAYLOAD=$(jq -n \
+    --arg model "${AI_MODEL}" \
+    --arg system "${SYSTEM_PROMPT}" \
+    --arg user "${USER_PROMPT}" \
+    '{
+      model: $model,
+      messages: [
+        { role: "system", content: $system },
+        { role: "user", content: $user }
+      ],
+      max_tokens: 8000,
+      temperature: 0.7
+    }')
+
+  HTTP_CODE=$(curl -s -w "%{http_code}" -o /tmp/ai_response.json \
+    -X POST "${AI_API}" \
+    -H "Authorization: Bearer ${GH_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d "${PAYLOAD}")
+
+  if [ "${HTTP_CODE}" = "200" ]; then
+    # Extract HTML content, strip any markdown fences the model might add
+    jq -r '.choices[0].message.content' /tmp/ai_response.json \
+      | sed '/^```html$/d' | sed '/^```$/d' \
+      > "${PROJECT_DIR}/index.html"
+
+    # Verify we got valid HTML
+    if grep -q '<!DOCTYPE\|<html' "${PROJECT_DIR}/index.html"; then
+      FILESIZE=$(wc -c < "${PROJECT_DIR}/index.html")
+      log "  ✅ AI generated index.html (${FILESIZE} bytes)"
+      ai_generated=true
+    else
+      log "  ⚠️  AI response didn't contain valid HTML, falling back..."
+    fi
+  else
+    log "  ⚠️  GitHub Models API returned HTTP ${HTTP_CODE}, falling back..."
+    [ -f /tmp/ai_response.json ] && cat /tmp/ai_response.json | head -5
+  fi
+fi
+
+# ── Method 2: Template fallback ──
+if [ "${ai_generated}" = false ] && [ -f "${TEMPLATE_DIR}/index.html" ]; then
   log "  Using template with variable substitution..."
   sed \
     -e "s/{{CLIENT_NAME}}/${CLIENT_NAME}/g" \
@@ -76,8 +136,13 @@ elif [ -f "${TEMPLATE_DIR}/index.html" ]; then
     -e "s/{{GOALS}}/${GOALS}/g" \
     -e "s/{{EMAIL}}/${EMAIL}/g" \
     "${TEMPLATE_DIR}/index.html" > "${PROJECT_DIR}/index.html"
-else
-  log "  ⚠️  No AI tool or template found. Generating minimal page..."
+  ai_generated=true
+fi
+
+# ── Method 3: Inline fallback (always works) ──
+if [ "${ai_generated}" = false ]; then
+  log "  ⚠️  Using inline fallback page..."
+  YEAR=$(date +%Y)
   cat > "${PROJECT_DIR}/index.html" << HTMLEOF
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
@@ -86,6 +151,9 @@ else
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${CLIENT_NAME} — Professional ${NICHE} Services</title>
   <meta name="description" content="${GOALS}">
+  <meta property="og:title" content="${CLIENT_NAME}">
+  <meta property="og:description" content="${GOALS}">
+  <meta property="og:type" content="website">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script>
@@ -100,41 +168,62 @@ else
   </script>
 </head>
 <body class="bg-surface text-gray-200 font-sans antialiased">
-
-  <!-- Hero -->
-  <section class="min-h-screen flex items-center justify-center px-6">
-    <div class="text-center max-w-3xl">
-      <h1 class="font-mono text-4xl md:text-6xl font-bold text-white mb-6">${CLIENT_NAME}</h1>
-      <p class="text-xl text-gray-400 mb-8">${GOALS}</p>
-      <a href="#contact" class="inline-block px-8 py-3 bg-brand text-white font-mono font-bold rounded hover:opacity-90 transition">Get Started</a>
-    </div>
-  </section>
-
-  <!-- About -->
-  <section class="py-24 px-6 bg-surface-alt">
-    <div class="max-w-4xl mx-auto text-center">
-      <h2 class="font-mono text-3xl font-bold text-white mb-6">Professional ${NICHE} Services</h2>
-      <p class="text-gray-400 text-lg leading-relaxed">${GOALS}</p>
-    </div>
-  </section>
-
-  <!-- Contact -->
-  <section id="contact" class="py-24 px-6">
-    <div class="max-w-xl mx-auto text-center">
-      <h2 class="font-mono text-3xl font-bold text-white mb-6">Get in Touch</h2>
-      <p class="text-gray-400 mb-8">Ready to work together? Reach out today.</p>
-      <a href="mailto:${EMAIL}" class="inline-block px-8 py-3 bg-brand text-white font-mono font-bold rounded hover:opacity-90 transition">${EMAIL}</a>
-    </div>
-  </section>
-
-  <!-- Footer -->
+  <header class="fixed top-0 w-full bg-surface/80 backdrop-blur border-b border-gray-800 z-50">
+    <nav class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+      <span class="font-mono font-bold text-white">${CLIENT_NAME}</span>
+      <a href="#contact" class="px-4 py-2 bg-brand text-white font-mono text-sm rounded hover:opacity-90 transition">Contact</a>
+    </nav>
+  </header>
+  <main>
+    <section class="min-h-screen flex items-center justify-center px-6 pt-20">
+      <div class="text-center max-w-3xl">
+        <h1 class="font-mono text-4xl md:text-6xl font-bold text-white mb-6">${CLIENT_NAME}</h1>
+        <p class="text-xl text-gray-400 mb-8">${GOALS}</p>
+        <a href="#contact" class="inline-block px-8 py-3 bg-brand text-white font-mono font-bold rounded hover:opacity-90 transition">Get Started</a>
+      </div>
+    </section>
+    <section class="py-24 px-6 bg-surface-alt">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="font-mono text-3xl font-bold text-white mb-6">Professional ${NICHE} Services</h2>
+        <p class="text-gray-400 text-lg leading-relaxed">${GOALS}</p>
+      </div>
+    </section>
+    <section class="py-24 px-6">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="font-mono text-3xl font-bold text-white text-center mb-12">Why Choose Us</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="p-6 bg-surface-alt rounded-xl border border-gray-800">
+            <div class="text-3xl mb-4">⚡</div>
+            <h3 class="font-mono text-lg font-bold text-white mb-2">Fast &amp; Reliable</h3>
+            <p class="text-gray-400">Built for performance from the ground up.</p>
+          </div>
+          <div class="p-6 bg-surface-alt rounded-xl border border-gray-800">
+            <div class="text-3xl mb-4">🎯</div>
+            <h3 class="font-mono text-lg font-bold text-white mb-2">Results Driven</h3>
+            <p class="text-gray-400">Every decision focused on your goals.</p>
+          </div>
+          <div class="p-6 bg-surface-alt rounded-xl border border-gray-800">
+            <div class="text-3xl mb-4">🛡️</div>
+            <h3 class="font-mono text-lg font-bold text-white mb-2">Trusted Quality</h3>
+            <p class="text-gray-400">Professional standards, every time.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="contact" class="py-24 px-6 bg-surface-alt">
+      <div class="max-w-xl mx-auto text-center">
+        <h2 class="font-mono text-3xl font-bold text-white mb-6">Get in Touch</h2>
+        <p class="text-gray-400 mb-8">Ready to work together? Reach out today.</p>
+        <a href="mailto:${EMAIL}" class="inline-block px-8 py-3 bg-brand text-white font-mono font-bold rounded hover:opacity-90 transition">${EMAIL}</a>
+      </div>
+    </section>
+  </main>
   <footer class="py-8 border-t border-gray-800 text-center">
-    <p class="text-gray-500 text-sm font-mono">
-      &copy; $(date +%Y) ${CLIENT_NAME} &middot;
+    <p class="text-gray-400 text-sm font-mono">
+      &copy; ${YEAR} ${CLIENT_NAME} &middot;
       Built by <a href="https://ajayadesign.github.io" class="text-brand hover:underline">AjayaDesign</a>
     </p>
   </footer>
-
 </body>
 </html>
 HTMLEOF
@@ -273,11 +362,11 @@ git push -u origin main
 # Enable GitHub Pages on main branch
 log "  Enabling GitHub Pages..."
 gh api -X POST "repos/${REPO_FULL}/pages" \
-  -f source='{"branch":"main","path":"/"}' \
-  --silent 2>/dev/null || \
+  --input - <<< '{"source":{"branch":"main","path":"/"}}' \
+  2>/dev/null || \
 gh api -X PUT "repos/${REPO_FULL}/pages" \
-  -f source='{"branch":"main","path":"/"}' \
-  --silent 2>/dev/null || \
+  --input - <<< '{"source":{"branch":"main","path":"/"}}' \
+  2>/dev/null || \
 log "  ⚠️  Pages may already be enabled or needs manual setup"
 
 # ── Step 5: Add as submodule to main AjayaDesign site ──────────────
