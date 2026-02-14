@@ -215,6 +215,43 @@ test.describe('${title} page (${slug})', () => {
       expect(href).not.toBe('#');
     }
   });
+
+  test('SEO: exactly one h1 tag', async ({ page }) => {
+    await page.goto('${route}');
+    const h1Count = await page.locator('h1').count();
+    expect(h1Count, 'Page must have exactly 1 <h1> tag, found ' + h1Count).toBe(1);
+  });
+
+  test('SEO: heading hierarchy (no skipped levels)', async ({ page }) => {
+    await page.goto('${route}');
+    const headings = await page.evaluate(() => {
+      const els = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      return Array.from(els).map(el => parseInt(el.tagName[1]));
+    });
+    for (let i = 1; i < headings.length; i++) {
+      const gap = headings[i] - headings[i - 1];
+      expect(gap, 'Heading level skipped: h' + headings[i-1] + ' → h' + headings[i]).toBeLessThanOrEqual(1);
+    }
+  });
+
+  test('SEO: all images have descriptive alt text', async ({ page }) => {
+    await page.goto('${route}');
+    const images = page.locator('img');
+    const count = await images.count();
+    for (let i = 0; i < count; i++) {
+      const alt = await images.nth(i).getAttribute('alt');
+      expect(alt, 'Image missing alt text').toBeTruthy();
+      expect(alt.length, 'Alt text too short (should be descriptive): "' + alt + '"').toBeGreaterThan(4);
+    }
+  });
+
+  test('SEO: page has a title tag', async ({ page }) => {
+    await page.goto('${route}');
+    const title = await page.title();
+    expect(title, 'Page must have a <title> tag').toBeTruthy();
+    expect(title.length, 'Title too short: "' + title + '"').toBeGreaterThan(10);
+    expect(title.length, 'Title too long (' + title.length + ' chars) — keep under 65').toBeLessThan(65);
+  });
 });
 `;
 }
