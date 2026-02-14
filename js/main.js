@@ -65,6 +65,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = Object.fromEntries(formData.entries());
     console.log('[AjayaDesign] Intake submission:', data);
 
+    // Clean lead data — only real fields, no FormSubmit config
+    const lead = {
+      business_name: data.business_name || '',
+      niche: data.niche || '',
+      goals: data.goals || '',
+      email: data.email || '',
+    };
+    const ts = Date.now();
+    // ID = sanitized email + timestamp (e.g. "test-at-example-com_1771042375045")
+    const leadId = (lead.email || 'unknown').replace(/[@.]/g, '-') + '_' + ts;
+
     // Visual feedback — spinner
     const btn = intakeForm.querySelector('button[type="submit"]');
     const originalHTML = btn.innerHTML;
@@ -83,12 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
     emailPayload.append('_captcha', 'false');
     emailPayload.append('_template', 'box');
 
-    // 1. Firebase RTDB — persistent lead storage
+    // 1. Firebase RTDB — persistent lead storage (clean data, custom ID)
     const firebasePromise = (window.__db
-      ? window.__db.ref('leads').push({
-          ...data,
-          timestamp: Date.now(),
-          submitted_at: new Date().toISOString(),
+      ? window.__db.ref('leads/' + leadId).set({
+          ...lead,
+          timestamp: ts,
+          submitted_at: new Date(ts).toISOString(),
           source: window.location.hostname,
           status: 'new',
         }).then(() => console.log('[AjayaDesign] ✅ Lead saved to Firebase'))
