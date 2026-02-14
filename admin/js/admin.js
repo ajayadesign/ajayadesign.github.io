@@ -24,6 +24,7 @@ let pollTimer = null;
 let leads = [];
 let selectedLeadId = null;
 let currentUser = null;
+let leadsSubTab = 'active'; // 'active' or 'archived'
 
 // ── Step definitions ───────────────────────────────────
 const STEPS = [
@@ -603,72 +604,129 @@ function subscribeToLeads() {
 }
 
 function renderLeadStats() {
+  const activeLeads = leads.filter(l => l.status !== 'archived');
+  const archivedLeads = leads.filter(l => l.status === 'archived');
   const $statLeads = document.getElementById('stat-leads');
-  if ($statLeads) $statLeads.textContent = leads.length;
+  if ($statLeads) $statLeads.textContent = activeLeads.length;
+  const $statActive = document.getElementById('stat-leads-active');
+  if ($statActive) $statActive.textContent = activeLeads.length;
+  const $statArchived = document.getElementById('stat-leads-archived');
+  if ($statArchived) $statArchived.textContent = archivedLeads.length;
+}
+
+function switchLeadsSubTab(tab) {
+  leadsSubTab = tab;
+  const $active = document.getElementById('leads-subtab-active');
+  const $archived = document.getElementById('leads-subtab-archived');
+  const $activePanel = document.getElementById('leads-panel-content');
+  const $archivedPanel = document.getElementById('archived-panel-content');
+
+  if (tab === 'archived') {
+    $active.className   = 'flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition';
+    $archived.className = 'flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition';
+    $activePanel.classList.add('hidden');
+    $archivedPanel.classList.remove('hidden');
+  } else {
+    $active.className   = 'flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition';
+    $archived.className = 'flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition';
+    $activePanel.classList.remove('hidden');
+    $archivedPanel.classList.add('hidden');
+  }
+  renderLeadsPanel();
 }
 
 function renderLeadsPanel() {
-  const panel = document.getElementById('leads-panel-content');
-  if (!panel) return;
+  const activeLeads = leads.filter(l => l.status !== 'archived');
+  const archivedLeads = leads.filter(l => l.status === 'archived');
 
-  if (leads.length === 0) {
-    panel.innerHTML = `
-      <div class="text-center py-12">
-        <div class="text-4xl mb-3 opacity-30">📭</div>
-        <p class="text-gray-500 font-mono text-sm">No leads yet</p>
-        <p class="text-gray-600 text-xs mt-1">Submissions from the intake form will appear here</p>
-      </div>`;
-    return;
+  // Render active leads
+  const $activePanel = document.getElementById('leads-panel-content');
+  if ($activePanel) {
+    $activePanel.innerHTML = activeLeads.length === 0
+      ? `<div class="text-center py-12">
+          <div class="text-4xl mb-3 opacity-30">📭</div>
+          <p class="text-gray-500 font-mono text-sm">No active leads</p>
+          <p class="text-gray-600 text-xs mt-1">Submissions from the intake form will appear here</p>
+        </div>`
+      : activeLeads.map(lead => renderLeadCard(lead)).join('');
   }
 
-  panel.innerHTML = leads.map(lead => {
-    const statusColors = {
-      'new':         'bg-electric/20 text-electric',
-      'contacted':   'bg-neon-yellow/20 text-neon-yellow',
-      'building':    'bg-neon-purple/20 text-neon-purple',
-      'deployed':    'bg-neon-green/20 text-neon-green',
-      'archived':    'bg-gray-800 text-gray-500',
-    };
-    const statusCls = statusColors[lead.status] || statusColors['new'];
-    const time = lead.submitted_at ? formatTime(lead.submitted_at) : 'Unknown date';
-    const isSelected = lead.id === selectedLeadId;
+  // Render archived leads
+  const $archivedPanel = document.getElementById('archived-panel-content');
+  if ($archivedPanel) {
+    $archivedPanel.innerHTML = archivedLeads.length === 0
+      ? `<div class="text-center py-12">
+          <div class="text-4xl mb-3 opacity-30">🗃️</div>
+          <p class="text-gray-500 font-mono text-sm">No archived leads</p>
+          <p class="text-gray-600 text-xs mt-1">Archived leads will appear here</p>
+        </div>`
+      : archivedLeads.map(lead => renderLeadCard(lead)).join('');
+  }
+}
 
-    return `
-      <div onclick="selectLead('${lead.id}')" class="p-4 bg-surface-2 rounded-xl border cursor-pointer transition animate-fade-in
-        ${isSelected ? 'border-electric bg-electric/5' : 'border-border hover:border-border-glow'}">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="font-mono text-sm font-bold text-white">${esc(lead.business_name || 'Unknown')}</h3>
-          <div class="flex items-center gap-2" onclick="event.stopPropagation()">
-            <select onchange="updateLeadStatus('${lead.id}', this.value)"
-              class="text-[0.65rem] font-mono px-2 py-1 rounded-full border-0 cursor-pointer ${statusCls}">
-              ${['new','contacted','building','deployed','archived'].map(s =>
-                `<option value="${s}" ${lead.status === s ? 'selected' : ''} class="bg-surface text-gray-300">${s.toUpperCase()}</option>`
-              ).join('')}
-            </select>
-          </div>
+function renderLeadCard(lead) {
+  const statusColors = {
+    'new':         'bg-electric/20 text-electric',
+    'contacted':   'bg-neon-yellow/20 text-neon-yellow',
+    'building':    'bg-neon-purple/20 text-neon-purple',
+    'deployed':    'bg-neon-green/20 text-neon-green',
+    'archived':    'bg-gray-800 text-gray-500',
+  };
+  const statusCls = statusColors[lead.status] || statusColors['new'];
+  const time = lead.submitted_at ? formatTime(lead.submitted_at) : 'Unknown date';
+  const isSelected = lead.id === selectedLeadId;
+  const isArchived = lead.status === 'archived';
+
+  return `
+    <div onclick="selectLead('${lead.id}')" class="p-4 bg-surface-2 rounded-xl border cursor-pointer transition animate-fade-in
+      ${isSelected ? 'border-electric bg-electric/5' : 'border-border hover:border-border-glow'}
+      ${isArchived ? 'opacity-70' : ''}">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-mono text-sm font-bold ${isArchived ? 'text-gray-400' : 'text-white'}">${esc(lead.business_name || 'Unknown')}</h3>
+        <div class="flex items-center gap-2" onclick="event.stopPropagation()">
+          ${isArchived
+            ? `<button onclick="restoreLeadById('${lead.id}')" class="text-[0.65rem] font-mono px-2 py-1 rounded-full bg-neon-green/10 text-neon-green hover:bg-neon-green/20 transition">♻️ Restore</button>`
+            : `<select onchange="updateLeadStatus('${lead.id}', this.value)"
+                class="text-[0.65rem] font-mono px-2 py-1 rounded-full border-0 cursor-pointer ${statusCls}">
+                ${['new','contacted','building','deployed','archived'].map(s =>
+                  `<option value="${s}" ${lead.status === s ? 'selected' : ''} class="bg-surface text-gray-300">${s.toUpperCase()}</option>`
+                ).join('')}
+              </select>`
+          }
         </div>
-        <div class="grid grid-cols-2 gap-2 text-xs mb-3">
-          <div><span class="text-gray-600">Niche:</span> <span class="text-gray-400">${esc(lead.niche || '-')}</span></div>
-          <div><span class="text-gray-600">Email:</span> <span class="text-gray-400">${esc(lead.email || '-')}</span></div>
-        </div>
-        <p class="text-xs text-gray-500 mb-3">${esc(lead.goals || '-')}</p>
-        <div class="flex items-center justify-between">
-          <span class="text-[0.65rem] text-gray-600">${time}</span>
-          <span class="text-[0.65rem] text-gray-600 font-mono">${lead.source || 'direct'}</span>
-        </div>
-      </div>`;
-  }).join('');
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+        <div><span class="text-gray-600">Niche:</span> <span class="text-gray-400">${esc(lead.niche || '-')}</span></div>
+        <div><span class="text-gray-600">Email:</span> <span class="text-gray-400">${esc(lead.email || '-')}</span></div>
+      </div>
+      <p class="text-xs text-gray-500 mb-3">${esc(lead.goals || '-')}</p>
+      <div class="flex items-center justify-between">
+        <span class="text-[0.65rem] text-gray-600">${time}</span>
+        <span class="text-[0.65rem] text-gray-600 font-mono">${lead.source || 'direct'}</span>
+      </div>
+    </div>`;
 }
 
 function updateLeadStatus(leadId, newStatus) {
   if (!window.__db) return;
+
+  // Optimistic local update — reflects immediately in UI
+  const lead = leads.find(l => l.id === leadId);
+  if (lead) {
+    lead.status = newStatus;
+    renderLeadStats();
+    renderLeadsPanel();
+    if (leadId === selectedLeadId) renderLeadDetail();
+  }
+
   window.__db.ref(`leads/${leadId}/status`).set(newStatus)
     .then(() => {
       console.log(`[Admin] Lead ${leadId} → ${newStatus}`);
-      // If this lead is selected, refresh its detail view
-      if (leadId === selectedLeadId) renderLeadDetail();
     })
-    .catch(err => console.error('[Admin] Failed to update lead:', err));
+    .catch(err => {
+      console.error('[Admin] Failed to update lead:', err);
+      // Revert on failure — Firebase listener will fix state anyway
+    });
 }
 
 // ── Select a lead ──────────────────────────────────────
@@ -727,6 +785,19 @@ function renderLeadDetail() {
     const subject = encodeURIComponent(`AjayaDesign — Your website for ${lead.business_name || 'your business'}`);
     document.getElementById('lead-email-link').href = `mailto:${lead.email}?subject=${subject}`;
   }
+
+  // Toggle Archive / Restore buttons
+  const $btnArchive = document.getElementById('btn-archive-lead');
+  const $btnRestore = document.getElementById('btn-restore-lead');
+  if ($btnArchive && $btnRestore) {
+    if (lead.status === 'archived') {
+      $btnArchive.classList.add('hidden');
+      $btnRestore.classList.remove('hidden');
+    } else {
+      $btnArchive.classList.remove('hidden');
+      $btnRestore.classList.add('hidden');
+    }
+  }
 }
 
 function updateLeadStatusFromDetail(newStatus) {
@@ -776,6 +847,25 @@ function archiveLead() {
   if (!lead) return;
   if (!confirm(`Archive lead "${lead.business_name}"?`)) return;
   updateLeadStatus(selectedLeadId, 'archived');
+  // Switch to archived sub-tab so user sees where it went
+  setTimeout(() => switchLeadsSubTab('archived'), 300);
+}
+
+function restoreLead() {
+  if (!selectedLeadId) return;
+  const lead = leads.find(l => l.id === selectedLeadId);
+  if (!lead) return;
+  updateLeadStatus(selectedLeadId, 'new');
+  // Switch back to active sub-tab
+  setTimeout(() => switchLeadsSubTab('active'), 300);
+}
+
+function restoreLeadById(leadId) {
+  if (!leadId) return;
+  updateLeadStatus(leadId, 'new');
+  if (leadId === selectedLeadId) {
+    setTimeout(() => switchLeadsSubTab('active'), 300);
+  }
 }
 
 // ── Sign out ───────────────────────────────────────────

@@ -288,8 +288,24 @@
         <div class="p-4 border-b border-border">
           <h2 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">Client Requests</h2>
         </div>
+        <!-- Active / Archived sub-tabs -->
+        <div class="flex border-b border-border bg-surface-1">
+          <button onclick="switchLeadsSubTab('active')" id="leads-subtab-active"
+            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition">
+            Active <span id="stat-leads-active" class="ml-1 px-1.5 py-0.5 rounded-full bg-electric/20 text-electric text-[0.55rem]">0</span>
+          </button>
+          <button onclick="switchLeadsSubTab('archived')" id="leads-subtab-archived"
+            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+            Archived <span id="stat-leads-archived" class="ml-1 px-1.5 py-0.5 rounded-full bg-gray-800 text-gray-500 text-[0.55rem]">0</span>
+          </button>
+        </div>
+        <!-- Active leads list -->
         <div id="leads-panel-content" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3">
           <div class="text-center text-gray-600 text-xs font-mono py-8">Loading leads...</div>
+        </div>
+        <!-- Archived leads list (hidden initially) -->
+        <div id="archived-panel-content" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3 hidden">
+          <div class="text-center text-gray-600 text-xs font-mono py-8">No archived leads</div>
         </div>
       </div>
     </aside>
@@ -368,8 +384,11 @@
               <a id="lead-email-link" href="" class="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-2 text-gray-300 border border-border rounded-lg font-mono text-sm hover:border-border-glow transition">
                 ✉️ Send Email
               </a>
-              <button onclick="archiveLead()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-2 text-gray-500 border border-border rounded-lg font-mono text-sm hover:text-brand-link hover:border-brand-link/30 transition">
+              <button id="btn-archive-lead" onclick="archiveLead()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-2 text-gray-500 border border-border rounded-lg font-mono text-sm hover:text-brand-link hover:border-brand-link/30 transition">
                 🗃️ Archive
+              </button>
+              <button id="btn-restore-lead" onclick="restoreLead()" class="hidden inline-flex items-center gap-2 px-5 py-2.5 bg-neon-green/10 text-neon-green border border-neon-green/30 rounded-lg font-mono text-sm hover:bg-neon-green/20 transition">
+                ♻️ Restore
               </button>
             </div>
           </div>
