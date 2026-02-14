@@ -73,17 +73,20 @@ You output ONLY raw HTML. No markdown fences, no explanations, no commentary.
 
 Design rules you MUST follow:
 - Single complete index.html file using Tailwind CSS CDN (<script src="https://cdn.tailwindcss.com"></script>)
-- Inline Tailwind config with custom colors: brand (#ED1C24), surface (#0A0A0F), surface-alt (#111118), electric-blue (#00D4FF)
+- Inline Tailwind config with custom colors: brand-btn (#991B1B), brand-link (#FF6B6B), surface (#0A0A0F), surface-alt (#111118), electric-blue (#00D4FF)
 - Google Fonts: JetBrains Mono for headings/mono, Inter for body
 - Dark background (bg-surface), light text (text-gray-200)
 - WCAG 2 AA accessible: contrast ratios ≥ 4.5:1 for normal text, ≥ 3:1 for large text
+- CRITICAL: buttons and CTA links MUST use bg-brand-btn (#991B1B) with text-white — NEVER use #ED1C24 as a background with light text (it fails contrast)
 - Do NOT use text-gray-600 or text-gray-500 on dark backgrounds — use text-gray-400 minimum
+- CRITICAL: NEVER use href="#" — all links must have meaningful destinations (use section IDs like href="#about", href="#services", href="#contact", or real URLs like mailto: links)
 - All interactive elements must have visible focus states
 - Mobile-responsive with proper viewport meta tag
 - Smooth scroll (class="scroll-smooth" on html)
 - Semantic HTML5 (header, main, section, footer)
 - SEO: title, meta description, Open Graph tags
 - Sections: Hero with CTA, About/Services, Features/Benefits (3-column grid), Contact/CTA, Footer
+- Every section must have an id attribute matching its nav links (e.g. id="about", id="services", id="contact")
 - Footer must include: "Built by <a href=https://ajayadesign.github.io>AjayaDesign</a>"
 - All copy must be real, compelling, tailored to the client — NO placeholder text like Lorem ipsum
 - Subtle CSS animations for visual polish'
@@ -344,22 +347,109 @@ test('all links have valid href', async ({ page }) => {
 });
 TESTEOF
 
-# ── GATEKEEPER: Run tests ──
-log "  Running tests..."
-if ! npx playwright test; then
-  log "❌ TESTS FAILED — aborting deployment. Site will NOT be pushed."
-  # Notify failure via Telegram
-  if [ -n "${TELEGRAM_BOT_TOKEN}" ] && [ -n "${TELEGRAM_CHAT_ID}" ]; then
-    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-      -d chat_id="${TELEGRAM_CHAT_ID}" \
-      -d parse_mode="Markdown" \
-      -d text="❌ *AjayaDesign Build Failed*%0A%0AClient: \`${CLIENT_NAME}\`%0ANiche: ${NICHE}%0A%0ATests failed — deployment blocked." \
-      > /dev/null 2>&1
-  fi
-  exit 1
-fi
+# ── GATEKEEPER: Run tests with agentic retry loop ──
+MAX_ATTEMPTS=3
+ATTEMPT=1
 
-log "  ✅ All tests passed!"
+while [ ${ATTEMPT} -le ${MAX_ATTEMPTS} ]; do
+  log "  ▶ Attempt ${ATTEMPT}/${MAX_ATTEMPTS} — running tests..."
+
+  TEST_OUTPUT=$(npx playwright test 2>&1) || true
+  TEST_EXIT=$?
+
+  if echo "${TEST_OUTPUT}" | grep -q "failed"; then
+    TEST_EXIT=1
+  fi
+
+  if [ ${TEST_EXIT} -eq 0 ] && ! echo "${TEST_OUTPUT}" | grep -q "failed"; then
+    log "  ✅ All tests passed on attempt ${ATTEMPT}!"
+    break
+  fi
+
+  log "  ⚠️  Tests failed on attempt ${ATTEMPT}"
+
+  # If we've exhausted retries, abort
+  if [ ${ATTEMPT} -ge ${MAX_ATTEMPTS} ]; then
+    log "❌ TESTS FAILED after ${MAX_ATTEMPTS} attempts — aborting deployment."
+    echo "${TEST_OUTPUT}" | tail -30
+    if [ -n "${TELEGRAM_BOT_TOKEN}" ] && [ -n "${TELEGRAM_CHAT_ID}" ]; then
+      curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        -d chat_id="${TELEGRAM_CHAT_ID}" \
+        -d parse_mode="Markdown" \
+        -d text="❌ *AjayaDesign Build Failed*%0A%0AClient: \`${CLIENT_NAME}\`%0ANiche: ${NICHE}%0A%0ATests failed after ${MAX_ATTEMPTS} AI fix attempts — deployment blocked." \
+        > /dev/null 2>&1
+    fi
+    exit 1
+  fi
+
+  # ── Agentic fix: send errors back to AI ──
+  if [ -n "${GH_TOKEN}" ]; then
+    log "  🔄 Sending errors to AI for auto-fix (attempt $((ATTEMPT + 1)))..."
+
+    CURRENT_HTML=$(cat "${PROJECT_DIR}/index.html")
+
+    # Extract just the meaningful error lines
+    ERROR_SUMMARY=$(echo "${TEST_OUTPUT}" | grep -E "color-contrast|href.*#|Error:|serious\]|critical\]|Expected|Received|overflow" | head -20)
+
+    FIX_PROMPT="The following HTML page has test failures. Fix ALL issues and return the complete corrected index.html.
+
+ERRORS:
+${ERROR_SUMMARY}
+
+RULES:
+- Buttons/CTA links: use bg-[#991B1B] with text-white (NEVER #ED1C24 bg with light text — fails WCAG contrast)
+- All text on dark backgrounds: minimum text-gray-400 (#9CA3AF) for contrast ratio ≥ 4.5:1
+- NEVER use href=\"#\" — use real section IDs (href=\"#about\", href=\"#contact\") or real URLs (mailto:, https://)
+- Every section needs an id attribute matching its nav links
+- No horizontal overflow
+
+CURRENT HTML:
+${CURRENT_HTML}
+
+Output ONLY the fixed, complete HTML. No explanations, no markdown fences."
+
+    FIX_PAYLOAD=$(jq -n \
+      --arg model "${AI_MODEL}" \
+      --arg system "You are an expert web developer. Fix accessibility and test failures in HTML. Output ONLY the corrected raw HTML, nothing else." \
+      --arg user "${FIX_PROMPT}" \
+      '{
+        model: $model,
+        messages: [
+          { role: "system", content: $system },
+          { role: "user", content: $user }
+        ],
+        max_tokens: 8000,
+        temperature: 0.3
+      }')
+
+    FIX_HTTP=$(curl -s -w "%{http_code}" -o /tmp/ai_fix_response.json \
+      -X POST "${AI_API}" \
+      -H "Authorization: Bearer ${GH_TOKEN}" \
+      -H "Content-Type: application/json" \
+      -d "${FIX_PAYLOAD}")
+
+    if [ "${FIX_HTTP}" = "200" ]; then
+      jq -r '.choices[0].message.content' /tmp/ai_fix_response.json \
+        | sed '/^```html$/d' | sed '/^```$/d' \
+        > "${PROJECT_DIR}/index.html"
+
+      if grep -q '<!DOCTYPE\|<html' "${PROJECT_DIR}/index.html"; then
+        FILESIZE=$(wc -c < "${PROJECT_DIR}/index.html")
+        log "  ✅ AI fix applied (${FILESIZE} bytes) — re-testing..."
+      else
+        log "  ⚠️  AI fix response was not valid HTML, keeping previous version"
+      fi
+    else
+      log "  ⚠️  AI fix API returned HTTP ${FIX_HTTP}, cannot auto-fix"
+      # Still increment to try again or fail
+    fi
+  else
+    log "  ⚠️  No GH_TOKEN — cannot auto-fix, aborting"
+    exit 1
+  fi
+
+  ATTEMPT=$((ATTEMPT + 1))
+done
 
 # ── Step 4: Deploy ─────────────────────────────────────────────────
 log "🚀  Step 4 — Deploying to GitHub Pages"
@@ -401,9 +491,10 @@ INJECT_SCRIPT="${MAIN_SITE}/automation/inject_card.js"
 if [ -d "${MAIN_SITE}" ]; then
   cd "${MAIN_SITE}"
 
-  # 5a: Add submodule
+  # 5a: Add submodule (--force handles stale cached git dirs from previous runs)
   if [ ! -d "${REPO_NAME}" ]; then
-    git submodule add "https://github.com/${REPO_FULL}.git" "${REPO_NAME}"
+    rm -rf ".git/modules/${REPO_NAME}" 2>/dev/null || true
+    git submodule add --force "https://github.com/${REPO_FULL}.git" "${REPO_NAME}"
     log "  ✅ Submodule added"
   else
     log "  ⚠️  Submodule ${REPO_NAME} already exists, updating..."
