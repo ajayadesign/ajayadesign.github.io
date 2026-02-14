@@ -1,4 +1,5 @@
 services:
+  # ── n8n — Workflow automation engine ──
   n8n:
     image: n8nio/n8n:latest
     container_name: ajayadesign-n8n
@@ -18,6 +19,30 @@ services:
       - N8N_LOG_LEVEL=info
     volumes:
       - n8n_data:/home/node/.n8n
+    depends_on:
+      - runner
+
+  # ── Runner — Build & deploy sidecar ──
+  runner:
+    build:
+      context: ./runner
+      dockerfile: Dockerfile
+    container_name: ajayadesign-runner
+    restart: unless-stopped
+    ports:
+      - "3456:3456"
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID:-}
+      - GH_TOKEN=${GH_TOKEN:-}
+      - TZ=America/Chicago
+    volumes:
+      # Mount the entire website workspace
+      - /home/aj/website:/workspace
+      # Share git credentials from host
+      - ~/.gitconfig:/root/.gitconfig:ro
+      # Share gh CLI auth from host
+      - ~/.config/gh:/root/.config/gh:ro
 
 volumes:
   n8n_data:
