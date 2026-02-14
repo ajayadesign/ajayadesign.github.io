@@ -257,7 +257,10 @@ Rules:
 - Fix ALL reported issues
 - Output the complete fixed <main>...</main> element
 - Do NOT change the overall structure or content — only fix the specific issues
-- Buttons/CTAs: bg-cta or bg-primary with text-white (ensure WCAG contrast)
+- For color-contrast failures on buttons/CTAs: replace the Tailwind bg class with an inline style using a WCAG AA compliant dark color.
+  Example: Instead of class="bg-cta text-white" use style="background-color:#b91c1c" class="text-white"
+  The inline background MUST have a contrast ratio ≥ 4.5:1 against white (#ffffff). Safe dark colors: #b91c1c, #1d4ed8, #15803d, #7c2d12, #6b21a8, #0f766e, #92400e.
+- For color-contrast failures on text: add inline style="color:#hex" with a color that has ≥ 4.5:1 contrast against its background
 - Text on dark backgrounds: minimum text-textMuted for 4.5:1 contrast
 - NEVER use href="#" — use real section IDs or page links
 - All images need alt text

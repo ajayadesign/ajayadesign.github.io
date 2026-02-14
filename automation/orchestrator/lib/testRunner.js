@@ -105,15 +105,18 @@ function runTests(projectDir) {
   // Extract failure details
   const failures = [];
   if (!passed) {
-    // Parse from output
+    // Parse from output — skip passing lines (✓) and summary lines
     const lines = output.split('\n');
     for (const line of lines) {
+      const trimmed = line.trim();
+      // Skip passing tests and blank lines
+      if (!trimmed || trimmed.startsWith('✓') || trimmed.startsWith('·')) continue;
       if (
-        line.match(
-          /color-contrast|href.*#|Error:|serious\]|critical\]|Expected|Received|overflow|axe/i
+        trimmed.match(
+          /color-contrast|\[serious\]|\[critical\]|href="#"|Error:|Expected.*Received|scrollWidth/i
         )
       ) {
-        failures.push(line.trim());
+        failures.push(trimmed);
       }
     }
   }
@@ -268,11 +271,19 @@ ${navLinkChecks}
 
 function extractFailedPages(output) {
   const failed = new Set();
-  const matches = output.matchAll(/(\w+)\.spec\.js/g);
-  for (const m of matches) {
-    if (output.includes(`${m[1]}.spec.js`) && output.includes('failed')) {
-      failed.add(m[1]);
+  const lines = output.split('\n');
+  for (const line of lines) {
+    // Match lines like: ✘ 3 [Desktop] › tests/index.spec.js:20:3 › ... (failed)
+    // or lines with ✗, ✘, ×, or containing 'failed' next to a spec file
+    const specMatch = line.match(/(\w+)\.spec\.js/);
+    if (specMatch && (line.includes('✘') || line.includes('✗') || line.includes('×') || line.match(/\d+\).*failed/))) {
+      failed.add(specMatch[1]);
     }
+  }
+  // Also check for pages mentioned in axe violation output
+  const axePageMatch = output.matchAll(/tests\/(\w+)\.spec\.js.*?axe accessibility.*?failed/gis);
+  for (const m of axePageMatch) {
+    failed.add(m[1]);
   }
   return [...failed];
 }
