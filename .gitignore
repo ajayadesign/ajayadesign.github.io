@@ -15,6 +15,9 @@ playwright-report/
 # Editor
 .vscode/
 
+# Secrets
+automation/.env
+
 # OS files
 .DS_Store
 Thumbs.db
