@@ -46,7 +46,7 @@ test('intake form has all required fields and submits', async ({ page }) => {
 
   const btn = form.locator('button[type="submit"]');
   await expect(btn).toContainText('Processing', { timeout: 3000 });
-  await expect(btn).toContainText('Build Initiated', { timeout: 5000 });
+  await expect(btn).toContainText('Request Received', { timeout: 5000 });
 });
 
 test('portfolio links point to local submodule paths', async ({ page }) => {
