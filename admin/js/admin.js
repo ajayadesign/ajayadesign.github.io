@@ -22,6 +22,7 @@ let aiEvents = [];
 let logLines = [];
 let pollTimer = null;
 let leads = [];
+let selectedLeadId = null;
 let currentUser = null;
 
 // ── Step definitions ───────────────────────────────────
@@ -113,12 +114,29 @@ function switchTab(tab) {
     $tabLeads.className   = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition';
     $buildsTab.classList.add('hidden');
     $leadsPanel.classList.remove('hidden');
+    // Show lead detail if one was selected, otherwise empty state
+    $buildDetail.classList.add('hidden');
+    if (selectedLeadId) {
+      $emptyState.classList.add('hidden');
+      document.getElementById('lead-detail').classList.remove('hidden');
+    } else {
+      $emptyState.classList.remove('hidden');
+      document.getElementById('lead-detail').classList.add('hidden');
+    }
     renderLeadsPanel();
   } else {
     $tabBuilds.className  = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition';
     $tabLeads.className   = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition';
     $buildsTab.classList.remove('hidden');
     $leadsPanel.classList.add('hidden');
+    // Show build detail if one was selected, otherwise empty state
+    document.getElementById('lead-detail').classList.add('hidden');
+    if (selectedBuildId) {
+      $emptyState.classList.add('hidden');
+      $buildDetail.classList.remove('hidden');
+    } else {
+      $emptyState.classList.remove('hidden');
+    }
   }
 }
 
@@ -214,6 +232,7 @@ async function selectBuild(buildId) {
   // Show detail panel
   $emptyState.classList.add('hidden');
   $buildDetail.classList.remove('hidden');
+  document.getElementById('lead-detail').classList.add('hidden');
 
   // Fetch build details
   try {
@@ -567,12 +586,14 @@ function renderLeadsPanel() {
     };
     const statusCls = statusColors[lead.status] || statusColors['new'];
     const time = lead.submitted_at ? formatTime(lead.submitted_at) : 'Unknown date';
+    const isSelected = lead.id === selectedLeadId;
 
     return `
-      <div class="p-4 bg-surface-2 rounded-xl border border-border hover:border-border-glow transition animate-fade-in">
+      <div onclick="selectLead('${lead.id}')" class="p-4 bg-surface-2 rounded-xl border cursor-pointer transition animate-fade-in
+        ${isSelected ? 'border-electric bg-electric/5' : 'border-border hover:border-border-glow'}">
         <div class="flex items-center justify-between mb-3">
           <h3 class="font-mono text-sm font-bold text-white">${esc(lead.business_name || 'Unknown')}</h3>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2" onclick="event.stopPropagation()">
             <select onchange="updateLeadStatus('${lead.id}', this.value)"
               class="text-[0.65rem] font-mono px-2 py-1 rounded-full border-0 cursor-pointer ${statusCls}">
               ${['new','contacted','building','deployed','archived'].map(s =>
@@ -597,8 +618,119 @@ function renderLeadsPanel() {
 function updateLeadStatus(leadId, newStatus) {
   if (!window.__db) return;
   window.__db.ref(`leads/${leadId}/status`).set(newStatus)
-    .then(() => console.log(`[Admin] Lead ${leadId} → ${newStatus}`))
+    .then(() => {
+      console.log(`[Admin] Lead ${leadId} → ${newStatus}`);
+      // If this lead is selected, refresh its detail view
+      if (leadId === selectedLeadId) renderLeadDetail();
+    })
     .catch(err => console.error('[Admin] Failed to update lead:', err));
+}
+
+// ── Select a lead ──────────────────────────────────────
+function selectLead(leadId) {
+  selectedLeadId = leadId;
+  renderLeadsPanel(); // Update selection highlight
+
+  // Hide other main panels, show lead detail
+  document.getElementById('empty-state').classList.add('hidden');
+  document.getElementById('build-detail').classList.add('hidden');
+  document.getElementById('lead-detail').classList.remove('hidden');
+
+  renderLeadDetail();
+}
+
+function renderLeadDetail() {
+  const lead = leads.find(l => l.id === selectedLeadId);
+  if (!lead) return;
+
+  const statusColors = {
+    'new':       { cls: 'bg-electric/20 text-electric',       text: 'NEW' },
+    'contacted': { cls: 'bg-neon-yellow/20 text-neon-yellow', text: 'CONTACTED' },
+    'building':  { cls: 'bg-neon-purple/20 text-neon-purple', text: 'BUILDING' },
+    'deployed':  { cls: 'bg-neon-green/20 text-neon-green',   text: 'DEPLOYED' },
+    'archived':  { cls: 'bg-gray-800 text-gray-500',          text: 'ARCHIVED' },
+  };
+  const s = statusColors[lead.status] || statusColors['new'];
+
+  // Badge
+  const $badge = document.getElementById('lead-status-badge');
+  $badge.textContent = s.text;
+  $badge.className = `px-2.5 py-1 rounded-full text-xs font-mono font-semibold ${s.cls}`;
+
+  // Header
+  document.getElementById('lead-business').textContent = lead.business_name || 'Unknown';
+
+  // Status dropdown
+  document.getElementById('lead-status-select').value = lead.status || 'new';
+
+  // Meta
+  const metas = [];
+  if (lead.niche)  metas.push(`<span>🏷 ${esc(lead.niche)}</span>`);
+  if (lead.email)  metas.push(`<span>📧 ${esc(lead.email)}</span>`);
+  if (lead.source) metas.push(`<span>🌐 ${esc(lead.source)}</span>`);
+  document.getElementById('lead-meta').innerHTML = metas.join('');
+
+  // Content
+  document.getElementById('lead-goals').textContent = lead.goals || 'No goals specified';
+  document.getElementById('lead-email').textContent = lead.email || '-';
+  document.getElementById('lead-niche').textContent = lead.niche || '-';
+  document.getElementById('lead-time').textContent = lead.submitted_at ? formatTime(lead.submitted_at) : 'Unknown';
+  document.getElementById('lead-source').textContent = lead.source || 'direct';
+
+  // Email link
+  if (lead.email) {
+    const subject = encodeURIComponent(`AjayaDesign — Your website for ${lead.business_name || 'your business'}`);
+    document.getElementById('lead-email-link').href = `mailto:${lead.email}?subject=${subject}`;
+  }
+}
+
+function updateLeadStatusFromDetail(newStatus) {
+  if (!selectedLeadId) return;
+  updateLeadStatus(selectedLeadId, newStatus);
+}
+
+function triggerBuildForLead() {
+  const lead = leads.find(l => l.id === selectedLeadId);
+  if (!lead) return;
+
+  if (!confirm(`Trigger a build for "${lead.business_name}"?`)) return;
+
+  // Update status to building
+  updateLeadStatus(selectedLeadId, 'building');
+
+  // POST to runner
+  fetch(`${API_BASE}/build`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      business_name: lead.business_name,
+      niche: lead.niche,
+      goals: lead.goals,
+      email: lead.email,
+    }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log('[Admin] Build triggered:', data);
+      // Switch to builds tab and select the new build
+      switchTab('builds');
+      if (data.id) {
+        setTimeout(() => selectBuild(data.id), 1000);
+      }
+      refreshBuilds();
+    })
+    .catch(err => {
+      console.error('[Admin] Failed to trigger build:', err);
+      alert(`Failed to trigger build: ${err.message}`);
+    });
+}
+
+function archiveLead() {
+  if (!selectedLeadId) return;
+  const lead = leads.find(l => l.id === selectedLeadId);
+  if (!lead) return;
+  if (!confirm(`Archive lead "${lead.business_name}"?`)) return;
+  updateLeadStatus(selectedLeadId, 'archived');
 }
 
 // ── Sign out ───────────────────────────────────────────
