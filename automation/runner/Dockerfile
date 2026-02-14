@@ -25,6 +25,10 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
 # Install serve globally for test web server
 RUN npm install -g serve
 
+# Pre-install Playwright + Chromium so builds skip the slow install
+RUN npm install -g @playwright/test @axe-core/playwright \
+    && npx playwright install --with-deps chromium
+
 WORKDIR /runner
 
 COPY server.js /runner/server.js

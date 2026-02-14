@@ -8,7 +8,7 @@ const { spawn } = require('child_process');
 const { randomUUID } = require('crypto');
 
 const PORT = 3456;
-const SCRIPT = '/workspace/automation/build_and_deploy.sh';
+const SCRIPT = '/workspace/ajayadesign.github.io/automation/build_and_deploy.sh';
 
 // Track running builds
 const builds = new Map();
@@ -45,9 +45,9 @@ const server = http.createServer((req, res) => {
         return res.end(JSON.stringify({ error: 'Invalid JSON' }));
       }
 
-      const clientName = data.businessName || data.clientName || data.business_name;
-      const niche = data.niche || 'General';
-      const goals = data.goals || '';
+      const clientName = data.business_name || data.businessName || data.clientName;
+      const niche = data.niche || data.businessType || data.business_type || 'General';
+      const goals = data.goals || data.details || data.description || 'Professional website';
       const email = data.email || '';
 
       if (!clientName) {
