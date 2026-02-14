@@ -110,7 +110,7 @@ async function fixPage(slug, projectDir, failures, designSystem, blueprint, orch
     const mainContent = mainMatch[0];
     const errorSummary = failures.slice(0, 15).join('\n');
 
-    // Ask AI to fix
+    // Ask AI to fix (use extra retries for rate limiting during fix cycles)
     const fixedMain = await callAI({
       messages: [
         { role: 'system', content: FIXER_SYSTEM },
@@ -118,6 +118,7 @@ async function fixPage(slug, projectDir, failures, designSystem, blueprint, orch
       ],
       temperature: 0.3,
       maxTokens: 8000,
+      retries: 4,
     });
 
     // Validate response

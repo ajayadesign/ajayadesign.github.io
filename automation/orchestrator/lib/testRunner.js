@@ -232,8 +232,9 @@ function generateIntegrationTest(pages) {
   const navLinkChecks = pages
     .map((p) => {
       const href = p.slug === 'index' ? '/' : `/${p.slug}.html`;
-      return `    const link_${p.slug} = page.locator('nav a[href="${href}"]');
-    if (await link_${p.slug}.count()) await expect(link_${p.slug}).toBeVisible();`;
+      const safe = p.slug.replace(/[^a-zA-Z0-9_]/g, '_');
+      return `    const link_${safe} = page.locator('nav a[href="${href}"]');
+    if (await link_${safe}.count()) await expect(link_${safe}).toBeVisible();`;
     })
     .join('\n');
 

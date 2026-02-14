@@ -15,14 +15,21 @@ async function callAI({ messages, temperature = 0.7, maxTokens = 8000, model, re
   const token = process.env.GH_TOKEN;
   if (!token) throw new Error('GH_TOKEN not set — cannot call AI API');
 
+  const maxAttempts = retries + 1;
   let lastErr;
-  for (let attempt = 1; attempt <= retries + 1; attempt++) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await _request({ messages, temperature, maxTokens, model, token });
     } catch (err) {
       lastErr = err;
       if (attempt <= retries) {
-        const wait = attempt * 2000;
+        // Parse "wait X seconds" from 429 responses
+        const waitMatch = err.message.match(/wait\s+(\d+)\s+second/i);
+        const rateLimited = err.message.includes('429') || err.message.includes('RateLimitReached');
+        const wait = rateLimited
+          ? (waitMatch ? (parseInt(waitMatch[1], 10) + 2) * 1000 : 25_000)
+          : attempt * 2000;
+        console.log(`  ⏳ AI retry ${attempt}/${retries} — waiting ${Math.round(wait/1000)}s${rateLimited ? ' (rate limited)' : ''}...`);
         await new Promise(r => setTimeout(r, wait));
       }
     }
