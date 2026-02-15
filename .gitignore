@@ -17,6 +17,7 @@ playwright-report/
 
 # Secrets
 automation/.env
+automation/firebase-service-account.json
 
 # OS files
 .DS_Store
