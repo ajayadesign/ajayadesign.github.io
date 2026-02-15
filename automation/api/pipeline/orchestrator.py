@@ -57,6 +57,7 @@ class BuildOrchestrator:
         self.build.status = "running"
         self.build.started_at = datetime.now(timezone.utc)
         await self._flush()
+        self._sync_build_firebase()  # Sync running status to Firebase
         self._emit("build", {"status": "running", "build_id": self.build.short_id})
 
         try:
@@ -73,6 +74,7 @@ class BuildOrchestrator:
             self.build.finished_at = datetime.now(timezone.utc)
             await self._flush()
             await self._sync_firebase("deployed")
+            self._sync_build_firebase()  # Sync final status to Firebase
             self._emit("build", {"status": "complete", "build_id": self.build.short_id})
             self._log_msg("🎉 Build complete!", level="info", category="build")
             return self.build
@@ -82,6 +84,7 @@ class BuildOrchestrator:
             self.build.finished_at = datetime.now(timezone.utc)
             await self._flush()
             await self._sync_firebase("failed")
+            self._sync_build_firebase()  # Sync failed status to Firebase
             self._emit("build", {"status": "failed", "error": str(exc)})
             self._log_msg(f"💥 Build failed: {exc}", level="error", category="build")
             logger.error("Build %s failed:\n%s", self.build.short_id, traceback.format_exc())
@@ -234,6 +237,7 @@ class BuildOrchestrator:
         _, name, description = PHASES[phase_number - 1]
         self._log_msg(f"▶ Phase {phase_number}/8: {description}", category=name)
         self._emit("phase", {"number": phase_number, "name": name, "status": "running"})
+        self._sync_phase_firebase(phase_number, name, "running")
 
         phase = BuildPhase(
             build_id=self.build.id,
@@ -255,6 +259,7 @@ class BuildOrchestrator:
             "name": phase.phase_name,
             "status": "complete",
         })
+        self._sync_phase_firebase(phase.phase_number, phase.phase_name, "complete")
 
     def _log_msg(
         self,
@@ -309,3 +314,35 @@ class BuildOrchestrator:
             self._log_msg(
                 f"⚠️ Firebase sync failed: {e}", level="warning", category="firebase"
             )
+
+    def _sync_build_firebase(self):
+        """Sync the full build record to Firebase RTDB builds/ node."""
+        try:
+            from api.services.firebase import sync_build_to_firebase
+
+            sync_build_to_firebase({
+                "short_id": self.build.short_id,
+                "client_name": self.build.client_name,
+                "niche": self.build.niche,
+                "email": self.build.email or "",
+                "status": self.build.status,
+                "created_at": self.build.created_at.isoformat() if self.build.created_at else "",
+                "started_at": self.build.started_at.isoformat() if self.build.started_at else "",
+                "finished_at": self.build.finished_at.isoformat() if self.build.finished_at else "",
+                "live_url": self.build.live_url or "",
+                "repo_full": self.build.repo_full or "",
+                "pages_count": self.build.pages_count or 0,
+            })
+        except Exception as e:
+            logger.debug("Firebase build sync failed (non-critical): %s", e)
+
+    def _sync_phase_firebase(self, phase_number: int, phase_name: str, status: str):
+        """Sync phase status to Firebase for real-time admin dashboard."""
+        try:
+            from api.services.firebase import sync_build_phase_to_firebase
+
+            sync_build_phase_to_firebase(
+                self.build.short_id, phase_number, phase_name, status
+            )
+        except Exception:
+            pass  # Non-critical — dashboard will still work via SSE

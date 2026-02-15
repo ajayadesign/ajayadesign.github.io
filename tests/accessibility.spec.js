@@ -13,7 +13,7 @@ test('page loads with correct title', async ({ page }) => {
 test('hero section is visible', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('h1')).toBeVisible();
-  await expect(page.locator('h1')).toContainText('Engineering Precision');
+  await expect(page.locator('h1')).toContainText('One Click Away');
 });
 
 test('all nav links point to valid anchors', async ({ page }) => {

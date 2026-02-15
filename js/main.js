@@ -50,6 +50,109 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // ── Smooth Scroll on Nav Click ──
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', (e) => {
+      const targetId = anchor.getAttribute('href');
+      if (targetId === '#') return;  // logo link
+      const target = document.querySelector(targetId);
+      if (!target) return;
+      e.preventDefault();
+      const navHeight = navbar.offsetHeight;
+      const targetPos = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+      window.scrollTo({ top: targetPos, behavior: 'smooth' });
+      // Update URL hash without jumping
+      history.pushState(null, '', targetId);
+    });
+  });
+
+  // ── Active Section Highlight ──
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+
+  sections.forEach(section => sectionObserver.observe(section));
+
+  // ── Firebase Status Indicator ──
+  // Uses Firebase .info/connected to show real-time connectivity
+  function initStatusIndicator() {
+    const db = window.__db;
+    if (!db) {
+      updateStatusUI(false);
+      return;
+    }
+    db.ref('.info/connected').on('value', (snap) => {
+      updateStatusUI(snap.val() === true);
+    });
+  }
+
+  function updateStatusUI(online) {
+    const label = online ? 'System Online' : 'Offline';
+    const dotColor = online ? 'bg-green-500' : 'bg-gray-500';
+    const pingColor = online ? 'bg-green-400' : 'bg-gray-400';
+
+    // Nav status
+    const navDot  = document.getElementById('nav-status-dot');
+    const navPing = document.getElementById('nav-status-ping');
+    const navText = document.getElementById('nav-status-text');
+    if (navDot) {
+      navDot.className = `relative inline-flex rounded-full h-2 w-2 ${dotColor}`;
+      navPing.className = `animate-ping absolute inline-flex h-full w-full rounded-full ${pingColor} opacity-75`;
+      navText.textContent = label;
+    }
+
+    // Mobile status
+    const mobileSt = document.getElementById('mobile-system-status');
+    if (mobileSt) {
+      const mDot  = mobileSt.querySelector('span > span:last-child');
+      const mPing = mobileSt.querySelector('span > span:first-child');
+      if (mDot) mDot.className = `relative inline-flex rounded-full h-2 w-2 ${dotColor}`;
+      if (mPing) mPing.className = `animate-ping absolute inline-flex h-full w-full rounded-full ${pingColor} opacity-75`;
+      // Update text node (last child text)
+      const textNodes = [...mobileSt.childNodes].filter(n => n.nodeType === 3);
+      if (textNodes.length) textNodes[textNodes.length - 1].textContent = '\n            ' + label + '\n          ';
+    }
+
+    // Footer status
+    const footerSt = document.getElementById('footer-system-status');
+    if (footerSt) {
+      const fDot  = footerSt.querySelector('span.relative > span:last-child');
+      const fPing = footerSt.querySelector('span.relative > span:first-child');
+      const fText = footerSt.querySelector(':scope > span:last-child');
+      if (fDot) fDot.className = `relative inline-flex rounded-full h-2 w-2 ${dotColor}`;
+      if (fPing) fPing.className = `animate-ping absolute inline-flex h-full w-full rounded-full ${pingColor} opacity-75`;
+      if (fText) fText.textContent = label;
+    }
+  }
+
+  initStatusIndicator();
+
+  // ── Dynamic "Sites Shipped" counter from Firebase builds node ──
+  function initSitesCounter() {
+    const el = document.getElementById('stat-sites');
+    const db = window.__db;
+    if (!el || !db) return;
+    db.ref('builds').on('value', (snap) => {
+      const builds = snap.val();
+      if (!builds) return;
+      const completedCount = Object.values(builds).filter(b => b.status === 'complete').length;
+      // Minimum of 4 (the manually listed portfolio items)
+      const total = Math.max(4, completedCount);
+      el.innerHTML = total + '<span class="text-amd-red">+</span>';
+    });
+  }
+  initSitesCounter();
+
   // ── Intake Form Submission ──
   // Triple-send: Firebase (DB) + FormSubmit (email) + Python API (pipeline).
   // Firebase = persistent storage + offline bridge (poller picks up missed leads).

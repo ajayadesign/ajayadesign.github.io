@@ -54,6 +54,24 @@ body {
   transform: translateY(0);
 }
 
+/* ── Active Nav Link ── */
+.nav-link {
+  position: relative;
+}
+.nav-link.active {
+  color: #ED1C24;
+}
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 2px;
+  background: #ED1C24;
+  border-radius: 1px;
+}
+
 /* ── Blinking Cursor ── */
 .cursor-blink::after {
   content: '▍';
