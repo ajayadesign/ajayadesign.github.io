@@ -1,5 +1,5 @@
 """
-Phase 2: AI Council — Strategist ↔ Critic Debate.
+Phase 2: AI Council — Strategist ↔ Critic Debate + Creative Direction.
 """
 
 import re
@@ -13,6 +13,9 @@ from api.pipeline.prompts import (
     strategist_revise,
     CRITIC_SYSTEM,
     critic_review,
+    CREATIVE_DIRECTOR_SYSTEM,
+    creative_director_create,
+    match_niche_pattern,
 )
 
 logger = logging.getLogger(__name__)
@@ -28,6 +31,27 @@ DEFAULT_COLORS = {
 }
 
 DEFAULT_TYPOGRAPHY = {"headings": "JetBrains Mono", "body": "Inter"}
+
+DEFAULT_CREATIVE_SPEC = {
+    "visualConcept": "Modern, clean, and professional",
+    "heroTreatment": {
+        "type": "fade-up-stagger",
+        "description": "Full-viewport hero with staggered fade-up text",
+        "ctaStyle": "solid-lift",
+        "textAnimation": "fade-up-stagger",
+    },
+    "motionDesign": {
+        "scrollRevealDefault": "fade-up",
+        "staggerDelay": "100ms",
+        "hoverScale": "1.02",
+    },
+    "colorEnhancements": {
+        "useGradientText": True,
+        "useNoiseOverlay": False,
+        "useGlassMorphism": False,
+    },
+    "imageSearchTerms": {},
+}
 
 
 async def ai_council(
@@ -134,6 +158,13 @@ async def ai_council(
     # ── Post-process ──
     _sanitize_blueprint(blueprint, business_name, niche)
 
+    # ── Inject niche pattern hints into blueprint ──
+    niche_pattern = match_niche_pattern(niche)
+    if niche_pattern:
+        blueprint.setdefault("creativeMood", niche_pattern.get("mood", ""))
+        blueprint.setdefault("themeMode", niche_pattern.get("theme", "dark"))
+        _log(log_fn, f"  🎨 Matched niche pattern: {niche} → mood={niche_pattern.get('mood', 'N/A')}")
+
     _log(
         log_fn,
         f"  📋 Final blueprint: {len(blueprint['pages'])} pages, "
@@ -142,7 +173,30 @@ async def ai_council(
         f"/{blueprint.get('colorDirection', {}).get('accent', '?')}",
     )
 
-    return {"blueprint": blueprint, "transcript": transcript}
+    # ── Creative Direction ──
+    creative_spec = await _get_creative_direction(blueprint, log_fn=log_fn)
+
+    return {"blueprint": blueprint, "transcript": transcript, "creative_spec": creative_spec}
+
+
+async def _get_creative_direction(blueprint: dict, *, scraped_data: dict | None = None, log_fn=None) -> dict:
+    """Call Creative Director AI for visual treatment specification."""
+    _log(log_fn, "  🎬 Creative Director developing visual treatment...")
+    try:
+        raw = await call_ai(
+            messages=[
+                {"role": "system", "content": CREATIVE_DIRECTOR_SYSTEM},
+                {"role": "user", "content": creative_director_create(blueprint, scraped_data)},
+            ],
+            temperature=0.7,
+            max_tokens=3000,
+        )
+        spec = extract_json(raw)
+        _log(log_fn, f"  🎬 Creative spec: {spec.get('visualConcept', 'N/A')}")
+        return spec
+    except Exception as e:
+        _log(log_fn, f"  ⚠️ Creative Director failed ({e}) — using default spec")
+        return dict(DEFAULT_CREATIVE_SPEC)
 
 
 def _sanitize_blueprint(blueprint: dict, business_name: str, niche: str) -> None:

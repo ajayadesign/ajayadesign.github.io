@@ -12,7 +12,7 @@ from api.pipeline.prompts import DESIGNER_SYSTEM, designer_create
 logger = logging.getLogger(__name__)
 
 
-async def generate_design_system(blueprint: dict, *, log_fn=None) -> dict:
+async def generate_design_system(blueprint: dict, *, creative_spec: dict | None = None, log_fn=None) -> dict:
     """Call AI to produce design system, validate WCAG, build sharedHead."""
     _log(log_fn, "🎨 Generating design system (Tailwind config + shared nav/footer)")
 
@@ -121,17 +121,43 @@ def _build_shared_head(ds: dict, blueprint: dict) -> str:
 
     return f"""  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="{ds['googleFontsUrl']}" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <script>
     {ds['tailwindConfig']}
   </script>
   <style>
     html {{ scroll-behavior: smooth; }}
+    body {{ overflow-x: hidden; }}
     ::-webkit-scrollbar {{ width: 6px; }}
     ::-webkit-scrollbar-track {{ background: transparent; }}
     ::-webkit-scrollbar-thumb {{ background: #333; border-radius: 3px; }}
-  </style>"""
+    .gradient-text {{
+      background: linear-gradient(135deg, var(--tw-gradient-from, #fff), var(--tw-gradient-to, #ccc));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }}
+    .glass {{
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }}
+    .noise::before {{
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }}
+    .counter {{ display: inline-block; }}
+  </style>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>"""
 
 
 def _log(fn, msg):

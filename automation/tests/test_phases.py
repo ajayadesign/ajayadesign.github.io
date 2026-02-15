@@ -39,8 +39,11 @@ class TestPhase2Council:
 
         assert "blueprint" in result
         assert "transcript" in result
+        assert "creative_spec" in result
         assert len(result["blueprint"]["pages"]) > 0
         assert result["transcript"][0]["speaker"] == "strategist"
+        # Creative spec should have visual concept
+        assert "visualConcept" in result["creative_spec"]
 
     async def test_council_sanitizes_colors(self, mock_ai):
         from api.pipeline.phases.p02_council import _sanitize_blueprint
@@ -134,7 +137,7 @@ class TestPhase5Assemble:
         for page in bp["pages"]:
             fname = "index.html" if page["slug"] == "index" else f"{page['slug']}.html"
             with open(os.path.join(project_dir, fname), "w") as f:
-                f.write(f"<html><body><nav>{{{{ACTIVE:{page['slug']}}}}}</nav></body></html>")
+                f.write(f"<html><head></head><body><nav>{{{{ACTIVE:{page['slug']}}}}}</nav><img src=\"test.jpg\"></body></html>")
 
         await assemble(bp, ds, project_dir)
 
@@ -142,11 +145,18 @@ class TestPhase5Assemble:
         assert os.path.exists(os.path.join(project_dir, "sitemap.xml"))
         assert os.path.exists(os.path.join(project_dir, "robots.txt"))
         assert os.path.exists(os.path.join(project_dir, "404.html"))
+        assert os.path.exists(os.path.join(project_dir, "favicon.svg"))
 
         # Check nav states stitched
         with open(os.path.join(project_dir, "index.html")) as f:
             content = f.read()
         assert "{{ACTIVE:" not in content
+
+        # Check enhanced features
+        assert "scroll-progress" in content
+        assert "back-to-top" in content
+        assert "application/ld+json" in content
+        assert 'loading="lazy"' in content
 
 
 class TestPhase6Test:
@@ -171,3 +181,77 @@ class TestPhase8Notify:
             "org/sunrise-bakery", "https://example.com", 4,
         )
         # Should complete without error
+
+
+class TestNichePatterns:
+    def test_match_bakery(self):
+        from api.pipeline.prompts import match_niche_pattern
+
+        pattern = match_niche_pattern("Artisan Bakery & Café")
+        assert pattern is not None
+        assert "warm" in pattern["mood"]
+
+    def test_match_tech(self):
+        from api.pipeline.prompts import match_niche_pattern
+
+        pattern = match_niche_pattern("SaaS platform")
+        assert pattern is not None
+        assert "tech" in pattern["theme"] or "dark" in pattern["theme"]
+
+    def test_match_restaurant_by_keyword(self):
+        from api.pipeline.prompts import match_niche_pattern
+
+        pattern = match_niche_pattern("Fine dining establishment")
+        assert pattern is not None
+
+    def test_no_match(self):
+        from api.pipeline.prompts import match_niche_pattern
+
+        pattern = match_niche_pattern("Quantum computing research")
+        assert pattern is None
+
+
+class TestNewPrompts:
+    def test_creative_director_system_exists(self):
+        from api.pipeline.prompts import CREATIVE_DIRECTOR_SYSTEM
+        assert "creative director" in CREATIVE_DIRECTOR_SYSTEM.lower()
+
+    def test_creative_director_create(self):
+        from api.pipeline.prompts import creative_director_create
+        result = creative_director_create(SAMPLE_BLUEPRINT)
+        assert "Sunrise Bakery" in result
+        assert "NICHE:" in result
+
+    def test_scraper_analysis_system_exists(self):
+        from api.pipeline.prompts import SCRAPER_ANALYSIS_SYSTEM
+        assert "analyze" in SCRAPER_ANALYSIS_SYSTEM.lower()
+
+    def test_scraper_analyze(self):
+        from api.pipeline.prompts import scraper_analyze
+        result = scraper_analyze("Hello world content", ["#FF0000"], ["Inter"])
+        assert "#FF0000" in result
+        assert "Inter" in result
+
+    def test_polish_system_exists(self):
+        from api.pipeline.prompts import POLISH_SYSTEM
+        assert "visual polish" in POLISH_SYSTEM.lower()
+
+    def test_polish_enhance(self):
+        from api.pipeline.prompts import polish_enhance
+        result = polish_enhance(
+            "<main>test</main>",
+            {"title": "Home", "slug": "index"},
+            {"visualConcept": "Modern"},
+        )
+        assert "Home" in result
+        assert "Modern" in result
+
+    def test_page_builder_accepts_creative_spec(self):
+        from api.pipeline.prompts import page_builder_create
+        result = page_builder_create(
+            SAMPLE_BLUEPRINT["pages"][0],
+            SAMPLE_DESIGN_SYSTEM,
+            SAMPLE_BLUEPRINT,
+            creative_spec={"visualConcept": "Warm bakery feel"},
+        )
+        assert "Warm bakery feel" in result

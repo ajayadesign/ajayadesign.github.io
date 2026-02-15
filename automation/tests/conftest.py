@@ -134,6 +134,30 @@ SAMPLE_CRITIC_RESPONSE = {
     "critiques": [],
 }
 
+SAMPLE_CREATIVE_SPEC = {
+    "visualConcept": "Warm artisanal bakery with inviting golden tones",
+    "heroTreatment": {
+        "type": "parallax-image",
+        "description": "Full-viewport image of fresh bread with warm overlay",
+        "ctaStyle": "solid-lift",
+        "textAnimation": "fade-up-stagger",
+    },
+    "motionDesign": {
+        "scrollRevealDefault": "fade-up",
+        "staggerDelay": "100ms",
+        "hoverScale": "1.02",
+    },
+    "colorEnhancements": {
+        "useGradientText": True,
+        "useNoiseOverlay": False,
+        "useGlassMorphism": False,
+    },
+    "imageSearchTerms": {
+        "index": ["artisan bread warm lighting"],
+        "about": ["bakery kitchen professional"],
+    },
+}
+
 
 @pytest.fixture
 def sample_request():
@@ -180,6 +204,10 @@ def mock_ai():
         if "ux critic" in system:
             return "```json\n" + json.dumps(SAMPLE_CRITIC_RESPONSE) + "\n```"
 
+        # Creative Director — matches "creative director" in CREATIVE_DIRECTOR_SYSTEM
+        if "creative director" in system:
+            return "```json\n" + json.dumps(SAMPLE_CREATIVE_SPEC) + "\n```"
+
         # Designer — matches "visual designer" in DESIGNER_SYSTEM
         if "visual designer" in system:
             return "```json\n" + json.dumps(SAMPLE_DESIGN_SYSTEM) + "\n```"
@@ -191,6 +219,14 @@ def mock_ai():
         # Fixer — matches "fixing accessibility" in FIXER_SYSTEM
         if "fixing accessibility" in system:
             return SAMPLE_PAGE_HTML
+
+        # Polish — matches "visual polish" in POLISH_SYSTEM
+        if "visual polish" in system:
+            return SAMPLE_PAGE_HTML
+
+        # Scraper analysis — matches "analyze an existing website" in SCRAPER_ANALYSIS_SYSTEM
+        if "analyze" in system and "existing website" in system:
+            return '```json\n{"brand_voice": "warm, inviting", "sentiment": "premium"}\n```'
 
         # Default
         return '{"ok": true}'
@@ -298,6 +334,7 @@ def mock_settings(tmp_path):
     mock_s.firebase_cred_path = ""
     mock_s.firebase_db_url = "https://test.firebaseio.com"
     mock_s.firebase_poll_interval = 60
+    mock_s.unsplash_access_key = ""
     os.makedirs(mock_s.base_dir, exist_ok=True)
 
     with patch("api.config.settings", mock_s), \

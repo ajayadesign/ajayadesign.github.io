@@ -17,6 +17,7 @@ async def generate_pages(
     design_system: dict,
     project_dir: str,
     *,
+    creative_spec: dict | None = None,
     log_fn=None,
     event_fn=None,
 ) -> list[dict]:
@@ -25,6 +26,8 @@ async def generate_pages(
     results = []
 
     _log(log_fn, f"📝 Generating {len(pages)} pages")
+    if creative_spec:
+        _log(log_fn, f"  🎬 Creative direction: {creative_spec.get('visualConcept', 'N/A')}")
 
     for i, page in enumerate(pages):
         filename = "index.html" if page["slug"] == "index" else f"{page['slug']}.html"
@@ -37,7 +40,7 @@ async def generate_pages(
             raw = await call_ai(
                 messages=[
                     {"role": "system", "content": PAGE_BUILDER_SYSTEM},
-                    {"role": "user", "content": page_builder_create(page, design_system, blueprint)},
+                    {"role": "user", "content": page_builder_create(page, design_system, blueprint, creative_spec=creative_spec)},
                 ],
                 temperature=0.7,
                 max_tokens=8000,
@@ -123,6 +126,20 @@ def _wrap_with_design_system(
 {ds.get('footerHtml', '')}
 
 {ds.get('mobileMenuJs', '')}
+<script>
+  AOS.init({{ duration: 800, once: true, offset: 80 }});
+  document.querySelectorAll('.counter').forEach(el => {{
+    const target = parseInt(el.dataset.target || el.textContent, 10);
+    if (isNaN(target)) return;
+    let current = 0;
+    const step = Math.max(1, Math.ceil(target / 60));
+    const timer = setInterval(() => {{
+      current += step;
+      if (current >= target) {{ el.textContent = target.toLocaleString(); clearInterval(timer); }}
+      else {{ el.textContent = current.toLocaleString(); }}
+    }}, 25);
+  }});
+</script>
 </body>
 </html>"""
 
