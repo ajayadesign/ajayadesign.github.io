@@ -38,6 +38,9 @@ services:
       AI_MODEL: "gpt-4o"
       TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN:-}"
       TELEGRAM_CHAT_ID: "${TELEGRAM_CHAT_ID:-}"
+      FIREBASE_CRED_PATH: "/app/firebase-service-account.json"
+      FIREBASE_DB_URL: "https://ajayadesign-6d739-default-rtdb.firebaseio.com"
+      FIREBASE_POLL_INTERVAL: "30"
       BASE_DIR: "/repos"
       MAIN_SITE_DIR: "/site"
       HOST_UID: "${HOST_UID:-1000}"
@@ -45,6 +48,7 @@ services:
     volumes:
       - repos:/repos
       - ../../:/site
+      - ./firebase-service-account.json:/app/firebase-service-account.json:ro
     restart: unless-stopped
 
 volumes:

@@ -168,10 +168,11 @@ async def process_parse_requests() -> None:
         logger.info("⚙️ Processing parse request %s (%d chars)", rid, len(raw_text))
 
         try:
-            raw_response = await call_ai(
-                system=PARSE_CLIENT_SYSTEM,
-                user=parse_client_text(raw_text),
-            )
+            messages = [
+                {"role": "system", "content": PARSE_CLIENT_SYSTEM},
+                {"role": "user", "content": parse_client_text(raw_text)},
+            ]
+            raw_response = await call_ai(messages)
             parsed_data = extract_json(raw_response)
             confidence = parsed_data.pop("confidence", "medium")
             if confidence not in ("high", "medium", "low"):

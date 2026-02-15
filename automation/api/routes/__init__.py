@@ -287,10 +287,11 @@ async def parse_client(req: ParseClientRequest):
     from api.pipeline.prompts import PARSE_CLIENT_SYSTEM, parse_client_text
 
     try:
-        raw_response = await call_ai(
-            system=PARSE_CLIENT_SYSTEM,
-            user=parse_client_text(req.raw_text),
-        )
+        messages = [
+            {"role": "system", "content": PARSE_CLIENT_SYSTEM},
+            {"role": "user", "content": parse_client_text(req.raw_text)},
+        ]
+        raw_response = await call_ai(messages)
         parsed_data = extract_json(raw_response)
     except Exception as exc:
         logger.error("AI parse-client failed: %s", exc)
