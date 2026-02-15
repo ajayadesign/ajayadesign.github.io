@@ -16,14 +16,46 @@ class Settings(BaseSettings):
     )
 
     # GitHub
-    gh_token: str = Field(default="", description="GitHub PAT for API + AI")
+    gh_token: str = Field(default="", description="GitHub PAT for repo management")
     github_org: str = Field(default="ajayadesign")
 
-    # AI
-    ai_api_url: str = Field(
-        default="https://models.inference.ai.azure.com/chat/completions"
+    # AI — multi-provider support ("github-models" or "anthropic")
+    ai_provider: str = Field(
+        default="github-models",
+        description="AI provider: 'github-models' (OpenAI via Azure) or 'anthropic' (Claude)",
     )
-    ai_model: str = Field(default="gpt-4o")
+    ai_token: str = Field(default="", description="GitHub PAT for AI models (falls back to GH_TOKEN)")
+    anthropic_api_key: str = Field(default="", description="Anthropic API key for Claude models")
+    ai_api_url: str = Field(
+        default="",
+        description="Override AI API URL (auto-set per provider if blank)",
+    )
+    ai_model: str = Field(default="")
+
+    @property
+    def ai_effective_url(self) -> str:
+        """Resolve API URL based on provider."""
+        if self.ai_api_url:
+            return self.ai_api_url
+        if self.ai_provider == "anthropic":
+            return "https://api.anthropic.com/v1/messages"
+        return "https://models.inference.ai.azure.com/chat/completions"
+
+    @property
+    def ai_effective_model(self) -> str:
+        """Resolve model name based on provider."""
+        if self.ai_model:
+            return self.ai_model
+        if self.ai_provider == "anthropic":
+            return "claude-sonnet-4-20250514"
+        return "gpt-4o"
+
+    @property
+    def ai_auth_token(self) -> str:
+        """Token for AI API calls — provider-specific."""
+        if self.ai_provider == "anthropic":
+            return self.anthropic_api_key
+        return self.ai_token or self.gh_token
 
     # Telegram
     telegram_bot_token: str = Field(default="")
