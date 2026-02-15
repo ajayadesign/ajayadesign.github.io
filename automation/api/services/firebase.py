@@ -178,6 +178,29 @@ def sync_build_phase_to_firebase(
         return False
 
 
+# ── Build Logs (sync log lines so admin can show real-time logs via Firebase) ──
+
+
+def sync_build_log_to_firebase(short_id: str, sequence: int, message: str, category: str = "general", level: str = "info") -> bool:
+    """Push a log line to Firebase RTDB for real-time admin dashboard."""
+    if not _initialized:
+        return False
+
+    try:
+        ref = firebase_db.reference(f"builds/{short_id}/log/{sequence}")
+        ref.set({
+            "seq": sequence,
+            "msg": message,
+            "cat": category,
+            "lvl": level,
+            "ts": {'.sv': 'timestamp'},
+        })
+        return True
+    except Exception as e:
+        logger.debug(f"Firebase log sync failed (non-critical): {e}")
+        return False
+
+
 # ── Parse Requests (Firebase bridge for AI text extraction) ──────
 
 

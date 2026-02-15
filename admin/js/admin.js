@@ -278,20 +278,21 @@ function renderBuildList() {
 }
 
 // ── Select a build ─────────────────────────────────────
+let _firebaseBuildRef = null;  // Active Firebase listener for build detail
+let _firebaseLogRef = null;    // Active Firebase listener for log lines
+
 async function selectBuild(buildId) {
   selectedBuildId = buildId;
   renderBuildList(); // Update selection highlight
 
-  // Close existing SSE
-  if (eventSource) {
-    eventSource.close();
-    eventSource = null;
-  }
+  // Close existing SSE and Firebase listeners
+  if (eventSource) { eventSource.close(); eventSource = null; }
+  _detachFirebaseBuildListeners();
 
   // Reset panels
   aiEvents = [];
   logLines = [];
-  currentStepData = { current: 0, total: 6 };
+  currentStepData = { current: 0, total: 8 };
 
   // Reset pipeline graph
   if (typeof resetPipeline === 'function') {
@@ -304,39 +305,16 @@ async function selectBuild(buildId) {
   $buildDetail.classList.remove('hidden');
   document.getElementById('lead-detail').classList.add('hidden');
 
-  // Fetch build details
+  // ── Strategy: Try API first, fall back to Firebase ──
+  let loaded = false;
+
   try {
-    const res = await fetch(`${API_BASE}/builds/${buildId}`);
+    const res = await fetch(`${API_BASE}/builds/${buildId}`, { signal: AbortSignal.timeout(5000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const build = await res.json();
+    _populateBuildHeader(build);
 
-    // Populate header (FastAPI returns client_name, short_id, etc.)
-    $buildClient.textContent = build.client_name || 'Unknown Client';
-    $buildId.textContent = `#${build.short_id || buildId}`;
-    $buildTime.textContent = formatTime(build.created_at || build.started_at);
-
-    // Status badge
-    const displayStatus = build.status === 'complete' ? 'success' : build.status;
-    const statusMap = {
-      queued:  { text: 'QUEUED',  cls: 'bg-gray-800 text-gray-400' },
-      running: { text: 'RUNNING', cls: 'bg-electric/20 text-electric' },
-      success: { text: 'SUCCESS', cls: 'bg-neon-green/20 text-neon-green' },
-      failed:  { text: 'FAILED',  cls: 'bg-brand-link/20 text-brand-link' },
-    };
-    const s = statusMap[displayStatus] || { text: build.status?.toUpperCase(), cls: 'bg-gray-800 text-gray-400' };
-    $buildStatus.textContent = s.text;
-    $buildStatus.className = `px-2.5 py-1 rounded-full text-xs font-mono font-semibold ${s.cls}`;
-
-    // Meta
-    const metas = [];
-    if (build.niche) metas.push(`<span>🏷 ${esc(build.niche)}</span>`);
-    if (build.email) metas.push(`<span>📧 ${esc(build.email)}</span>`);
-    if (build.live_url) metas.push(`<a href="${build.live_url}" target="_blank" class="text-electric hover:underline">🔗 ${build.live_url}</a>`);
-    $buildMeta.innerHTML = metas.join('');
-
-    // Render initial step progress
-    renderStepProgress(0);
-
-    // Process existing log lines
+    // Process existing log lines from API
     if (build.log && build.log.length > 0) {
       build.log.forEach(line => processLogLine(line, false));
       renderLog();
@@ -344,13 +322,108 @@ async function selectBuild(buildId) {
       scrollLogToBottom();
     }
 
-    // Open SSE for live updates (works for running AND completed builds)
+    // SSE for live updates when API is reachable
     connectSSE(buildId);
+    loaded = true;
 
   } catch (err) {
-    console.error('[Admin] Failed to load build:', err);
-    $logPanel.innerHTML = `<div class="text-brand-link">Failed to load build details: ${err.message}</div>`;
+    console.warn('[Admin] API unavailable, using Firebase for build:', err.message);
   }
+
+  // Always attach Firebase listener for real-time updates (primary in prod)
+  _attachFirebaseBuildListeners(buildId, !loaded);
+}
+
+/** Populate the build detail header from build data (works with both API and Firebase shapes). */
+function _populateBuildHeader(build) {
+  $buildClient.textContent = build.client_name || build.clientName || 'Unknown Client';
+  $buildId.textContent = `#${build.short_id || build.shortId || selectedBuildId}`;
+  $buildTime.textContent = formatTime(build.created_at || build.started_at || build.createdAt);
+
+  _updateBuildStatusBadge(build.status);
+
+  const metas = [];
+  if (build.niche) metas.push(`<span>🏷 ${esc(build.niche)}</span>`);
+  if (build.email) metas.push(`<span>📧 ${esc(build.email)}</span>`);
+  const liveUrl = build.live_url || build.liveUrl;
+  if (liveUrl) metas.push(`<a href="${liveUrl}" target="_blank" class="text-electric hover:underline">🔗 ${liveUrl}</a>`);
+  $buildMeta.innerHTML = metas.join('');
+
+  renderStepProgress(0);
+}
+
+function _updateBuildStatusBadge(status) {
+  const displayStatus = status === 'complete' ? 'success' : status;
+  const statusMap = {
+    queued:  { text: 'QUEUED',  cls: 'bg-gray-800 text-gray-400' },
+    running: { text: 'RUNNING', cls: 'bg-electric/20 text-electric' },
+    success: { text: 'SUCCESS', cls: 'bg-neon-green/20 text-neon-green' },
+    complete:{ text: 'SUCCESS', cls: 'bg-neon-green/20 text-neon-green' },
+    failed:  { text: 'FAILED',  cls: 'bg-brand-link/20 text-brand-link' },
+  };
+  const s = statusMap[displayStatus] || { text: (status || '').toUpperCase(), cls: 'bg-gray-800 text-gray-400' };
+  $buildStatus.textContent = s.text;
+  $buildStatus.className = `px-2.5 py-1 rounded-full text-xs font-mono font-semibold ${s.cls}`;
+}
+
+/** Attach Firebase real-time listeners for a build's status, phases, and logs. */
+function _attachFirebaseBuildListeners(buildId, isPrimary) {
+  if (!window.__db) return;
+
+  const buildRef = window.__db.ref('builds/' + buildId);
+  _firebaseBuildRef = buildRef;
+
+  // Listen to build metadata (status, phases)
+  buildRef.on('value', (snap) => {
+    const data = snap.val();
+    if (!data) return;
+
+    // If Firebase is primary data source, populate header
+    if (isPrimary) {
+      _populateBuildHeader(data);
+    }
+
+    // Always update status badge in real-time
+    _updateBuildStatusBadge(data.status);
+
+    // Update phase progress from Firebase
+    if (data.phases) {
+      const phaseEntries = Object.values(data.phases);
+      const completedPhases = phaseEntries.filter(p => p.status === 'complete').length;
+      const runningPhase = phaseEntries.find(p => p.status === 'running');
+      const currentPhase = runningPhase
+        ? parseInt(Object.keys(data.phases).find(k => data.phases[k] === runningPhase) || '0')
+        : completedPhases;
+      renderStepProgress(currentPhase);
+    }
+
+    // Build finished — update stats
+    if (data.status === 'complete' || data.status === 'failed') {
+      refreshBuilds();
+    }
+  });
+
+  // Listen to log lines (child_added for real-time streaming)
+  const logRef = window.__db.ref('builds/' + buildId + '/log');
+  _firebaseLogRef = logRef;
+
+  logRef.orderByChild('seq').on('child_added', (snap) => {
+    const entry = snap.val();
+    if (!entry || !entry.msg) return;
+
+    const line = entry.msg;
+    processLogLine(line, true);
+
+    if (typeof pipelineHandleLog === 'function') pipelineHandleLog(line);
+    renderLog();
+    if ($autoScroll && $autoScroll.checked) scrollLogToBottom();
+  });
+}
+
+/** Detach Firebase listeners when switching builds. */
+function _detachFirebaseBuildListeners() {
+  if (_firebaseBuildRef) { _firebaseBuildRef.off(); _firebaseBuildRef = null; }
+  if (_firebaseLogRef) { _firebaseLogRef.off(); _firebaseLogRef = null; }
 }
 
 // ── SSE Connection ─────────────────────────────────────
