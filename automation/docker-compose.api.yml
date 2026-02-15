@@ -1,0 +1,52 @@
+# AjayaDesign Automation — Python API + PostgreSQL
+#
+# Usage:
+#   docker compose -f docker-compose.api.yml up --build
+#
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ajayadesign
+      POSTGRES_USER: ajaya
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ajaya"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "3001:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://ajaya:${POSTGRES_PASSWORD:-localdev}@db:5432/ajayadesign"
+      GH_TOKEN: "${GH_TOKEN}"
+      GITHUB_ORG: "ajayadesign"
+      AI_API_URL: "https://models.inference.ai.azure.com/chat/completions"
+      AI_MODEL: "gpt-4o"
+      TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN:-}"
+      TELEGRAM_CHAT_ID: "${TELEGRAM_CHAT_ID:-}"
+      BASE_DIR: "/repos"
+      MAIN_SITE_DIR: "/site"
+      HOST_UID: "${HOST_UID:-1000}"
+      HOST_GID: "${HOST_GID:-1000}"
+    volumes:
+      - repos:/repos
+      - ../../:/site
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  repos:

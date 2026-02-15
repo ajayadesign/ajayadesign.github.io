@@ -770,7 +770,10 @@ function renderLeadDetail() {
   const metas = [];
   if (lead.niche)  metas.push(`<span>🏷 ${esc(lead.niche)}</span>`);
   if (lead.email)  metas.push(`<span>📧 ${esc(lead.email)}</span>`);
+  if (lead.phone)  metas.push(`<span>📱 ${esc(lead.phone)}</span>`);
+  if (lead.location) metas.push(`<span>📍 ${esc(lead.location)}</span>`);
   if (lead.source) metas.push(`<span>🌐 ${esc(lead.source)}</span>`);
+  if (lead.rebuild) metas.push(`<span class="text-yellow-400">⚠️ REBUILD</span>`);
   document.getElementById('lead-meta').innerHTML = metas.join('');
 
   // Content
@@ -779,6 +782,26 @@ function renderLeadDetail() {
   document.getElementById('lead-niche').textContent = lead.niche || '-';
   document.getElementById('lead-time').textContent = lead.submitted_at ? formatTime(lead.submitted_at) : 'Unknown';
   document.getElementById('lead-source').textContent = lead.source || 'direct';
+
+  // Extended fields
+  const $extra = document.getElementById('lead-extra-fields');
+  if ($extra) {
+    const extras = [];
+    if (lead.phone) extras.push(`<div class="flex"><span class="w-32 text-gray-500 shrink-0">Phone</span><span class="text-white">${esc(lead.phone)}</span></div>`);
+    if (lead.location) extras.push(`<div class="flex"><span class="w-32 text-gray-500 shrink-0">Location</span><span class="text-white">${esc(lead.location)}</span></div>`);
+    if (lead.existingWebsite || lead.existing_website) {
+      const url = lead.existingWebsite || lead.existing_website;
+      extras.push(`<div class="flex"><span class="w-32 text-gray-500 shrink-0">Existing Site</span><a href="${esc(url)}" target="_blank" class="text-electric hover:underline">${esc(url)}</a></div>`);
+    }
+    if (lead.brandColors || lead.brand_colors) extras.push(`<div class="flex"><span class="w-32 text-gray-500 shrink-0">Brand Colors</span><span class="text-white">${esc(lead.brandColors || lead.brand_colors)}</span></div>`);
+    if (lead.tagline) extras.push(`<div class="flex"><span class="w-32 text-gray-500 shrink-0">Tagline</span><span class="text-white italic">"${esc(lead.tagline)}"</span></div>`);
+    if (lead.targetAudience || lead.target_audience) extras.push(`<div class="flex"><span class="w-32 text-gray-500 shrink-0">Audience</span><span class="text-white">${esc(lead.targetAudience || lead.target_audience)}</span></div>`);
+    if (lead.competitorUrls || lead.competitor_urls) extras.push(`<div class="flex items-start"><span class="w-32 text-gray-500 shrink-0">Competitors</span><span class="text-white whitespace-pre-line">${esc(lead.competitorUrls || lead.competitor_urls)}</span></div>`);
+    if (lead.additionalNotes || lead.additional_notes) extras.push(`<div class="flex items-start"><span class="w-32 text-gray-500 shrink-0">Notes</span><span class="text-white whitespace-pre-line">${esc(lead.additionalNotes || lead.additional_notes)}</span></div>`);
+    $extra.innerHTML = extras.length
+      ? `<div class="mt-4 pt-4 border-t border-border space-y-2 text-xs font-mono">${extras.join('')}</div>`
+      : '';
+  }
 
   // Email link
   if (lead.email) {
@@ -866,6 +889,219 @@ function restoreLeadById(leadId) {
   if (leadId === selectedLeadId) {
     setTimeout(() => switchLeadsSubTab('active'), 300);
   }
+}
+
+// ── Add Client Modal ───────────────────────────────────
+let addClientTab = 'manual';
+
+function openAddClientModal() {
+  document.getElementById('add-client-modal').classList.remove('hidden');
+  switchAddClientTab('manual');
+  clearAddClientForm();
+}
+
+function closeAddClientModal() {
+  document.getElementById('add-client-modal').classList.add('hidden');
+  clearAddClientForm();
+}
+
+function switchAddClientTab(tab) {
+  addClientTab = tab;
+  const $manual = document.getElementById('acm-tab-manual');
+  const $ai     = document.getElementById('acm-tab-ai');
+  const $aiPanel = document.getElementById('acm-ai-panel');
+
+  if (tab === 'manual') {
+    $manual.className = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition';
+    $ai.className     = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition';
+    $aiPanel.classList.add('hidden');
+  } else {
+    $ai.className     = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition';
+    $manual.className = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition';
+    $aiPanel.classList.remove('hidden');
+  }
+}
+
+function clearAddClientForm() {
+  const ids = ['acm-business-name','acm-niche','acm-email','acm-goals','acm-phone','acm-location',
+    'acm-existing-website','acm-brand-colors','acm-tagline','acm-target-audience',
+    'acm-competitor-urls','acm-additional-notes','acm-raw-text'];
+  ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  const cb = document.getElementById('acm-rebuild');
+  if (cb) cb.checked = false;
+  const $status = document.getElementById('acm-parse-status');
+  if ($status) { $status.classList.add('hidden'); $status.textContent = ''; }
+}
+
+async function parseWithAI() {
+  const rawText = (document.getElementById('acm-raw-text')?.value || '').trim();
+  if (rawText.length < 10) {
+    alert('Please paste at least a few sentences of client details.');
+    return;
+  }
+
+  const $btn = document.getElementById('acm-parse-btn');
+  const $status = document.getElementById('acm-parse-status');
+  const origHTML = $btn.innerHTML;
+  $btn.innerHTML = '⏳ Parsing...';
+  $btn.disabled = true;
+  $status.classList.remove('hidden');
+  $status.className = 'text-xs font-mono text-gray-400';
+  $status.textContent = 'Sending to AI...';
+
+  try {
+    const res = await fetch(`${API_BASE}/parse-client`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rawText: rawText }),
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    const p = data.parsed || {};
+
+    // Populate form fields from parsed data
+    const fieldMap = {
+      'acm-business-name':    p.businessName || p.business_name || '',
+      'acm-niche':            p.niche || '',
+      'acm-email':            p.email || '',
+      'acm-goals':            p.goals || '',
+      'acm-phone':            p.phone || '',
+      'acm-location':         p.location || '',
+      'acm-existing-website': p.existingWebsite || p.existing_website || '',
+      'acm-brand-colors':     p.brandColors || p.brand_colors || '',
+      'acm-tagline':          p.tagline || '',
+      'acm-target-audience':  p.targetAudience || p.target_audience || '',
+      'acm-competitor-urls':  p.competitorUrls || p.competitor_urls || '',
+      'acm-additional-notes': p.additionalNotes || p.additional_notes || '',
+    };
+
+    Object.entries(fieldMap).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el && val) el.value = val;
+    });
+
+    // Highlight required fields that are still empty
+    ['acm-business-name', 'acm-niche', 'acm-email', 'acm-goals'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && !el.value.trim()) {
+        el.classList.add('border-red-500/50');
+      } else if (el) {
+        el.classList.remove('border-red-500/50');
+      }
+    });
+
+    const conf = data.confidence || 'medium';
+    const confColors = { high: 'text-neon-green', medium: 'text-neon-yellow', low: 'text-neon-orange' };
+    $status.className = `text-xs font-mono ${confColors[conf] || 'text-gray-400'}`;
+    $status.textContent = `✅ Parsed (${conf} confidence) — review and edit below`;
+
+  } catch (err) {
+    console.error('[Admin] AI parse failed:', err);
+    $status.className = 'text-xs font-mono text-brand-link';
+    $status.textContent = `❌ Parse failed: ${err.message}. Fill the form manually.`;
+  } finally {
+    $btn.innerHTML = origHTML;
+    $btn.disabled = false;
+  }
+}
+
+async function saveNewLead(triggerBuild) {
+  // Validate required fields
+  const biz   = (document.getElementById('acm-business-name')?.value || '').trim();
+  const niche = (document.getElementById('acm-niche')?.value || '').trim();
+  const email = (document.getElementById('acm-email')?.value || '').trim();
+  const goals = (document.getElementById('acm-goals')?.value || '').trim();
+
+  if (!biz || !niche || !email || !goals) {
+    alert('Please fill in all required fields: Business Name, Niche, Email, Goals.');
+    return;
+  }
+
+  const ts = Date.now();
+  const leadId = email.replace(/[@.]/g, '-') + '_' + ts;
+  const source = addClientTab === 'ai' ? 'admin-ai-parse' : 'admin-manual';
+
+  const leadData = {
+    business_name: biz,
+    niche: niche,
+    goals: goals,
+    email: email,
+    phone:            (document.getElementById('acm-phone')?.value || '').trim(),
+    location:         (document.getElementById('acm-location')?.value || '').trim(),
+    existingWebsite:  (document.getElementById('acm-existing-website')?.value || '').trim(),
+    brandColors:      (document.getElementById('acm-brand-colors')?.value || '').trim(),
+    tagline:          (document.getElementById('acm-tagline')?.value || '').trim(),
+    targetAudience:   (document.getElementById('acm-target-audience')?.value || '').trim(),
+    competitorUrls:   (document.getElementById('acm-competitor-urls')?.value || '').trim(),
+    additionalNotes:  (document.getElementById('acm-additional-notes')?.value || '').trim(),
+    rebuild:          !!(document.getElementById('acm-rebuild')?.checked),
+    timestamp: ts,
+    submitted_at: new Date(ts).toISOString(),
+    source: source,
+    status: triggerBuild ? 'building' : 'new',
+  };
+
+  // 1. Save to Firebase RTDB
+  try {
+    if (window.__db) {
+      await window.__db.ref('leads/' + leadId).set(leadData);
+      console.log('[Admin] ✅ Lead saved to Firebase:', leadId);
+    }
+  } catch (err) {
+    console.error('[Admin] Firebase save failed:', err);
+    alert('Failed to save lead to Firebase: ' + err.message);
+    return;
+  }
+
+  // 2. Trigger build if requested
+  if (triggerBuild) {
+    try {
+      const res = await fetch(`${API_BASE}/build`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          businessName: biz,
+          niche: niche,
+          goals: goals,
+          email: email,
+          phone: leadData.phone,
+          location: leadData.location,
+          existingWebsite: leadData.existingWebsite,
+          brandColors: leadData.brandColors,
+          tagline: leadData.tagline,
+          targetAudience: leadData.targetAudience,
+          competitorUrls: leadData.competitorUrls,
+          additionalNotes: leadData.additionalNotes,
+          rebuild: leadData.rebuild,
+          firebaseId: leadId,
+          source: source,
+        }),
+      });
+      const data = await res.json();
+      console.log('[Admin] ✅ Build triggered:', data);
+      closeAddClientModal();
+      switchTab('builds');
+      if (data.id || data.short_id) {
+        setTimeout(() => {
+          refreshBuilds();
+          selectBuild(data.id || data.short_id);
+        }, 1000);
+      }
+      return;
+    } catch (err) {
+      console.warn('[Admin] Build trigger failed (lead still saved):', err);
+    }
+  }
+
+  closeAddClientModal();
+  switchTab('leads');
+  switchLeadsSubTab('active');
 }
 
 // ── Sign out ───────────────────────────────────────────
