@@ -7,8 +7,8 @@
 // Change this when Cloudflare Tunnel is set up:
 //   e.g. 'https://api.ajayadesign.com'
 const API_BASE = window.location.hostname === 'localhost'
-  ? 'http://localhost:3456'
-  : 'http://localhost:3456'; // TODO: replace with tunnel URL
+  ? 'http://localhost:8000/api/v1'
+  : 'http://localhost:8000/api/v1'; // TODO: replace with tunnel URL
 
 const POLL_INTERVAL = 5000;
 const ALLOWED_EMAIL = 'ajayadahal1000@gmail.com'; // Only this user can access admin
@@ -188,7 +188,17 @@ async function refreshBuilds() {
   try {
     const res = await fetch(`${API_BASE}/builds`, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    builds = await res.json();
+    const data = await res.json();
+    builds = (data.builds || []).map(b => ({
+      id: b.short_id,
+      client: b.client_name,
+      status: b.status === 'complete' ? 'success' : b.status,
+      niche: b.niche,
+      email: b.email,
+      started: b.created_at || b.started_at,
+      finished: b.finished_at,
+      liveUrl: b.live_url,
+    }));
     renderBuildList();
     updateStats();
   } catch (err) {
@@ -199,7 +209,7 @@ async function refreshBuilds() {
 
 function updateStats() {
   $statTotal.textContent = builds.length;
-  $statSuccess.textContent = builds.filter(b => b.status === 'success').length;
+  $statSuccess.textContent = builds.filter(b => b.status === 'success' || b.status === 'complete').length;
   $statFailed.textContent = builds.filter(b => b.status === 'failed').length;
 }
 
@@ -216,8 +226,9 @@ function renderBuildList() {
 
   $buildList.innerHTML = builds.map(b => {
     const isSelected = b.id === selectedBuildId;
-    const statusIcon = b.status === 'running' ? '🔄' : b.status === 'success' ? '✅' : '❌';
-    const statusClass = b.status === 'running' ? 'text-electric' : b.status === 'success' ? 'text-neon-green' : 'text-brand-link';
+    const isSuccess = b.status === 'success' || b.status === 'complete';
+    const statusIcon = b.status === 'queued' ? '⏳' : b.status === 'running' ? '🔄' : isSuccess ? '✅' : '❌';
+    const statusClass = b.status === 'queued' ? 'text-gray-500' : b.status === 'running' ? 'text-electric' : isSuccess ? 'text-neon-green' : 'text-brand-link';
     const time = formatTime(b.started);
     const duration = b.finished ? formatDuration(b.started, b.finished) : b.status === 'running' ? 'running...' : '';
 
@@ -271,18 +282,20 @@ async function selectBuild(buildId) {
     const res = await fetch(`${API_BASE}/builds/${buildId}`);
     const build = await res.json();
 
-    // Populate header
-    $buildClient.textContent = build.client || 'Unknown Client';
-    $buildId.textContent = `#${build.id}`;
-    $buildTime.textContent = formatTime(build.started);
+    // Populate header (FastAPI returns client_name, short_id, etc.)
+    $buildClient.textContent = build.client_name || 'Unknown Client';
+    $buildId.textContent = `#${build.short_id || buildId}`;
+    $buildTime.textContent = formatTime(build.created_at || build.started_at);
 
     // Status badge
+    const displayStatus = build.status === 'complete' ? 'success' : build.status;
     const statusMap = {
+      queued:  { text: 'QUEUED',  cls: 'bg-gray-800 text-gray-400' },
       running: { text: 'RUNNING', cls: 'bg-electric/20 text-electric' },
       success: { text: 'SUCCESS', cls: 'bg-neon-green/20 text-neon-green' },
       failed:  { text: 'FAILED',  cls: 'bg-brand-link/20 text-brand-link' },
     };
-    const s = statusMap[build.status] || { text: build.status, cls: 'bg-gray-800 text-gray-400' };
+    const s = statusMap[displayStatus] || { text: build.status?.toUpperCase(), cls: 'bg-gray-800 text-gray-400' };
     $buildStatus.textContent = s.text;
     $buildStatus.className = `px-2.5 py-1 rounded-full text-xs font-mono font-semibold ${s.cls}`;
 
@@ -290,7 +303,7 @@ async function selectBuild(buildId) {
     const metas = [];
     if (build.niche) metas.push(`<span>🏷 ${esc(build.niche)}</span>`);
     if (build.email) metas.push(`<span>📧 ${esc(build.email)}</span>`);
-    if (build.liveUrl) metas.push(`<a href="${build.liveUrl}" target="_blank" class="text-electric hover:underline">🔗 ${build.liveUrl}</a>`);
+    if (build.live_url) metas.push(`<a href="${build.live_url}" target="_blank" class="text-electric hover:underline">🔗 ${build.live_url}</a>`);
     $buildMeta.innerHTML = metas.join('');
 
     // Render initial step progress
@@ -322,67 +335,54 @@ function connectSSE(buildId) {
     console.log('[Admin] SSE connected for build', buildId);
   };
 
-  eventSource.addEventListener('log', (e) => {
-    const data = JSON.parse(e.data);
-    processLogLine(data.raw || data.line, true);
-    // Feed to pipeline graph for metadata extraction
-    if (typeof pipelineHandleLog === 'function') pipelineHandleLog(data.raw || data.line);
-    renderLog();
-    if ($autoScroll.checked) scrollLogToBottom();
-  });
+  // FastAPI sends generic "data:" events — dispatch by event.type field
+  eventSource.onmessage = (e) => {
+    let data;
+    try { data = JSON.parse(e.data); } catch { return; }
 
-  eventSource.addEventListener('step', (e) => {
-    const data = JSON.parse(e.data);
-    currentStepData = { current: data.current, total: data.total };
-    renderStepProgress(data.current);
-    // Feed to pipeline graph
-    if (typeof pipelineHandleStep === 'function') pipelineHandleStep(data);
-    // Also add as log line
-    processLogLine(data.raw || `[STEP:${data.current}:${data.total}:${data.stepName}] ${data.message}`, true);
-    renderLog();
-    if ($autoScroll.checked) scrollLogToBottom();
-  });
+    const type = data.type;
 
-  eventSource.addEventListener('ai', (e) => {
-    const data = JSON.parse(e.data);
-    aiEvents.push(data);
-    renderAI();
-    // Feed to pipeline graph
-    if (typeof pipelineHandleAI === 'function') pipelineHandleAI(data);
-  });
+    if (type === 'log') {
+      processLogLine(data.raw || data.message || data.line, true);
+      if (typeof pipelineHandleLog === 'function') pipelineHandleLog(data.raw || data.message || data.line);
+      renderLog();
+      if ($autoScroll.checked) scrollLogToBottom();
 
-  eventSource.addEventListener('test', (e) => {
-    const data = JSON.parse(e.data);
-    // Add to AI panel as well for visibility
-    aiEvents.push({ ...data, type: 'test' });
-    renderAI();
-    // Feed to pipeline graph
-    if (typeof pipelineHandleTest === 'function') pipelineHandleTest(data);
-    processLogLine(data.raw || `[TEST:${data.action}] ${data.message}`, true);
-    renderLog();
-    if ($autoScroll.checked) scrollLogToBottom();
-  });
+    } else if (type === 'step') {
+      currentStepData = { current: data.current, total: data.total };
+      renderStepProgress(data.current);
+      if (typeof pipelineHandleStep === 'function') pipelineHandleStep(data);
+      processLogLine(data.raw || `[STEP:${data.current}:${data.total}:${data.stepName || data.step_name}] ${data.message || ''}`, true);
+      renderLog();
+      if ($autoScroll.checked) scrollLogToBottom();
 
-  eventSource.addEventListener('done', (e) => {
-    const data = JSON.parse(e.data);
-    // Update header status
-    const s = data.status === 'success'
-      ? { text: 'SUCCESS', cls: 'bg-neon-green/20 text-neon-green' }
-      : { text: 'FAILED', cls: 'bg-brand-link/20 text-brand-link' };
-    $buildStatus.textContent = s.text;
-    $buildStatus.className = `px-2.5 py-1 rounded-full text-xs font-mono font-semibold ${s.cls}`;
+    } else if (type === 'ai') {
+      aiEvents.push(data);
+      renderAI();
+      if (typeof pipelineHandleAI === 'function') pipelineHandleAI(data);
 
-    if (data.status === 'success') renderStepProgress(6);
-    // Feed to pipeline graph
-    if (typeof pipelineHandleDone === 'function') pipelineHandleDone(data);
-    refreshBuilds();
-    eventSource.close();
-  });
+    } else if (type === 'test') {
+      aiEvents.push({ ...data, type: 'test' });
+      renderAI();
+      if (typeof pipelineHandleTest === 'function') pipelineHandleTest(data);
+      processLogLine(data.raw || `[TEST:${data.action}] ${data.message || ''}`, true);
+      renderLog();
+      if ($autoScroll.checked) scrollLogToBottom();
 
-  eventSource.addEventListener('catch-up-done', () => {
-    // All historical lines have been sent; now receiving live data
-    console.log('[Admin] Catch-up complete, streaming live');
-  });
+    } else if (type === 'done' || type === 'timeout') {
+      const finalStatus = data.status === 'complete' ? 'success' : data.status;
+      const s = finalStatus === 'success'
+        ? { text: 'SUCCESS', cls: 'bg-neon-green/20 text-neon-green' }
+        : { text: 'FAILED', cls: 'bg-brand-link/20 text-brand-link' };
+      $buildStatus.textContent = s.text;
+      $buildStatus.className = `px-2.5 py-1 rounded-full text-xs font-mono font-semibold ${s.cls}`;
+
+      if (finalStatus === 'success') renderStepProgress(8);
+      if (typeof pipelineHandleDone === 'function') pipelineHandleDone(data);
+      refreshBuilds();
+      eventSource.close();
+    }
+  };
 
   eventSource.onerror = () => {
     console.warn('[Admin] SSE error/closed');
@@ -837,24 +837,31 @@ function triggerBuildForLead() {
   // Update status to building
   updateLeadStatus(selectedLeadId, 'building');
 
-  // POST to runner
-  fetch(`${API_BASE}/build`, {
+  // POST to FastAPI
+  fetch(`${API_BASE}/builds`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      business_name: lead.business_name,
+      businessName: lead.business_name,
       niche: lead.niche,
-      goals: lead.goals,
+      goals: lead.goals || '',
       email: lead.email,
+      phone: lead.phone || undefined,
+      location: lead.location || undefined,
+      firebaseId: selectedLeadId,
+      source: lead.source || 'admin-trigger',
     }),
   })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) return res.json().then(e => { throw new Error(e.detail || `HTTP ${res.status}`); });
+      return res.json();
+    })
     .then(data => {
       console.log('[Admin] Build triggered:', data);
       // Switch to builds tab and select the new build
       switchTab('builds');
-      if (data.id) {
-        setTimeout(() => selectBuild(data.id), 1000);
+      if (data.short_id) {
+        setTimeout(() => selectBuild(data.short_id), 1000);
       }
       refreshBuilds();
     })
@@ -954,7 +961,7 @@ async function parseWithAI() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ rawText: rawText }),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!res.ok) {
@@ -1062,7 +1069,7 @@ async function saveNewLead(triggerBuild) {
   // 2. Trigger build if requested
   if (triggerBuild) {
     try {
-      const res = await fetch(`${API_BASE}/build`, {
+      const res = await fetch(`${API_BASE}/builds`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1070,27 +1077,31 @@ async function saveNewLead(triggerBuild) {
           niche: niche,
           goals: goals,
           email: email,
-          phone: leadData.phone,
-          location: leadData.location,
-          existingWebsite: leadData.existingWebsite,
-          brandColors: leadData.brandColors,
-          tagline: leadData.tagline,
-          targetAudience: leadData.targetAudience,
-          competitorUrls: leadData.competitorUrls,
-          additionalNotes: leadData.additionalNotes,
+          phone: leadData.phone || undefined,
+          location: leadData.location || undefined,
+          existingWebsite: leadData.existingWebsite || undefined,
+          brandColors: leadData.brandColors || undefined,
+          tagline: leadData.tagline || undefined,
+          targetAudience: leadData.targetAudience || undefined,
+          competitorUrls: leadData.competitorUrls || undefined,
+          additionalNotes: leadData.additionalNotes || undefined,
           rebuild: leadData.rebuild,
           firebaseId: leadId,
           source: source,
         }),
       });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || `HTTP ${res.status}`);
+      }
       const data = await res.json();
       console.log('[Admin] ✅ Build triggered:', data);
       closeAddClientModal();
       switchTab('builds');
-      if (data.id || data.short_id) {
+      if (data.short_id) {
         setTimeout(() => {
           refreshBuilds();
-          selectBuild(data.id || data.short_id);
+          selectBuild(data.short_id);
         }, 1000);
       }
       return;
