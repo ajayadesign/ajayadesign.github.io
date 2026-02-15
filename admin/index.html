@@ -226,6 +226,9 @@
       <h1 class="font-mono font-semibold text-white text-sm tracking-wide">AjayaDesign<span class="text-electric">::</span>Admin</h1>
     </div>
     <div class="flex items-center gap-4">
+      <button onclick="openAddClientModal()" class="flex items-center gap-1.5 px-3 py-1.5 bg-electric/10 text-electric border border-electric/30 rounded-lg font-mono text-xs font-semibold hover:bg-electric/20 transition">
+        ➕ Add Client
+      </button>
       <div id="connection-status" class="flex items-center gap-2 text-xs font-mono">
         <span class="w-2 h-2 rounded-full bg-gray-600" id="conn-dot"></span>
         <span id="conn-text" class="text-gray-500">Disconnected</span>
@@ -355,7 +358,7 @@
           </div>
 
           <!-- Info Grid -->
-          <div class="grid grid-cols-2 gap-4 mb-8">
+          <div class="grid grid-cols-2 gap-4 mb-4">
             <div class="bg-surface-2 rounded-xl border border-border p-4">
               <div class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1">Email</div>
               <div id="lead-email" class="text-sm text-electric font-mono"></div>
@@ -373,6 +376,9 @@
               <div id="lead-source" class="text-sm text-gray-300 font-mono"></div>
             </div>
           </div>
+
+          <!-- Extended Fields (populated by JS) -->
+          <div id="lead-extra-fields" class="mb-8"></div>
 
           <!-- Actions -->
           <div>
@@ -485,6 +491,147 @@
         Sign in with Google
       </button>
       <p id="login-error" class="text-brand-link text-xs mt-4 hidden"></p>
+    </div>
+  </div>
+
+  <!-- ═══ Add Client Modal ═══ -->
+  <div id="add-client-modal" class="fixed inset-0 z-[100] hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeAddClientModal()"></div>
+    <!-- Modal -->
+    <div class="absolute inset-4 md:inset-y-8 md:inset-x-auto md:max-w-2xl md:mx-auto bg-surface-1 rounded-2xl border border-border shadow-2xl flex flex-col overflow-hidden animate-slide-up">
+      <!-- Header -->
+      <div class="flex items-center justify-between p-5 border-b border-border">
+        <h2 class="font-mono font-semibold text-white text-sm">➕ Add New Client</h2>
+        <button onclick="closeAddClientModal()" class="text-gray-500 hover:text-white transition text-xl leading-none">&times;</button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex border-b border-border">
+        <button id="acm-tab-manual" onclick="switchAddClientTab('manual')"
+          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition">
+          Manual Form
+        </button>
+        <button id="acm-tab-ai" onclick="switchAddClientTab('ai')"
+          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+          AI Paste &amp; Parse
+        </button>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="flex-1 overflow-y-auto p-5 space-y-4">
+
+        <!-- ── AI Parse Panel ── -->
+        <div id="acm-ai-panel" class="hidden space-y-4">
+          <p class="text-xs text-gray-400 font-mono">Paste client details below — email, text message, notes, anything. AI will extract the fields.</p>
+          <textarea id="acm-raw-text" rows="6"
+            placeholder="Hey Aj, I run a bakery called Sunrise Bakery in Portland OR. We need a website to showcase our artisan breads..."
+            class="w-full px-4 py-3 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric focus:ring-1 focus:ring-electric/50 transition-colors resize-none"></textarea>
+          <button onclick="parseWithAI()" id="acm-parse-btn"
+            class="flex items-center gap-2 px-4 py-2.5 bg-electric/10 text-electric border border-electric/30 rounded-lg font-mono text-xs font-semibold hover:bg-electric/20 transition">
+            🤖 Parse with AI
+          </button>
+          <div id="acm-parse-status" class="hidden text-xs font-mono"></div>
+        </div>
+
+        <!-- ── Form Fields (shared by Manual and AI-parsed) ── -->
+        <div id="acm-form-fields">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Business Name -->
+            <div class="md:col-span-2">
+              <label class="block font-mono text-xs text-gray-500 mb-1">Business Name <span class="text-red-400">*</span></label>
+              <input id="acm-business-name" type="text" required
+                class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="e.g. Sunrise Bakery" />
+            </div>
+            <!-- Niche -->
+            <div>
+              <label class="block font-mono text-xs text-gray-500 mb-1">Niche / Industry <span class="text-red-400">*</span></label>
+              <input id="acm-niche" type="text" required
+                class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="e.g. Artisan Bakery" />
+            </div>
+            <!-- Email -->
+            <div>
+              <label class="block font-mono text-xs text-gray-500 mb-1">Email <span class="text-red-400">*</span></label>
+              <input id="acm-email" type="email" required
+                class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="hello@client.com" />
+            </div>
+            <!-- Goals -->
+            <div class="md:col-span-2">
+              <label class="block font-mono text-xs text-gray-500 mb-1">Goals <span class="text-red-400">*</span></label>
+              <textarea id="acm-goals" rows="2"
+                class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition resize-none" placeholder="What should the website accomplish?"></textarea>
+            </div>
+            <!-- Phone -->
+            <div>
+              <label class="block font-mono text-xs text-gray-500 mb-1">Phone</label>
+              <input id="acm-phone" type="tel"
+                class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="(503) 555-1234" />
+            </div>
+            <!-- Location -->
+            <div>
+              <label class="block font-mono text-xs text-gray-500 mb-1">Location</label>
+              <input id="acm-location" type="text"
+                class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="Portland, OR" />
+            </div>
+            <!-- Existing Website -->
+            <div>
+              <label class="block font-mono text-xs text-gray-500 mb-1">Existing Website</label>
+              <input id="acm-existing-website" type="url"
+                class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="https://current-site.com" />
+            </div>
+            <!-- Brand Colors -->
+            <div>
+              <label class="block font-mono text-xs text-gray-500 mb-1">Brand Colors</label>
+              <input id="acm-brand-colors" type="text"
+                class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="Navy blue #1a365d, Gold" />
+            </div>
+            <!-- Tagline -->
+            <div class="md:col-span-2">
+              <label class="block font-mono text-xs text-gray-500 mb-1">Tagline / Slogan</label>
+              <input id="acm-tagline" type="text"
+                class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="e.g. Fresh Baked Daily Since 1985" />
+            </div>
+            <!-- Target Audience -->
+            <div class="md:col-span-2">
+              <label class="block font-mono text-xs text-gray-500 mb-1">Target Audience</label>
+              <input id="acm-target-audience" type="text"
+                class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="e.g. Young professionals aged 25-40" />
+            </div>
+            <!-- Competitor URLs -->
+            <div class="md:col-span-2">
+              <label class="block font-mono text-xs text-gray-500 mb-1">Competitor URLs</label>
+              <textarea id="acm-competitor-urls" rows="2"
+                class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition resize-none" placeholder="One URL per line"></textarea>
+            </div>
+            <!-- Additional Notes -->
+            <div class="md:col-span-2">
+              <label class="block font-mono text-xs text-gray-500 mb-1">Additional Notes</label>
+              <textarea id="acm-additional-notes" rows="2"
+                class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition resize-none" placeholder="Special hours, certifications, awards..."></textarea>
+            </div>
+            <!-- Rebuild -->
+            <div class="md:col-span-2">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="acm-rebuild" class="w-4 h-4 rounded border-border bg-surface text-electric focus:ring-electric/50" />
+                <span class="font-mono text-xs text-gray-400">Rebuild existing site</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="p-5 border-t border-border flex items-center justify-between gap-3">
+        <button onclick="closeAddClientModal()" class="px-4 py-2.5 text-gray-500 font-mono text-xs hover:text-white transition">Cancel</button>
+        <div class="flex gap-3">
+          <button onclick="saveNewLead(false)" class="px-4 py-2.5 bg-surface-2 text-gray-300 border border-border rounded-lg font-mono text-xs hover:border-border-glow transition">
+            Save Lead Only
+          </button>
+          <button onclick="saveNewLead(true)" class="px-4 py-2.5 bg-electric/10 text-electric border border-electric/30 rounded-lg font-mono text-xs font-semibold hover:bg-electric/20 transition">
+            🚀 Save &amp; Build
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 

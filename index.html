@@ -594,10 +594,10 @@
             ></textarea>
           </div>
 
-          <!-- Email (bonus) -->
+          <!-- Email -->
           <div>
             <label for="email" class="block font-mono text-sm text-gray-400 mb-2">
-              <span class="text-amd-red">$</span> contact_email
+              <span class="text-amd-red">$</span> contact_email <span class="text-red-400">*</span>
             </label>
             <input
               type="email"
@@ -607,6 +607,156 @@
               placeholder="you@example.com"
               class="w-full px-4 py-3 rounded-lg bg-surface border border-border-dim text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-amd-red focus:ring-1 focus:ring-amd-red/50 transition-colors"
             />
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label for="phone" class="block font-mono text-sm text-gray-400 mb-2">
+              <span class="text-amd-red">$</span> phone <span class="text-red-400">*</span>
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              required
+              pattern="[0-9+\-() ]+"
+              placeholder="(503) 555-1234"
+              class="w-full px-4 py-3 rounded-lg bg-surface border border-border-dim text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-amd-red focus:ring-1 focus:ring-amd-red/50 transition-colors"
+            />
+          </div>
+
+          <!-- Location -->
+          <div>
+            <label for="location" class="block font-mono text-sm text-gray-400 mb-2">
+              <span class="text-amd-red">$</span> location <span class="text-red-400">*</span>
+            </label>
+            <input
+              type="text"
+              id="location"
+              name="location"
+              required
+              minlength="3"
+              placeholder="e.g. Portland, OR"
+              class="w-full px-4 py-3 rounded-lg bg-surface border border-border-dim text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-amd-red focus:ring-1 focus:ring-amd-red/50 transition-colors"
+            />
+          </div>
+
+          <!-- ── Optional Fields (collapsed by default) ── -->
+          <div>
+            <button type="button" id="toggle-optional"
+              class="flex items-center gap-2 font-mono text-sm text-gray-400 hover:text-amd-red transition-colors"
+              onclick="document.getElementById('optional-fields').classList.toggle('hidden');this.querySelector('svg').classList.toggle('rotate-180')">
+              <svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              Optional — help the AI build a better site
+            </button>
+          </div>
+
+          <div id="optional-fields" class="hidden space-y-6">
+            <!-- Existing Website -->
+            <div>
+              <label for="existing-website" class="block font-mono text-sm text-gray-400 mb-2">
+                <span class="text-amd-red">$</span> existing_website
+              </label>
+              <input
+                type="url"
+                id="existing-website"
+                name="existing_website"
+                placeholder="https://your-current-site.com"
+                class="w-full px-4 py-3 rounded-lg bg-surface border border-border-dim text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-amd-red focus:ring-1 focus:ring-amd-red/50 transition-colors"
+              />
+            </div>
+
+            <!-- Brand Colors -->
+            <div>
+              <label for="brand-colors" class="block font-mono text-sm text-gray-400 mb-2">
+                <span class="text-amd-red">$</span> brand_colors
+              </label>
+              <input
+                type="text"
+                id="brand-colors"
+                name="brand_colors"
+                placeholder="e.g. Navy blue #1a365d, Gold #d4a843"
+                class="w-full px-4 py-3 rounded-lg bg-surface border border-border-dim text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-amd-red focus:ring-1 focus:ring-amd-red/50 transition-colors"
+              />
+            </div>
+
+            <!-- Tagline -->
+            <div>
+              <label for="tagline" class="block font-mono text-sm text-gray-400 mb-2">
+                <span class="text-amd-red">$</span> tagline
+              </label>
+              <input
+                type="text"
+                id="tagline"
+                name="tagline"
+                placeholder="e.g. Fresh Baked Daily Since 1985"
+                class="w-full px-4 py-3 rounded-lg bg-surface border border-border-dim text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-amd-red focus:ring-1 focus:ring-amd-red/50 transition-colors"
+              />
+            </div>
+
+            <!-- Target Audience -->
+            <div>
+              <label for="target-audience" class="block font-mono text-sm text-gray-400 mb-2">
+                <span class="text-amd-red">$</span> target_audience
+              </label>
+              <input
+                type="text"
+                id="target-audience"
+                name="target_audience"
+                placeholder="e.g. Young professionals aged 25-40 in Austin, TX"
+                class="w-full px-4 py-3 rounded-lg bg-surface border border-border-dim text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-amd-red focus:ring-1 focus:ring-amd-red/50 transition-colors"
+              />
+            </div>
+
+            <!-- Competitor URLs -->
+            <div>
+              <label for="competitor-urls" class="block font-mono text-sm text-gray-400 mb-2">
+                <span class="text-amd-red">$</span> competitor_urls
+              </label>
+              <textarea
+                id="competitor-urls"
+                name="competitor_urls"
+                rows="2"
+                placeholder="One URL per line — AI will study them for differentiation"
+                class="w-full px-4 py-3 rounded-lg bg-surface border border-border-dim text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-amd-red focus:ring-1 focus:ring-amd-red/50 transition-colors resize-none"
+              ></textarea>
+            </div>
+
+            <!-- Additional Notes -->
+            <div>
+              <label for="additional-notes" class="block font-mono text-sm text-gray-400 mb-2">
+                <span class="text-amd-red">$</span> additional_notes
+              </label>
+              <textarea
+                id="additional-notes"
+                name="additional_notes"
+                rows="3"
+                placeholder="Special hours, certifications, awards, anything else the AI should know..."
+                class="w-full px-4 py-3 rounded-lg bg-surface border border-border-dim text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-amd-red focus:ring-1 focus:ring-amd-red/50 transition-colors resize-none"
+              ></textarea>
+            </div>
+
+            <!-- Rebuild Checkbox with Safety -->
+            <div>
+              <label class="flex items-center gap-3 cursor-pointer group">
+                <input type="checkbox" id="rebuild-checkbox" name="rebuild" value="true"
+                  class="w-4 h-4 rounded border-border-dim bg-surface text-amd-red focus:ring-amd-red/50"
+                  onchange="document.getElementById('rebuild-confirm-panel').classList.toggle('hidden', !this.checked)" />
+                <span class="font-mono text-sm text-gray-400 group-hover:text-gray-300">Rebuild existing site</span>
+              </label>
+              <div id="rebuild-confirm-panel" class="hidden mt-3 p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
+                <p class="font-mono text-xs text-yellow-400 mb-2">⚠️ This will <strong>replace</strong> your existing site with a fresh build. Your current site will be backed up as a git branch before rebuild.</p>
+                <label for="rebuild-confirm" class="block font-mono text-xs text-yellow-400 mb-1">
+                  Type your business name to confirm:
+                </label>
+                <input
+                  type="text"
+                  id="rebuild-confirm"
+                  placeholder="Type business name exactly"
+                  class="w-full px-3 py-2 rounded bg-surface border border-yellow-500/50 text-white font-mono text-xs placeholder-gray-600 focus:outline-none focus:border-yellow-400"
+                />
+              </div>
+            </div>
           </div>
 
           <!-- Submit -->

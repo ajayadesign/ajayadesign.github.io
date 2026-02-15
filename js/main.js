@@ -51,12 +51,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Intake Form Submission ──
-  // Dual-send: FormSubmit.co (email — always works) + n8n (automation pipeline).
-  // n8n only fires when browsing from the same machine running Docker.
-  // From production (GitHub Pages), n8n silently fails and email still delivers.
+  // Quad-send: Firebase (DB) + FormSubmit (email) + n8n (automation) + Python API (pipeline).
+  // Firebase = persistent storage. FormSubmit = email backup.
+  // n8n fires only from local Docker. Python API fires only when FastAPI is running.
   const N8N_WEBHOOK = 'http://localhost:5678/webhook/ajayadesign-intake';
+  const PYTHON_API = 'http://localhost:8000/api/v1/build';
   const FORMSUBMIT_URL = 'https://formsubmit.co/ajax/9dc23f5c5eb6fba941487190ff80294b';
   const N8N_TIMEOUT_MS = 3000; // fail fast from production
+  const API_TIMEOUT_MS = 5000;
   const intakeForm = document.getElementById('ajayadesign-intake-form');
 
   intakeForm.addEventListener('submit', async (e) => {
@@ -65,12 +67,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = Object.fromEntries(formData.entries());
     console.log('[AjayaDesign] Intake submission:', data);
 
-    // Clean lead data — only real fields, no FormSubmit config
+    // Rebuild safety gate — must type business name to confirm
+    const rebuildBox = document.getElementById('rebuild-checkbox');
+    const rebuildConfirm = document.getElementById('rebuild-confirm');
+    if (rebuildBox && rebuildBox.checked) {
+      const typed = (rebuildConfirm ? rebuildConfirm.value.trim() : '');
+      if (typed.toLowerCase() !== (data.business_name || '').trim().toLowerCase()) {
+        alert('To confirm a rebuild, type your business name exactly in the confirmation field.');
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+        return;
+      }
+    }
+
+    // Clean lead data — all fields, no FormSubmit config
     const lead = {
-      business_name: data.business_name || '',
-      niche: data.niche || '',
-      goals: data.goals || '',
-      email: data.email || '',
+      businessName:      data.business_name || '',
+      niche:             data.niche || '',
+      goals:             data.goals || '',
+      email:             data.email || '',
+      phone:             data.phone || '',
+      location:          data.location || '',
+      existingWebsite:   data.existing_website || '',
+      brandColors:       data.brand_colors || '',
+      tagline:           data.tagline || '',
+      targetAudience:    data.target_audience || '',
+      competitorUrls:    data.competitor_urls || '',
+      additionalNotes:   data.additional_notes || '',
+      rebuild:           !!(rebuildBox && rebuildBox.checked),
     };
     const ts = Date.now();
     // ID = sanitized email + timestamp (e.g. "test-at-example-com_1771042375045")
@@ -126,7 +150,22 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(err => console.warn('[AjayaDesign] ⚠️ n8n unreachable (email still sent):', err))
       .finally(() => clearTimeout(n8nTimer));
 
-    await Promise.allSettled([firebasePromise, emailPromise, n8nPromise]);
+    // 4. Python FastAPI — pipeline trigger (only available when API server is running)
+    const apiCtrl = new AbortController();
+    const apiTimer = setTimeout(() => apiCtrl.abort(), API_TIMEOUT_MS);
+    const apiPayload = { ...lead, firebaseId: leadId, source: window.location.hostname };
+    const apiPromise = fetch(PYTHON_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(apiPayload),
+      signal: apiCtrl.signal,
+    }).then(r => r.ok
+        ? console.log('[AjayaDesign] ✅ Python API build triggered')
+        : console.warn('[AjayaDesign] ⚠️ Python API responded', r.status))
+      .catch(err => console.warn('[AjayaDesign] ⚠️ Python API unreachable (Firebase bridge will pick it up):', err))
+      .finally(() => clearTimeout(apiTimer));
+
+    await Promise.allSettled([firebasePromise, emailPromise, n8nPromise, apiPromise]);
 
     // Visual feedback — success
     btn.innerHTML = `
