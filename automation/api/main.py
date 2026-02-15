@@ -15,7 +15,10 @@ from api.config import settings
 from api.database import init_db, close_db, async_session
 from api.models.build import Build
 from api.routes import router
-from api.services.firebase import init_firebase, get_new_leads, get_all_leads, update_lead_status, is_initialized
+from api.services.firebase import (
+    init_firebase, get_new_leads, get_all_leads, update_lead_status, is_initialized,
+    get_pending_parse_requests, update_parse_request,
+)
 from api.services.queue import BuildQueue
 
 logging.basicConfig(
@@ -117,22 +120,78 @@ async def reconcile_firebase_leads() -> list[dict]:
 
 
 async def periodic_firebase_poll(interval: int = 60) -> None:
-    """Poll Firebase for new leads every ``interval`` seconds."""
+    """Poll Firebase for new leads and parse requests every ``interval`` seconds."""
     while True:
         try:
             await asyncio.sleep(interval)
             if not is_initialized():
                 continue
+
+            # Poll for new leads
             leads = get_new_leads()
             if leads:
                 logger.info("📡 Firebase poll found %d new leads", len(leads))
                 missed = await reconcile_firebase_leads()
                 for m in missed:
                     await build_queue.enqueue(m["build_id"])
+
+            # Poll for parse requests
+            await process_parse_requests()
+
         except asyncio.CancelledError:
             break
         except Exception as e:
             logger.error("Firebase poll error: %s", e)
+
+
+async def process_parse_requests() -> None:
+    """Pick up pending parse_requests from Firebase, run AI extraction, write results back."""
+    pending = get_pending_parse_requests()
+    if not pending:
+        return
+
+    from api.services.ai import call_ai, extract_json
+    from api.pipeline.prompts import PARSE_CLIENT_SYSTEM, parse_client_text
+
+    for req in pending:
+        rid = req["request_id"]
+        raw_text = req.get("rawText", "")
+        if len(raw_text) < 10:
+            update_parse_request(rid, {
+                "status": "failed",
+                "error": "Text too short (min 10 chars)",
+            })
+            continue
+
+        # Mark as processing so the admin sees the spinner update
+        update_parse_request(rid, {"status": "processing"})
+        logger.info("⚙️ Processing parse request %s (%d chars)", rid, len(raw_text))
+
+        try:
+            raw_response = await call_ai(
+                system=PARSE_CLIENT_SYSTEM,
+                user=parse_client_text(raw_text),
+            )
+            parsed_data = extract_json(raw_response)
+            confidence = parsed_data.pop("confidence", "medium")
+            if confidence not in ("high", "medium", "low"):
+                confidence = "medium"
+
+            update_parse_request(rid, {
+                "status": "complete",
+                "result": {
+                    "parsed": parsed_data,
+                    "confidence": confidence,
+                },
+            })
+            logger.info("✅ Parse request %s complete (confidence=%s)", rid, confidence)
+
+        except Exception as exc:
+            logger.error("❌ Parse request %s failed: %s", rid, exc)
+            update_parse_request(rid, {
+                "status": "failed",
+                "error": str(exc),
+            })
 
 
 @asynccontextmanager
