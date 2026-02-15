@@ -83,24 +83,24 @@
 
       <!-- Desktop Links -->
       <ul class="hidden md:flex items-center gap-8 text-sm font-medium">
-        <li><a href="#edge" class="hover:text-amd-red transition-colors">The Edge</a></li>
-        <li><a href="#legacy" class="hover:text-amd-red transition-colors">Legacy</a></li>
-        <li><a href="#process" class="hover:text-amd-red transition-colors">Process</a></li>
-        <li><a href="#works" class="hover:text-amd-red transition-colors">Works</a></li>
+        <li><a href="#edge" class="nav-link hover:text-amd-red transition-colors">The Edge</a></li>
+        <li><a href="#legacy" class="nav-link hover:text-amd-red transition-colors">Legacy</a></li>
+        <li><a href="#process" class="nav-link hover:text-amd-red transition-colors">Process</a></li>
+        <li><a href="#works" class="nav-link hover:text-amd-red transition-colors">Works</a></li>
         <li>
           <a href="#intake" class="inline-flex items-center gap-2 px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">
-            Initiate Your Build
+            Start Free
           </a>
         </li>
       </ul>
 
       <!-- Status Indicator -->
-      <div id="telegram-bot-status" class="hidden md:flex items-center gap-2 text-xs font-mono text-gray-400">
+      <div id="nav-system-status" class="hidden md:flex items-center gap-2 text-xs font-mono text-gray-400">
         <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+          <span id="nav-status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+          <span id="nav-status-dot" class="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
         </span>
-        System Online
+        <span id="nav-status-text">Checking…</span>
       </div>
 
       <!-- Mobile Menu Button -->
@@ -115,22 +115,22 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-border-dim bg-surface/95 backdrop-blur-lg">
       <ul class="flex flex-col gap-1 px-6 py-4 text-sm font-medium">
-        <li><a href="#edge" class="block py-2 hover:text-amd-red transition-colors">The Edge</a></li>
-        <li><a href="#legacy" class="block py-2 hover:text-amd-red transition-colors">Legacy</a></li>
-        <li><a href="#process" class="block py-2 hover:text-amd-red transition-colors">Process</a></li>
-        <li><a href="#works" class="block py-2 hover:text-amd-red transition-colors">Works</a></li>
+        <li><a href="#edge" class="nav-link block py-2 hover:text-amd-red transition-colors">The Edge</a></li>
+        <li><a href="#legacy" class="nav-link block py-2 hover:text-amd-red transition-colors">Legacy</a></li>
+        <li><a href="#process" class="nav-link block py-2 hover:text-amd-red transition-colors">Process</a></li>
+        <li><a href="#works" class="nav-link block py-2 hover:text-amd-red transition-colors">Works</a></li>
         <li class="pt-2">
           <a href="#intake" class="block text-center px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">
-            Initiate Your Build
+            Start Free
           </a>
         </li>
         <li class="pt-2">
-          <div class="flex items-center gap-2 text-xs font-mono text-gray-400">
+          <div id="mobile-system-status" class="flex items-center gap-2 text-xs font-mono text-gray-400">
             <span class="relative flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
             </span>
-            System Online
+            Checking…
           </div>
         </li>
       </ul>
@@ -151,21 +151,21 @@
       </div>
 
       <h1 class="font-mono font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-tight tracking-tight">
-        Websites Built with<br />
-        <span class="text-amd-red">Engineering Precision.</span>
+        Your Next Customer<br />
+        <span class="text-amd-red">Is One Click Away.</span>
       </h1>
 
       <p class="mt-6 max-w-2xl mx-auto text-base sm:text-lg text-gray-400 leading-relaxed">
-        I don't just design sites; I architect <span class="text-electric-blue font-medium">high-performance, SEO-driven digital engines</span> for technical businesses and local pros.
+        I build <span class="text-electric-blue font-medium">blazing-fast, SEO-tuned websites</span> that turn visitors into paying customers — engineered with the precision of a hardware lab.
       </p>
 
       <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
         <a href="#intake" class="inline-flex items-center gap-2 px-8 py-3.5 bg-amd-red-btn text-white font-mono font-semibold rounded hover:bg-red-800 transition-all hover:shadow-lg hover:shadow-amd-red/20">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          Initiate Your Build
+          Get Your Free Site Preview
         </a>
         <a href="#process" class="inline-flex items-center gap-2 px-8 py-3.5 border border-border-dim text-gray-400 font-mono rounded hover:border-amd-red hover:text-white transition-all">
-          View Process
+          See How It Works
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
         </a>
       </div>
@@ -173,16 +173,16 @@
       <!-- Metrics bar -->
       <div class="mt-16 grid grid-cols-3 gap-6 max-w-lg mx-auto">
         <div class="text-center">
-          <p class="font-mono text-2xl sm:text-3xl font-bold text-white">&lt;1<span class="text-amd-red">s</span></p>
-          <p class="text-xs text-gray-400 mt-1">Load Time</p>
+          <p class="font-mono text-2xl sm:text-3xl font-bold text-white" id="stat-sites">4<span class="text-amd-red">+</span></p>
+          <p class="text-xs text-gray-400 mt-1">Sites Shipped</p>
         </div>
         <div class="text-center">
-          <p class="font-mono text-2xl sm:text-3xl font-bold text-white">100<span class="text-amd-red">%</span></p>
-          <p class="text-xs text-gray-400 mt-1">Mobile First</p>
+          <p class="font-mono text-2xl sm:text-3xl font-bold text-white">&lt;24<span class="text-amd-red">hr</span></p>
+          <p class="text-xs text-gray-400 mt-1">Turnaround</p>
         </div>
         <div class="text-center">
-          <p class="font-mono text-2xl sm:text-3xl font-bold text-white">24<span class="text-amd-red">hr</span></p>
-          <p class="text-xs text-gray-400 mt-1">Rapid Deploy</p>
+          <p class="font-mono text-2xl sm:text-3xl font-bold text-white">$0<span class="text-amd-red"> down</span></p>
+          <p class="text-xs text-gray-400 mt-1">Free Preview First</p>
         </div>
       </div>
     </div>
@@ -307,65 +307,91 @@
   <section id="process" class="py-24 sm:py-32">
     <div class="max-w-5xl mx-auto px-6">
       <div class="reveal text-center mb-16">
-        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Workflow</p>
-        <h2 class="font-mono text-3xl sm:text-4xl font-bold text-white">My <span class="text-amd-red">Process</span></h2>
-        <p class="mt-4 text-gray-400 max-w-xl mx-auto">Three phases. No guesswork. Engineered outcomes.</p>
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Automated Pipeline</p>
+        <h2 class="font-mono text-3xl sm:text-4xl font-bold text-white">How Your Site <span class="text-amd-red">Gets Built</span></h2>
+        <p class="mt-4 text-gray-400 max-w-xl mx-auto">An 8-phase build pipeline — from intake form to live URL — engineered for speed and zero-defect launches.</p>
       </div>
 
-      <div class="relative">
-        <!-- Vertical connector line (desktop) -->
-        <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-amd-red/60 via-electric-blue/40 to-amd-red/60"></div>
-
-        <!-- Step 1 -->
-        <div class="reveal relative flex flex-col md:flex-row items-center gap-8 mb-16">
-          <div class="md:w-1/2 md:text-right md:pr-12">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amd-red/10 border border-amd-red/20 font-mono text-xs text-amd-red-text mb-4">
-              PHASE 01
-            </div>
-            <h3 class="font-mono text-xl font-bold text-white mb-3">Technical Intake</h3>
-            <p class="text-gray-400 text-sm leading-relaxed">
-              We start with a structured diagnostic — your business goals, target audience, competitors, and technical requirements are mapped into an engineering brief. No fluff, just signal.
-            </p>
+      <!-- 8-phase pipeline grid -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Phase 1 -->
+        <div class="reveal group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/40 transition-all duration-300">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="w-8 h-8 flex items-center justify-center rounded-full bg-amd-red/10 border border-amd-red/30 font-mono text-xs font-bold text-amd-red-text">01</span>
+            <h3 class="font-mono text-sm font-bold text-white">Intake</h3>
           </div>
-          <div class="relative z-10 w-12 h-12 flex items-center justify-center rounded-full bg-surface border-2 border-amd-red text-amd-red-text font-mono font-bold text-sm flex-shrink-0">
-            01
-          </div>
-          <div class="md:w-1/2 md:pl-12"></div>
+          <p class="text-gray-400 text-xs leading-relaxed">You fill out the form below. Your business goals, niche, and competitors are mapped into a structured engineering brief.</p>
         </div>
 
-        <!-- Step 2 -->
-        <div class="reveal relative flex flex-col md:flex-row items-center gap-8 mb-16">
-          <div class="md:w-1/2 md:pr-12 md:order-1 order-2"></div>
-          <div class="relative z-10 w-12 h-12 flex items-center justify-center rounded-full bg-surface border-2 border-electric-blue text-electric-blue font-mono font-bold text-sm flex-shrink-0 order-1 md:order-2">
-            02
+        <!-- Phase 2 -->
+        <div class="reveal group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-electric-blue/40 transition-all duration-300">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="w-8 h-8 flex items-center justify-center rounded-full bg-electric-blue/10 border border-electric-blue/30 font-mono text-xs font-bold text-electric-blue">02</span>
+            <h3 class="font-mono text-sm font-bold text-white">Creative Direction</h3>
           </div>
-          <div class="md:w-1/2 md:pl-12 md:order-3 order-3">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-electric-blue/10 border border-electric-blue/20 font-mono text-xs text-electric-blue mb-4">
-              PHASE 02
-            </div>
-            <h3 class="font-mono text-xl font-bold text-white mb-3">Rapid Build</h3>
-            <p class="text-gray-400 text-sm leading-relaxed">
-              My custom build pipeline handles scaffolding, component generation, and content integration — engineered for speed and accuracy, following the <span class="text-electric-blue font-medium">Drone Builder Checklist</span> at every stage.
-            </p>
-          </div>
+          <p class="text-gray-400 text-xs leading-relaxed">I craft a creative brief — tone, color palette, hero copy, CTAs — tailored to your niche and audience.</p>
         </div>
 
-        <!-- Step 3 -->
-        <div class="reveal relative flex flex-col md:flex-row items-center gap-8">
-          <div class="md:w-1/2 md:text-right md:pr-12">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amd-red/10 border border-amd-red/20 font-mono text-xs text-amd-red-text mb-4">
-              PHASE 03
-            </div>
-            <h3 class="font-mono text-xl font-bold text-white mb-3">Engineering QA &amp; Launch</h3>
-            <p class="text-gray-400 text-sm leading-relaxed">
-              Performance audits, cross-browser testing, accessibility checks, and SEO validation. Every launch goes through the full checklist before going live. Zero-defect or it doesn't ship.
-            </p>
+        <!-- Phase 3 -->
+        <div class="reveal group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/40 transition-all duration-300">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="w-8 h-8 flex items-center justify-center rounded-full bg-amd-red/10 border border-amd-red/30 font-mono text-xs font-bold text-amd-red-text">03</span>
+            <h3 class="font-mono text-sm font-bold text-white">Site Generation</h3>
           </div>
-          <div class="relative z-10 w-12 h-12 flex items-center justify-center rounded-full bg-surface border-2 border-amd-red text-amd-red-text font-mono font-bold text-sm flex-shrink-0">
-            03
-          </div>
-          <div class="md:w-1/2 md:pl-12"></div>
+          <p class="text-gray-400 text-xs leading-relaxed">Full multi-page site assembled — home, about, services, contact — using niche-specific design patterns.</p>
         </div>
+
+        <!-- Phase 4 -->
+        <div class="reveal group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-electric-blue/40 transition-all duration-300">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="w-8 h-8 flex items-center justify-center rounded-full bg-electric-blue/10 border border-electric-blue/30 font-mono text-xs font-bold text-electric-blue">04</span>
+            <h3 class="font-mono text-sm font-bold text-white">QA Checks</h3>
+          </div>
+          <p class="text-gray-400 text-xs leading-relaxed">Automated HTML validation, link checks, accessibility audit, and Lighthouse performance scoring.</p>
+        </div>
+
+        <!-- Phase 5 -->
+        <div class="reveal group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/40 transition-all duration-300">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="w-8 h-8 flex items-center justify-center rounded-full bg-amd-red/10 border border-amd-red/30 font-mono text-xs font-bold text-amd-red-text">05</span>
+            <h3 class="font-mono text-sm font-bold text-white">Git Deploy</h3>
+          </div>
+          <p class="text-gray-400 text-xs leading-relaxed">Site is pushed to its own GitHub repo with GitHub Pages enabled — your live URL is ready in seconds.</p>
+        </div>
+
+        <!-- Phase 6 -->
+        <div class="reveal group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-electric-blue/40 transition-all duration-300">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="w-8 h-8 flex items-center justify-center rounded-full bg-electric-blue/10 border border-electric-blue/30 font-mono text-xs font-bold text-electric-blue">06</span>
+            <h3 class="font-mono text-sm font-bold text-white">DNS Setup</h3>
+          </div>
+          <p class="text-gray-400 text-xs leading-relaxed">Custom domain configured and verified. HTTPS enabled automatically via GitHub Pages.</p>
+        </div>
+
+        <!-- Phase 7 -->
+        <div class="reveal group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/40 transition-all duration-300">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="w-8 h-8 flex items-center justify-center rounded-full bg-amd-red/10 border border-amd-red/30 font-mono text-xs font-bold text-amd-red-text">07</span>
+            <h3 class="font-mono text-sm font-bold text-white">Portfolio Inject</h3>
+          </div>
+          <p class="text-gray-400 text-xs leading-relaxed">Your site automatically appears in my portfolio — with a live screenshot, not a placeholder emoji.</p>
+        </div>
+
+        <!-- Phase 8 -->
+        <div class="reveal group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-electric-blue/40 transition-all duration-300">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="w-8 h-8 flex items-center justify-center rounded-full bg-electric-blue/10 border border-electric-blue/30 font-mono text-xs font-bold text-electric-blue">08</span>
+            <h3 class="font-mono text-sm font-bold text-white">Notification</h3>
+          </div>
+          <p class="text-gray-400 text-xs leading-relaxed">You get an email with your live URL, Lighthouse score, and a preview screenshot. Done.</p>
+        </div>
+      </div>
+
+      <!-- Pipeline footnote -->
+      <div class="reveal mt-10 text-center">
+        <p class="text-xs font-mono text-gray-400">
+          <span class="text-amd-red">▸</span> Average time from form submission to live site: <span class="text-white font-medium">&lt; 24 hours</span>
+        </p>
       </div>
     </div>
   </section>
@@ -529,9 +555,9 @@
   <section id="intake" class="py-24 sm:py-32">
     <div class="max-w-3xl mx-auto px-6">
       <div class="reveal text-center mb-12">
-        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Start</p>
-        <h2 class="font-mono text-3xl sm:text-4xl font-bold text-white">Start Your <span class="text-amd-red">Build</span></h2>
-        <p class="mt-4 text-gray-400 max-w-lg mx-auto">Fill out the intake form below and I'll respond within 24 hours.</p>
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Let's Go</p>
+        <h2 class="font-mono text-3xl sm:text-4xl font-bold text-white">Get Your <span class="text-amd-red">Free Preview</span></h2>
+        <p class="mt-4 text-gray-400 max-w-lg mx-auto">Fill out the form and I’ll send you a free site preview within 24 hours — no payment, no commitment.</p>
       </div>
 
       <div class="reveal relative overflow-hidden rounded-2xl bg-surface-card border border-border-dim">
@@ -647,7 +673,7 @@
               class="flex items-center gap-2 font-mono text-sm text-gray-400 hover:text-amd-red transition-colors"
               onclick="document.getElementById('optional-fields').classList.toggle('hidden');this.querySelector('svg').classList.toggle('rotate-180')">
               <svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-              Optional — help the AI build a better site
+              Optional — helps me build a better site
             </button>
           </div>
 
@@ -717,7 +743,7 @@
                 id="competitor-urls"
                 name="competitor_urls"
                 rows="2"
-                placeholder="One URL per line — AI will study them for differentiation"
+                placeholder="One URL per line — I'll study them for differentiation"
                 class="w-full px-4 py-3 rounded-lg bg-surface border border-border-dim text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-amd-red focus:ring-1 focus:ring-amd-red/50 transition-colors resize-none"
               ></textarea>
             </div>
@@ -731,7 +757,7 @@
                 id="additional-notes"
                 name="additional_notes"
                 rows="3"
-                placeholder="Special hours, certifications, awards, anything else the AI should know..."
+                placeholder="Special hours, certifications, awards, anything else I should know..."
                 class="w-full px-4 py-3 rounded-lg bg-surface border border-border-dim text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-amd-red focus:ring-1 focus:ring-amd-red/50 transition-colors resize-none"
               ></textarea>
             </div>
@@ -766,13 +792,40 @@
             style="background-color:#991B1B;color:#ffffff"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            Initiate Your Build
+            Launch My Project
           </button>
 
           <p class="text-center text-xs text-gray-400 font-mono mt-4">
             Secured by engineering-grade encryption. Your data stays yours.
           </p>
         </form>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════ BUILT WITH / TRUST ═══════════════════ -->
+  <section class="py-16 border-t border-border-dim bg-surface">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <p class="font-mono text-gray-200 text-xs tracking-widest uppercase mb-2">// Tech Stack</p>
+        <h3 class="font-mono text-lg font-bold text-white">Built With Engineering-Grade Tools</h3>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-gray-200 font-mono text-xs">
+        <span class="flex items-center gap-2"><span class="text-electric-blue">▹</span> Tailwind CSS</span>
+        <span class="flex items-center gap-2"><span class="text-amd-red">▹</span> FastAPI</span>
+        <span class="flex items-center gap-2"><span class="text-electric-blue">▹</span> Firebase RTDB</span>
+        <span class="flex items-center gap-2"><span class="text-amd-red">▹</span> Python Automation</span>
+        <span class="flex items-center gap-2"><span class="text-electric-blue">▹</span> GitHub Pages</span>
+        <span class="flex items-center gap-2"><span class="text-amd-red">▹</span> Lighthouse CI</span>
+        <span class="flex items-center gap-2"><span class="text-electric-blue">▹</span> Playwright</span>
+        <span class="flex items-center gap-2"><span class="text-amd-red">▹</span> Custom CI/CD</span>
+      </div>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-6 text-gray-200 text-xs font-mono">
+        <span class="px-3 py-1.5 rounded-full border border-border-dim">🔒 HTTPS by default</span>
+        <span class="px-3 py-1.5 rounded-full border border-border-dim">⚡ Sub-1s load times</span>
+        <span class="px-3 py-1.5 rounded-full border border-border-dim">📱 Mobile-first</span>
+        <span class="px-3 py-1.5 rounded-full border border-border-dim">♿ WCAG accessible</span>
       </div>
     </div>
   </section>
@@ -791,13 +844,13 @@
           Built with engineering precision in Manor, TX &nbsp;·&nbsp; &copy; <span id="footer-year"></span> AjayaDesign
         </p>
 
-        <div id="footer-bot-status" class="flex items-center gap-2 text-xs font-mono text-gray-400">
+        <div id="footer-system-status" class="flex items-center gap-2 text-xs font-mono text-gray-400">
           <a href="/admin/" class="text-gray-600 hover:text-electric transition mr-3 text-sm" title="Admin Dashboard">⚙️</a>
           <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
           </span>
-          System Online
+          <span>Checking…</span>
         </div>
       </div>
     </div>

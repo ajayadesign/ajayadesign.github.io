@@ -107,8 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function initDashboard() {
   refreshBuilds();
   pollTimer = setInterval(refreshBuilds, POLL_INTERVAL);
-  checkConnection();
+  initConnectionMonitor();
   subscribeToLeads();
+  subscribeToBuildsFirebase();
 }
 
 // ── Tab switching ──────────────────────────────────────
@@ -166,21 +167,47 @@ function switchContentTab(tab) {
   });
 }
 
-// ── Connection check ───────────────────────────────────
-async function checkConnection() {
+// ── Connection check (Firebase-first, API fallback) ───
+let firebaseConnected = false;
+let apiConnected = false;
+
+function initConnectionMonitor() {
+  // Firebase real-time connection status
+  if (window.__db) {
+    window.__db.ref('.info/connected').on('value', (snap) => {
+      firebaseConnected = !!snap.val();
+      updateConnectionUI();
+    });
+  }
+  // Also check Python API periodically (for build streaming)
+  checkApiConnection();
+}
+
+async function checkApiConnection() {
   try {
     const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(3000) });
-    if (res.ok) {
-      $connDot.className = 'w-2 h-2 rounded-full bg-neon-green live-dot';
-      $connText.textContent = 'Connected';
-      $connText.className = 'text-neon-green';
-    }
+    apiConnected = res.ok;
   } catch {
+    apiConnected = false;
+  }
+  updateConnectionUI();
+  setTimeout(checkApiConnection, 15000);
+}
+
+function updateConnectionUI() {
+  if (apiConnected) {
+    $connDot.className = 'w-2 h-2 rounded-full bg-neon-green live-dot';
+    $connText.textContent = 'Build System Online';
+    $connText.className = 'text-neon-green';
+  } else if (firebaseConnected) {
+    $connDot.className = 'w-2 h-2 rounded-full bg-electric live-dot';
+    $connText.textContent = 'Connected';
+    $connText.className = 'text-electric';
+  } else {
     $connDot.className = 'w-2 h-2 rounded-full bg-gray-600';
-    $connText.textContent = 'Disconnected';
+    $connText.textContent = 'Offline';
     $connText.className = 'text-gray-500';
   }
-  setTimeout(checkConnection, 10000);
 }
 
 // ── Fetch build history ────────────────────────────────
@@ -583,6 +610,37 @@ document.addEventListener('keydown', (e) => {
     refreshBuilds();
   }
 });
+
+// ═══════════════════════════════════════════════════════
+//  Firebase RTDB — Real-time builds (fallback when API is offline)
+// ═══════════════════════════════════════════════════════
+function subscribeToBuildsFirebase() {
+  if (!window.__db) return;
+  window.__db.ref('builds').orderByChild('created_at').limitToLast(50).on('value', (snapshot) => {
+    if (apiConnected) return; // API is primary source when available
+    const fbBuilds = [];
+    snapshot.forEach((child) => {
+      const b = child.val();
+      fbBuilds.push({
+        id: child.key,
+        client: b.client_name || b.clientName || 'Unknown',
+        status: b.status === 'complete' ? 'success' : b.status,
+        niche: b.niche || '',
+        email: b.email || '',
+        started: b.created_at || b.started_at,
+        finished: b.finished_at,
+        liveUrl: b.live_url || '',
+      });
+    });
+    fbBuilds.reverse();
+    // Only use Firebase data if API hasn't provided builds
+    if (builds.length === 0 && fbBuilds.length > 0) {
+      builds = fbBuilds;
+      renderBuildList();
+      updateStats();
+    }
+  });
+}
 
 // ═══════════════════════════════════════════════════════
 //  Firebase RTDB — Real-time leads
