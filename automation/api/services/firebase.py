@@ -176,3 +176,36 @@ def sync_build_phase_to_firebase(
     except Exception as e:
         logger.error(f"Firebase sync_build_phase failed: {e}")
         return False
+
+
+# ── Parse Requests (Firebase bridge for AI text extraction) ──────
+
+
+def get_pending_parse_requests() -> list[dict]:
+    """Fetch all parse_requests with status='pending' from Firebase RTDB."""
+    if not _initialized:
+        return []
+
+    try:
+        ref = firebase_db.reference("parse_requests")
+        snapshot = ref.order_by_child("status").equal_to("pending").get()
+        if not snapshot:
+            return []
+        return [{"request_id": k, **v} for k, v in snapshot.items()]
+    except Exception as e:
+        logger.error(f"Firebase get_pending_parse_requests failed: {e}")
+        return []
+
+
+def update_parse_request(request_id: str, updates: dict) -> bool:
+    """Update a parse_request node in Firebase RTDB."""
+    if not _initialized:
+        return False
+
+    try:
+        ref = firebase_db.reference(f"parse_requests/{request_id}")
+        ref.update(updates)
+        return True
+    except Exception as e:
+        logger.error(f"Firebase update_parse_request failed: {e}")
+        return False

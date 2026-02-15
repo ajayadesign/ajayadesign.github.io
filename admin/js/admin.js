@@ -1012,14 +1012,19 @@ async function parseWithAI() {
   $btn.disabled = true;
   $status.classList.remove('hidden');
   $status.className = 'text-xs font-mono text-gray-400';
-  $status.textContent = 'Sending to AI...';
+  $status.textContent = 'Submitting parse request...';
+
+  // Strategy: Try direct API first (fast, ~2s). If offline, fall back to
+  // Firebase bridge (async — Python poller picks it up on next cycle).
+  let usedFirebase = false;
 
   try {
+    // ── Attempt 1: Direct API call (works when API server is running) ──
     const res = await fetch(`${API_BASE}/parse-client`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ rawText: rawText }),
-      signal: AbortSignal.timeout(30000),
+      body: JSON.stringify({ rawText }),
+      signal: AbortSignal.timeout(8000),
     });
 
     if (!res.ok) {
@@ -1028,52 +1033,115 @@ async function parseWithAI() {
     }
 
     const data = await res.json();
-    const p = data.parsed || {};
+    _applyParsedFields(data, $status);
 
-    // Populate form fields from parsed data
-    const fieldMap = {
-      'acm-business-name':    p.businessName || p.business_name || '',
-      'acm-niche':            p.niche || '',
-      'acm-email':            p.email || '',
-      'acm-goals':            p.goals || '',
-      'acm-phone':            p.phone || '',
-      'acm-location':         p.location || '',
-      'acm-existing-website': p.existingWebsite || p.existing_website || '',
-      'acm-brand-colors':     p.brandColors || p.brand_colors || '',
-      'acm-tagline':          p.tagline || '',
-      'acm-target-audience':  p.targetAudience || p.target_audience || '',
-      'acm-competitor-urls':  p.competitorUrls || p.competitor_urls || '',
-      'acm-additional-notes': p.additionalNotes || p.additional_notes || '',
-    };
+  } catch (apiErr) {
+    console.warn('[Admin] Direct API parse failed, trying Firebase bridge:', apiErr.message);
 
-    Object.entries(fieldMap).forEach(([id, val]) => {
-      const el = document.getElementById(id);
-      if (el && val) el.value = val;
-    });
+    // ── Attempt 2: Firebase bridge (works in prod) ──
+    const db = firebase.database();
+    if (!db) {
+      $status.className = 'text-xs font-mono text-brand-link';
+      $status.textContent = `❌ Parse failed: No API or Firebase connection. Fill the form manually.`;
+      $btn.innerHTML = origHTML;
+      $btn.disabled = false;
+      return;
+    }
 
-    // Highlight required fields that are still empty
-    ['acm-business-name', 'acm-niche', 'acm-email', 'acm-goals'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el && !el.value.trim()) {
-        el.classList.add('border-red-500/50');
-      } else if (el) {
-        el.classList.remove('border-red-500/50');
+    usedFirebase = true;
+    const requestId = Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+    const requestRef = db.ref('parse_requests/' + requestId);
+
+    // Write the parse request
+    try {
+      await requestRef.set({
+        rawText,
+        status: 'pending',
+        requestedAt: Date.now(),
+        requestedBy: firebase.auth().currentUser?.email || 'unknown',
+      });
+      $status.textContent = '📡 Request sent — waiting for automation server...';
+    } catch (fbErr) {
+      $status.className = 'text-xs font-mono text-brand-link';
+      $status.textContent = `❌ Firebase write failed: ${fbErr.message}. Fill the form manually.`;
+      $btn.innerHTML = origHTML;
+      $btn.disabled = false;
+      return;
+    }
+
+    // Listen for result (timeout after 90s)
+    const result = await new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        requestRef.off('value', handler);
+        resolve({ error: 'Timeout — automation server may be offline. Try again later or fill manually.' });
+      }, 90000);
+
+      function handler(snap) {
+        const val = snap.val();
+        if (!val) return;
+        if (val.status === 'processing') {
+          $status.textContent = '⚙️ Processing with AI...';
+          return;
+        }
+        if (val.status === 'complete' || val.status === 'failed') {
+          clearTimeout(timeout);
+          requestRef.off('value', handler);
+          resolve(val);
+        }
       }
+      requestRef.on('value', handler);
     });
 
-    const conf = data.confidence || 'medium';
-    const confColors = { high: 'text-neon-green', medium: 'text-neon-yellow', low: 'text-neon-orange' };
-    $status.className = `text-xs font-mono ${confColors[conf] || 'text-gray-400'}`;
-    $status.textContent = `✅ Parsed (${conf} confidence) — review and edit below`;
-
-  } catch (err) {
-    console.error('[Admin] AI parse failed:', err);
-    $status.className = 'text-xs font-mono text-brand-link';
-    $status.textContent = `❌ Parse failed: ${err.message}. Fill the form manually.`;
+    if (result.status === 'complete' && result.result) {
+      _applyParsedFields(result.result, $status);
+    } else {
+      const errMsg = result.error || 'Parse failed on server';
+      $status.className = 'text-xs font-mono text-brand-link';
+      $status.textContent = `❌ ${errMsg}. Fill the form manually.`;
+    }
   } finally {
     $btn.innerHTML = origHTML;
     $btn.disabled = false;
   }
+}
+
+/** Apply parsed fields to the Add Client form. */
+function _applyParsedFields(data, $status) {
+  const p = data.parsed || {};
+  const fieldMap = {
+    'acm-business-name':    p.businessName || p.business_name || '',
+    'acm-niche':            p.niche || '',
+    'acm-email':            p.email || '',
+    'acm-goals':            p.goals || '',
+    'acm-phone':            p.phone || '',
+    'acm-location':         p.location || '',
+    'acm-existing-website': p.existingWebsite || p.existing_website || '',
+    'acm-brand-colors':     p.brandColors || p.brand_colors || '',
+    'acm-tagline':          p.tagline || '',
+    'acm-target-audience':  p.targetAudience || p.target_audience || '',
+    'acm-competitor-urls':  p.competitorUrls || p.competitor_urls || '',
+    'acm-additional-notes': p.additionalNotes || p.additional_notes || '',
+  };
+
+  Object.entries(fieldMap).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el && val) el.value = val;
+  });
+
+  // Highlight required fields that are still empty
+  ['acm-business-name', 'acm-niche', 'acm-email', 'acm-goals'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.value.trim()) {
+      el.classList.add('border-red-500/50');
+    } else if (el) {
+      el.classList.remove('border-red-500/50');
+    }
+  });
+
+  const conf = data.confidence || 'medium';
+  const confColors = { high: 'text-neon-green', medium: 'text-neon-yellow', low: 'text-neon-orange' };
+  $status.className = `text-xs font-mono ${confColors[conf] || 'text-gray-400'}`;
+  $status.textContent = `✅ Parsed (${conf} confidence) — review and edit below`;
 }
 
 async function saveNewLead(triggerBuild) {
