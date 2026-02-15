@@ -280,6 +280,18 @@ class BuildOrchestrator:
         getattr(logger, level, logger.info)(
             "[%s] %s", self.build.short_id, message
         )
+        # Sync to Firebase for real-time admin dashboard
+        self._sync_log_firebase(self._log_seq, message, category, level)
+
+    def _sync_log_firebase(self, seq: int, message: str, category: str, level: str):
+        """Push log line to Firebase for real-time display."""
+        try:
+            from api.services.firebase import sync_build_log_to_firebase
+            sync_build_log_to_firebase(
+                self.build.short_id, seq, message, category, level
+            )
+        except Exception:
+            pass  # Non-critical
 
     def _emit(self, event_type: str, data: dict):
         if self._event_fn:
