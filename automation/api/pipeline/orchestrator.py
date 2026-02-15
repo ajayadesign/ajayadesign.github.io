@@ -44,6 +44,7 @@ class BuildOrchestrator:
         # Intermediate results
         self.repo: dict = {}
         self.blueprint: dict = {}
+        self.creative_spec: dict = {}
         self.design_system: dict = {}
         self.page_results: list[dict] = []
         self.test_result: dict = {}
@@ -128,6 +129,7 @@ class BuildOrchestrator:
             event_fn=lambda t, d: self._emit(t, d),
         )
         self.blueprint = result["blueprint"]
+        self.creative_spec = result.get("creative_spec", {})
         self.build.blueprint = self.blueprint
         self.build.pages_count = len(self.blueprint.get("pages", []))
         await self._end_phase(phase)
@@ -136,6 +138,7 @@ class BuildOrchestrator:
         phase = await self._start_phase(3)
         self.design_system = await p03_design.generate_design_system(
             self.blueprint,
+            creative_spec=self.creative_spec,
             log_fn=lambda m: self._log_msg(m, category="design"),
         )
         self.build.design_system = self.design_system
@@ -147,6 +150,7 @@ class BuildOrchestrator:
             self.blueprint,
             self.design_system,
             self.repo["dir"],
+            creative_spec=self.creative_spec,
             log_fn=lambda m: self._log_msg(m, category="generate"),
             event_fn=lambda t, d: self._emit(t, d),
         )
@@ -176,6 +180,7 @@ class BuildOrchestrator:
             self.blueprint,
             self.design_system,
             self.repo["dir"],
+            creative_spec=self.creative_spec,
             log_fn=lambda m: self._log_msg(m, category="assemble"),
         )
         await self._end_phase(phase)

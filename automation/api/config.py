@@ -49,6 +49,9 @@ class Settings(BaseSettings):
     max_council_rounds: int = Field(default=2)
     max_fix_attempts: int = Field(default=3)
 
+    # Image sourcing (optional — graceful no-op without key)
+    unsplash_access_key: str = Field(default="", description="Unsplash API access key for stock images")
+
     # Host ownership fix (Docker → host)
     host_uid: int = Field(default=1000)
     host_gid: int = Field(default=1000)

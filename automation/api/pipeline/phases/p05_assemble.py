@@ -15,10 +15,11 @@ async def assemble(
     design_system: dict,
     project_dir: str,
     *,
+    creative_spec: dict | None = None,
     log_fn=None,
 ) -> None:
     """Post-process all generated HTML files."""
-    _log(log_fn, "📎 Assembly — stitching nav states, sitemap, robots, 404")
+    _log(log_fn, "📎 Assembly — stitching nav states, sitemap, robots, 404 + enhancements")
 
     pages = blueprint.get("pages", [])
 
@@ -36,6 +37,13 @@ async def assemble(
 
     # 5. Cross-link validation
     _validate_links(project_dir, log_fn)
+
+    # 6. Enhanced features
+    _inject_scroll_progress(project_dir, pages, blueprint, log_fn)
+    _inject_back_to_top(project_dir, pages, log_fn)
+    _generate_favicon(project_dir, blueprint, log_fn)
+    _inject_json_ld(project_dir, blueprint, log_fn)
+    _inject_performance_hints(project_dir, pages, log_fn)
 
     _log(log_fn, "  ✅ Assembly complete")
 
@@ -171,3 +179,156 @@ def _log(fn, msg):
     if fn:
         fn(msg)
     logger.info(msg)
+
+
+# ── Enhanced Assembly Features ──────────────────────────
+
+
+def _inject_scroll_progress(project_dir: str, pages: list, blueprint: dict, log_fn) -> None:
+    """Add a scroll progress indicator bar to all pages."""
+    progress_html = (
+        '<div id="scroll-progress" style="position:fixed;top:0;left:0;width:0;height:3px;'
+        'background:linear-gradient(90deg,var(--tw-gradient-from,#ED1C24),var(--tw-gradient-to,#00D4FF));'
+        'z-index:9999;transition:width 0.1s;"></div>'
+    )
+    progress_script = """<script>
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    document.getElementById('scroll-progress').style.width = pct + '%';
+  });
+</script>"""
+
+    for page in pages:
+        fname = "index.html" if page["slug"] == "index" else f"{page['slug']}.html"
+        fpath = os.path.join(project_dir, fname)
+        if not os.path.exists(fpath):
+            continue
+        with open(fpath, "r", encoding="utf-8") as f:
+            html = f.read()
+        if "scroll-progress" in html:
+            continue
+        html = html.replace("<body", f"{progress_html}\n<body", 1)
+        html = html.replace("</body>", f"{progress_script}\n</body>", 1)
+        with open(fpath, "w", encoding="utf-8") as f:
+            f.write(html)
+
+    _log(log_fn, "    ✅ Scroll progress indicator injected")
+
+
+def _inject_back_to_top(project_dir: str, pages: list, log_fn) -> None:
+    """Add a back-to-top floating button."""
+    btn_html = (
+        '<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:\'smooth\'})" '
+        'aria-label="Back to top" '
+        'style="position:fixed;bottom:2rem;right:2rem;width:48px;height:48px;border-radius:50%;'
+        'background:rgba(255,255,255,0.1);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.15);'
+        'color:#fff;font-size:1.2rem;cursor:pointer;opacity:0;transition:opacity 0.3s;z-index:999;">'
+        '↑</button>'
+    )
+    btn_script = """<script>
+  window.addEventListener('scroll', () => {
+    document.getElementById('back-to-top').style.opacity = window.scrollY > 400 ? '1' : '0';
+  });
+</script>"""
+
+    for page in pages:
+        fname = "index.html" if page["slug"] == "index" else f"{page['slug']}.html"
+        fpath = os.path.join(project_dir, fname)
+        if not os.path.exists(fpath):
+            continue
+        with open(fpath, "r", encoding="utf-8") as f:
+            html = f.read()
+        if "back-to-top" in html:
+            continue
+        html = html.replace("</body>", f"{btn_html}\n{btn_script}\n</body>", 1)
+        with open(fpath, "w", encoding="utf-8") as f:
+            f.write(html)
+
+    _log(log_fn, "    ✅ Back-to-top button injected")
+
+
+def _generate_favicon(project_dir: str, blueprint: dict, log_fn) -> None:
+    """Generate a simple SVG favicon from the business name initial."""
+    name = blueprint.get("siteName", "S")
+    initial = name[0].upper() if name else "S"
+    primary = blueprint.get("colorDirection", {}).get("primary", "#ED1C24")
+
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+        f'<rect width="100" height="100" rx="20" fill="{primary}"/>'
+        f'<text x="50" y="68" font-size="56" font-weight="bold" font-family="system-ui" '
+        f'fill="white" text-anchor="middle">{initial}</text></svg>'
+    )
+
+    favicon_path = os.path.join(project_dir, "favicon.svg")
+    with open(favicon_path, "w") as f:
+        f.write(svg)
+
+    # Inject favicon link into all HTML files
+    html_files = [f for f in os.listdir(project_dir) if f.endswith(".html")]
+    for fname in html_files:
+        fpath = os.path.join(project_dir, fname)
+        with open(fpath, "r", encoding="utf-8") as f:
+            html = f.read()
+        if "favicon" not in html:
+            html = html.replace("</head>", '  <link rel="icon" href="/favicon.svg" type="image/svg+xml">\n</head>', 1)
+            with open(fpath, "w", encoding="utf-8") as f:
+                f.write(html)
+
+    _log(log_fn, "    ✅ SVG favicon generated")
+
+
+def _inject_json_ld(project_dir: str, blueprint: dict, log_fn) -> None:
+    """Add JSON-LD structured data to index.html."""
+    import json as _json
+
+    index_path = os.path.join(project_dir, "index.html")
+    if not os.path.exists(index_path):
+        return
+
+    site_name = blueprint.get("siteName", "Business")
+    niche = blueprint.get("keyDifferentiators", ["Professional services"])
+    if isinstance(niche, list):
+        niche = ", ".join(niche[:3])
+
+    ld = {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": site_name,
+        "description": blueprint.get("tagline", f"Professional {niche}"),
+    }
+
+    script_tag = f'<script type="application/ld+json">{_json.dumps(ld, indent=2)}</script>'
+
+    with open(index_path, "r", encoding="utf-8") as f:
+        html = f.read()
+    if "application/ld+json" not in html:
+        html = html.replace("</head>", f"  {script_tag}\n</head>", 1)
+        with open(index_path, "w", encoding="utf-8") as f:
+            f.write(html)
+
+    _log(log_fn, "    ✅ JSON-LD structured data injected")
+
+
+def _inject_performance_hints(project_dir: str, pages: list, log_fn) -> None:
+    """Add lazy loading to images and preconnect hints."""
+    for page in pages:
+        fname = "index.html" if page["slug"] == "index" else f"{page['slug']}.html"
+        fpath = os.path.join(project_dir, fname)
+        if not os.path.exists(fpath):
+            continue
+        with open(fpath, "r", encoding="utf-8") as f:
+            html = f.read()
+
+        # Add loading="lazy" to images that don't have it
+        html = re.sub(
+            r'<img(?![^>]*loading=)([^>]*?)(/?>)',
+            r'<img loading="lazy"\1\2',
+            html,
+        )
+
+        with open(fpath, "w", encoding="utf-8") as f:
+            f.write(html)
+
+    _log(log_fn, "    ✅ Performance hints (lazy loading) injected")
