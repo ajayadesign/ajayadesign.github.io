@@ -2,14 +2,17 @@
 Phase 7: Deploy — git push, GitHub Pages API, submodule, portfolio card.
 """
 
+import html
 import os
-import re
 import logging
+from pathlib import Path
 
 from api.config import settings
 from api.services.git import run_cmd, try_cmd
 
 logger = logging.getLogger(__name__)
+
+PORTFOLIO_MARKER = "<!-- %%PORTFOLIO_INJECT%% -->"
 
 NICHE_EMOJI = {
     "photo": "📸", "camera": "📸", "food": "🍰", "bakery": "🍰",
@@ -32,6 +35,59 @@ def _pick_emoji(niche: str) -> str:
         if keyword in n:
             return emoji
     return "🌐"
+
+
+def inject_portfolio_card(
+    index_path: str,
+    *,
+    repo_name: str,
+    client_name: str,
+    niche: str = "Professional Services",
+    goals: str = "",
+    emoji: str = "🌐",
+) -> bool:
+    """
+    Inject a portfolio card into index.html at the PORTFOLIO_MARKER.
+
+    Pure-Python replacement for the old inject_card.js Node script.
+    Returns True if a card was injected, False otherwise.
+    """
+    path = Path(index_path)
+    if not path.exists():
+        logger.warning("inject_portfolio_card: %s not found", index_path)
+        return False
+
+    content = path.read_text(encoding="utf-8")
+    if PORTFOLIO_MARKER not in content:
+        logger.warning("inject_portfolio_card: marker not found in %s", index_path)
+        return False
+
+    # Avoid duplicate cards
+    card_id = f'id="card-{html.escape(repo_name)}"'
+    if card_id in content:
+        logger.info("inject_portfolio_card: card for %s already exists, skipping", repo_name)
+        return False
+
+    safe_name = html.escape(client_name)
+    safe_niche = html.escape(niche)
+    safe_goals = html.escape(goals) if goals else ""
+    live_url = f"https://ajayadesign.github.io/{html.escape(repo_name)}/"
+
+    subtitle = safe_goals if safe_goals else safe_niche
+
+    card_html = (
+        f'\n        <div class="portfolio-card" {card_id}>\n'
+        f"          <span class=\"card-emoji\">{emoji}</span>\n"
+        f"          <h3><a href=\"{live_url}\" target=\"_blank\">{safe_name}</a></h3>\n"
+        f"          <p>{subtitle}</p>\n"
+        f"        </div>\n"
+        f"        {PORTFOLIO_MARKER}"
+    )
+
+    new_content = content.replace(PORTFOLIO_MARKER, card_html, 1)
+    path.write_text(new_content, encoding="utf-8")
+    logger.info("inject_portfolio_card: injected card for %s", repo_name)
+    return True
 
 
 async def deploy(
@@ -98,29 +154,18 @@ async def deploy(
             await try_cmd(f'git submodule update --remote "{repo_name}"', cwd=main_site_dir)
             _log(log_fn, "    ⚠️ Submodule already exists, updated")
 
-        # Inject portfolio card
-        inject_script = os.path.join(main_site_dir, "automation", "inject_card.js")
+        # Inject portfolio card (pure Python — no Node dependency)
         main_index = os.path.join(main_site_dir, "index.html")
-
-        if os.path.exists(inject_script) and os.path.exists(main_index):
-            with open(main_index, "r") as f:
-                if "%%PORTFOLIO_INJECT%%" in f.read():
-                    emoji = _pick_emoji(tagline)
-                    import json
-
-                    card_data = json.dumps({
-                        "repoName": repo_name,
-                        "clientName": client_name,
-                        "niche": tagline or "Professional Services",
-                        "goals": blueprint.get("siteGoals", ""),
-                        "emoji": emoji,
-                        "indexPath": main_index,
-                    })
-                    ok, _ = await try_cmd(
-                        f"echo '{card_data}' | node \"{inject_script}\"",
-                        cwd=main_site_dir,
-                    )
-                    _log(log_fn, "    ✅ Portfolio card injected" if ok else "    ⚠️ Card injection failed")
+        emoji = _pick_emoji(tagline)
+        card_ok = inject_portfolio_card(
+            main_index,
+            repo_name=repo_name,
+            client_name=client_name,
+            niche=tagline or "Professional Services",
+            goals=blueprint.get("siteGoals", ""),
+            emoji=emoji,
+        )
+        _log(log_fn, "    ✅ Portfolio card injected" if card_ok else "    ⚠️ Card injection skipped")
 
         # Commit + push main site
         await try_cmd("git add -A", cwd=main_site_dir)

@@ -51,13 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Intake Form Submission ──
-  // Quad-send: Firebase (DB) + FormSubmit (email) + n8n (automation) + Python API (pipeline).
-  // Firebase = persistent storage. FormSubmit = email backup.
-  // n8n fires only from local Docker. Python API fires only when FastAPI is running.
-  const N8N_WEBHOOK = 'http://localhost:5678/webhook/ajayadesign-intake';
+  // Triple-send: Firebase (DB) + FormSubmit (email) + Python API (pipeline).
+  // Firebase = persistent storage + offline bridge (poller picks up missed leads).
+  // FormSubmit = email backup. Python API = direct pipeline trigger.
   const PYTHON_API = 'http://localhost:8000/api/v1/build';
   const FORMSUBMIT_URL = 'https://formsubmit.co/ajax/9dc23f5c5eb6fba941487190ff80294b';
-  const N8N_TIMEOUT_MS = 3000; // fail fast from production
   const API_TIMEOUT_MS = 5000;
   const intakeForm = document.getElementById('ajayadesign-intake-form');
 
@@ -112,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     btn.disabled = true;
 
-    // Send to all three: Firebase (DB) + FormSubmit (email) + n8n (automation)
+    // Triple-send: Firebase (DB) + FormSubmit (email) + Python API (pipeline)
     const emailPayload = new FormData(intakeForm);
     emailPayload.append('_subject', 'New AjayaDesign Client Request');
     emailPayload.append('_captcha', 'false');
@@ -139,18 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }).then(() => console.log('[AjayaDesign] ✅ Email sent via FormSubmit'))
       .catch(err => console.warn('[AjayaDesign] ⚠️ FormSubmit failed:', err));
 
-    const n8nCtrl = new AbortController();
-    const n8nTimer = setTimeout(() => n8nCtrl.abort(), N8N_TIMEOUT_MS);
-    const n8nPromise = fetch(N8N_WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-      signal: n8nCtrl.signal,
-    }).then(() => console.log('[AjayaDesign] ✅ n8n webhook triggered'))
-      .catch(err => console.warn('[AjayaDesign] ⚠️ n8n unreachable (email still sent):', err))
-      .finally(() => clearTimeout(n8nTimer));
-
-    // 4. Python FastAPI — pipeline trigger (only available when API server is running)
+    // 3. Python FastAPI — pipeline trigger (only available when API server is running)
     const apiCtrl = new AbortController();
     const apiTimer = setTimeout(() => apiCtrl.abort(), API_TIMEOUT_MS);
     const apiPayload = { ...lead, firebaseId: leadId, source: window.location.hostname };
@@ -165,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(err => console.warn('[AjayaDesign] ⚠️ Python API unreachable (Firebase bridge will pick it up):', err))
       .finally(() => clearTimeout(apiTimer));
 
-    await Promise.allSettled([firebasePromise, emailPromise, n8nPromise, apiPromise]);
+    await Promise.allSettled([firebasePromise, emailPromise, apiPromise]);
 
     // Visual feedback — success
     btn.innerHTML = `
