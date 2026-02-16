@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 # Reasonable default when AI creative direction fails
 DEFAULT_CREATIVE_SPEC = {
     "visualConcept": "Clean, modern, professional site with subtle animations",
+    "designStyle": "neo-corporate",
     "heroTreatment": {
         "type": "parallax-image",
         "ctaStyle": "solid-lift",
@@ -28,6 +29,9 @@ DEFAULT_CREATIVE_SPEC = {
         "useGradientText": True,
         "useNoiseOverlay": True,
         "useGlassMorphism": False,
+        "useAuroraBlobs": False,
+        "useSvgWaveDividers": False,
+        "useClayDepthShadows": False,
     },
     "imageSearchTerms": {},
 }

@@ -34,6 +34,7 @@ DEFAULT_TYPOGRAPHY = {"headings": "JetBrains Mono", "body": "Inter"}
 
 DEFAULT_CREATIVE_SPEC = {
     "visualConcept": "Modern, clean, and professional",
+    "designStyle": "neo-corporate",
     "heroTreatment": {
         "type": "fade-up-stagger",
         "description": "Full-viewport hero with staggered fade-up text",
@@ -49,6 +50,9 @@ DEFAULT_CREATIVE_SPEC = {
         "useGradientText": True,
         "useNoiseOverlay": False,
         "useGlassMorphism": False,
+        "useAuroraBlobs": False,
+        "useSvgWaveDividers": False,
+        "useClayDepthShadows": False,
     },
     "imageSearchTerms": {},
 }
@@ -163,7 +167,10 @@ async def ai_council(
     if niche_pattern:
         blueprint.setdefault("creativeMood", niche_pattern.get("mood", ""))
         blueprint.setdefault("themeMode", niche_pattern.get("theme", "dark"))
-        _log(log_fn, f"  🎨 Matched niche pattern: {niche} → mood={niche_pattern.get('mood', 'N/A')}")
+        blueprint.setdefault("designStyle", niche_pattern.get("designStyle", ""))
+        blueprint.setdefault("landingPattern", niche_pattern.get("landingPattern", ""))
+        blueprint.setdefault("fontPairingStyle", niche_pattern.get("fontPairingStyle", ""))
+        _log(log_fn, f"  🎨 Matched niche pattern: {niche} → style={niche_pattern.get('designStyle', 'N/A')}, mood={niche_pattern.get('mood', 'N/A')}")
 
     _log(
         log_fn,
