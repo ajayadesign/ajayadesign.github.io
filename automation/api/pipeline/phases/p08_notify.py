@@ -18,6 +18,7 @@ async def notify(
     live_url: str,
     page_count: int,
     *,
+    verified_live: bool = False,
     log_fn=None,
 ) -> None:
     """Send build-complete notification via Telegram."""
@@ -31,6 +32,7 @@ async def notify(
         repo_full=repo_full,
         live_url=live_url,
         page_count=page_count,
+        verified_live=verified_live,
     )
 
     _log(log_fn, "  ✅ Telegram notification sent" if ok else "  ⚠️ Telegram not sent (not configured or failed)")

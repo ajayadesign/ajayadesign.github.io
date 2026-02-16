@@ -25,10 +25,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY api/ api/
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 
-# Set git identity
+# Set git identity + safe.directory for mounted volumes
 RUN git config --global user.email "bot@ajayadesign.com" && \
     git config --global user.name "AjayaDesign Bot" && \
-    git config --global init.defaultBranch main
+    git config --global init.defaultBranch main && \
+    git config --global --add safe.directory '*' && \
+    git config --global credential.helper store
 
 EXPOSE 3001
 

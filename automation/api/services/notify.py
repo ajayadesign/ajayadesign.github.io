@@ -25,6 +25,7 @@ async def send_telegram(
     repo_full: str,
     live_url: str,
     page_count: int,
+    verified_live: bool = False,
 ) -> bool:
     """Send Telegram build-complete notification. Returns True on success."""
     token = settings.telegram_bot_token
@@ -34,6 +35,8 @@ async def send_telegram(
         logger.warning("Telegram not configured — skipping notification")
         return False
 
+    live_status = "✅ Verified live" if verified_live else "⏳ Propagating"
+
     message = "\n".join([
         "✅ *AjayaDesign v2 — New Site Deployed\\!*",
         "",
@@ -42,6 +45,7 @@ async def send_telegram(
         f"🎯 *Goals:* {_esc_md(goals)}",
         f"📧 *Email:* {_esc_md(email or 'not provided')}",
         f"📄 *Pages:* {page_count}",
+        f"🌐 *Status:* {_esc_md(live_status)}",
         "",
         f"🔗 *Live URL:* [{_esc_md(live_url)}]({live_url})",
         f"📦 *Repo:* [github\\.com/{_esc_md(repo_full)}](https://github.com/{repo_full})",

@@ -146,6 +146,19 @@ def _rebuild_page(
     footer_match = re.search(r"<footer[\s>][\s\S]*?</footer>", original_html, re.IGNORECASE)
     footer = footer_match.group(0) if footer_match else ds.get("footerHtml", "")
 
+    # Preserve inline/linked scripts from end of original <body>
+    # (AOS.init, scroll progress, back-to-top, etc. injected by Phase 5)
+    body_close = re.search(r"</footer>([\s\S]*?)</body>", original_html, re.IGNORECASE)
+    tail_scripts = ""
+    if body_close:
+        tail_raw = body_close.group(1).strip()
+        # Extract all <script> blocks from the tail
+        scripts = re.findall(r"<script[\s>][\s\S]*?</script>", tail_raw, re.IGNORECASE)
+        if scripts:
+            tail_scripts = "\n".join(scripts)
+
+    mobile_menu = ds.get('mobileMenuJs', '')
+
     return f"""<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -155,7 +168,8 @@ def _rebuild_page(
 {nav}
 {new_main}
 {footer}
-{ds.get('mobileMenuJs', '')}
+{mobile_menu}
+{tail_scripts}
 </body>
 </html>"""
 

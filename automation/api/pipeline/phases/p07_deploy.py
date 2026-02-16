@@ -2,13 +2,16 @@
 Phase 7: Deploy — git push, GitHub Pages API, submodule, portfolio card.
 """
 
+import asyncio
 import html
 import os
 import logging
 from pathlib import Path
 
+import httpx
+
 from api.config import settings
-from api.services.git import run_cmd, try_cmd
+from api.services.git import run_cmd, try_cmd, ensure_git_identity
 
 logger = logging.getLogger(__name__)
 
@@ -104,6 +107,9 @@ async def deploy(
 
     _log(log_fn, f"🚀 Deploying {repo_full} to GitHub Pages")
 
+    # ── Ensure git identity + safe.directory (critical for mounted volumes) ──
+    await ensure_git_identity()
+
     # ── Git add, commit, push ──
     await run_cmd("git add -A", cwd=project_dir)
 
@@ -126,13 +132,14 @@ async def deploy(
     _log(log_fn, "  Enabling GitHub Pages...")
     pages_payload = '{"source":{"branch":"main","path":"/"}}'
 
+    # Use echo pipe instead of <<< heredoc (dash shell doesn't support <<<)
     ok, _ = await try_cmd(
-        f"gh api -X POST 'repos/{repo_full}/pages' --input - <<< '{pages_payload}'",
+        f"echo '{pages_payload}' | gh api -X POST 'repos/{repo_full}/pages' --input -",
         cwd=project_dir,
     )
     if not ok:
         ok, _ = await try_cmd(
-            f"gh api -X PUT 'repos/{repo_full}/pages' --input - <<< '{pages_payload}'",
+            f"echo '{pages_payload}' | gh api -X PUT 'repos/{repo_full}/pages' --input -",
             cwd=project_dir,
         )
 
@@ -182,7 +189,51 @@ async def deploy(
     else:
         _log(log_fn, f"  ⚠️ Main site not found at {main_site_dir}, skipping submodule")
 
-    _log(log_fn, f"  🔗 Live URL: {repo['live_url']}")
+    # ── Verify site is live ──
+    live_url = repo["live_url"]
+    is_live = await verify_site_live(live_url, log_fn=log_fn)
+    repo["verified_live"] = is_live
+
+    _log(log_fn, f"  🔗 Live URL: {live_url}")
+
+
+async def verify_site_live(
+    url: str,
+    *,
+    max_attempts: int = 10,
+    delay_secs: int = 6,
+    log_fn=None,
+) -> bool:
+    """
+    Poll the live URL until it returns 200 with real HTML content.
+    GitHub Pages can take 10-60s to propagate after the first push.
+    """
+    _log(log_fn, f"  🔍 Verifying site is live: {url}")
+
+    for attempt in range(1, max_attempts + 1):
+        try:
+            async with httpx.AsyncClient(
+                follow_redirects=True, timeout=10
+            ) as client:
+                resp = await client.get(url)
+                if resp.status_code == 200 and "<!DOCTYPE" in resp.text[:500]:
+                    _log(log_fn, f"  ✅ Site is live! (attempt {attempt}/{max_attempts})")
+                    return True
+                _log(
+                    log_fn,
+                    f"  ⏳ Attempt {attempt}/{max_attempts}: HTTP {resp.status_code}, waiting {delay_secs}s...",
+                )
+        except Exception as e:
+            _log(
+                log_fn,
+                f"  ⏳ Attempt {attempt}/{max_attempts}: {type(e).__name__}, waiting {delay_secs}s...",
+            )
+
+        if attempt < max_attempts:
+            await asyncio.sleep(delay_secs)
+
+    _log(log_fn, f"  ⚠️ Site not live after {max_attempts * delay_secs}s — notification will still be sent")
+    return False
 
 
 def _log(fn, msg):

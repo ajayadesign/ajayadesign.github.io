@@ -1,0 +1,31 @@
+{
+  "status": "failed",
+  "client_name": "E2E Test \u2014 Sunrise Bakery",
+  "phases": {},
+  "timings": {
+    "total_secs": 2.0,
+    "phases": {
+      "repository": 0
+    }
+  },
+  "errors": [
+    "[Errno 13] Permission denied: '/workspace'",
+    "Check failed: Build status = complete",
+    "Check failed: Blueprint has pages",
+    "Check failed: Creative spec produced",
+    "Check failed: Design system has tailwindConfig",
+    "Check failed: Design system has navHtml",
+    "Check failed: Design system has footerHtml",
+    "Check failed: Page results exist",
+    "Check failed: Pages generated (not fallback)",
+    "Check failed: All 8 phases recorded in DB",
+    "Check failed: All phases completed",
+    "Check failed: Substantial logging",
+    "Check failed: SSE phase events emitted"
+  ],
+  "artifacts": {},
+  "checks": {
+    "passed": 0,
+    "failed": 12
+  }
+}
