@@ -45,7 +45,7 @@ services:
       FIREBASE_DB_URL: "https://ajayadesign-6d739-default-rtdb.firebaseio.com"
       FIREBASE_POLL_INTERVAL: "30"
       BASE_DIR: "/repos"
-      MAIN_SITE_DIR: "/site"
+      MAIN_SITE_DIR: "/site/ajayadesign.github.io"
       HOST_UID: "${HOST_UID:-1000}"
       HOST_GID: "${HOST_GID:-1000}"
     volumes:

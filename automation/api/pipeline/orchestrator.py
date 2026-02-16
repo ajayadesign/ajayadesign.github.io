@@ -219,6 +219,7 @@ class BuildOrchestrator:
     async def _phase_8_notify(self):
         phase = await self._start_phase(8)
         page_count = len(self.blueprint.get("pages", []))
+        verified_live = self.repo.get("verified_live", False)
         await p08_notify.notify(
             self.build.client_name,
             self.build.niche,
@@ -227,6 +228,7 @@ class BuildOrchestrator:
             self.build.repo_full or "",
             self.build.live_url or "",
             page_count,
+            verified_live=verified_live,
             log_fn=lambda m: self._log_msg(m, category="notify"),
         )
         await self._end_phase(phase)
