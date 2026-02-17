@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.database import get_db
 from api.models.build import Build
 from api.schemas.contract import BuildPatchRequest, PortfolioSeedRequest
+from api.services.firebase import sync_portfolio_site_to_firebase
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["portfolio"])
@@ -74,6 +75,23 @@ async def patch_build(
     await db.refresh(build)
 
     logger.info(f"✅ Build {short_id} patched: {list(update_data.keys())}")
+
+    # Sync to Firebase
+    sync_portfolio_site_to_firebase({
+        "short_id": build.short_id,
+        "client_name": build.client_name or "",
+        "email": getattr(build, "email", "") or "",
+        "phone": getattr(build, "phone", "") or "",
+        "niche": build.niche or "",
+        "goals": build.goals or "",
+        "location": getattr(build, "location", "") or "",
+        "live_url": build.live_url or "",
+        "repo_name": build.repo_name or "",
+        "brand_colors": getattr(build, "brand_colors", "") or "",
+        "tagline": getattr(build, "tagline", "") or "",
+        "status": build.status or "complete",
+    })
+
     return {
         "short_id": build.short_id,
         "client_name": build.client_name,
@@ -120,13 +138,36 @@ async def seed_portfolio(req: PortfolioSeedRequest, db: AsyncSession = Depends(g
             created_at=datetime.now(timezone.utc),
         )
         db.add(build)
-        created.append(site.client_name)
+        created.append({"client_name": site.client_name, "short_id": build.short_id})
 
     await db.commit()
-    logger.info(f"✅ Portfolio seeded: {len(created)} created, {len(skipped)} skipped")
+
+    # Sync all newly created sites to Firebase
+    for item in created:
+        sid = item["short_id"]
+        # Find the matching site data from request
+        site_data = next((s for s in req.sites if s.client_name == item["client_name"]), None)
+        if site_data:
+            sync_portfolio_site_to_firebase({
+                "short_id": sid,
+                "client_name": site_data.client_name,
+                "email": site_data.email or "",
+                "phone": site_data.phone or "",
+                "niche": site_data.niche or "",
+                "goals": site_data.goals or "",
+                "location": site_data.location or "",
+                "live_url": site_data.live_url or "",
+                "repo_name": site_data.repo_name or "",
+                "brand_colors": site_data.brand_colors or "",
+                "tagline": site_data.tagline or "",
+                "status": site_data.status or "complete",
+            })
+
+    created_names = [c["client_name"] for c in created]
+    logger.info(f"✅ Portfolio seeded: {len(created_names)} created, {len(skipped)} skipped")
     return {
-        "created": created,
+        "created": created_names,
         "skipped": skipped,
-        "total_created": len(created),
+        "total_created": len(created_names),
         "total_skipped": len(skipped),
     }
