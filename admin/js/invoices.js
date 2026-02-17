@@ -60,16 +60,40 @@ function copyPayPalLink() {
 
 // ── Open an existing invoice ───────────────────────────
 async function openInvoice(invoiceNumber) {
+  let loaded = false;
+
+  // Try API first
   try {
     const res = await fetch(`${API_BASE}/invoices/${invoiceNumber}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     currentInvoice = await res.json();
     invoiceItems = (currentInvoice.items || []).map(item => ({ ...item }));
+    loaded = true;
   } catch (err) {
-    console.error('[Invoices] Failed to load:', err);
-    alert('Failed to load invoice: ' + err.message);
+    console.warn('[Invoices] API failed, trying Firebase:', err.message);
+  }
+
+  // Fallback: Firebase RTDB (summary data only — line items not stored)
+  if (!loaded && window.__db) {
+    try {
+      const snap = await window.__db.ref(`invoices/${invoiceNumber}`).once('value');
+      const val = snap.val();
+      if (val) {
+        currentInvoice = { invoice_number: invoiceNumber, ...val, items: [] };
+        invoiceItems = [];
+        loaded = true;
+        console.info('[Invoices] Loaded from Firebase (read-only summary)');
+      }
+    } catch (fbErr) {
+      console.warn('[Invoices] Firebase fallback failed:', fbErr.message);
+    }
+  }
+
+  if (!loaded) {
+    alert('Failed to load invoice — API and Firebase both unavailable.');
     return;
   }
+
   _populateInvoiceForm();
   hideAllMainPanels();
   document.getElementById('invoice-detail').classList.remove('hidden');
