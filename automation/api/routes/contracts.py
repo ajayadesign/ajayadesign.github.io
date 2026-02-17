@@ -24,6 +24,10 @@ from api.services.email_service import (
     send_email, build_contract_email, build_invoice_email,
     build_signed_notification_email,
 )
+from api.services.firebase import (
+    sync_contract_to_firebase, delete_contract_from_firebase,
+    sync_invoice_to_firebase, delete_invoice_from_firebase,
+)
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/contracts", tags=["contracts"])
@@ -33,6 +37,50 @@ email_router = APIRouter(prefix="/email", tags=["email"])
 
 def _short_id() -> str:
     return uuid.uuid4().hex[:8]
+
+
+def _sync_contract_fb(c: Contract) -> None:
+    """Fire-and-forget sync of contract state to Firebase."""
+    try:
+        sync_contract_to_firebase({
+            "short_id": c.short_id,
+            "client_name": c.client_name,
+            "client_email": c.client_email,
+            "project_name": c.project_name,
+            "total_amount": float(c.total_amount or 0),
+            "deposit_amount": float(c.deposit_amount or 0),
+            "payment_method": c.payment_method or "",
+            "status": c.status or "draft",
+            "signed_at": c.signed_at.isoformat() if c.signed_at else None,
+            "signer_name": c.signer_name,
+            "sent_at": c.sent_at.isoformat() if c.sent_at else None,
+            "build_short_id": "",  # TODO: resolve if needed
+        })
+    except Exception as e:
+        logger.warning(f"Firebase contract sync failed (non-critical): {e}")
+
+
+def _sync_invoice_fb(inv: Invoice) -> None:
+    """Fire-and-forget sync of invoice state to Firebase."""
+    try:
+        sync_invoice_to_firebase({
+            "invoice_number": inv.invoice_number,
+            "client_name": inv.client_name,
+            "client_email": inv.client_email,
+            "total_amount": float(inv.total_amount or 0),
+            "subtotal": float(inv.subtotal or 0),
+            "tax_amount": float(inv.tax_amount or 0),
+            "amount_paid": float(inv.amount_paid or 0),
+            "payment_status": inv.payment_status or "unpaid",
+            "payment_method": inv.payment_method or "",
+            "status": inv.status or "draft",
+            "due_date": str(inv.due_date) if inv.due_date else None,
+            "paid_at": inv.paid_at.isoformat() if inv.paid_at else None,
+            "contract_short_id": "",
+            "items_count": len(inv.items or []),
+        })
+    except Exception as e:
+        logger.warning(f"Firebase invoice sync failed (non-critical): {e}")
 
 
 def _contract_to_response(c: Contract) -> dict:
@@ -161,6 +209,7 @@ async def create_contract(req: ContractCreateRequest, db: AsyncSession = Depends
     await db.commit()
     await db.refresh(contract)
     logger.info(f"✅ Contract created: {contract.short_id} for {contract.client_name}")
+    _sync_contract_fb(contract)
     return _contract_to_response(contract)
 
 
@@ -190,6 +239,7 @@ async def update_contract(
 
     await db.commit()
     await db.refresh(contract)
+    _sync_contract_fb(contract)
     return _contract_to_response(contract)
 
 
@@ -204,6 +254,7 @@ async def delete_contract(short_id: str, db: AsyncSession = Depends(get_db)):
         raise HTTPException(404, f"Contract {short_id} not found")
     await db.delete(contract)
     await db.commit()
+    delete_contract_from_firebase(short_id)
 
 
 # ── Signing ─────────────────────────────────────────────
@@ -277,6 +328,7 @@ async def sign_contract(
     await db.refresh(contract)
 
     logger.info(f"✅ Contract {contract.short_id} signed by {req.signer_name}")
+    _sync_contract_fb(contract)
 
     # Send notification to admin
     try:
@@ -327,6 +379,7 @@ async def send_contract(short_id: str, db: AsyncSession = Depends(get_db)):
         contract.status = "sent"
         contract.sent_at = datetime.now(timezone.utc)
         await db.commit()
+        _sync_contract_fb(contract)
 
     return result_email
 
@@ -387,6 +440,7 @@ async def create_invoice(req: InvoiceCreateRequest, db: AsyncSession = Depends(g
     await db.commit()
     await db.refresh(invoice)
     logger.info(f"✅ Invoice created: {invoice.invoice_number} for {invoice.client_name}")
+    _sync_invoice_fb(invoice)
     return _invoice_to_response(invoice)
 
 
@@ -416,6 +470,7 @@ async def update_invoice(
 
     await db.commit()
     await db.refresh(invoice)
+    _sync_invoice_fb(invoice)
     return _invoice_to_response(invoice)
 
 
@@ -430,6 +485,7 @@ async def delete_invoice(invoice_number: str, db: AsyncSession = Depends(get_db)
         raise HTTPException(404, f"Invoice {invoice_number} not found")
     await db.delete(invoice)
     await db.commit()
+    delete_invoice_from_firebase(invoice_number)
 
 
 @invoice_router.post("/{invoice_number}/send")
@@ -484,6 +540,7 @@ async def send_invoice(invoice_number: str, db: AsyncSession = Depends(get_db)):
         invoice.status = "sent"
         invoice.sent_at = datetime.now(timezone.utc)
         await db.commit()
+        _sync_invoice_fb(invoice)
 
     return result_email
 
@@ -504,6 +561,7 @@ async def mark_invoice_paid(invoice_number: str, db: AsyncSession = Depends(get_
     invoice.status = "paid"
     await db.commit()
     await db.refresh(invoice)
+    _sync_invoice_fb(invoice)
     return _invoice_to_response(invoice)
 
 

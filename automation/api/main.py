@@ -250,14 +250,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS — allow admin dashboard on GitHub Pages
+# CORS — allow admin dashboard on GitHub Pages and local dev
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://ajayadesign.github.io",
-        "http://localhost:*",
-        "http://127.0.0.1:*",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -7,8 +7,8 @@
 // Change this when Cloudflare Tunnel is set up:
 //   e.g. 'https://api.ajayadesign.com'
 const API_BASE = window.location.hostname === 'localhost'
-  ? 'http://localhost:8000/api/v1'
-  : 'http://localhost:8000/api/v1'; // TODO: replace with tunnel URL
+  ? 'http://localhost:3001/api/v1'
+  : 'http://localhost:3001/api/v1'; // TODO: replace with tunnel URL
 
 const POLL_INTERVAL = 5000;
 const ALLOWED_EMAIL = 'ajayadahal1000@gmail.com'; // Only this user can access admin
