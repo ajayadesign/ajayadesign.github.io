@@ -297,13 +297,27 @@ def sync_contract_to_firebase(contract_data: dict) -> bool:
 
     try:
         ref = firebase_db.reference(f"contracts/{short_id}")
+        # Build the clause list for Firebase (keep it lightweight)
+        raw_clauses = contract_data.get("clauses", [])
+        fb_clauses = [
+            {"title": c.get("title", ""), "body": c.get("body", ""),
+             "category": c.get("category", "custom"), "enabled": c.get("enabled", True)}
+            for c in (raw_clauses if isinstance(raw_clauses, list) else [])
+        ]
+
         ref.update({
             "client_name": contract_data.get("client_name", ""),
             "client_email": contract_data.get("client_email", ""),
             "project_name": contract_data.get("project_name", ""),
+            "project_description": contract_data.get("project_description", ""),
             "total_amount": contract_data.get("total_amount", 0),
             "deposit_amount": contract_data.get("deposit_amount", 0),
             "payment_method": contract_data.get("payment_method", ""),
+            "payment_terms": contract_data.get("payment_terms", ""),
+            "start_date": contract_data.get("start_date", None),
+            "estimated_completion_date": contract_data.get("estimated_completion_date", None),
+            "clauses": fb_clauses,
+            "custom_notes": contract_data.get("custom_notes", ""),
             "status": contract_data.get("status", "draft"),
             "signed_at": contract_data.get("signed_at", None),
             "signer_name": contract_data.get("signer_name", None),
