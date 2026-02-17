@@ -41,16 +41,20 @@ async function openContract(shortId) {
     console.warn('[Contracts] API failed, trying Firebase:', err.message);
   }
 
-  // Fallback: Firebase RTDB (summary data only — clauses not stored)
+  // Fallback: Firebase RTDB
   if (!loaded && window.__db) {
     try {
       const snap = await window.__db.ref(`contracts/${shortId}`).once('value');
       const val = snap.val();
       if (val) {
-        currentContract = { short_id: shortId, ...val, clauses: [] };
-        contractClauses = [];
+        const fbClauses = Array.isArray(val.clauses) ? val.clauses : [];
+        currentContract = { short_id: shortId, ...val, clauses: fbClauses };
+        contractClauses = fbClauses.length > 0
+          ? fbClauses.map(c => ({ ...c }))
+          : defaultClauses.map(c => ({ ...c }));  // Use defaults when Firebase has none
         loaded = true;
-        console.info('[Contracts] Loaded from Firebase (read-only summary)');
+        console.info('[Contracts] Loaded from Firebase (%d clauses%s)', contractClauses.length,
+          fbClauses.length === 0 ? ' — used defaults' : '');
       }
     } catch (fbErr) {
       console.warn('[Contracts] Firebase fallback failed:', fbErr.message);
