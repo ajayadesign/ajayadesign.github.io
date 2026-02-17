@@ -8,6 +8,7 @@ import uuid
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel
 from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -79,6 +80,40 @@ async def log_activity(
 # ═══════════════════════════════════════════════════════
 #  API Endpoints
 # ═══════════════════════════════════════════════════════
+
+class ManualActivityRequest(BaseModel):
+    entity_type: str
+    entity_id: str
+    action: str
+    description: str = ""
+    icon: str = "📋"
+    actor: str = "admin"
+    metadata: dict | None = None
+
+
+@activity_router.post("")
+async def create_manual_activity(
+    req: ManualActivityRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Manually log a past event (e.g., first contract sent via email,
+    payment received offline, contract voided).
+    """
+    await log_activity(
+        entity_type=req.entity_type,
+        entity_id=req.entity_id,
+        action=req.action,
+        description=req.description,
+        icon=req.icon,
+        actor=req.actor,
+        metadata=req.metadata,
+        db=db,
+    )
+    await db.commit()
+    logger.info(f"📋 Manual activity logged: {req.action} on {req.entity_type}/{req.entity_id}")
+    return {"success": True, "message": "Activity logged"}
+
 
 @activity_router.get("")
 async def list_activities(

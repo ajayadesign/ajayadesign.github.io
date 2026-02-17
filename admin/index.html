@@ -567,6 +567,7 @@
               <button onclick="saveContract()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-green/10 text-neon-green border border-neon-green/30 hover:bg-neon-green/20 transition">💾 Save</button>
               <button onclick="sendContract()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20 transition">📧 Send to Client</button>
               <button onclick="downloadContractPDF()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-purple/10 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/20 transition">📄 Download PDF</button>
+              <button onclick="logPastContractEvent()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-yellow/10 text-neon-yellow border border-neon-yellow/30 hover:bg-neon-yellow/20 transition" title="Record a past event (sent via email, payment received, etc.)">📜 Log Event</button>
             </div>
           </div>
           <div id="ct-meta" class="text-xs font-mono text-gray-500"></div>
@@ -634,7 +635,10 @@
           <div>
             <div class="flex items-center justify-between mb-3">
               <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">📋 Contract Clauses</h3>
-              <button onclick="resetClausesToDefault()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-surface-2 text-gray-500 hover:text-gray-300 transition">↻ Reset Defaults</button>
+              <div class="flex items-center gap-2">
+                <button onclick="addCustomClause()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-electric/10 text-electric hover:bg-electric/20 transition">+ Add Clause</button>
+                <button onclick="resetClausesToDefault()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-surface-2 text-gray-500 hover:text-gray-300 transition">↻ Reset Defaults</button>
+              </div>
             </div>
             <div id="ct-clauses-container" class="space-y-3">
               <!-- Populated by JS -->
@@ -675,8 +679,7 @@
               <button onclick="saveInvoice()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-green/10 text-neon-green border border-neon-green/30 hover:bg-neon-green/20 transition">💾 Save</button>
               <button onclick="sendInvoice()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20 transition">📧 Send to Client</button>
               <button onclick="markInvoicePaid()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-green/10 text-neon-green border border-neon-green/30 hover:bg-neon-green/20 transition">✅ Mark Paid</button>
-              <button onclick="downloadInvoicePDF()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-purple/10 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/20 transition">📄 Download PDF</button>
-            </div>
+              <button onclick="downloadInvoicePDF()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-purple/10 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/20 transition">📄 Download PDF</button>              <button onclick=\"logPastInvoiceEvent()\" class=\"text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-yellow/10 text-neon-yellow border border-neon-yellow/30 hover:bg-neon-yellow/20 transition\" title=\"Record a past event (payment received, sent, etc.)\">📜 Log Event</button>            </div>
           </div>
         </div>
         <div class="flex-1 overflow-y-auto p-6 space-y-6">
