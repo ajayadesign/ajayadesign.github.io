@@ -52,17 +52,49 @@ const SEED_SITES = [
   },
 ];
 
-// ── Load portfolio from API ────────────────────────────
+// ── Load portfolio from API (with Firebase RTDB fallback) ──
 async function loadPortfolio() {
+  let loaded = false;
+
+  // Try API first
   try {
     const res = await fetch(`${API_BASE}/portfolio`, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     portfolioSites = data.sites || [];
+    loaded = true;
   } catch (err) {
-    console.warn('[Portfolio] Failed to load:', err.message);
-    portfolioSites = [];
+    console.warn('[Portfolio] API failed, trying Firebase:', err.message);
   }
+
+  // Fallback: read from Firebase RTDB
+  if (!loaded && window.__db) {
+    try {
+      const snap = await window.__db.ref('portfolio').once('value');
+      const val = snap.val();
+      if (val) {
+        portfolioSites = Object.entries(val).map(([key, s]) => ({
+          short_id: key,
+          client_name: s.client_name || '',
+          email: s.email || '',
+          phone: s.phone || '',
+          niche: s.niche || '',
+          goals: s.goals || '',
+          location: s.location || '',
+          live_url: s.live_url || '',
+          brand_colors: s.brand_colors || '',
+          tagline: s.tagline || '',
+          status: s.status || 'complete',
+        }));
+        loaded = true;
+        console.info('[Portfolio] Loaded %d sites from Firebase', portfolioSites.length);
+      }
+    } catch (fbErr) {
+      console.warn('[Portfolio] Firebase fallback failed:', fbErr.message);
+    }
+  }
+
+  if (!loaded) portfolioSites = [];
   renderPortfolioSites();
 }
 
@@ -196,70 +228,104 @@ async function savePortfolioEdit() {
 // ── Load contracts/invoices for a site ─────────────────
 async function loadSiteContracts(shortId) {
   const $list = document.getElementById('pf-contracts-list');
+  let contracts = null;
+
+  // Try API first
   try {
     const res = await fetch(`${API_BASE}/contracts`, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    const site = portfolioSites.find(s => s.short_id === shortId);
-    const siteContracts = (data.contracts || []).filter(c =>
-      c.client_name === site?.client_name || c.build_id === site?.id
-    );
+    contracts = data.contracts || [];
+  } catch (_) {}
 
-    if (siteContracts.length === 0) {
-      $list.innerHTML = '<p class="text-xs text-gray-600 font-mono">No contracts yet</p>';
-      return;
-    }
-
-    $list.innerHTML = siteContracts.map(c => `
-      <div onclick="openContract('${c.short_id}')"
-        class="p-3 bg-surface rounded-lg border border-border hover:border-border-glow cursor-pointer transition flex items-center justify-between">
-        <div>
-          <span class="font-mono text-xs text-white font-semibold">${esc(c.project_name)}</span>
-          <span class="text-[0.6rem] text-gray-500 ml-2">#${c.short_id}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-mono text-neon-green">$${parseFloat(c.total_amount || 0).toFixed(2)}</span>
-          <span class="px-2 py-0.5 rounded-full text-[0.6rem] font-mono ${contractStatusClass(c.status)}">${(c.status || 'draft').toUpperCase()}</span>
-        </div>
-      </div>
-    `).join('');
-  } catch (err) {
-    $list.innerHTML = '<p class="text-xs text-gray-600 font-mono">Failed to load contracts</p>';
+  // Fallback: Firebase
+  if (!contracts && window.__db) {
+    try {
+      const snap = await window.__db.ref('contracts').once('value');
+      const val = snap.val();
+      if (val) contracts = Object.entries(val).map(([key, c]) => ({ short_id: key, ...c }));
+    } catch (_) {}
   }
+
+  if (!contracts) {
+    $list.innerHTML = '<p class="text-xs text-gray-600 font-mono">Failed to load contracts</p>';
+    return;
+  }
+
+  const site = portfolioSites.find(s => s.short_id === shortId);
+  const siteContracts = contracts.filter(c =>
+    c.client_name === site?.client_name || c.build_id === site?.id || c.build_short_id === shortId
+  );
+
+  if (siteContracts.length === 0) {
+    $list.innerHTML = '<p class="text-xs text-gray-600 font-mono">No contracts yet</p>';
+    return;
+  }
+
+  $list.innerHTML = siteContracts.map(c => `
+    <div onclick="openContract('${c.short_id}')"
+      class="p-3 bg-surface rounded-lg border border-border hover:border-border-glow cursor-pointer transition flex items-center justify-between">
+      <div>
+        <span class="font-mono text-xs text-white font-semibold">${esc(c.project_name)}</span>
+        <span class="text-[0.6rem] text-gray-500 ml-2">#${c.short_id}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-mono text-neon-green">$${parseFloat(c.total_amount || 0).toFixed(2)}</span>
+        <span class="px-2 py-0.5 rounded-full text-[0.6rem] font-mono ${contractStatusClass(c.status)}">${(c.status || 'draft').toUpperCase()}</span>
+      </div>
+    </div>
+  `).join('');
 }
 
 async function loadSiteInvoices(shortId) {
   const $list = document.getElementById('pf-invoices-list');
+  let invoices = null;
+
+  // Try API first
   try {
     const res = await fetch(`${API_BASE}/invoices`, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    const site = portfolioSites.find(s => s.short_id === shortId);
-    const siteInvoices = (data.invoices || []).filter(inv =>
-      inv.client_name === site?.client_name || inv.build_id === site?.id
-    );
+    invoices = data.invoices || [];
+  } catch (_) {}
 
-    if (siteInvoices.length === 0) {
-      $list.innerHTML = '<p class="text-xs text-gray-600 font-mono">No invoices yet</p>';
-      return;
-    }
-
-    $list.innerHTML = siteInvoices.map(inv => `
-      <div onclick="openInvoice('${inv.invoice_number}')"
-        class="p-3 bg-surface rounded-lg border border-border hover:border-border-glow cursor-pointer transition flex items-center justify-between">
-        <div>
-          <span class="font-mono text-xs text-white font-semibold">${inv.invoice_number}</span>
-          <span class="text-[0.6rem] text-gray-500 ml-2">${esc(inv.client_name)}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-mono text-neon-green">$${parseFloat(inv.total_amount || 0).toFixed(2)}</span>
-          <span class="px-2 py-0.5 rounded-full text-[0.6rem] font-mono ${invoiceStatusClass(inv.payment_status)}">${(inv.payment_status || 'unpaid').toUpperCase()}</span>
-        </div>
-      </div>
-    `).join('');
-  } catch (err) {
-    $list.innerHTML = '<p class="text-xs text-gray-600 font-mono">Failed to load invoices</p>';
+  // Fallback: Firebase
+  if (!invoices && window.__db) {
+    try {
+      const snap = await window.__db.ref('invoices').once('value');
+      const val = snap.val();
+      if (val) invoices = Object.entries(val).map(([key, inv]) => ({ invoice_number: key, ...inv }));
+    } catch (_) {}
   }
+
+  if (!invoices) {
+    $list.innerHTML = '<p class="text-xs text-gray-600 font-mono">Failed to load invoices</p>';
+    return;
+  }
+
+  const site = portfolioSites.find(s => s.short_id === shortId);
+  const siteInvoices = invoices.filter(inv =>
+    inv.client_name === site?.client_name || inv.build_id === site?.id
+  );
+
+  if (siteInvoices.length === 0) {
+    $list.innerHTML = '<p class="text-xs text-gray-600 font-mono">No invoices yet</p>';
+    return;
+  }
+
+  $list.innerHTML = siteInvoices.map(inv => `
+    <div onclick="openInvoice('${inv.invoice_number}')"
+      class="p-3 bg-surface rounded-lg border border-border hover:border-border-glow cursor-pointer transition flex items-center justify-between">
+      <div>
+        <span class="font-mono text-xs text-white font-semibold">${inv.invoice_number}</span>
+        <span class="text-[0.6rem] text-gray-500 ml-2">${esc(inv.client_name)}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-mono text-neon-green">$${parseFloat(inv.total_amount || 0).toFixed(2)}</span>
+        <span class="px-2 py-0.5 rounded-full text-[0.6rem] font-mono ${invoiceStatusClass(inv.payment_status)}">${(inv.payment_status || 'unpaid').toUpperCase()}</span>
+      </div>
+    </div>
+  `).join('');
 }
 
 // ── Sub-tab switching ──────────────────────────────────
@@ -286,66 +352,102 @@ function switchPortfolioSubTab(tab) {
 // ── Load all contracts / invoices for sidebar ──────────
 async function loadAllContracts() {
   const $list = document.getElementById('portfolio-contracts-list');
+  let contracts = null;
+
+  // Try API first
   try {
     const res = await fetch(`${API_BASE}/contracts`, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    const contracts = data.contracts || [];
+    contracts = data.contracts || [];
+  } catch (_) {}
 
-    if (contracts.length === 0) {
-      $list.innerHTML = `<div class="text-center py-12"><div class="text-4xl mb-3 opacity-30">📝</div><p class="text-gray-500 font-mono text-sm">No contracts yet</p></div>`;
-      return;
-    }
-
-    $list.innerHTML = contracts.map(c => `
-      <div onclick="openContract('${c.short_id}')"
-        class="p-4 bg-surface-2 rounded-xl border border-border hover:border-border-glow cursor-pointer transition">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="font-mono text-sm font-bold text-white">${esc(c.client_name)}</h3>
-          <span class="px-2 py-0.5 rounded-full text-[0.6rem] font-mono ${contractStatusClass(c.status)}">${(c.status || 'draft').toUpperCase()}</span>
-        </div>
-        <div class="text-xs text-gray-400 mb-1">${esc(c.project_name)}</div>
-        <div class="flex items-center justify-between text-[0.65rem]">
-          <span class="text-gray-600">#${c.short_id}</span>
-          <span class="text-neon-green font-mono">$${parseFloat(c.total_amount || 0).toFixed(2)}</span>
-        </div>
-      </div>
-    `).join('');
-  } catch (err) {
-    $list.innerHTML = '<p class="text-xs text-gray-600 font-mono p-4">Failed to load contracts</p>';
+  // Fallback: Firebase
+  if (!contracts && window.__db) {
+    try {
+      const snap = await window.__db.ref('contracts').once('value');
+      const val = snap.val();
+      if (val) {
+        contracts = Object.entries(val).map(([key, c]) => ({ short_id: key, ...c }));
+        console.info('[Portfolio] Loaded %d contracts from Firebase', contracts.length);
+      }
+    } catch (_) {}
   }
+
+  if (!contracts) {
+    $list.innerHTML = '<p class="text-xs text-gray-600 font-mono p-4">Failed to load contracts</p>';
+    return;
+  }
+
+  if (contracts.length === 0) {
+    $list.innerHTML = `<div class="text-center py-12"><div class="text-4xl mb-3 opacity-30">📝</div><p class="text-gray-500 font-mono text-sm">No contracts yet</p></div>`;
+    return;
+  }
+
+  $list.innerHTML = contracts.map(c => `
+    <div onclick="openContract('${c.short_id}')"
+      class="p-4 bg-surface-2 rounded-xl border border-border hover:border-border-glow cursor-pointer transition">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-mono text-sm font-bold text-white">${esc(c.client_name)}</h3>
+        <span class="px-2 py-0.5 rounded-full text-[0.6rem] font-mono ${contractStatusClass(c.status)}">${(c.status || 'draft').toUpperCase()}</span>
+      </div>
+      <div class="text-xs text-gray-400 mb-1">${esc(c.project_name)}</div>
+      <div class="flex items-center justify-between text-[0.65rem]">
+        <span class="text-gray-600">#${c.short_id}</span>
+        <span class="text-neon-green font-mono">$${parseFloat(c.total_amount || 0).toFixed(2)}</span>
+      </div>
+    </div>
+  `).join('');
 }
 
 async function loadAllInvoices() {
   const $list = document.getElementById('portfolio-invoices-list');
+  let invoices = null;
+
+  // Try API first
   try {
     const res = await fetch(`${API_BASE}/invoices`, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    const invoices = data.invoices || [];
+    invoices = data.invoices || [];
+  } catch (_) {}
 
-    if (invoices.length === 0) {
-      $list.innerHTML = `<div class="text-center py-12"><div class="text-4xl mb-3 opacity-30">💰</div><p class="text-gray-500 font-mono text-sm">No invoices yet</p></div>`;
-      return;
-    }
-
-    $list.innerHTML = invoices.map(inv => `
-      <div onclick="openInvoice('${inv.invoice_number}')"
-        class="p-4 bg-surface-2 rounded-xl border border-border hover:border-border-glow cursor-pointer transition">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="font-mono text-sm font-bold text-white">${inv.invoice_number}</h3>
-          <span class="px-2 py-0.5 rounded-full text-[0.6rem] font-mono ${invoiceStatusClass(inv.payment_status)}">${(inv.payment_status || 'unpaid').toUpperCase()}</span>
-        </div>
-        <div class="text-xs text-gray-400 mb-1">${esc(inv.client_name)}</div>
-        <div class="flex items-center justify-between text-[0.65rem]">
-          <span class="text-gray-600">${inv.due_date || 'No due date'}</span>
-          <span class="text-neon-green font-mono">$${parseFloat(inv.total_amount || 0).toFixed(2)}</span>
-        </div>
-      </div>
-    `).join('');
-  } catch (err) {
-    $list.innerHTML = '<p class="text-xs text-gray-600 font-mono p-4">Failed to load invoices</p>';
+  // Fallback: Firebase
+  if (!invoices && window.__db) {
+    try {
+      const snap = await window.__db.ref('invoices').once('value');
+      const val = snap.val();
+      if (val) {
+        invoices = Object.entries(val).map(([key, inv]) => ({ invoice_number: key, ...inv }));
+        console.info('[Portfolio] Loaded %d invoices from Firebase', invoices.length);
+      }
+    } catch (_) {}
   }
+
+  if (!invoices) {
+    $list.innerHTML = '<p class="text-xs text-gray-600 font-mono p-4">Failed to load invoices</p>';
+    return;
+  }
+
+  if (invoices.length === 0) {
+    $list.innerHTML = `<div class="text-center py-12"><div class="text-4xl mb-3 opacity-30">💰</div><p class="text-gray-500 font-mono text-sm">No invoices yet</p></div>`;
+    return;
+  }
+
+  $list.innerHTML = invoices.map(inv => `
+    <div onclick="openInvoice('${inv.invoice_number}')"
+      class="p-4 bg-surface-2 rounded-xl border border-border hover:border-border-glow cursor-pointer transition">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-mono text-sm font-bold text-white">${inv.invoice_number}</h3>
+        <span class="px-2 py-0.5 rounded-full text-[0.6rem] font-mono ${invoiceStatusClass(inv.payment_status)}">${(inv.payment_status || 'unpaid').toUpperCase()}</span>
+      </div>
+      <div class="text-xs text-gray-400 mb-1">${esc(inv.client_name)}</div>
+      <div class="flex items-center justify-between text-[0.65rem]">
+        <span class="text-gray-600">${inv.due_date || 'No due date'}</span>
+        <span class="text-neon-green font-mono">$${parseFloat(inv.total_amount || 0).toFixed(2)}</span>
+      </div>
+    </div>
+  `).join('');
 }
 
 // ── Create contract/invoice from portfolio site ────────

@@ -28,16 +28,40 @@ loadDefaultClauses();
 
 // ── Open a contract (existing) ─────────────────────────
 async function openContract(shortId) {
+  let loaded = false;
+
+  // Try API first
   try {
     const res = await fetch(`${API_BASE}/contracts/${shortId}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     currentContract = await res.json();
     contractClauses = (currentContract.clauses || []).map(c => ({ ...c }));
+    loaded = true;
   } catch (err) {
-    console.error('[Contracts] Failed to load contract:', err);
-    alert('Failed to load contract: ' + err.message);
+    console.warn('[Contracts] API failed, trying Firebase:', err.message);
+  }
+
+  // Fallback: Firebase RTDB (summary data only — clauses not stored)
+  if (!loaded && window.__db) {
+    try {
+      const snap = await window.__db.ref(`contracts/${shortId}`).once('value');
+      const val = snap.val();
+      if (val) {
+        currentContract = { short_id: shortId, ...val, clauses: [] };
+        contractClauses = [];
+        loaded = true;
+        console.info('[Contracts] Loaded from Firebase (read-only summary)');
+      }
+    } catch (fbErr) {
+      console.warn('[Contracts] Firebase fallback failed:', fbErr.message);
+    }
+  }
+
+  if (!loaded) {
+    alert('Failed to load contract — API and Firebase both unavailable.');
     return;
   }
+
   _populateContractForm();
   hideAllMainPanels();
   document.getElementById('contract-detail').classList.remove('hidden');

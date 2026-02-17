@@ -123,7 +123,8 @@ async def reconcile_firebase_leads() -> list[dict]:
 
 async def reconcile_contracts_invoices_to_firebase() -> None:
     """
-    On startup, re-sync all active contracts and invoices from Postgres → Firebase.
+    On startup, re-sync all active contracts, invoices, and portfolio sites
+    from Postgres → Firebase.
     This covers the case where the server was down and Firebase mirror is stale.
     Also picks up any pending signatures that arrived while we were offline.
     """
@@ -131,12 +132,38 @@ async def reconcile_contracts_invoices_to_firebase() -> None:
         return
 
     from api.models.contract import Contract, Invoice
-    from api.services.firebase import sync_contract_to_firebase, sync_invoice_to_firebase
+    from api.services.firebase import sync_contract_to_firebase, sync_invoice_to_firebase, sync_portfolio_site_to_firebase
 
     synced_contracts = 0
     synced_invoices = 0
+    synced_portfolio = 0
 
     async with async_session() as session:
+        # Re-sync all portfolio sites (complete builds)
+        result = await session.execute(
+            select(Build).where(Build.status.in_(["complete", "success"]))
+        )
+        builds = result.scalars().all()
+        for b in builds:
+            try:
+                sync_portfolio_site_to_firebase({
+                    "short_id": b.short_id,
+                    "client_name": b.client_name or "",
+                    "email": getattr(b, "email", "") or "",
+                    "phone": getattr(b, "phone", "") or "",
+                    "niche": b.niche or "",
+                    "goals": b.goals or "",
+                    "location": getattr(b, "location", "") or "",
+                    "live_url": b.live_url or "",
+                    "repo_name": b.repo_name or "",
+                    "brand_colors": getattr(b, "brand_colors", "") or "",
+                    "tagline": getattr(b, "tagline", "") or "",
+                    "status": b.status or "complete",
+                })
+                synced_portfolio += 1
+            except Exception as e:
+                logger.warning("Failed to sync portfolio %s to Firebase: %s", b.short_id, e)
+
         # Re-sync all non-cancelled contracts
         result = await session.execute(
             select(Contract).where(Contract.status.notin_(["cancelled"]))
@@ -213,10 +240,10 @@ async def reconcile_contracts_invoices_to_firebase() -> None:
             except Exception as e:
                 logger.warning("Failed to sync invoice %s to Firebase: %s", inv.invoice_number, e)
 
-    if synced_contracts or synced_invoices:
+    if synced_contracts or synced_invoices or synced_portfolio:
         logger.info(
-            "🔄 Synced %d contracts, %d invoices → Firebase",
-            synced_contracts, synced_invoices,
+            "🔄 Synced %d portfolio sites, %d contracts, %d invoices → Firebase",
+            synced_portfolio, synced_contracts, synced_invoices,
         )
 
 
