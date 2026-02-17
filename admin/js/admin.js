@@ -287,8 +287,9 @@ function updateConnectionUI() {
   }
 }
 
-// ── Fetch build history ────────────────────────────────
+// ── Fetch build history (API-first, Firebase RTDB fallback) ──
 async function refreshBuilds() {
+  let loaded = false;
   try {
     const res = await fetch(`${API_BASE}/builds`, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -303,12 +304,42 @@ async function refreshBuilds() {
       finished: b.finished_at,
       liveUrl: b.live_url,
     }));
-    renderBuildList();
-    updateStats();
+    loaded = true;
   } catch (err) {
-    // Silently fail — might just be offline
-    console.warn('[Admin] Failed to fetch builds:', err.message);
+    console.warn('[Admin] API builds fetch failed:', err.message);
   }
+
+  // Fallback: read from Firebase RTDB when API is unreachable
+  if (!loaded && window.__db) {
+    try {
+      const snap = await window.__db.ref('builds').orderByChild('created_at').limitToLast(50).once('value');
+      const fbBuilds = [];
+      snap.forEach((child) => {
+        const b = child.val();
+        fbBuilds.push({
+          id: child.key,
+          client: b.client_name || b.clientName || 'Unknown',
+          status: b.status === 'complete' ? 'success' : b.status,
+          niche: b.niche || '',
+          email: b.email || '',
+          started: b.created_at || b.started_at,
+          finished: b.finished_at,
+          liveUrl: b.live_url || '',
+        });
+      });
+      fbBuilds.reverse();
+      if (fbBuilds.length > 0) {
+        builds = fbBuilds;
+        loaded = true;
+        console.info('[Admin] Loaded %d builds from Firebase', builds.length);
+      }
+    } catch (fbErr) {
+      console.warn('[Admin] Firebase builds fallback failed:', fbErr.message);
+    }
+  }
+
+  renderBuildList();
+  updateStats();
 }
 
 function updateStats() {
