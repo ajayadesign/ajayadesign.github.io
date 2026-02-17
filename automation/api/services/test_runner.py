@@ -133,7 +133,7 @@ def generate_integration_test(pages: list[dict]) -> str:
     ])
 
     nav_checks = "\n".join([
-        f"    const link_{p['slug'].replace('-', '_')} = page.locator('nav a[href=\"{_route(p)}\"]');\n"
+        f"    const link_{p['slug'].replace('-', '_')} = page.locator('nav a[href=\"{_nav_href(p)}\"]');\n"
         f"    if (await link_{p['slug'].replace('-', '_')}.count()) "
         f"await expect(link_{p['slug'].replace('-', '_')}).toBeVisible();"
         for p in pages
@@ -241,3 +241,8 @@ def _extract_failed_pages(output: str) -> list[str]:
 
 def _route(page: dict) -> str:
     return "/" if page["slug"] == "index" else f"/{page['slug']}.html"
+
+
+def _nav_href(page: dict) -> str:
+    """Return the relative href as it appears in nav HTML (after link rewriting)."""
+    return "index.html" if page["slug"] == "index" else f"{page['slug']}.html"

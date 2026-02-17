@@ -295,11 +295,13 @@ Rules for navHtml:
 - Mobile: hamburger button that toggles a full-width dropdown menu
 - CTA button on far right with hover glow effect
 - Smooth transition on scroll (shrink padding on scroll-down)
+- ALL links MUST be relative (e.g. href=\"menu.html\", href=\"index.html\"). NEVER use root-relative links starting with / (e.g. NEVER href=\"/menu.html\" or href=\"/\")
 
 Rules for footerHtml:
 - Multi-column footer (2-3 columns) with social icon links
 - MUST include: Built by <a href=\"https://ajayadesign.github.io\">AjayaDesign</a>
 - Copyright year and business name
+- ALL internal links MUST be relative (e.g. href=\"menu.html\"). NEVER use root-relative links starting with /
 
 Rules for tailwindConfig:
 - Must define all colors: primary, accent, surface, surfaceAlt, textMain, textMuted, cta, ctaHover
@@ -328,7 +330,7 @@ def designer_create(blueprint: dict) -> str:
     from datetime import datetime
 
     pages_str = ", ".join(
-        f"{p.get('navLabel', p['title'])} (/{'' if p['slug'] == 'index' else p['slug'] + '.html'})"
+        f"{p.get('navLabel', p['title'])} ({'' if p['slug'] == 'index' else p['slug'] + '.html'})"
         for p in blueprint["pages"]
     )
 
@@ -376,6 +378,7 @@ Your output starts with <main> and ends with </main>.
 - WCAG AA accessible: contrast, alt text, semantic HTML, visible focus states
 - Mobile-responsive: use Tailwind responsive prefixes (md:, lg:)
 - NEVER use href=\"#\" — use real page links or section IDs
+- ALL internal page links MUST be relative paths (e.g. href=\"menu.html\", href=\"contact.html\", href=\"index.html\"). NEVER use root-relative paths starting with / (e.g. NEVER href=\"/menu.html\" or href=\"/menu\" or href=\"/\")
 
 ═══ CREATIVE RULES ═══
 - The hero section MUST fill the viewport (min-h-screen)
@@ -439,6 +442,13 @@ Add data-aos attributes for scroll-triggered animations:
 - Heading hierarchy: h1 → h2 → h3, NEVER skip levels
 - Every <img> MUST have a descriptive alt attribute (>4 characters)
 - Use semantic HTML: <section>, <article>, <aside>, <figure>
+
+═══ IMAGE RULES ═══
+- NEVER use local/relative image paths like /images/photo.jpg or images/photo.jpg
+- ALL images MUST use real Unsplash URLs: https://images.unsplash.com/photo-XXXXX?w=800&q=80
+- Use relevant Unsplash photos that match the business niche and section context
+- Hero image: use w=1600, other images: use w=800
+- If you don't know a real Unsplash URL, use https://placehold.co/800x600/1a1a2e/ffffff?text=Section+Name as fallback
 
 Output ONLY the <main>...</main> element. Nothing else."""
 
@@ -517,6 +527,7 @@ Rules:
 - For color-contrast on text: add inline style with ≥ 4.5:1 contrast color
 - NEVER use href="#" — use real section IDs or page links
 - All images need descriptive alt text
+- ALL internal page links MUST be relative paths (e.g. href="menu.html"). NEVER use root-relative paths starting with / (e.g. NEVER href="/menu.html" or href="/")
 - SEO heading rules: exactly ONE <h1>, no skipping levels, <h1> should contain business name
 - No horizontal overflow
 
