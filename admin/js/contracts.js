@@ -47,7 +47,11 @@ async function openContract(shortId) {
       const snap = await window.__db.ref(`contracts/${shortId}`).once('value');
       const val = snap.val();
       if (val) {
-        const fbClauses = Array.isArray(val.clauses) ? val.clauses : [];
+        // Firebase RTDB stores arrays as indexed objects {0:{...},1:{...}}
+        const rawClauses = val.clauses;
+        const fbClauses = Array.isArray(rawClauses) ? rawClauses
+          : (rawClauses && typeof rawClauses === 'object') ? Object.values(rawClauses)
+          : [];
         currentContract = { short_id: shortId, ...val, clauses: fbClauses };
         contractClauses = fbClauses.length > 0
           ? fbClauses.map(c => ({ ...c }))
@@ -147,7 +151,12 @@ function _populateContractForm() {
   document.getElementById('ct-payment-terms').value = c.payment_terms || '';
   document.getElementById('ct-custom-notes').value = c.custom_notes || '';
 
-  contractClauses = (c.clauses || []).map(cl => ({ ...cl }));
+  // Only overwrite contractClauses from saved data if it has clauses;
+  // otherwise keep what openContract() already set (e.g. defaults from Firebase fallback)
+  const savedClauses = c.clauses || [];
+  if (savedClauses.length > 0 || contractClauses.length === 0) {
+    contractClauses = savedClauses.map(cl => ({ ...cl }));
+  }
   renderClauses();
 
   _updateContractStatusBadge(c.status);
@@ -964,7 +973,25 @@ function downloadContractPDF() {
     );
   }
 
-  // Download
+  // Download — mobile Chrome ignores the download attribute on blob: URLs
+  // and uses the blob UUID as the filename. Convert to data URI first so
+  // the <a download="..."> attribute is honoured on every platform.
   const filename = `AjayaDesign-Contract-${contractId}-${(data.client_name || 'client').replace(/\s+/g, '-')}.pdf`;
-  doc.save(filename);
+  try {
+    const pdfBlob = doc.output('blob');
+    const reader = new FileReader();
+    reader.onloadend = function () {
+      const a = document.createElement('a');
+      a.href = reader.result;          // data:application/pdf;base64,…
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => document.body.removeChild(a), 200);
+    };
+    reader.readAsDataURL(pdfBlob);
+  } catch (e) {
+    console.warn('[PDF] Data-URI download failed, falling back:', e);
+    doc.save(filename);                // Desktop fallback
+  }
 }
