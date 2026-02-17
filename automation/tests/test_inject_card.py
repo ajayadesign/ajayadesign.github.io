@@ -129,7 +129,9 @@ class TestInjectPortfolioCard:
             client_name="Cool",
         )
         content = index_html.read_text()
-        assert "https://ajayadesign.github.io/cool-site/" in content
+        # Must use relative path (not absolute) so Playwright tests pass
+        assert 'href="/cool-site/"' in content
+        assert 'rel="noopener noreferrer"' in content
 
     def test_multiple_cards_injected_in_order(self, index_html):
         inject_portfolio_card(

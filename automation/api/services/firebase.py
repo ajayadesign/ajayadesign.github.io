@@ -453,3 +453,19 @@ def mark_signature_processed(sign_token: str) -> bool:
     except Exception as e:
         logger.error(f"Firebase mark_signature_processed failed: {e}")
         return False
+
+
+# ── Activity Log Sync ────────────────────────────────────
+
+
+def sync_activity_to_firebase(activity_data: dict) -> bool:
+    """Push an activity log entry to Firebase for real-time admin feed."""
+    if not _initialized:
+        return False
+    try:
+        entry_id = activity_data.get("id", "unknown")
+        firebase_db.reference(f"activity_logs/{entry_id}").set(activity_data)
+        return True
+    except Exception as e:
+        logger.error(f"Firebase sync_activity failed: {e}")
+        return False

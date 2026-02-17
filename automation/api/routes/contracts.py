@@ -30,6 +30,7 @@ from api.services.firebase import (
     publish_contract_for_signing, get_pending_signatures,
     mark_signature_processed,
 )
+from api.routes.activity import log_activity
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/contracts", tags=["contracts"])
@@ -212,6 +213,12 @@ async def create_contract(req: ContractCreateRequest, db: AsyncSession = Depends
     await db.refresh(contract)
     logger.info(f"✅ Contract created: {contract.short_id} for {contract.client_name}")
     _sync_contract_fb(contract)
+    await log_activity(
+        entity_type="contract", entity_id=contract.short_id,
+        action="created", icon="📝",
+        description=f"Contract created for {contract.client_name} — {contract.project_name}",
+        metadata={"client_name": contract.client_name, "project_name": contract.project_name, "total_amount": float(contract.total_amount or 0)},
+    )
     return _contract_to_response(contract)
 
 
@@ -242,6 +249,13 @@ async def update_contract(
     await db.commit()
     await db.refresh(contract)
     _sync_contract_fb(contract)
+    changed_fields = list(update_data.keys())
+    await log_activity(
+        entity_type="contract", entity_id=short_id,
+        action="updated", icon="✏️",
+        description=f"Contract updated — changed: {', '.join(changed_fields)}",
+        metadata={"changed_fields": changed_fields},
+    )
     return _contract_to_response(contract)
 
 
@@ -254,9 +268,15 @@ async def delete_contract(short_id: str, db: AsyncSession = Depends(get_db)):
     contract = result.scalar_one_or_none()
     if not contract:
         raise HTTPException(404, f"Contract {short_id} not found")
+    client_name = contract.client_name
     await db.delete(contract)
     await db.commit()
     delete_contract_from_firebase(short_id)
+    await log_activity(
+        entity_type="contract", entity_id=short_id,
+        action="deleted", icon="🗑️",
+        description=f"Contract for {client_name} deleted",
+    )
 
 
 # ── Signing ─────────────────────────────────────────────
@@ -331,6 +351,13 @@ async def sign_contract(
 
     logger.info(f"✅ Contract {contract.short_id} signed by {req.signer_name}")
     _sync_contract_fb(contract)
+    await log_activity(
+        entity_type="contract", entity_id=contract.short_id,
+        action="signed", icon="✍️",
+        description=f"Contract signed by {req.signer_name}",
+        actor=f"client:{req.signer_name}",
+        metadata={"signer_name": req.signer_name, "signer_ip": contract.signer_ip},
+    )
 
     # Send notification to admin
     try:
@@ -382,6 +409,12 @@ async def send_contract(short_id: str, db: AsyncSession = Depends(get_db)):
         contract.sent_at = datetime.now(timezone.utc)
         await db.commit()
         _sync_contract_fb(contract)
+        await log_activity(
+            entity_type="contract", entity_id=contract.short_id,
+            action="sent", icon="📧",
+            description=f"Contract emailed to {contract.client_email}",
+            metadata={"client_email": contract.client_email},
+        )
 
         # ── Publish to Firebase for public signing ──
         publish_contract_for_signing(str(contract.sign_token), {
@@ -462,6 +495,12 @@ async def create_invoice(req: InvoiceCreateRequest, db: AsyncSession = Depends(g
     await db.refresh(invoice)
     logger.info(f"✅ Invoice created: {invoice.invoice_number} for {invoice.client_name}")
     _sync_invoice_fb(invoice)
+    await log_activity(
+        entity_type="invoice", entity_id=invoice.invoice_number,
+        action="created", icon="💰",
+        description=f"Invoice {invoice.invoice_number} created for {invoice.client_name} — ${float(invoice.total_amount or 0):.2f}",
+        metadata={"client_name": invoice.client_name, "total_amount": float(invoice.total_amount or 0)},
+    )
     return _invoice_to_response(invoice)
 
 
@@ -492,6 +531,13 @@ async def update_invoice(
     await db.commit()
     await db.refresh(invoice)
     _sync_invoice_fb(invoice)
+    changed_fields = list(update_data.keys())
+    await log_activity(
+        entity_type="invoice", entity_id=invoice_number,
+        action="updated", icon="✏️",
+        description=f"Invoice {invoice_number} updated — changed: {', '.join(changed_fields)}",
+        metadata={"changed_fields": changed_fields},
+    )
     return _invoice_to_response(invoice)
 
 
@@ -504,9 +550,15 @@ async def delete_invoice(invoice_number: str, db: AsyncSession = Depends(get_db)
     invoice = result.scalar_one_or_none()
     if not invoice:
         raise HTTPException(404, f"Invoice {invoice_number} not found")
+    client_name = invoice.client_name
     await db.delete(invoice)
     await db.commit()
     delete_invoice_from_firebase(invoice_number)
+    await log_activity(
+        entity_type="invoice", entity_id=invoice_number,
+        action="deleted", icon="🗑️",
+        description=f"Invoice {invoice_number} for {client_name} deleted",
+    )
 
 
 @invoice_router.post("/{invoice_number}/send")
@@ -562,6 +614,12 @@ async def send_invoice(invoice_number: str, db: AsyncSession = Depends(get_db)):
         invoice.sent_at = datetime.now(timezone.utc)
         await db.commit()
         _sync_invoice_fb(invoice)
+        await log_activity(
+            entity_type="invoice", entity_id=invoice.invoice_number,
+            action="sent", icon="📧",
+            description=f"Invoice {invoice.invoice_number} emailed to {invoice.client_email}",
+            metadata={"client_email": invoice.client_email},
+        )
 
     return result_email
 
@@ -583,6 +641,12 @@ async def mark_invoice_paid(invoice_number: str, db: AsyncSession = Depends(get_
     await db.commit()
     await db.refresh(invoice)
     _sync_invoice_fb(invoice)
+    await log_activity(
+        entity_type="invoice", entity_id=invoice_number,
+        action="paid", icon="✅",
+        description=f"Invoice {invoice_number} marked as paid — ${float(invoice.total_amount or 0):.2f}",
+        metadata={"total_amount": float(invoice.total_amount or 0), "paid_at": invoice.paid_at.isoformat() if invoice.paid_at else None},
+    )
     return _invoice_to_response(invoice)
 
 

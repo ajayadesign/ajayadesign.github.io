@@ -74,14 +74,16 @@ def inject_portfolio_card(
     safe_name = html.escape(client_name)
     safe_niche = html.escape(niche)
     safe_goals = html.escape(goals) if goals else ""
-    live_url = f"https://ajayadesign.github.io/{html.escape(repo_name)}/"
+    safe_repo = html.escape(repo_name)
+    # Use relative path so it works both locally and on GitHub Pages
+    live_url = f"/{safe_repo}/"
 
     subtitle = safe_goals if safe_goals else safe_niche
 
     card_html = (
         f'\n        <div class="portfolio-card" {card_id}>\n'
         f"          <span class=\"card-emoji\">{emoji}</span>\n"
-        f"          <h3><a href=\"{live_url}\" target=\"_blank\">{safe_name}</a></h3>\n"
+        f'          <h3><a href="{live_url}" target="_blank" rel="noopener noreferrer">{safe_name}</a></h3>\n'
         f"          <p>{subtitle}</p>\n"
         f"        </div>\n"
         f"        {PORTFOLIO_MARKER}"

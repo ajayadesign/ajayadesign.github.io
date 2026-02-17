@@ -258,6 +258,16 @@ async def process_firebase_signatures() -> None:
             logger.info("✅ Contract %s signed by %s (via Firebase bridge)",
                         contract.short_id, signer_name)
 
+            # Log the signing activity
+            from api.routes.activity import log_activity
+            await log_activity(
+                entity_type="contract", entity_id=contract.short_id,
+                action="signed", icon="✍️",
+                description=f"Contract signed by {signer_name} (via Firebase bridge)",
+                actor=f"client:{signer_name}",
+                metadata={"signer_name": signer_name, "signer_ip": sig.get("signer_ip", "firebase-bridge")},
+            )
+
             # Sync back to Firebase contracts node
             try:
                 sync_contract_to_firebase({
@@ -359,14 +369,16 @@ app.add_middleware(
 
 app.include_router(router, prefix="/api/v1")
 
-# Contract, Invoice, Email, and Portfolio routes
+# Contract, Invoice, Email, Portfolio, and Activity routes
 from api.routes.contracts import router as contract_router, invoice_router, email_router
 from api.routes.portfolio import router as portfolio_router
+from api.routes.activity import activity_router
 
 app.include_router(contract_router, prefix="/api/v1")
 app.include_router(invoice_router, prefix="/api/v1")
 app.include_router(email_router, prefix="/api/v1")
 app.include_router(portfolio_router, prefix="/api/v1")
+app.include_router(activity_router, prefix="/api/v1")
 
 
 @app.get("/", include_in_schema=False)
