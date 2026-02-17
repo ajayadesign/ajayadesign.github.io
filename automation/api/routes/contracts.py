@@ -18,11 +18,12 @@ from api.schemas.contract import (
     InvoiceCreateRequest, InvoiceUpdateRequest, InvoiceResponse,
     InvoiceListResponse,
     SendEmailRequest, SendEmailResponse,
-    ClauseItem, InvoiceLineItem,
+    ClauseItem, InvoiceLineItem, PaymentPlanInstallment,
+    RecordPaymentRequest,
 )
 from api.services.email_service import (
     send_email, build_contract_email, build_invoice_email,
-    build_signed_notification_email,
+    build_signed_notification_email, build_payment_reminder_email,
 )
 from api.services.notify import send_telegram_contract_signed
 from api.services.firebase import (
@@ -67,6 +68,8 @@ def _sync_contract_fb(c: Contract) -> None:
 def _sync_invoice_fb(inv: Invoice) -> None:
     """Fire-and-forget sync of invoice state to Firebase."""
     try:
+        plan = inv.payment_plan or []
+        pending_installments = sum(1 for i in plan if i.get("status") in ("pending", "overdue"))
         sync_invoice_to_firebase({
             "invoice_number": inv.invoice_number,
             "client_name": inv.client_name,
@@ -82,6 +85,8 @@ def _sync_invoice_fb(inv: Invoice) -> None:
             "paid_at": inv.paid_at.isoformat() if inv.paid_at else None,
             "contract_short_id": "",
             "items_count": len(inv.items or []),
+            "payment_plan_enabled": inv.payment_plan_enabled or "false",
+            "pending_installments": pending_installments,
         })
     except Exception as e:
         logger.warning(f"Firebase invoice sync failed (non-critical): {e}")
@@ -147,6 +152,8 @@ def _invoice_to_response(inv: Invoice) -> dict:
         "provider_address": inv.provider_address or "",
         "notes": inv.notes or "",
         "status": inv.status or "draft",
+        "payment_plan": inv.payment_plan or [],
+        "payment_plan_enabled": inv.payment_plan_enabled or "false",
         "created_at": inv.created_at,
         "updated_at": inv.updated_at,
         "sent_at": inv.sent_at,
@@ -512,6 +519,8 @@ async def create_invoice(req: InvoiceCreateRequest, db: AsyncSession = Depends(g
         due_date=req.due_date,
         notes=req.notes,
         status="draft",
+        payment_plan=[inst.model_dump(mode="json") for inst in req.payment_plan] if req.payment_plan else [],
+        payment_plan_enabled=req.payment_plan_enabled,
     )
     db.add(invoice)
     await db.commit()
@@ -547,6 +556,22 @@ async def update_invoice(
             item.model_dump(mode="json") if hasattr(item, "model_dump") else item
             for item in update_data["items"]
         ]
+    if "payment_plan" in update_data and update_data["payment_plan"] is not None:
+        # Serialize payment plan entries — convert date/Decimal to str/float
+        serialized_plan = []
+        for inst in update_data["payment_plan"]:
+            if hasattr(inst, "model_dump"):
+                serialized_plan.append(inst.model_dump(mode="json"))
+            else:
+                # Already a dict from model_dump — convert native types
+                entry = dict(inst)
+                for k, v in entry.items():
+                    if hasattr(v, 'isoformat'):
+                        entry[k] = v.isoformat() if v is not None else None
+                    elif hasattr(v, '__float__'):
+                        entry[k] = float(v)
+                serialized_plan.append(entry)
+        update_data["payment_plan"] = serialized_plan
 
     for key, value in update_data.items():
         setattr(invoice, key, value)
@@ -671,6 +696,135 @@ async def mark_invoice_paid(invoice_number: str, db: AsyncSession = Depends(get_
         metadata={"total_amount": float(invoice.total_amount or 0), "paid_at": invoice.paid_at.isoformat() if invoice.paid_at else None},
     )
     return _invoice_to_response(invoice)
+
+
+@invoice_router.post("/{invoice_number}/record-payment")
+async def record_installment_payment(
+    invoice_number: str,
+    req: RecordPaymentRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Record a payment for a specific installment in the payment plan."""
+    result = await db.execute(
+        select(Invoice).where(Invoice.invoice_number == invoice_number)
+    )
+    invoice = result.scalar_one_or_none()
+    if not invoice:
+        raise HTTPException(404, f"Invoice {invoice_number} not found")
+
+    plan = [dict(inst) for inst in (invoice.payment_plan or [])]
+    found = False
+    inst_amount = 0
+    for inst in plan:
+        if inst.get("id") == req.installment_id:
+            inst_amount = float(req.amount or inst.get("amount", 0))
+            inst["status"] = "paid"
+            inst["paid_at"] = datetime.now(timezone.utc).isoformat()
+            found = True
+            break
+
+    if not found:
+        raise HTTPException(404, f"Installment {req.installment_id} not found")
+
+    invoice.payment_plan = plan
+    # Update total amount_paid
+    new_paid = float(invoice.amount_paid or 0) + inst_amount
+    invoice.amount_paid = new_paid
+
+    # Update payment_status based on total
+    total = float(invoice.total_amount or 0)
+    if new_paid >= total:
+        invoice.payment_status = "paid"
+        invoice.status = "paid"
+        invoice.paid_at = datetime.now(timezone.utc)
+    else:
+        invoice.payment_status = "partial"
+
+    if req.payment_method:
+        invoice.payment_method = req.payment_method
+
+    await db.commit()
+    await db.refresh(invoice)
+    _sync_invoice_fb(invoice)
+
+    await log_activity(
+        entity_type="invoice", entity_id=invoice_number,
+        action="payment_received", icon="💵",
+        description=f"Payment of ${inst_amount:.2f} received for {invoice_number} (installment {req.installment_id})",
+        metadata={
+            "installment_id": req.installment_id,
+            "amount": inst_amount,
+            "total_paid": new_paid,
+            "total_due": total,
+        },
+    )
+    logger.info(f"💵 Installment payment recorded: ${inst_amount:.2f} on {invoice_number}")
+    return _invoice_to_response(invoice)
+
+
+@invoice_router.post("/{invoice_number}/send-reminder")
+async def send_payment_reminder(
+    invoice_number: str,
+    db: AsyncSession = Depends(get_db),
+):
+    """Send a payment reminder email for the next unpaid installment."""
+    result = await db.execute(
+        select(Invoice).where(Invoice.invoice_number == invoice_number)
+    )
+    invoice = result.scalar_one_or_none()
+    if not invoice:
+        raise HTTPException(404, f"Invoice {invoice_number} not found")
+
+    plan = [dict(inst) for inst in (invoice.payment_plan or [])]
+    # Find next pending/overdue installment
+    next_inst = None
+    for inst in plan:
+        if inst.get("status") in ("pending", "overdue"):
+            next_inst = inst
+            break
+
+    if not next_inst:
+        return {"success": False, "message": "No pending installments found"}
+
+    inst_amount = float(next_inst.get("amount", 0))
+    inst_due = next_inst.get("due_date", "")
+    remaining = float(invoice.total_amount or 0) - float(invoice.amount_paid or 0)
+
+    subject, html = build_payment_reminder_email(
+        client_name=invoice.client_name,
+        invoice_number=invoice.invoice_number,
+        installment_amount=f"{inst_amount:.2f}",
+        due_date=inst_due,
+        remaining_balance=f"{remaining:.2f}",
+        payment_method=invoice.payment_method or "",
+    )
+
+    email_result = await send_email(
+        to=invoice.client_email,
+        subject=subject,
+        body_html=html,
+    )
+
+    if email_result["success"]:
+        # Mark reminder_sent_at on the installment
+        next_inst["reminder_sent_at"] = datetime.now(timezone.utc).isoformat()
+        invoice.payment_plan = plan
+        await db.commit()
+        _sync_invoice_fb(invoice)
+
+        await log_activity(
+            entity_type="invoice", entity_id=invoice_number,
+            action="reminder_sent", icon="🔔",
+            description=f"Payment reminder sent to {invoice.client_email} — ${inst_amount:.2f} due {inst_due}",
+            metadata={
+                "installment_id": next_inst.get("id"),
+                "amount": inst_amount,
+                "due_date": inst_due,
+            },
+        )
+        logger.info(f"🔔 Payment reminder sent for {invoice_number} to {invoice.client_email}")
+
+    return email_result
 
 
 # ═══════════════════════════════════════════════════════

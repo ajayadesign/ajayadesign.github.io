@@ -115,6 +115,10 @@ class Invoice(Base):
     notes = Column(Text, default="")
     status = Column(String(20), default="draft")  # draft, sent, paid, overdue, cancelled
 
+    # Payment plan: [{id, due_date, amount, status, paid_at, reminder_sent_at}]
+    payment_plan = Column(JSON, default=list)
+    payment_plan_enabled = Column(String(5), default="false")  # "true"/"false"
+
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

@@ -109,6 +109,21 @@ class InvoiceLineItem(BaseModel):
     amount: Decimal = Decimal("0")
 
 
+class PaymentPlanInstallment(BaseModel):
+    id: str
+    due_date: date
+    amount: Decimal = Decimal("0")
+    status: str = "pending"  # pending, paid, overdue, skipped
+    paid_at: Optional[datetime] = None
+    reminder_sent_at: Optional[datetime] = None
+
+
+class RecordPaymentRequest(BaseModel):
+    installment_id: str
+    amount: Optional[Decimal] = None  # if None, use installment amount
+    payment_method: Optional[str] = None
+
+
 class InvoiceCreateRequest(BaseModel):
     contract_id: Optional[str] = None
     build_id: Optional[str] = None
@@ -124,6 +139,8 @@ class InvoiceCreateRequest(BaseModel):
     payment_status: str = "unpaid"
     due_date: Optional[date] = None
     notes: str = ""
+    payment_plan: list[PaymentPlanInstallment] = []
+    payment_plan_enabled: str = "false"
 
 
 class InvoiceUpdateRequest(BaseModel):
@@ -140,6 +157,8 @@ class InvoiceUpdateRequest(BaseModel):
     due_date: Optional[date] = None
     notes: Optional[str] = None
     status: Optional[str] = None
+    payment_plan: Optional[list[PaymentPlanInstallment]] = None
+    payment_plan_enabled: Optional[str] = None
 
 
 class InvoiceResponse(BaseModel):
@@ -164,6 +183,8 @@ class InvoiceResponse(BaseModel):
     provider_address: str
     notes: str
     status: str
+    payment_plan: list[PaymentPlanInstallment] = []
+    payment_plan_enabled: str = "false"
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     sent_at: Optional[datetime] = None
