@@ -75,7 +75,20 @@ function _daysBetween(a, b) {
 
 function scrollAnalytics(id) {
   const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const container = document.getElementById('analytics-scroll');
+  if (el && container) {
+    // Use container.scrollTo instead of scrollIntoView to prevent
+    // mobile browsers from scroll-chaining to the body
+    const offset = el.offsetTop - container.offsetTop;
+    container.scrollTo({ top: offset, behavior: 'smooth' });
+  }
+  // Close sidebar on mobile after jumping to section
+  if (window.innerWidth < 768) {
+    const sb = document.getElementById('sidebar');
+    if (sb && sb.classList.contains('translate-x-0')) {
+      toggleMobileSidebar();
+    }
+  }
 }
 
 // ── Main data fetch ────────────────────────────────────

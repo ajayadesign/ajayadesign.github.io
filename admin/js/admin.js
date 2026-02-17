@@ -197,6 +197,22 @@ function switchTab(tab) {
       $emptyState.classList.remove('hidden');
     }
   }
+
+  // ── Sync mobile bottom tab bar ──
+  document.querySelectorAll('#mobile-tab-bar .mobile-tab').forEach(el => {
+    el.classList.remove('text-electric');
+    el.classList.add('text-gray-500');
+  });
+  const $mtab = document.getElementById('mtab-' + tab);
+  if ($mtab) { $mtab.classList.remove('text-gray-500'); $mtab.classList.add('text-electric'); }
+
+  // ── Auto-close mobile sidebar on tab switch ──
+  if (window.innerWidth < 768) {
+    const sb = document.getElementById('sidebar');
+    if (sb && sb.classList.contains('translate-x-0')) {
+      toggleMobileSidebar();
+    }
+  }
 }
 
 // ── Content tab switching (Pipeline / AI / Log) ────────
