@@ -272,6 +272,10 @@
           class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
           📜 History
         </button>
+        <button onclick="switchTab('analytics')" id="tab-analytics"
+          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+          📊 Analytics
+        </button>
       </div>
 
       <!-- Builds Tab -->
@@ -398,6 +402,49 @@
         <!-- Activity timeline -->
         <div id="history-list" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-1">
           <div class="text-center text-gray-600 text-xs font-mono py-8">Loading activity...</div>
+        </div>
+      </div>
+
+      <!-- Analytics Tab (hidden initially) -->
+      <div id="analytics-sidebar" class="flex-1 overflow-hidden hidden flex flex-col">
+        <div class="p-4 border-b border-border">
+          <div class="flex items-center justify-between">
+            <h2 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">Insights</h2>
+            <button onclick="refreshAnalytics()" class="text-gray-500 hover:text-electric transition" title="Refresh">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+          </div>
+        </div>
+        <!-- Quick KPIs -->
+        <div class="p-3 space-y-2 border-b border-border">
+          <div class="grid grid-cols-2 gap-2">
+            <div class="bg-surface-2 rounded-lg p-2.5 text-center">
+              <div id="kpi-revenue" class="font-mono text-lg font-bold text-neon-green">$0</div>
+              <div class="text-[0.6rem] text-gray-500 uppercase">Revenue</div>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-2.5 text-center">
+              <div id="kpi-clients" class="font-mono text-lg font-bold text-electric">0</div>
+              <div class="text-[0.6rem] text-gray-500 uppercase">Clients</div>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-2.5 text-center">
+              <div id="kpi-contracts" class="font-mono text-lg font-bold text-neon-purple">0</div>
+              <div class="text-[0.6rem] text-gray-500 uppercase">Contracts</div>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-2.5 text-center">
+              <div id="kpi-invoices" class="font-mono text-lg font-bold text-neon-yellow">0</div>
+              <div class="text-[0.6rem] text-gray-500 uppercase">Invoices</div>
+            </div>
+          </div>
+        </div>
+        <!-- Section jump links -->
+        <div class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-1">
+          <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Jump to</p>
+          <button onclick="scrollAnalytics('sec-revenue')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">💰 Revenue & Payments</button>
+          <button onclick="scrollAnalytics('sec-pipeline')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">🔄 Client Pipeline</button>
+          <button onclick="scrollAnalytics('sec-engagement')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">📈 Customer Engagement</button>
+          <button onclick="scrollAnalytics('sec-builds')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">🔨 Build Performance</button>
+          <button onclick="scrollAnalytics('sec-storage')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">💾 Firebase Storage</button>
+          <button onclick="scrollAnalytics('sec-activity')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">📜 Activity Timeline</button>
         </div>
       </div>
     </aside>
@@ -876,6 +923,201 @@
 
         </div>
       </div>
+
+      <!-- ═══ Analytics Panel (hidden initially) ═══ -->
+      <div id="analytics-panel" class="flex-1 flex flex-col overflow-hidden hidden">
+        <!-- Header -->
+        <div class="p-3 md:p-6 bg-surface-1 border-b border-border">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">📊</span>
+              <div>
+                <h2 class="font-mono text-xl font-bold text-white">Business Analytics</h2>
+                <p id="analytics-updated" class="text-xs text-gray-500 font-mono">Loading...</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <select id="analytics-period" onchange="refreshAnalytics()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-surface-2 border border-border text-gray-300 cursor-pointer focus:border-electric focus:outline-none">
+                <option value="7">Last 7 days</option>
+                <option value="30" selected>Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="365">All time</option>
+              </select>
+              <button onclick="refreshAnalytics()" class="p-2 rounded-lg bg-surface-2 border border-border text-gray-400 hover:text-electric hover:border-electric transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scrollable content -->
+        <div id="analytics-scroll" class="flex-1 overflow-y-auto p-3 md:p-6 space-y-6">
+
+          <!-- ═══ Revenue & Payments ═══ -->
+          <section id="sec-revenue">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">💰 Revenue &amp; Payments</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+              <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
+                <div id="an-total-revenue" class="font-mono text-xl font-bold text-neon-green">$0</div>
+                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Total Revenue</div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
+                <div id="an-collected" class="font-mono text-xl font-bold text-electric">$0</div>
+                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Collected</div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
+                <div id="an-outstanding" class="font-mono text-xl font-bold text-neon-yellow">$0</div>
+                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Outstanding</div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
+                <div id="an-collection-rate" class="font-mono text-xl font-bold text-neon-purple">0%</div>
+                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Collection Rate</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Revenue Over Time</h4>
+                <div class="h-48"><canvas id="chart-revenue"></canvas></div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Payment Status Breakdown</h4>
+                <div class="h-48 flex items-center justify-center"><canvas id="chart-payment-status"></canvas></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ═══ Client Pipeline ═══ -->
+          <section id="sec-pipeline">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">🔄 Client Pipeline</h3>
+            <div id="pipeline-funnel" class="space-y-2 mb-4"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Lead Sources</h4>
+                <div class="h-48 flex items-center justify-center"><canvas id="chart-lead-sources"></canvas></div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Client Niches</h4>
+                <div class="h-48 flex items-center justify-center"><canvas id="chart-niches"></canvas></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ═══ Customer Engagement ═══ -->
+          <section id="sec-engagement">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">📈 Customer Engagement</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+              <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
+                <div id="an-avg-deal" class="font-mono text-xl font-bold text-electric">$0</div>
+                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Avg Deal Size</div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
+                <div id="an-sign-rate" class="font-mono text-xl font-bold text-neon-green">0%</div>
+                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Contract Sign Rate</div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
+                <div id="an-avg-time-sign" class="font-mono text-xl font-bold text-neon-yellow">—</div>
+                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Avg Time to Sign</div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
+                <div id="an-repeat-rate" class="font-mono text-xl font-bold text-neon-purple">0%</div>
+                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Repeat Client Rate</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Contract Status Flow</h4>
+                <div class="h-48 flex items-center justify-center"><canvas id="chart-contract-flow"></canvas></div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Monthly Activity</h4>
+                <div class="h-48"><canvas id="chart-monthly-activity"></canvas></div>
+              </div>
+            </div>
+            <!-- Top clients table -->
+            <div class="bg-surface-2 rounded-xl border border-border p-4 mt-4">
+              <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Top Clients by Revenue</h4>
+              <div id="top-clients-table" class="overflow-x-auto"></div>
+            </div>
+          </section>
+
+          <!-- ═══ Build Performance ═══ -->
+          <section id="sec-builds">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">🔨 Build Performance</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+              <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
+                <div id="an-total-builds" class="font-mono text-xl font-bold text-white">0</div>
+                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Total Builds</div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
+                <div id="an-build-success" class="font-mono text-xl font-bold text-neon-green">0%</div>
+                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Success Rate</div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
+                <div id="an-avg-build-time" class="font-mono text-xl font-bold text-electric">—</div>
+                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Avg Build Time</div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
+                <div id="an-sites-live" class="font-mono text-xl font-bold text-neon-yellow">0</div>
+                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Sites Live</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Build Outcomes</h4>
+                <div class="h-48 flex items-center justify-center"><canvas id="chart-build-outcomes"></canvas></div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Builds Over Time</h4>
+                <div class="h-48"><canvas id="chart-builds-timeline"></canvas></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ═══ Firebase Storage ═══ -->
+          <section id="sec-storage">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">💾 Firebase Realtime DB Storage</h3>
+            <div class="bg-surface-2 rounded-xl border border-border p-4 mb-4">
+              <!-- Gauge bar -->
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-mono text-xs text-gray-400">Usage</span>
+                <span id="storage-usage-text" class="font-mono text-xs text-electric">Calculating...</span>
+              </div>
+              <div class="w-full bg-surface rounded-full h-4 overflow-hidden border border-border">
+                <div id="storage-bar" class="h-full rounded-full bg-gradient-to-r from-electric to-neon-green transition-all duration-700" style="width:0%"></div>
+              </div>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[0.6rem] text-gray-600 font-mono">0 MB</span>
+                <span class="text-[0.6rem] text-gray-600 font-mono">1 GB (free tier)</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Storage by Node</h4>
+                <div class="h-48 flex items-center justify-center"><canvas id="chart-storage"></canvas></div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Node Details</h4>
+                <div id="storage-breakdown" class="space-y-2"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ═══ Activity Timeline Chart ═══ -->
+          <section id="sec-activity">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">📜 Activity Heatmap</h3>
+            <div class="bg-surface-2 rounded-xl border border-border p-4 mb-4">
+              <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Daily Actions (last 30 days)</h4>
+              <div class="h-48"><canvas id="chart-activity-heatmap"></canvas></div>
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Recent Events</h4>
+              <div id="recent-events-list" class="space-y-1 max-h-64 overflow-y-auto no-scrollbar"></div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
     </main>
   </div>
 
@@ -1054,6 +1296,9 @@
   <script src="js/history.js"></script>
   <!-- jsPDF for PDF generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Chart.js for analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="js/analytics.js"></script>
   <script>
     /* ═══ Mobile Sidebar Toggle ═══ */
     function toggleMobileSidebar() {

@@ -119,10 +119,12 @@ function switchTab(tab) {
   const $tabLeads  = document.getElementById('tab-leads');
   const $tabPortfolio = document.getElementById('tab-portfolio');
   const $tabHistory = document.getElementById('tab-history');
+  const $tabAnalytics = document.getElementById('tab-analytics');
   const $buildsTab = document.getElementById('builds-tab');
   const $leadsPanel = document.getElementById('leads-panel');
   const $portfolioPanel = document.getElementById('portfolio-panel');
   const $historyPanel = document.getElementById('history-panel');
+  const $analyticsSidebar = document.getElementById('analytics-sidebar');
 
   const inactiveClass = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition';
   const activeClass   = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition';
@@ -132,12 +134,14 @@ function switchTab(tab) {
   $tabLeads.className  = inactiveClass;
   if ($tabPortfolio) $tabPortfolio.className = inactiveClass;
   if ($tabHistory) $tabHistory.className = inactiveClass;
+  if ($tabAnalytics) $tabAnalytics.className = inactiveClass;
 
   // Hide all sidebar panels
   $buildsTab.classList.add('hidden');
   $leadsPanel.classList.add('hidden');
   if ($portfolioPanel) $portfolioPanel.classList.add('hidden');
   if ($historyPanel) $historyPanel.classList.add('hidden');
+  if ($analyticsSidebar) $analyticsSidebar.classList.add('hidden');
 
   // Hide all main panels
   $buildDetail.classList.add('hidden');
@@ -145,9 +149,11 @@ function switchTab(tab) {
   const $portfolioDetail = document.getElementById('portfolio-detail');
   const $contractDetail  = document.getElementById('contract-detail');
   const $invoiceDetail   = document.getElementById('invoice-detail');
+  const $analyticsPanel  = document.getElementById('analytics-panel');
   if ($portfolioDetail) $portfolioDetail.classList.add('hidden');
   if ($contractDetail)  $contractDetail.classList.add('hidden');
   if ($invoiceDetail)   $invoiceDetail.classList.add('hidden');
+  if ($analyticsPanel)  $analyticsPanel.classList.add('hidden');
 
   if (tab === 'leads') {
     $tabLeads.className = activeClass;
@@ -174,6 +180,12 @@ function switchTab(tab) {
     if ($historyPanel) $historyPanel.classList.remove('hidden');
     $emptyState.classList.remove('hidden');
     if (typeof loadActivityLog === 'function') loadActivityLog();
+  } else if (tab === 'analytics') {
+    if ($tabAnalytics) $tabAnalytics.className = activeClass;
+    if ($analyticsSidebar) $analyticsSidebar.classList.remove('hidden');
+    $emptyState.classList.add('hidden');
+    if ($analyticsPanel) $analyticsPanel.classList.remove('hidden');
+    if (typeof refreshAnalytics === 'function') refreshAnalytics();
   } else {
     // builds (default)
     $tabBuilds.className = activeClass;

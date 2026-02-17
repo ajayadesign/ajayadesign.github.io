@@ -497,7 +497,7 @@ function invoiceStatusClass(status) {
 }
 
 function hideAllMainPanels() {
-  const panels = ['empty-state', 'build-detail', 'lead-detail', 'portfolio-detail', 'contract-detail', 'invoice-detail'];
+  const panels = ['empty-state', 'build-detail', 'lead-detail', 'portfolio-detail', 'contract-detail', 'invoice-detail', 'analytics-panel'];
   panels.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.add('hidden');
