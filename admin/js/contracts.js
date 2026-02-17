@@ -48,6 +48,12 @@ function openNewContract(prefill = {}) {
   currentContract = null;
   contractClauses = defaultClauses.map(c => ({ ...c }));
 
+  // Ensure we show the editable form, not the signed view
+  const $signedView = document.getElementById('ct-signed-view');
+  const $editableForm = document.getElementById('ct-editable-form');
+  if ($signedView) $signedView.classList.add('hidden');
+  if ($editableForm) $editableForm.classList.remove('hidden');
+
   // Clear form
   _clearContractForm();
 
@@ -85,6 +91,20 @@ function _populateContractForm() {
   const c = currentContract;
   if (!c) return;
 
+  _updateDeleteButton();
+
+  // If signed, show the beautiful executed contract view instead
+  if (c.signed_at || c.status === 'signed') {
+    _showSignedContractView(c);
+    return;
+  }
+
+  // Hide the signed view, show the editable form
+  const $signedView = document.getElementById('ct-signed-view');
+  const $editableForm = document.getElementById('ct-editable-form');
+  if ($signedView) $signedView.classList.add('hidden');
+  if ($editableForm) $editableForm.classList.remove('hidden');
+
   document.getElementById('ct-client-name').value = c.client_name || '';
   document.getElementById('ct-client-email').value = c.client_email || '';
   document.getElementById('ct-client-phone').value = c.client_phone || '';
@@ -105,7 +125,7 @@ function _populateContractForm() {
   _updateContractStatusBadge(c.status);
   document.getElementById('ct-meta').textContent = `#${c.short_id} · Created ${c.created_at ? new Date(c.created_at).toLocaleDateString() : 'N/A'}`;
 
-  // Signature section
+  // Signature section (legacy — only for editable view)
   if (c.signed_at) {
     document.getElementById('ct-signature-section').classList.remove('hidden');
     if (c.signature_data) document.getElementById('ct-signature-img').src = c.signature_data;
@@ -113,6 +133,159 @@ function _populateContractForm() {
     document.getElementById('ct-signed-at').textContent = `Signed ${new Date(c.signed_at).toLocaleString()}`;
   } else {
     document.getElementById('ct-signature-section').classList.add('hidden');
+  }
+}
+
+// ── Beautiful Signed Contract View ─────────────────────
+function _showSignedContractView(c) {
+  const $signedView = document.getElementById('ct-signed-view');
+  const $editableForm = document.getElementById('ct-editable-form');
+  if ($editableForm) $editableForm.classList.add('hidden');
+
+  // Create the signed view container if it doesn't exist yet
+  if (!$signedView) {
+    const container = document.querySelector('#contract-detail > .flex-1.overflow-y-auto');
+    if (!container) return;
+    const div = document.createElement('div');
+    div.id = 'ct-signed-view';
+    container.prepend(div);
+    _renderSignedView(div, c);
+  } else {
+    $signedView.classList.remove('hidden');
+    _renderSignedView($signedView, c);
+  }
+
+  _updateContractStatusBadge('signed');
+  document.getElementById('ct-meta').textContent = `#${c.short_id} · EXECUTED CONTRACT · Signed ${c.signed_at ? new Date(c.signed_at).toLocaleString() : 'N/A'}`;
+}
+
+function _renderSignedView($el, c) {
+  const amount = parseFloat(c.total_amount || 0);
+  const deposit = parseFloat(c.deposit_amount || 0);
+  const enabledClauses = (c.clauses || []).filter(cl => cl.enabled !== false);
+  const signedDate = c.signed_at ? new Date(c.signed_at).toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }) : 'N/A';
+
+  $el.innerHTML = `
+    <!-- ═══ Signed Banner ═══ -->
+    <div class="mb-6 p-5 rounded-2xl bg-gradient-to-r from-neon-green/10 via-neon-green/5 to-transparent border border-neon-green/30 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-neon-green/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+      <div class="flex items-center gap-4 relative">
+        <div class="w-14 h-14 rounded-2xl bg-neon-green/20 flex items-center justify-center text-3xl">✅</div>
+        <div>
+          <h2 class="font-mono text-lg font-bold text-neon-green">CONTRACT EXECUTED</h2>
+          <p class="text-sm text-gray-400 font-mono">Signed by <span class="text-white font-semibold">${esc(c.signer_name || 'Client')}</span> on ${esc(signedDate)}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Parties ═══ -->
+    <div class="grid grid-cols-2 gap-4 mb-6">
+      <div class="bg-surface-2 rounded-xl border border-border p-5">
+        <div class="text-[0.6rem] font-mono text-electric uppercase tracking-widest mb-3">Provider</div>
+        <p class="text-sm text-white font-semibold mb-1">${esc(c.provider_name || 'AjayaDesign')}</p>
+        <p class="text-xs text-gray-400">${esc(c.provider_email || 'ajayadesign@gmail.com')}</p>
+        ${c.provider_address ? `<p class="text-xs text-gray-500 mt-1">${esc(c.provider_address)}</p>` : ''}
+      </div>
+      <div class="bg-surface-2 rounded-xl border border-border p-5">
+        <div class="text-[0.6rem] font-mono text-neon-purple uppercase tracking-widest mb-3">Client</div>
+        <p class="text-sm text-white font-semibold mb-1">${esc(c.client_name)}</p>
+        <p class="text-xs text-gray-400">${esc(c.client_email || '')}</p>
+        ${c.client_phone ? `<p class="text-xs text-gray-500 mt-1">📱 ${esc(c.client_phone)}</p>` : ''}
+        ${c.client_address ? `<p class="text-xs text-gray-500 mt-1">📍 ${esc(c.client_address)}</p>` : ''}
+      </div>
+    </div>
+
+    <!-- ═══ Project Details ═══ -->
+    <div class="mb-6 bg-surface-2 rounded-xl border border-border p-5">
+      <div class="text-[0.6rem] font-mono text-electric uppercase tracking-widest mb-3">Project Details</div>
+      <h3 class="text-base text-white font-semibold font-mono mb-2">${esc(c.project_name)}</h3>
+      ${c.project_description ? `<p class="text-sm text-gray-400 leading-relaxed">${esc(c.project_description)}</p>` : ''}
+      <div class="grid grid-cols-2 gap-4 mt-4">
+        ${c.start_date ? `<div><span class="text-[0.6rem] text-gray-600 block">Start Date</span><span class="text-sm text-white font-mono">${esc(c.start_date)}</span></div>` : ''}
+        ${c.estimated_completion_date ? `<div><span class="text-[0.6rem] text-gray-600 block">Est. Completion</span><span class="text-sm text-white font-mono">${esc(c.estimated_completion_date)}</span></div>` : ''}
+      </div>
+    </div>
+
+    <!-- ═══ Financial Terms ═══ -->
+    <div class="mb-6 bg-surface-2 rounded-xl border border-neon-green/20 p-5">
+      <div class="text-[0.6rem] font-mono text-neon-green uppercase tracking-widest mb-3">Financial Terms</div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <span class="text-[0.6rem] text-gray-600 block">Total Amount</span>
+          <span class="text-xl text-neon-green font-mono font-bold">$${amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+        </div>
+        ${deposit > 0 ? `<div>
+          <span class="text-[0.6rem] text-gray-600 block">Deposit</span>
+          <span class="text-lg text-white font-mono">$${deposit.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+        </div>` : ''}
+        ${c.payment_method ? `<div>
+          <span class="text-[0.6rem] text-gray-600 block">Payment Method</span>
+          <span class="text-sm text-white font-mono capitalize">${esc(c.payment_method)}</span>
+        </div>` : ''}
+      </div>
+      ${c.payment_terms ? `<div class="mt-4 pt-3 border-t border-border">
+        <span class="text-[0.6rem] text-gray-600 block mb-1">Payment Terms</span>
+        <p class="text-sm text-gray-400">${esc(c.payment_terms)}</p>
+      </div>` : ''}
+    </div>
+
+    <!-- ═══ All Clauses ═══ -->
+    <div class="mb-6">
+      <div class="text-[0.6rem] font-mono text-electric uppercase tracking-widest mb-3">📋 Contract Clauses (${enabledClauses.length})</div>
+      <div class="space-y-3">
+        ${enabledClauses.map((clause, i) => {
+          const catColors = {
+            core: 'border-l-electric',
+            technical: 'border-l-neon-purple',
+            legal: 'border-l-neon-yellow',
+            support: 'border-l-neon-green',
+            custom: 'border-l-neon-orange',
+          };
+          const borderColor = catColors[clause.category] || 'border-l-gray-600';
+          return `
+            <div class="bg-surface-2 rounded-xl border border-border ${borderColor} border-l-4 p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-sm font-mono font-semibold text-white">${i + 1}. ${esc(clause.title)}</span>
+                <span class="text-[0.55rem] font-mono text-gray-600 uppercase px-1.5 py-0.5 bg-surface rounded">${esc(clause.category || '')}</span>
+              </div>
+              <p class="text-xs text-gray-400 leading-relaxed whitespace-pre-line">${esc(clause.body)}</p>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    ${c.custom_notes ? `
+    <!-- ═══ Custom Notes ═══ -->
+    <div class="mb-6 bg-surface-2 rounded-xl border border-border p-5">
+      <div class="text-[0.6rem] font-mono text-neon-yellow uppercase tracking-widest mb-3">Additional Notes</div>
+      <p class="text-sm text-gray-400 leading-relaxed whitespace-pre-line">${esc(c.custom_notes)}</p>
+    </div>` : ''}
+
+    <!-- ═══ Signature ═══ -->
+    <div class="mb-6 bg-surface-2 rounded-xl border border-neon-green/30 p-5">
+      <div class="text-[0.6rem] font-mono text-neon-green uppercase tracking-widest mb-3">✍️ Signature</div>
+      <div class="flex items-center gap-6">
+        ${c.signature_data ? `<div class="bg-white rounded-lg p-2"><img src="${c.signature_data}" class="h-20 max-w-[200px] object-contain" alt="Client Signature" /></div>` : '<div class="text-xs text-gray-600 font-mono">Signature data not available</div>'}
+        <div>
+          <p class="text-sm text-white font-mono font-semibold">${esc(c.signer_name || 'Client')}</p>
+          <p class="text-xs text-gray-500 font-mono">${esc(signedDate)}</p>
+          <p class="text-xs text-gray-600 font-mono mt-1">Contract #${esc(c.short_id)}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Activity History for this contract ═══ -->
+    <div class="mb-6">
+      <div class="text-[0.6rem] font-mono text-gray-400 uppercase tracking-widest mb-3">📜 Contract History</div>
+      <div id="ct-entity-history" class="space-y-1">
+        <p class="text-xs text-gray-600 font-mono">Loading history...</p>
+      </div>
+    </div>
+  `;
+
+  // Load entity-specific history timeline
+  if (typeof loadEntityHistory === 'function') {
+    loadEntityHistory('contract', c.short_id, document.getElementById('ct-entity-history'));
   }
 }
 
@@ -139,6 +312,8 @@ function _updateContractStatusBadge(status) {
 }
 
 // ── Render clause toggles ──────────────────────────────
+let _draggedClauseIdx = null;
+
 function renderClauses() {
   const $container = document.getElementById('ct-clauses-container');
   if (!$container) return;
@@ -154,9 +329,21 @@ function renderClauses() {
     const borderColor = categoryColors[clause.category] || 'border-border';
 
     return `
-      <div class="bg-surface-2 rounded-xl border ${borderColor} p-4 ${!clause.enabled ? 'opacity-50' : ''}">
+      <div class="clause-item bg-surface-2 rounded-xl border ${borderColor} p-4 ${!clause.enabled ? 'opacity-50' : ''} transition-all duration-200"
+           draggable="true" data-clause-idx="${i}"
+           ondragstart="_onClauseDragStart(event, ${i})"
+           ondragover="_onClauseDragOver(event)"
+           ondragenter="_onClauseDragEnter(event)"
+           ondragleave="_onClauseDragLeave(event)"
+           ondrop="_onClauseDrop(event, ${i})"
+           ondragend="_onClauseDragEnd(event)">
         <div class="flex items-center justify-between mb-2">
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <span class="drag-handle cursor-grab active:cursor-grabbing text-gray-600 hover:text-gray-400 select-none text-sm px-0.5" title="Drag to reorder">⠿</span>
+            <div class="flex flex-col -my-1">
+              <button onclick="moveClause(${i}, -1)" class="text-gray-600 hover:text-electric transition text-[0.6rem] leading-none ${i === 0 ? 'invisible' : ''}" title="Move up">▲</button>
+              <button onclick="moveClause(${i}, 1)" class="text-gray-600 hover:text-electric transition text-[0.6rem] leading-none ${i === contractClauses.length - 1 ? 'invisible' : ''}" title="Move down">▼</button>
+            </div>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" ${clause.enabled ? 'checked' : ''} onchange="toggleClause(${i})"
                 class="sr-only peer">
@@ -171,6 +358,55 @@ function renderClauses() {
           class="w-full bg-transparent text-xs text-gray-400 font-mono focus:text-gray-300 focus:outline-none resize-none leading-relaxed">${esc(clause.body)}</textarea>
       </div>`;
   }).join('');
+}
+
+// ── Drag-and-drop handlers ─────────────────────────────
+function _onClauseDragStart(e, idx) {
+  _draggedClauseIdx = idx;
+  e.dataTransfer.effectAllowed = 'move';
+  e.currentTarget.style.opacity = '0.4';
+}
+function _onClauseDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
+function _onClauseDragEnter(e) {
+  e.preventDefault();
+  const card = e.currentTarget;
+  if (card.classList.contains('clause-item')) {
+    card.classList.add('ring-1', 'ring-electric/40');
+  }
+}
+function _onClauseDragLeave(e) {
+  const card = e.currentTarget;
+  card.classList.remove('ring-1', 'ring-electric/40');
+}
+function _onClauseDrop(e, targetIdx) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('ring-1', 'ring-electric/40');
+  if (_draggedClauseIdx === null || _draggedClauseIdx === targetIdx) return;
+
+  const [moved] = contractClauses.splice(_draggedClauseIdx, 1);
+  contractClauses.splice(targetIdx, 0, moved);
+  _draggedClauseIdx = null;
+  renderClauses();
+}
+function _onClauseDragEnd(e) {
+  e.currentTarget.style.opacity = '';
+  _draggedClauseIdx = null;
+  // Clean up any lingering highlights
+  document.querySelectorAll('.clause-item').forEach(el => {
+    el.classList.remove('ring-1', 'ring-electric/40');
+  });
+}
+
+// ── Arrow-key move ─────────────────────────────────────
+function moveClause(index, direction) {
+  const target = index + direction;
+  if (target < 0 || target >= contractClauses.length) return;
+  const [moved] = contractClauses.splice(index, 1);
+  contractClauses.splice(target, 0, moved);
+  renderClauses();
 }
 
 function toggleClause(index) {
@@ -337,6 +573,48 @@ async function saveContract() {
   }
 }
 
+// ── Delete contract (draft only) ───────────────────────
+async function deleteContract() {
+  if (!currentContract || !currentContract.short_id) {
+    alert('No saved contract to delete.');
+    return;
+  }
+  const status = (currentContract.status || 'draft').toLowerCase();
+  if (status === 'signed' || status === 'executed' || status === 'completed') {
+    alert('❌ Cannot delete a signed/executed contract. It is a permanent record.');
+    return;
+  }
+  if (!confirm(`⚠️ Delete contract #${currentContract.short_id} for ${currentContract.client_name}?\n\nThis cannot be undone.`)) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/contracts/${currentContract.short_id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+    alert('🗑️ Contract deleted.');
+    currentContract = null;
+    contractClauses = [];
+    document.getElementById('contract-detail').classList.add('hidden');
+    // Refresh list if visible
+    if (typeof loadAllContracts === 'function') loadAllContracts();
+  } catch (err) {
+    console.error('[Contracts] Delete failed:', err);
+    alert('Delete failed: ' + err.message);
+  }
+}
+
+function _updateDeleteButton() {
+  const $btn = document.getElementById('ct-btn-delete');
+  if (!$btn) return;
+  const status = (currentContract?.status || 'draft').toLowerCase();
+  if (status === 'signed' || status === 'executed' || status === 'completed') {
+    $btn.classList.add('hidden');
+  } else {
+    $btn.classList.remove('hidden');
+  }
+}
+
 function _gatherContractData() {
   return {
     client_name: document.getElementById('ct-client-name').value.trim(),
@@ -405,17 +683,55 @@ function downloadContractPDF() {
   const contentWidth = pageWidth - margin * 2;
   let y = 20;
 
-  // ── Header
-  doc.setFontSize(20);
-  doc.setFont('helvetica', 'bold');
-  doc.text('SERVICE AGREEMENT', pageWidth / 2, y, { align: 'center' });
-  y += 10;
+  // Sanitize text for jsPDF (built-in fonts only support basic Latin)
+  function pdfSafe(str) {
+    return String(str || '')
+      .replace(/\u2192|\u2794|\u27A1/g, '->')   // → arrows
+      .replace(/\u2190/g, '<-')                   // ←
+      .replace(/\u2194/g, '<->')                  // ↔
+      .replace(/\u2013/g, '-')                    // – en dash
+      .replace(/\u2014/g, '--')                   // — em dash
+      .replace(/\u2018|\u2019/g, "'")             // '' smart quotes
+      .replace(/\u201C|\u201D/g, '"')             // "" smart quotes
+      .replace(/\u2026/g, '...')                  // … ellipsis
+      .replace(/\u00D7/g, 'x')                   // × multiplication
+      .replace(/\u2265/g, '>=')                   // ≥
+      .replace(/\u2264/g, '<=')                   // ≤
+      .replace(/\u2022/g, '*')                    // • bullet (alt)
+      .replace(/\u00B7/g, '*')                    // · middle dot
+      .replace(/[\u{1F000}-\u{1FFFF}]/gu, '')    // strip all emojis
+      .replace(/[^\x00-\x7F\xA0-\xFF]/g, '');    // strip remaining non-Latin-1
+  }
 
-  doc.setFontSize(10);
+  // ── Logo: red dot + "Ajaya" (dark) + "Design" (red)
+  const logoX = margin;
+  doc.setFillColor(237, 28, 36); // #ED1C24
+  doc.circle(logoX + 3, y - 2, 3, 'F');
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(40, 40, 40);
+  doc.text('Ajaya', logoX + 9, y);
+  const ajayaW = doc.getTextWidth('Ajaya');
+  doc.setTextColor(237, 28, 36);
+  doc.text('Design', logoX + 9 + ajayaW, y);
+
+  // Right-aligned doc title
+  doc.setFontSize(18);
+  doc.setTextColor(40, 40, 40);
+  doc.text('SERVICE AGREEMENT', pageWidth - margin, y, { align: 'right' });
+  y += 6;
+
+  // Thin red accent line
+  doc.setDrawColor(237, 28, 36);
+  doc.setLineWidth(0.5);
+  doc.line(margin, y, pageWidth - margin, y);
+  y += 8;
+
+  doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
-  doc.setTextColor(100);
-  doc.text('AjayaDesign Web Development Services', pageWidth / 2, y, { align: 'center' });
-  y += 15;
+  doc.setTextColor(120);
+  doc.text('Web Development Services  -  ajayadesign@gmail.com', margin, y);
+  y += 10;
 
   // ── Contract ID and Date
   doc.setTextColor(0);
@@ -440,11 +756,11 @@ function downloadContractPDF() {
   doc.text('Email: ajayadesign@gmail.com', margin, y);
   y += 8;
 
-  doc.text(`Client: ${data.client_name}`, margin, y);
+  doc.text(pdfSafe(`Client: ${data.client_name}`), margin, y);
   y += 5;
-  if (data.client_address) { doc.text(`Address: ${data.client_address}`, margin, y); y += 5; }
-  if (data.client_email) { doc.text(`Email: ${data.client_email}`, margin, y); y += 5; }
-  if (data.client_phone) { doc.text(`Phone: ${data.client_phone}`, margin, y); y += 5; }
+  if (data.client_address) { doc.text(pdfSafe(`Address: ${data.client_address}`), margin, y); y += 5; }
+  if (data.client_email) { doc.text(pdfSafe(`Email: ${data.client_email}`), margin, y); y += 5; }
+  if (data.client_phone) { doc.text(pdfSafe(`Phone: ${data.client_phone}`), margin, y); y += 5; }
   y += 8;
 
   // ── Project Details
@@ -455,10 +771,10 @@ function downloadContractPDF() {
 
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Project: ${data.project_name}`, margin, y);
+  doc.text(pdfSafe(`Project: ${data.project_name}`), margin, y);
   y += 5;
   if (data.project_description) {
-    const descLines = doc.splitTextToSize(data.project_description, contentWidth);
+    const descLines = doc.splitTextToSize(pdfSafe(data.project_description), contentWidth);
     doc.text(descLines, margin, y);
     y += descLines.length * 4.5 + 3;
   }
@@ -475,36 +791,67 @@ function downloadContractPDF() {
   const deposit = parseFloat(data.deposit_amount) || 0;
   doc.text(`Total Amount: $${amount.toFixed(2)}`, margin, y); y += 5;
   if (deposit > 0) { doc.text(`Deposit: $${deposit.toFixed(2)}`, margin, y); y += 5; }
-  if (data.payment_method) { doc.text(`Payment Method: ${data.payment_method.charAt(0).toUpperCase() + data.payment_method.slice(1)}`, margin, y); y += 5; }
+  if (data.payment_method) { doc.text(pdfSafe(`Payment Method: ${data.payment_method.charAt(0).toUpperCase() + data.payment_method.slice(1)}`), margin, y); y += 5; }
   if (data.start_date) { doc.text(`Start Date: ${data.start_date}`, margin, y); y += 5; }
   if (data.estimated_completion_date) { doc.text(`Est. Completion: ${data.estimated_completion_date}`, margin, y); y += 5; }
   if (data.payment_terms) {
-    const ptLines = doc.splitTextToSize(`Payment Terms: ${data.payment_terms}`, contentWidth);
+    const ptLines = doc.splitTextToSize(pdfSafe(`Payment Terms: ${data.payment_terms}`), contentWidth);
     doc.text(ptLines, margin, y);
     y += ptLines.length * 4.5 + 3;
   }
   y += 5;
 
-  // ── Clauses
-  const enabledClauses = (data.clauses || contractClauses || []).filter(c => c.enabled !== false);
+  // ── Clauses (use GUI order from contractClauses if available, else saved data)
+  const clauseSource = contractClauses.length > 0 ? contractClauses : (data.clauses || []);
+  const enabledClauses = clauseSource.filter(c => c.enabled !== false);
+
   if (enabledClauses.length > 0) {
     enabledClauses.forEach((clause, i) => {
       // Check if we need a new page
-      if (y > 260) {
-        doc.addPage();
-        y = 20;
-      }
+      if (y > 255) { doc.addPage(); y = 20; }
 
-      doc.setFontSize(10);
+      // Clause heading
+      doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
-      doc.text(`${i + 1}. ${clause.title}`, margin, y);
-      y += 6;
+      doc.setTextColor(40, 40, 40);
+      doc.text(pdfSafe(`${i + 1}. ${clause.title}`), margin, y);
+      y += 7;
 
-      doc.setFontSize(8.5);
+      // Clause body — split by \n\n for paragraphs, then wrap each
+      doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      const bodyLines = doc.splitTextToSize(clause.body, contentWidth);
-      doc.text(bodyLines, margin, y);
-      y += bodyLines.length * 4 + 6;
+      doc.setTextColor(60, 60, 60);
+
+      const paragraphs = pdfSafe(clause.body || '').split(/\n\n+/);
+      paragraphs.forEach(para => {
+        para = para.trim();
+        if (!para) return;
+
+        // Detect bullet / numbered lines within a paragraph
+        const subLines = para.split('\n');
+        subLines.forEach(line => {
+          line = line.trim();
+          if (!line) return;
+
+          // Check if line is a bullet (•, -, *) or numbered (1., 2.)
+          const isBullet = /^[•\-\*]\s/.test(line);
+          const isNumbered = /^\d+\.\s/.test(line);
+          const indent = (isBullet || isNumbered) ? 6 : 0;
+          const lineMargin = margin + indent;
+          const lineWidth = contentWidth - indent;
+
+          const wrapped = doc.splitTextToSize(line, lineWidth);
+          wrapped.forEach((wl, wIdx) => {
+            if (y > 275) { doc.addPage(); y = 20; }
+            // First line at full indent; continuation lines get extra indent
+            const xPos = wIdx === 0 ? lineMargin : lineMargin + (indent ? 2 : 0);
+            doc.text(wl, xPos, y);
+            y += 4.5;
+          });
+        });
+        y += 2; // paragraph gap
+      });
+      y += 4; // gap after clause
     });
   }
 
@@ -517,48 +864,64 @@ function downloadContractPDF() {
     y += 7;
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    const noteLines = doc.splitTextToSize(data.custom_notes, contentWidth);
+    const noteLines = doc.splitTextToSize(pdfSafe(data.custom_notes), contentWidth);
     doc.text(noteLines, margin, y);
     y += noteLines.length * 4.5 + 8;
   }
 
-  // ── Signature Section
-  if (y > 230) { doc.addPage(); y = 20; }
+  // ── Client Signature Section
+  if (y > 220) { doc.addPage(); y = 20; }
+
+  const isSigned = !!(data.signature_data && data.status === 'signed');
+
   doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
-  doc.text('SIGNATURES', margin, y);
+  doc.text(isSigned ? 'EXECUTED BY CLIENT' : 'CLIENT SIGNATURE', margin, y);
   y += 10;
 
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
+  doc.text(pdfSafe(`Client: ${data.client_name}`), margin, y);
+  y += 8;
 
-  // Provider signature
-  doc.text('Provider: AjayaDesign', margin, y);
-  y += 12;
-  doc.line(margin, y, margin + 80, y);
-  y += 5;
-  doc.text('Signature', margin, y);
-  doc.text('Date: _______________', margin + 90, y);
-  y += 15;
-
-  // Client signature
-  doc.text(`Client: ${data.client_name}`, margin, y);
-  y += 12;
-
-  if (data.signature_data) {
+  if (isSigned) {
+    // Draw a light grey background box for signature
+    doc.setFillColor(248, 248, 248);
+    doc.roundedRect(margin, y - 2, 80, 28, 2, 2, 'F');
     try {
-      doc.addImage(data.signature_data, 'PNG', margin, y - 10, 60, 20);
-      y += 12;
+      doc.addImage(data.signature_data, 'PNG', margin + 2, y, 76, 24);
     } catch (e) {
-      doc.line(margin, y, margin + 80, y);
-      y += 5;
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text('[signature on file]', margin + 4, y + 14);
+      doc.setTextColor(0);
     }
+    y += 30;
+
+    // Signer name and date below signature
+    doc.setFontSize(8);
+    doc.setTextColor(80);
+    const signerName = data.signer_name || data.client_name;
+    doc.text(pdfSafe(`Signed by: ${signerName}`), margin, y);
+    y += 4;
+    if (data.signed_at) {
+      const signedDate = new Date(data.signed_at);
+      doc.text(`Date: ${signedDate.toLocaleDateString()} at ${signedDate.toLocaleTimeString()}`, margin, y);
+      y += 4;
+    }
+    if (data.signer_ip) {
+      doc.text(`IP: ${data.signer_ip}`, margin, y);
+      y += 4;
+    }
+    doc.setTextColor(0);
   } else {
+    // Unsigned — blank line for future signature
+    y += 5;
     doc.line(margin, y, margin + 80, y);
     y += 5;
+    doc.text('Signature', margin, y);
+    doc.text('Date: _______________', margin + 90, y);
   }
-  doc.text('Signature', margin, y);
-  doc.text('Date: _______________', margin + 90, y);
 
   // Footer on each page
   const pageCount = doc.internal.getNumberOfPages();

@@ -3,11 +3,13 @@
     "leads": {
       ".read": false,
       ".write": true,
+      ".indexOn": ["status", "timestamp"],
       "$leadId": {
         ".validate": "newData.hasChildren(['businessName', 'email'])"
       }
     },
     "signing": {
+      ".indexOn": ["status"],
       "$signToken": {
         ".read": true,
         ".write": "!data.exists() || !data.child('status').val().matches(/^(signed|processed)$/)",
@@ -16,7 +18,8 @@
     },
     "builds": {
       ".read": "auth != null",
-      ".write": "auth != null"
+      ".write": "auth != null",
+      ".indexOn": ["created_at", "status"]
     },
     "contracts": {
       ".read": "auth != null",
@@ -30,9 +33,15 @@
       ".read": "auth != null",
       ".write": "auth != null"
     },
+    "activity_logs": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["created_at", "entity_type"]
+    },
     "parse_requests": {
       ".read": "auth != null",
-      ".write": true
+      ".write": true,
+      ".indexOn": ["status"]
     }
   }
 }

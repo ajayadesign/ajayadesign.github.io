@@ -7,6 +7,55 @@
 let currentInvoice = null;
 let invoiceItems = [];
 
+// ── PayPal config ──────────────────────────────────────
+const PAYPAL_ME = 'ajayadesign';             // paypal.me/ajayadesign
+const PAYPAL_FEE_PERCENT = 0.0349;           // 3.49%
+const PAYPAL_FEE_FIXED   = 0.49;             // $0.49
+
+/**
+ * Calculate the gross amount so that after PayPal takes its fee,
+ * the seller receives exactly `netAmount`.
+ * Formula: gross = (net + fixed) / (1 - percent)
+ */
+function calcPayPalGross(netAmount) {
+  const gross = (netAmount + PAYPAL_FEE_FIXED) / (1 - PAYPAL_FEE_PERCENT);
+  return Math.ceil(gross * 100) / 100; // round up to nearest cent
+}
+
+/** Build a PayPal.me link with the fee-adjusted amount */
+function getPayPalLink(amount) {
+  const gross = calcPayPalGross(amount);
+  return `https://paypal.me/${PAYPAL_ME}/${gross.toFixed(2)}USD`;
+}
+
+/** Open PayPal payment link for the current invoice */
+function payWithPayPal() {
+  if (!currentInvoice) { alert('Save the invoice first.'); return; }
+  const total = parseFloat(currentInvoice.total_amount) || 0;
+  if (total <= 0) { alert('Invoice total must be greater than $0.'); return; }
+  const gross = calcPayPalGross(total);
+  const fee = (gross - total).toFixed(2);
+  if (!confirm(
+    `PayPal Payment Link\n\n` +
+    `Invoice total: $${total.toFixed(2)}\n` +
+    `Processing fee: $${fee} (paid by client)\n` +
+    `Client pays: $${gross.toFixed(2)}\n\n` +
+    `Open PayPal link?`
+  )) return;
+  window.open(getPayPalLink(total), '_blank');
+}
+
+/** Copy PayPal link to clipboard (to share with client) */
+function copyPayPalLink() {
+  if (!currentInvoice) { alert('Save the invoice first.'); return; }
+  const total = parseFloat(currentInvoice.total_amount) || 0;
+  if (total <= 0) { alert('Invoice total must be greater than $0.'); return; }
+  const link = getPayPalLink(total);
+  navigator.clipboard.writeText(link).then(() => {
+    alert('PayPal link copied!\n' + link);
+  });
+}
+
 // ── Open an existing invoice ───────────────────────────
 async function openInvoice(invoiceNumber) {
   try {
@@ -285,11 +334,29 @@ function downloadInvoicePDF() {
   const contentWidth = pageWidth - margin * 2;
   let y = 20;
 
-  // Header
-  doc.setFontSize(22);
+  // ── Logo: red dot + "Ajaya" (dark) + "Design" (red)
+  const logoX = margin;
+  doc.setFillColor(237, 28, 36); // #ED1C24
+  doc.circle(logoX + 3, y - 2, 3, 'F');
+  doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.text('INVOICE', pageWidth / 2, y, { align: 'center' });
-  y += 12;
+  doc.setTextColor(40, 40, 40);
+  doc.text('Ajaya', logoX + 9, y);
+  const ajayaW = doc.getTextWidth('Ajaya');
+  doc.setTextColor(237, 28, 36);
+  doc.text('Design', logoX + 9 + ajayaW, y);
+
+  // Right-aligned doc title
+  doc.setFontSize(20);
+  doc.setTextColor(40, 40, 40);
+  doc.text('INVOICE', pageWidth - margin, y, { align: 'right' });
+  y += 6;
+
+  // Thin red accent line
+  doc.setDrawColor(237, 28, 36);
+  doc.setLineWidth(0.5);
+  doc.line(margin, y, pageWidth - margin, y);
+  y += 10;
 
   // Invoice number and date
   const invNum = data.invoice_number || 'DRAFT';
@@ -376,6 +443,27 @@ function downloadInvoicePDF() {
   if (data.due_date) {
     doc.text(`Due Date: ${data.due_date}`, margin, y);
     y += 5;
+  }
+
+  // PayPal payment link (if method is paypal or always show as option)
+  if (total > 0 && (!data.payment_method || data.payment_method === 'paypal')) {
+    y += 4;
+    const gross = calcPayPalGross(total);
+    const fee = (gross - total).toFixed(2);
+    doc.setFillColor(0, 112, 186); // PayPal blue
+    doc.roundedRect(margin, y - 4, contentWidth, 24, 2, 2, 'F');
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Pay with PayPal', margin + contentWidth / 2, y + 4, { align: 'center' });
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`paypal.me/${PAYPAL_ME}/${gross.toFixed(2)}USD`, margin + contentWidth / 2, y + 10, { align: 'center' });
+    doc.text(`(Includes $${fee} processing fee)`, margin + contentWidth / 2, y + 15, { align: 'center' });
+    doc.setTextColor(0);
+    // Make the PayPal rect clickable as a link
+    doc.link(margin, y - 4, contentWidth, 24, { url: getPayPalLink(total) });
+    y += 26;
   }
 
   // Notes

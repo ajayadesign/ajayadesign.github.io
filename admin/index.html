@@ -568,11 +568,17 @@
               <button onclick="sendContract()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20 transition">📧 Send to Client</button>
               <button onclick="downloadContractPDF()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-purple/10 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/20 transition">📄 Download PDF</button>
               <button onclick="logPastContractEvent()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-yellow/10 text-neon-yellow border border-neon-yellow/30 hover:bg-neon-yellow/20 transition" title="Record a past event (sent via email, payment received, etc.)">📜 Log Event</button>
+              <button id="ct-btn-delete" onclick="deleteContract()" class="hidden text-xs font-mono px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition" title="Delete this draft contract">🗑️ Delete</button>
             </div>
           </div>
           <div id="ct-meta" class="text-xs font-mono text-gray-500"></div>
         </div>
         <div class="flex-1 overflow-y-auto p-6 space-y-6">
+          <!-- Signed Contract View (populated by JS when status=signed) -->
+          <div id="ct-signed-view" class="hidden"></div>
+
+          <!-- Editable Form (hidden when signed) -->
+          <div id="ct-editable-form">
           <!-- Client & Project Info -->
           <div class="grid grid-cols-2 gap-4">
             <div class="bg-surface-2 rounded-xl border border-border p-4">
@@ -664,6 +670,7 @@
               </div>
             </div>
           </div>
+          </div><!-- /ct-editable-form -->
         </div>
       </div>
 
@@ -678,6 +685,7 @@
             <div class="flex items-center gap-2">
               <button onclick="saveInvoice()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-green/10 text-neon-green border border-neon-green/30 hover:bg-neon-green/20 transition">💾 Save</button>
               <button onclick="sendInvoice()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20 transition">📧 Send to Client</button>
+              <button onclick="payWithPayPal()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/30 hover:bg-blue-500/20 transition" title="Generate PayPal.me link (fee passed to client)">💳 PayPal Link</button>
               <button onclick="markInvoicePaid()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-green/10 text-neon-green border border-neon-green/30 hover:bg-neon-green/20 transition">✅ Mark Paid</button>
               <button onclick="downloadInvoicePDF()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-purple/10 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/20 transition">📄 Download PDF</button>              <button onclick=\"logPastInvoiceEvent()\" class=\"text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-yellow/10 text-neon-yellow border border-neon-yellow/30 hover:bg-neon-yellow/20 transition\" title=\"Record a past event (payment received, sent, etc.)\">📜 Log Event</button>            </div>
           </div>
