@@ -1,0 +1,38 @@
+{
+  "rules": {
+    "leads": {
+      ".read": false,
+      ".write": true,
+      "$leadId": {
+        ".validate": "newData.hasChildren(['businessName', 'email'])"
+      }
+    },
+    "signing": {
+      "$signToken": {
+        ".read": true,
+        ".write": "!data.exists() || !data.child('status').val().matches(/^(signed|processed)$/)",
+        ".validate": "newData.hasChildren(['client_name', 'project_name'])"
+      }
+    },
+    "builds": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "contracts": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "invoices": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "portfolio": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "parse_requests": {
+      ".read": "auth != null",
+      ".write": true
+    }
+  }
+}

@@ -27,6 +27,8 @@ from api.services.email_service import (
 from api.services.firebase import (
     sync_contract_to_firebase, delete_contract_from_firebase,
     sync_invoice_to_firebase, delete_invoice_from_firebase,
+    publish_contract_for_signing, get_pending_signatures,
+    mark_signature_processed,
 )
 
 logger = logging.getLogger(__name__)
@@ -380,6 +382,25 @@ async def send_contract(short_id: str, db: AsyncSession = Depends(get_db)):
         contract.sent_at = datetime.now(timezone.utc)
         await db.commit()
         _sync_contract_fb(contract)
+
+        # ── Publish to Firebase for public signing ──
+        publish_contract_for_signing(str(contract.sign_token), {
+            "short_id": contract.short_id,
+            "client_name": contract.client_name,
+            "project_name": contract.project_name,
+            "project_description": contract.project_description or "",
+            "total_amount": float(contract.total_amount or 0),
+            "deposit_amount": float(contract.deposit_amount or 0),
+            "payment_method": contract.payment_method or "",
+            "payment_terms": contract.payment_terms or "",
+            "start_date": str(contract.start_date) if contract.start_date else None,
+            "estimated_completion_date": str(contract.estimated_completion_date) if contract.estimated_completion_date else None,
+            "clauses": [c for c in (contract.clauses or []) if c.get("enabled", True)],
+            "custom_notes": contract.custom_notes or "",
+            "provider_name": contract.provider_name or "AjayaDesign",
+            "provider_email": contract.provider_email or "ajayadesign@gmail.com",
+            "provider_address": contract.provider_address or "",
+        })
 
     return result_email
 
