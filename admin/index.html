@@ -260,8 +260,8 @@
 
     <!-- ═══ Sidebar ═══ -->
     <aside id="sidebar" class="fixed top-14 bottom-0 left-0 z-40 w-72 min-w-[18rem] bg-surface-1 border-r border-border flex flex-col -translate-x-full transition-transform duration-300 ease-in-out md:static md:z-auto md:translate-x-0 md:transition-none">
-      <!-- Tab Switcher -->
-      <div class="flex border-b border-border overflow-x-auto no-scrollbar">
+      <!-- Tab Switcher (desktop only — mobile uses bottom bar) -->
+      <div class="hidden md:flex border-b border-border overflow-x-auto no-scrollbar">
         <button onclick="switchTab('builds')" id="tab-builds"
           class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition">
           🔨 Builds
@@ -281,6 +281,10 @@
         <button onclick="switchTab('analytics')" id="tab-analytics"
           class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
           📊 Analytics
+        </button>
+        <button onclick="switchTab('traffic')" id="tab-traffic"
+          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+          🌐 Traffic
         </button>
       </div>
 
@@ -451,6 +455,51 @@
           <button onclick="scrollAnalytics('sec-builds')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">🔨 Build Performance</button>
           <button onclick="scrollAnalytics('sec-storage')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">💾 Firebase Storage</button>
           <button onclick="scrollAnalytics('sec-activity')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">📜 Activity Timeline</button>
+        </div>
+      </div>
+
+      <!-- Traffic Tab (hidden initially) -->
+      <div id="traffic-sidebar" class="flex-1 overflow-hidden hidden flex flex-col">
+        <div class="p-4 border-b border-border">
+          <div class="flex items-center justify-between">
+            <h2 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">Site Traffic</h2>
+            <button onclick="refreshTraffic()" class="text-gray-500 hover:text-electric transition" title="Refresh">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+          </div>
+        </div>
+        <!-- Quick KPIs -->
+        <div class="p-3 space-y-2 border-b border-border">
+          <div class="grid grid-cols-2 gap-2">
+            <div class="bg-surface-2 rounded-lg p-2.5 text-center">
+              <div id="traffic-kpi-live" class="font-mono text-lg font-bold text-neon-green">0</div>
+              <div class="text-[0.6rem] text-gray-500 uppercase">Live Now</div>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-2.5 text-center">
+              <div id="traffic-kpi-pageviews" class="font-mono text-lg font-bold text-electric">0</div>
+              <div class="text-[0.6rem] text-gray-500 uppercase">Views Today</div>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-2.5 text-center">
+              <div id="traffic-kpi-sessions" class="font-mono text-lg font-bold text-neon-purple">0</div>
+              <div class="text-[0.6rem] text-gray-500 uppercase">Sessions</div>
+            </div>
+            <div class="bg-surface-2 rounded-lg p-2.5 text-center">
+              <div id="traffic-kpi-avg-duration" class="font-mono text-lg font-bold text-neon-yellow">0s</div>
+              <div class="text-[0.6rem] text-gray-500 uppercase">Avg Duration</div>
+            </div>
+          </div>
+        </div>
+        <!-- Section jump links -->
+        <div class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-1">
+          <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Jump to</p>
+          <button onclick="scrollTraffic('sec-live-visitors')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">👁️ Live Visitors</button>
+          <button onclick="scrollTraffic('sec-traffic-overview')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">📈 Traffic Overview</button>
+          <button onclick="scrollTraffic('sec-top-pages')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">📄 Top Pages</button>
+          <button onclick="scrollTraffic('sec-traffic-sources')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">🔗 Traffic Sources</button>
+          <button onclick="scrollTraffic('sec-scroll-depth')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">📜 Scroll Depth</button>
+          <button onclick="scrollTraffic('sec-click-heatmap')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">🔥 Click Heatmap</button>
+          <button onclick="scrollTraffic('sec-performance')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">⚡ Performance</button>
+          <button onclick="scrollTraffic('sec-sessions')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">🗂️ Sessions</button>
         </div>
       </div>
     </aside>
@@ -1124,6 +1173,145 @@
         </div>
       </div>
 
+      <!-- ═══ Traffic Panel ═══ -->
+      <div id="traffic-panel" class="flex-1 flex flex-col overflow-hidden hidden">
+        <!-- Header -->
+        <div class="p-3 md:p-6 bg-surface-1 border-b border-border">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">🌐</span>
+              <div>
+                <h2 class="font-mono text-xl font-bold text-white">Site Traffic</h2>
+                <p id="traffic-updated" class="text-xs text-gray-500 font-mono">Live data from site_analytics</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="refreshTraffic()" class="p-2 rounded-lg bg-surface-2 border border-border text-gray-400 hover:text-electric hover:border-electric transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scrollable content -->
+        <div id="traffic-scroll" class="flex-1 overflow-y-auto scroll-contain p-3 md:p-6 space-y-6">
+
+          <!-- ═══ Live Visitors ═══ -->
+          <section id="sec-live-visitors">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">👁️ Live Visitors</h3>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="w-2.5 h-2.5 bg-neon-green rounded-full animate-pulse"></span>
+                <span id="traffic-live-count" class="font-mono text-sm text-neon-green font-bold">0</span>
+                <span class="text-xs text-gray-500 font-mono">visitors online now</span>
+              </div>
+              <!-- Header row -->
+              <div class="flex items-center justify-between py-1.5 px-2 text-[0.6rem] text-gray-600 font-mono uppercase tracking-wider border-b border-border mb-1">
+                <span class="w-24">Visitor</span>
+                <span class="flex-1">Page</span>
+                <span class="w-16">Device</span>
+                <span class="w-16 text-right">Time on</span>
+              </div>
+              <div id="traffic-live-table">
+                <p class="text-gray-500 text-xs font-mono text-center py-6">Waiting for visitors…</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- ═══ Traffic Overview (30-day chart) ═══ -->
+          <section id="sec-traffic-overview">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">📈 Traffic Overview (30 days)</h3>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <div class="h-56"><canvas id="traffic-chart-overview"></canvas></div>
+            </div>
+          </section>
+
+          <!-- ═══ Top Pages & Referrers ═══ -->
+          <section id="sec-top-pages">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">📄 Top Pages & Referrers</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Most Visited Pages</h4>
+                <div id="traffic-top-pages">
+                  <p class="text-gray-500 text-xs font-mono py-4">Loading…</p>
+                </div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Top Referrers</h4>
+                <div id="traffic-top-referrers">
+                  <p class="text-gray-500 text-xs font-mono py-4">Loading…</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ═══ Traffic Sources & Devices ═══ -->
+          <section id="sec-traffic-sources">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">🔗 Traffic Sources & Devices</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Source Breakdown</h4>
+                <div class="h-48 flex items-center justify-center"><canvas id="traffic-chart-sources"></canvas></div>
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Device Breakdown</h4>
+                <div class="h-48 flex items-center justify-center"><canvas id="traffic-chart-devices"></canvas></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ═══ Scroll Depth ═══ -->
+          <section id="sec-scroll-depth">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">📜 Scroll Depth</h3>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <div class="h-48"><canvas id="traffic-chart-scroll"></canvas></div>
+            </div>
+          </section>
+
+          <!-- ═══ Click Heatmap ═══ -->
+          <section id="sec-click-heatmap">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">🔥 Click Heatmap</h3>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <div class="flex items-center gap-3 mb-4">
+                <select id="traffic-heatmap-page" onchange="loadTrafficHeatmap()"
+                  class="text-xs font-mono px-3 py-1.5 rounded-lg bg-surface border border-border text-gray-300 cursor-pointer focus:border-electric focus:outline-none">
+                  <option value="">Select page…</option>
+                </select>
+              </div>
+              <div class="h-64"><canvas id="traffic-chart-clicks"></canvas></div>
+            </div>
+          </section>
+
+          <!-- ═══ Performance ═══ -->
+          <section id="sec-performance">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">⚡ Performance Metrics</h3>
+            <div id="traffic-perf-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3">
+              <p class="text-gray-500 text-xs font-mono text-center py-6 col-span-full">Loading…</p>
+            </div>
+          </section>
+
+          <!-- ═══ Sessions ═══ -->
+          <section id="sec-sessions">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">🗂️ Recent Sessions</h3>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <!-- Header row -->
+              <div class="flex items-center justify-between py-1.5 px-2 text-[0.6rem] text-gray-600 font-mono uppercase tracking-wider border-b border-border mb-1">
+                <span class="w-20">Visitor</span>
+                <span class="w-16">Device</span>
+                <span class="w-12">Pages</span>
+                <span class="w-16">Duration</span>
+                <span class="w-16">Source</span>
+                <span class="w-16 text-right">When</span>
+              </div>
+              <div id="traffic-sessions-list">
+                <p class="text-gray-500 text-xs font-mono text-center py-6">Loading…</p>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
     </main>
   </div>
 
@@ -1312,6 +1500,11 @@
         <span class="text-base leading-none">📊</span>
         <span class="text-[0.5rem] font-mono font-semibold uppercase tracking-wider mt-0.5">Analytics</span>
       </button>
+      <button onclick="switchTab('traffic')" id="mtab-traffic"
+        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-500 transition">
+        <span class="text-base leading-none">🌐</span>
+        <span class="text-[0.5rem] font-mono font-semibold uppercase tracking-wider mt-0.5">Traffic</span>
+      </button>
     </div>
   </nav>
 
@@ -1336,6 +1529,7 @@
   <!-- Chart.js for analytics -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="js/analytics.js"></script>
+  <script src="js/traffic.js"></script>
   <script>
     /* ═══ Mobile Sidebar Toggle ═══ */
     function toggleMobileSidebar() {
