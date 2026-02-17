@@ -205,11 +205,11 @@
       entries.forEach(function (e) {
         var vid = e[0], info = e[1];
         var timeOn = info.timestamp ? fmtDuration((Date.now() - info.timestamp) / 1000) : '—';
-        html += '<div class="flex items-center justify-between py-1.5 px-2 bg-surface rounded-lg text-xs font-mono">';
-        html += '<span class="text-electric truncate max-w-[6rem]">' + vid.substring(0, 8) + '…</span>';
-        html += '<span class="text-gray-400 truncate max-w-[8rem]">' + (info.page || '/') + '</span>';
-        html += '<span class="text-gray-500">' + (info.device || '—') + '</span>';
-        html += '<span class="text-gray-500">' + timeOn + '</span>';
+        html += '<div class="flex items-center gap-2 py-1.5 px-2 bg-surface rounded-lg text-xs font-mono min-w-0">';
+        html += '<span class="text-electric truncate w-16 shrink-0">' + vid.substring(0, 8) + '…</span>';
+        html += '<span class="text-gray-400 truncate flex-1">' + (info.page || '/') + '</span>';
+        html += '<span class="text-gray-500 hidden sm:block w-14 shrink-0">' + (info.device || '—') + '</span>';
+        html += '<span class="text-gray-500 w-14 shrink-0 text-right">' + timeOn + '</span>';
         html += '</div>';
       });
       html += '</div>';
@@ -485,13 +485,13 @@
       sessions.sort(function (a, b) { return (b.duration || 0) - (a.duration || 0); });
       var html = '<div class="space-y-1">';
       sessions.slice(0, 20).forEach(function (s) {
-        html += '<div class="flex items-center justify-between py-1.5 px-2 bg-surface rounded-lg text-xs font-mono">';
-        html += '<span class="text-electric truncate max-w-[5rem]">' + (s.visitorId || '').substring(0, 8) + '…</span>';
-        html += '<span class="text-gray-400">' + (s.device || '—') + '</span>';
-        html += '<span class="text-gray-400">' + (s.pages || 0) + ' pg</span>';
-        html += '<span class="text-white">' + fmtDuration(s.duration || 0) + '</span>';
-        html += '<span class="text-gray-500">' + (s.source || 'direct') + '</span>';
-        html += '<span class="text-gray-500">' + fmtTimeAgo(s.timestamp) + '</span>';
+        html += '<div class="flex items-center gap-2 py-1.5 px-2 bg-surface rounded-lg text-xs font-mono min-w-0">';
+        html += '<span class="text-electric truncate w-16 shrink-0">' + (s.visitorId || '').substring(0, 8) + '…</span>';
+        html += '<span class="text-gray-400 w-14 shrink-0 hidden sm:block">' + (s.device || '—') + '</span>';
+        html += '<span class="text-gray-400 w-10 shrink-0">' + (s.pages || 0) + ' pg</span>';
+        html += '<span class="text-white w-14 shrink-0">' + fmtDuration(s.duration || 0) + '</span>';
+        html += '<span class="text-gray-500 w-14 shrink-0 hidden sm:block">' + (s.source || 'direct') + '</span>';
+        html += '<span class="text-gray-500 flex-1 text-right">' + fmtTimeAgo(s.timestamp) + '</span>';
         html += '</div>';
       });
       html += '</div>';
