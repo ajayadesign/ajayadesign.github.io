@@ -189,6 +189,8 @@ async def reconcile_contracts_invoices_to_firebase() -> None:
                     if row:
                         contract_short_id = row
 
+                plan = inv.payment_plan or []
+                pending_installments = sum(1 for i in plan if i.get("status") in ("pending", "overdue"))
                 sync_invoice_to_firebase({
                     "invoice_number": inv.invoice_number,
                     "client_name": inv.client_name,
@@ -204,6 +206,8 @@ async def reconcile_contracts_invoices_to_firebase() -> None:
                     "paid_at": inv.paid_at.isoformat() if inv.paid_at else None,
                     "contract_short_id": contract_short_id,
                     "items_count": len(inv.items) if inv.items else 0,
+                    "payment_plan_enabled": inv.payment_plan_enabled or "false",
+                    "pending_installments": pending_installments,
                 })
                 synced_invoices += 1
             except Exception as e:
@@ -216,9 +220,120 @@ async def reconcile_contracts_invoices_to_firebase() -> None:
         )
 
 
+async def check_payment_plan_reminders() -> None:
+    """
+    Check all invoices with active payment plans for installments that are
+    due today or overdue, and send reminder emails if not already sent recently.
+    Runs every ~5 min as part of the periodic poller.
+    """
+    from datetime import date, timedelta
+    from api.models.contract import Invoice
+    from api.services.email_service import send_email, build_payment_reminder_email
+    from api.routes.activity import log_activity
+
+    today = date.today()
+
+    async with async_session() as session:
+        # Get all invoices with payment plans that aren't fully paid
+        result = await session.execute(
+            select(Invoice).where(
+                Invoice.payment_plan_enabled == "true",
+                Invoice.payment_status.notin_(["paid"]),
+                Invoice.status.notin_(["cancelled", "paid"]),
+            )
+        )
+        invoices = result.scalars().all()
+
+        if not invoices:
+            return
+
+        reminders_sent = 0
+
+        for inv in invoices:
+            plan = list(inv.payment_plan or [])
+            if not plan:
+                continue
+
+            plan_changed = False
+            for inst in plan:
+                if inst.get("status") != "pending":
+                    continue
+
+                # Parse due_date
+                try:
+                    due = date.fromisoformat(inst["due_date"])
+                except (ValueError, KeyError):
+                    continue
+
+                # Mark overdue if past due
+                if due < today and inst.get("status") == "pending":
+                    inst["status"] = "overdue"
+                    plan_changed = True
+
+                # Check if reminder is needed: due today, or overdue
+                # Skip if reminder was sent in the last 3 days
+                if due <= today:
+                    last_reminder = inst.get("reminder_sent_at")
+                    if last_reminder:
+                        try:
+                            from datetime import datetime as _dt
+                            lr = _dt.fromisoformat(last_reminder.replace("Z", "+00:00"))
+                            if (datetime.now(timezone.utc) - lr).days < 3:
+                                continue  # Reminder sent recently
+                        except Exception:
+                            pass
+
+                    # Send reminder
+                    inst_amount = float(inst.get("amount", 0))
+                    remaining = float(inv.total_amount or 0) - float(inv.amount_paid or 0)
+
+                    try:
+                        subject, html = build_payment_reminder_email(
+                            client_name=inv.client_name,
+                            invoice_number=inv.invoice_number,
+                            installment_amount=f"{inst_amount:.2f}",
+                            due_date=inst.get("due_date", ""),
+                            remaining_balance=f"{remaining:.2f}",
+                            payment_method=inv.payment_method or "",
+                        )
+                        email_result = await send_email(
+                            to=inv.client_email,
+                            subject=subject,
+                            body_html=html,
+                        )
+                        if email_result["success"]:
+                            inst["reminder_sent_at"] = datetime.now(timezone.utc).isoformat()
+                            plan_changed = True
+                            reminders_sent += 1
+
+                            await log_activity(
+                                entity_type="invoice", entity_id=inv.invoice_number,
+                                action="auto_reminder_sent", icon="🤖🔔",
+                                description=f"Auto-reminder sent to {inv.client_email} — ${inst_amount:.2f} due {inst.get('due_date', '')}",
+                                metadata={
+                                    "installment_id": inst.get("id"),
+                                    "amount": inst_amount,
+                                    "due_date": inst.get("due_date"),
+                                    "auto": True,
+                                },
+                            )
+                    except Exception as e:
+                        logger.warning("Failed to send auto-reminder for %s: %s", inv.invoice_number, e)
+
+                    break  # Only send one reminder per invoice per cycle
+
+            if plan_changed:
+                inv.payment_plan = plan
+                await session.commit()
+
+        if reminders_sent:
+            logger.info("🔔 Sent %d automatic payment reminder(s)", reminders_sent)
+
+
 async def periodic_firebase_poll(interval: int = 60) -> None:
     """Poll Firebase for new leads, parse requests, and signatures every ``interval`` seconds.
-    Every 5th cycle (~5 min) also re-syncs contracts/invoices Postgres → Firebase."""
+    Every 5th cycle (~5 min) also re-syncs contracts/invoices Postgres → Firebase
+    and checks for overdue payment plan installments that need reminders."""
     cycle = 0
     RESYNC_EVERY = 5  # cycles — re-sync contracts/invoices every ~5 min
 
@@ -245,8 +360,10 @@ async def periodic_firebase_poll(interval: int = 60) -> None:
             await process_firebase_signatures()
 
             # Periodically re-sync contracts & invoices → Firebase mirror
+            # and check for payment reminders
             if cycle % RESYNC_EVERY == 0:
                 await reconcile_contracts_invoices_to_firebase()
+                await check_payment_plan_reminders()
 
         except asyncio.CancelledError:
             break

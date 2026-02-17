@@ -1,11 +1,13 @@
 /* ═══════════════════════════════════════════════════════
    AjayaDesign Admin — Invoice Management
-   Full CRUD, line items, totals, email, PDF, mark paid
+   Full CRUD, line items, totals, email, PDF, mark paid,
+   payment plans with automated reminders
    ═══════════════════════════════════════════════════════ */
 
 // ── State ──────────────────────────────────────────────
 let currentInvoice = null;
 let invoiceItems = [];
+let paymentPlan = [];  // [{id, due_date, amount, status, paid_at, reminder_sent_at}]
 
 // ── PayPal config ──────────────────────────────────────
 const PAYPAL_ME = 'ajayadesign';             // paypal.me/ajayadesign
@@ -108,6 +110,13 @@ function _populateInvoiceForm() {
   renderInvoiceItems();
   recalcInvoice();
 
+  // Payment plan
+  paymentPlan = (inv.payment_plan || []).map(inst => ({ ...inst }));
+  const ppEnabled = inv.payment_plan_enabled === 'true';
+  document.getElementById('inv-payment-plan-enabled').checked = ppEnabled;
+  _togglePaymentPlanUI(ppEnabled);
+  renderPaymentPlan();
+
   _updateInvoiceStatusBadge(inv.payment_status || inv.status || 'unpaid');
   document.getElementById('inv-number').textContent = `💰 ${inv.invoice_number}`;
 }
@@ -116,6 +125,9 @@ function _clearInvoiceForm() {
   const ids = ['inv-client-name', 'inv-client-email', 'inv-payment-method', 'inv-due-date', 'inv-notes'];
   ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   document.getElementById('inv-tax-rate').value = '0';
+  paymentPlan = [];
+  document.getElementById('inv-payment-plan-enabled').checked = false;
+  _togglePaymentPlanUI(false);
 }
 
 function _updateInvoiceStatusBadge(status) {
@@ -250,6 +262,7 @@ function _gatherInvoiceData() {
   const taxRate = taxRatePercent / 100;
   const taxAmount = subtotal * taxRate;
   const total = subtotal + taxAmount;
+  const ppEnabled = document.getElementById('inv-payment-plan-enabled').checked;
 
   return {
     client_name: document.getElementById('inv-client-name').value.trim(),
@@ -262,6 +275,8 @@ function _gatherInvoiceData() {
     tax_amount: taxAmount,
     total_amount: total,
     notes: document.getElementById('inv-notes').value.trim(),
+    payment_plan: ppEnabled ? paymentPlan : [],
+    payment_plan_enabled: ppEnabled ? 'true' : 'false',
   };
 }
 
@@ -549,5 +564,285 @@ async function logPastInvoiceEvent() {
   } catch (err) {
     console.error('[Invoices] Log event failed:', err);
     alert('Failed to log event: ' + err.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  Payment Plan Management
+// ═══════════════════════════════════════════════════════
+
+/** Toggle the payment plan UI visibility */
+function togglePaymentPlan() {
+  const enabled = document.getElementById('inv-payment-plan-enabled').checked;
+  _togglePaymentPlanUI(enabled);
+}
+
+function _togglePaymentPlanUI(show) {
+  const els = ['pp-controls', 'pp-installments', 'pp-summary'];
+  els.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('hidden', !show);
+  });
+  if (show) renderPaymentPlan();
+}
+
+/** Auto-generate installments from the invoice total */
+function generatePaymentPlan() {
+  const total = _getCurrentTotal();
+  if (total <= 0) {
+    alert('Please add line items first (total must be > $0).');
+    return;
+  }
+
+  const numInstallments = parseInt(document.getElementById('pp-num-installments').value) || 4;
+  const amountPaid = currentInvoice ? parseFloat(currentInvoice.amount_paid || 0) : 0;
+  const remaining = total - amountPaid;
+
+  if (remaining <= 0) {
+    alert('Invoice is already fully paid.');
+    return;
+  }
+
+  const perInstallment = Math.floor(remaining / numInstallments * 100) / 100;
+  const lastInstallment = remaining - perInstallment * (numInstallments - 1);
+
+  // Start from today, monthly intervals
+  const startDate = new Date();
+  paymentPlan = [];
+
+  for (let i = 0; i < numInstallments; i++) {
+    const dueDate = new Date(startDate);
+    dueDate.setMonth(dueDate.getMonth() + i);
+    // Set to 1st of the month for clean dates (if generating fresh)
+    if (i > 0) dueDate.setDate(1);
+
+    const amount = i === numInstallments - 1 ? lastInstallment : perInstallment;
+
+    paymentPlan.push({
+      id: 'inst-' + Date.now() + '-' + i,
+      due_date: dueDate.toISOString().split('T')[0],
+      amount: parseFloat(amount.toFixed(2)),
+      status: 'pending',
+      paid_at: null,
+      reminder_sent_at: null,
+    });
+  }
+
+  renderPaymentPlan();
+}
+
+/** Add a single empty installment */
+function addInstallment() {
+  const lastDate = paymentPlan.length > 0
+    ? new Date(paymentPlan[paymentPlan.length - 1].due_date)
+    : new Date();
+  lastDate.setMonth(lastDate.getMonth() + 1);
+
+  paymentPlan.push({
+    id: 'inst-' + Date.now(),
+    due_date: lastDate.toISOString().split('T')[0],
+    amount: 0,
+    status: 'pending',
+    paid_at: null,
+    reminder_sent_at: null,
+  });
+
+  renderPaymentPlan();
+}
+
+/** Remove an installment */
+function removeInstallment(index) {
+  paymentPlan.splice(index, 1);
+  renderPaymentPlan();
+}
+
+/** Update installment field */
+function updateInstallment(index, field, value) {
+  if (!paymentPlan[index]) return;
+  if (field === 'amount') {
+    paymentPlan[index][field] = parseFloat(value) || 0;
+  } else {
+    paymentPlan[index][field] = value;
+  }
+  renderPaymentPlan();
+}
+
+/** Render the payment plan installments list */
+function renderPaymentPlan() {
+  const $container = document.getElementById('pp-installments');
+  if (!$container) return;
+
+  // Update summary counts
+  const paid = paymentPlan.filter(i => i.status === 'paid').length;
+  const overdue = paymentPlan.filter(i => i.status === 'overdue').length;
+  const pending = paymentPlan.filter(i => i.status === 'pending').length;
+
+  const $paidCount = document.getElementById('pp-paid-count');
+  const $pendingCount = document.getElementById('pp-pending-count');
+  const $overdueCount = document.getElementById('pp-overdue-count');
+  if ($paidCount) $paidCount.textContent = paid;
+  if ($pendingCount) $pendingCount.textContent = pending;
+  if ($overdueCount) $overdueCount.textContent = overdue;
+
+  // Check for overdue (client-side, in case poller hasn't run yet)
+  const today = new Date().toISOString().split('T')[0];
+  paymentPlan.forEach(inst => {
+    if (inst.status === 'pending' && inst.due_date < today) {
+      inst.status = 'overdue';
+    }
+  });
+
+  if (paymentPlan.length === 0) {
+    $container.innerHTML = `
+      <div class="text-center text-gray-600 text-xs font-mono py-6">
+        No installments yet. Click "Auto-Generate" or "+ Add" to create a plan.
+      </div>
+    `;
+    return;
+  }
+
+  const planTotal = paymentPlan.reduce((s, i) => s + (parseFloat(i.amount) || 0), 0);
+  const invoiceTotal = _getCurrentTotal();
+  const diff = invoiceTotal - planTotal;
+
+  $container.innerHTML = paymentPlan.map((inst, i) => {
+    const statusStyles = {
+      pending: { bg: 'bg-neon-yellow/10', border: 'border-neon-yellow/30', text: 'text-neon-yellow', label: 'PENDING', icon: '⏳' },
+      paid:    { bg: 'bg-neon-green/10', border: 'border-neon-green/30', text: 'text-neon-green', label: 'PAID', icon: '✅' },
+      overdue: { bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-400', label: 'OVERDUE', icon: '🚨' },
+      skipped: { bg: 'bg-gray-800', border: 'border-gray-700', text: 'text-gray-500', label: 'SKIPPED', icon: '⏭️' },
+    };
+    const s = statusStyles[inst.status] || statusStyles.pending;
+    const isPaid = inst.status === 'paid';
+    const reminderInfo = inst.reminder_sent_at
+      ? `<span class="text-[0.6rem] text-gray-600" title="Last reminder: ${inst.reminder_sent_at}">🔔 Reminded</span>`
+      : '';
+
+    return `
+      <div class="flex gap-3 items-center ${s.bg} rounded-lg border ${s.border} p-3 ${isPaid ? 'opacity-70' : ''}">
+        <div class="text-lg">${s.icon}</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-[0.6rem] font-mono font-bold ${s.text} uppercase">${s.label}</span>
+            <span class="text-[0.6rem] font-mono text-gray-600">#${i + 1}</span>
+            ${reminderInfo}
+          </div>
+          <div class="flex items-center gap-3">
+            <input type="date" value="${inst.due_date || ''}" ${isPaid ? 'disabled' : ''}
+              onchange="updateInstallment(${i}, 'due_date', this.value)"
+              class="bg-transparent text-sm text-white font-mono focus:outline-none border-b border-transparent focus:border-electric ${isPaid ? 'opacity-50' : ''}" />
+            <span class="text-gray-600 text-xs">$</span>
+            <input type="number" step="0.01" value="${parseFloat(inst.amount || 0).toFixed(2)}" ${isPaid ? 'disabled' : ''}
+              onchange="updateInstallment(${i}, 'amount', this.value)"
+              class="w-24 bg-transparent text-sm text-white font-mono text-right focus:outline-none border-b border-transparent focus:border-electric ${isPaid ? 'opacity-50' : ''}" />
+          </div>
+          ${isPaid && inst.paid_at ? `<div class="text-[0.55rem] text-gray-600 mt-1">Paid: ${new Date(inst.paid_at).toLocaleDateString()}</div>` : ''}
+        </div>
+        <div class="flex flex-col gap-1">
+          ${!isPaid ? `
+            <button onclick="recordInstallmentPayment(${i})" class="text-[0.6rem] font-mono px-2 py-1 rounded bg-neon-green/10 text-neon-green hover:bg-neon-green/20 transition" title="Record payment">💵 Paid</button>
+          ` : ''}
+          ${!isPaid ? `
+            <button onclick="removeInstallment(${i})" class="text-[0.6rem] font-mono px-2 py-1 rounded bg-red-500/10 text-red-400 hover:bg-red-500/20 transition" title="Remove">✕</button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Plan total vs invoice total warning
+  if (Math.abs(diff) > 0.01) {
+    const color = diff > 0 ? 'text-neon-yellow' : 'text-red-400';
+    $container.innerHTML += `
+      <div class="text-center text-xs font-mono ${color} mt-2">
+        Plan total: $${planTotal.toFixed(2)} · Invoice total: $${invoiceTotal.toFixed(2)} · Difference: $${Math.abs(diff).toFixed(2)}
+      </div>
+    `;
+  }
+}
+
+/** Get current invoice total from the form */
+function _getCurrentTotal() {
+  const subtotal = invoiceItems.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+  const taxRatePercent = parseFloat(document.getElementById('inv-tax-rate').value) || 0;
+  return subtotal + subtotal * (taxRatePercent / 100);
+}
+
+/** Record payment for a specific installment via the API */
+async function recordInstallmentPayment(index) {
+  const inst = paymentPlan[index];
+  if (!inst) return;
+
+  if (!currentInvoice || !currentInvoice.invoice_number) {
+    alert('Please save the invoice first.');
+    return;
+  }
+
+  const amount = parseFloat(inst.amount) || 0;
+  if (!confirm(`Record payment of $${amount.toFixed(2)} for installment #${index + 1}?`)) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/invoices/${currentInvoice.invoice_number}/record-payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        installment_id: inst.id,
+        amount: amount,
+        payment_method: document.getElementById('inv-payment-method').value || null,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
+    currentInvoice = await res.json();
+    paymentPlan = (currentInvoice.payment_plan || []).map(i => ({ ...i }));
+    _populateInvoiceForm();
+    alert(`✅ Payment of $${amount.toFixed(2)} recorded!`);
+  } catch (err) {
+    console.error('[PaymentPlan] Record payment failed:', err);
+    alert('Record payment failed: ' + err.message);
+  }
+}
+
+/** Send a payment reminder for the next unpaid installment */
+async function sendPaymentReminder() {
+  if (!currentInvoice || !currentInvoice.invoice_number) {
+    alert('Please save the invoice first.');
+    return;
+  }
+
+  const nextPending = paymentPlan.find(i => i.status === 'pending' || i.status === 'overdue');
+  if (!nextPending) {
+    alert('No pending installments to remind about.');
+    return;
+  }
+
+  const amt = parseFloat(nextPending.amount || 0).toFixed(2);
+  if (!confirm(`Send payment reminder to ${currentInvoice.client_email}?\n\nAmount: $${amt}\nDue: ${nextPending.due_date}`)) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/invoices/${currentInvoice.invoice_number}/send-reminder`, {
+      method: 'POST',
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    if (data.success) {
+      alert(`✅ Payment reminder sent to ${currentInvoice.client_email}!`);
+      // Refresh to show updated reminder_sent_at
+      await openInvoice(currentInvoice.invoice_number);
+    } else {
+      alert('⚠️ ' + (data.message || 'Failed to send reminder'));
+    }
+  } catch (err) {
+    console.error('[PaymentPlan] Send reminder failed:', err);
+    alert('Send reminder failed: ' + err.message);
   }
 }

@@ -242,3 +242,105 @@ def build_signed_notification_email(
     </div>
     """
     return subject, html
+
+
+def build_payment_reminder_email(
+    client_name: str,
+    invoice_number: str,
+    installment_amount: str,
+    due_date: str,
+    remaining_balance: str,
+    payment_method: str,
+    provider_name: str = "AjayaDesign",
+) -> tuple[str, str]:
+    """Build a payment reminder email for an upcoming/overdue installment. Returns (subject, html)."""
+    subject = f"Payment Reminder — ${installment_amount} due {due_date} ({invoice_number})"
+
+    paypal_btn = _build_paypal_button_html(installment_amount, payment_method)
+
+    # Determine urgency color
+    from datetime import date as _date
+    try:
+        due = _date.fromisoformat(due_date)
+        today = _date.today()
+        if due < today:
+            urgency_color = "#dc2626"  # red — overdue
+            urgency_label = "OVERDUE"
+            urgency_msg = f"This payment was due on <strong>{due_date}</strong> and is now overdue."
+        elif (due - today).days <= 3:
+            urgency_color = "#f59e0b"  # amber — due soon
+            urgency_label = "DUE SOON"
+            urgency_msg = f"This payment is due on <strong>{due_date}</strong> — that's in {(due - today).days} day(s)."
+        else:
+            urgency_color = "#6366f1"  # indigo — upcoming
+            urgency_label = "UPCOMING"
+            urgency_msg = f"This payment is due on <strong>{due_date}</strong>."
+    except Exception:
+        urgency_color = "#6366f1"
+        urgency_label = "REMINDER"
+        urgency_msg = f"This payment is due on <strong>{due_date}</strong>."
+
+    html = f"""
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+      <div style="text-align: center; margin-bottom: 32px;">
+        <h1 style="color: #111; font-size: 24px; margin: 0;">🔔 Payment Reminder</h1>
+        <p style="color: #666; margin-top: 8px;">from {provider_name}</p>
+      </div>
+
+      <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+        <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0;">
+          Hi <strong>{client_name}</strong>,
+        </p>
+        <p style="color: #333; font-size: 16px; line-height: 1.6;">
+          This is a friendly reminder about your upcoming payment for Invoice <strong>{invoice_number}</strong>.
+        </p>
+      </div>
+
+      <div style="background: {urgency_color}10; border: 2px solid {urgency_color}40; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; margin-bottom: 16px;">
+          <span style="background: {urgency_color}; color: white; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; letter-spacing: 1px;">
+            {urgency_label}
+          </span>
+        </div>
+        <p style="color: #333; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+          {urgency_msg}
+        </p>
+        <table style="width: 100%;">
+          <tr>
+            <td style="font-size: 14px; color: #666; padding: 4px 0;">Amount Due</td>
+            <td style="text-align: right; font-size: 20px; font-weight: 700; color: {urgency_color};">${installment_amount}</td>
+          </tr>
+          <tr>
+            <td style="font-size: 14px; color: #666; padding: 4px 0;">Due Date</td>
+            <td style="text-align: right; font-size: 14px; color: #333; font-weight: 600;">{due_date}</td>
+          </tr>
+          <tr>
+            <td style="font-size: 14px; color: #666; padding: 4px 0;">Remaining Balance</td>
+            <td style="text-align: right; font-size: 14px; color: #333;">${remaining_balance}</td>
+          </tr>
+          <tr>
+            <td style="font-size: 14px; color: #666; padding: 4px 0;">Payment Method</td>
+            <td style="text-align: right; font-size: 14px; color: #333;">{payment_method.title() if payment_method else 'See below'}</td>
+          </tr>
+        </table>
+      </div>
+
+      {paypal_btn}
+
+      <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+        <p style="color: #92400e; font-size: 14px; margin: 0; font-weight: 600;">Payment Instructions</p>
+        <p style="color: #92400e; font-size: 13px; margin-top: 8px;">
+          Please send payment via <strong>{payment_method.title() if payment_method else 'your preferred method'}</strong>.
+          If you have questions or need to adjust your payment plan, reply to this email.
+        </p>
+      </div>
+
+      <p style="color: #9ca3af; font-size: 13px; text-align: center; margin-top: 32px;">
+        Thank you for your continued business!
+      </p>
+      <p style="color: #d1d5db; font-size: 11px; text-align: center; margin-top: 16px;">
+        {provider_name} &middot; 13721 Andrew Abernathy Pass, Manor, TX 78653
+      </p>
+    </div>
+    """
+    return subject, html
