@@ -233,12 +233,16 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     // 2. FormSubmit — email backup
+    const emailCtrl = new AbortController();
+    const emailTimer = setTimeout(() => emailCtrl.abort(), API_TIMEOUT_MS);
     const emailPromise = fetch(FORMSUBMIT_URL, {
       method: 'POST',
       headers: { 'Accept': 'application/json' },
       body: emailPayload,
+      signal: emailCtrl.signal,
     }).then(() => console.log('[AjayaDesign] ✅ Email sent via FormSubmit'))
-      .catch(err => console.warn('[AjayaDesign] ⚠️ FormSubmit failed:', err));
+      .catch(err => console.warn('[AjayaDesign] ⚠️ FormSubmit failed:', err))
+      .finally(() => clearTimeout(emailTimer));
 
     // 3. Python FastAPI — pipeline trigger (only available when API server is running)
     const apiCtrl = new AbortController();
