@@ -151,7 +151,7 @@ def _generate_fallback(ds: dict, blueprint: dict, page_spec: dict) -> str:
     <div class="text-center max-w-3xl">
       <h1 class="font-heading text-4xl md:text-6xl font-bold text-textMain mb-6">{_esc(page_spec.get('title', 'Welcome'))}</h1>
       <p class="text-xl text-textMuted mb-8">{_esc(page_spec.get('purpose', blueprint.get('tagline', '')))}</p>
-      <a href="/contact.html" class="inline-block px-8 py-3 bg-cta text-white font-body font-bold rounded-lg hover:opacity-90 transition">
+      <a href="contact.html" class="inline-block px-8 py-3 bg-cta text-white font-body font-bold rounded-lg hover:opacity-90 transition">
         Get in Touch
       </a>
     </div>

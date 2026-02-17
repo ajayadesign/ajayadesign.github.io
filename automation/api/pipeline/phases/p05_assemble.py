@@ -26,6 +26,9 @@ async def assemble(
     # 1. Nav active states
     _stitch_nav_states(project_dir, pages, design_system, log_fn)
 
+    # 1b. Rewrite root-relative links to relative (subdirectory hosting)
+    _rewrite_links_for_subdirectory(project_dir, log_fn)
+
     # 2. sitemap.xml
     _generate_sitemap(project_dir, pages, blueprint, log_fn)
 
@@ -38,14 +41,168 @@ async def assemble(
     # 5. Cross-link validation
     _validate_links(project_dir, log_fn)
 
-    # 6. Enhanced features
+    # 6. Fix broken local image paths → placeholder
+    _fix_local_image_paths(project_dir, log_fn)
+
+    # 7. Enhanced features
     _inject_scroll_progress(project_dir, pages, blueprint, log_fn)
     _inject_back_to_top(project_dir, pages, log_fn)
     _generate_favicon(project_dir, blueprint, log_fn)
     _inject_json_ld(project_dir, blueprint, log_fn)
     _inject_performance_hints(project_dir, pages, log_fn)
 
+    # 8. Add JS error guard for mobileMenuJs null refs
+    _inject_js_safety_guard(project_dir, pages, log_fn)
+
     _log(log_fn, "  ✅ Assembly complete")
+
+
+def _rewrite_links_for_subdirectory(project_dir: str, log_fn) -> None:
+    """Convert root-relative links to relative links for GitHub Pages subdirectory hosting.
+
+    Root-relative links like /menu.html resolve to ajayadesign.github.io/menu.html
+    instead of ajayadesign.github.io/repo-name/menu.html.  By converting them to
+    relative paths (menu.html), the browser resolves them correctly regardless of
+    which subdirectory the site is served from.
+
+    Conversions:
+      href="/"              → href="index.html"
+      href="/page.html"     → href="page.html"
+      href="/page"          → href="page.html"       (adds missing .html)
+      src="/favicon.svg"    → src="favicon.svg"
+      src="/images/foo.jpg" → src="images/foo.jpg"   (drops leading /)
+    """
+    html_files = [f for f in os.listdir(project_dir) if f.endswith(".html")]
+    total_rewrites = 0
+
+    for fname in html_files:
+        fpath = os.path.join(project_dir, fname)
+        with open(fpath, "r", encoding="utf-8") as f:
+            html = f.read()
+
+        original = html
+        count = 0
+
+        # 1. href="/" → href="index.html"
+        html, n = re.subn(r'(href=")/"', r'\1index.html"', html)
+        count += n
+
+        # 2. href="/page.html" → href="page.html"
+        html, n = re.subn(r'(href=")/([A-Za-z0-9][\w-]*\.html)"', r'\1\2"', html)
+        count += n
+
+        # 3. href="/page" (no extension, no . in path) → href="page.html"
+        #    But skip external links, anchor links, javascript:, mailto:, tel:, https:, http:
+        def _fix_bare_root_link(m):
+            attr = m.group(1)   # href=" or src="
+            slug = m.group(2)   # page name without extension
+            # Only rewrite href (not src) for bare page links
+            if attr.startswith('href'):
+                return f'{attr}{slug}.html"'
+            return m.group(0)
+
+        html, n = re.subn(
+            r'(href=")/([A-Za-z0-9][\w-]*)"(?![./])',
+            _fix_bare_root_link,
+            html,
+        )
+        count += n
+
+        # 4. src="/anything" → src="anything" (images, scripts, etc.)
+        html, n = re.subn(r'((?:src|href)=")/(?=[A-Za-z0-9])', r'\1', html)
+        count += n
+
+        if html != original:
+            with open(fpath, "w", encoding="utf-8") as f:
+                f.write(html)
+            total_rewrites += count
+
+    if total_rewrites:
+        _log(log_fn, f"    ✅ Rewrote {total_rewrites} root-relative links to relative")
+    else:
+        _log(log_fn, "    ✅ No root-relative links to rewrite")
+
+
+def _fix_local_image_paths(project_dir: str, log_fn) -> None:
+    """Replace local/non-existent image src paths with placehold.co fallbacks.
+
+    AI sometimes generates src="/images/foo.jpg" or src="images/foo.jpg" paths
+    that don't exist. Replace them with visually appropriate placeholders.
+    """
+    html_files = [f for f in os.listdir(project_dir) if f.endswith(".html")]
+    total = 0
+
+    def _placeholder(m):
+        src = m.group(2)
+        # Skip external URLs (https://, http://, data:, //)
+        if re.match(r'(https?://|data:|//)', src):
+            return m.group(0)
+        # Skip files that actually exist
+        clean = src.lstrip("/")
+        if os.path.exists(os.path.join(project_dir, clean)):
+            return m.group(0)
+        # Extract a label from the path for the placeholder
+        label = os.path.splitext(os.path.basename(clean))[0].replace("-", "+").replace("_", "+")
+        return f'{m.group(1)}https://placehold.co/800x600/1a1a2e/ffffff?text={label}"'
+
+    for fname in html_files:
+        fpath = os.path.join(project_dir, fname)
+        with open(fpath, "r", encoding="utf-8") as f:
+            html = f.read()
+        original = html
+        html = re.sub(r'(src=")([^"]+)"', _placeholder, html)
+        if html != original:
+            n = sum(1 for a, b in zip(original.split('src="'), html.split('src="')) if a != b)
+            total += n
+            with open(fpath, "w", encoding="utf-8") as f:
+                f.write(html)
+
+    if total:
+        _log(log_fn, f"    ✅ Replaced {total} broken local image paths with placeholders")
+    else:
+        _log(log_fn, "    ✅ No broken image paths to fix")
+
+
+def _inject_js_safety_guard(project_dir: str, pages: list, log_fn) -> None:
+    """Wrap inline <script> blocks with try/catch to prevent null-ref crashes.
+
+    AI-generated mobileMenuJs often references elements by ID/class that may
+    not exist, causing 'Cannot read properties of null' errors.
+    """
+    html_files = [f for f in os.listdir(project_dir) if f.endswith(".html")]
+    guard_marker = "/* js-safety-guard */"
+    total = 0
+
+    for fname in html_files:
+        fpath = os.path.join(project_dir, fname)
+        with open(fpath, "r", encoding="utf-8") as f:
+            html = f.read()
+        if guard_marker in html:
+            continue
+
+        # Find inline scripts that aren't libraries / AOS / tailwind / JSON-LD
+        def _wrap_script(m):
+            nonlocal total
+            script_tag = m.group(0)
+            content = m.group(1)
+            # Skip well-known safe scripts
+            if any(kw in content for kw in [
+                "tailwind.config", "AOS.init", "application/ld+json",
+                "scroll-progress", "back-to-top", guard_marker,
+            ]):
+                return script_tag
+            # Wrap in try-catch
+            total += 1
+            return f"<script>{guard_marker}\ntry {{\n{content}\n}} catch(e) {{ console.warn('Script error:', e); }}\n</script>"
+
+        html = re.sub(r"<script>([^<]*(?:(?!</script>)<[^<]*)*)</script>", _wrap_script, html, flags=re.DOTALL)
+        with open(fpath, "w", encoding="utf-8") as f:
+            f.write(html)
+
+    if total:
+        _log(log_fn, f"    ✅ Wrapped {total} inline scripts with safety guards")
+    else:
+        _log(log_fn, "    ✅ No scripts needed safety guards")
 
 
 def _stitch_nav_states(
@@ -133,7 +290,7 @@ def _generate_404(project_dir: str, ds: dict, blueprint: dict, log_fn) -> None:
   <div class="text-center max-w-xl">
     <h1 class="font-heading text-6xl font-bold text-primary mb-4">404</h1>
     <p class="text-xl text-textMuted mb-8">This page doesn't exist.</p>
-    <a href="/" class="inline-block px-8 py-3 bg-cta text-white font-bold rounded-lg hover:opacity-90 transition">
+    <a href="index.html" class="inline-block px-8 py-3 bg-cta text-white font-bold rounded-lg hover:opacity-90 transition">
       Back to Home
     </a>
   </div>
@@ -162,9 +319,14 @@ def _validate_links(project_dir: str, log_fn) -> None:
             issues += 1
             _log(log_fn, f"    ⚠️ {fname}: contains href=\"#\"")
 
-        # Check internal links point to existing files
-        for match in re.finditer(r'href="(/[\w-]+\.html)"', content):
-            target = match.group(1).lstrip("/")
+        # Flag any remaining root-relative links (should all be relative by now)
+        for match in re.finditer(r'href="(/[\w-]+(?:\.html)?)"', content):
+            issues += 1
+            _log(log_fn, f"    ⚠️ {fname}: root-relative link {match.group(1)} — should be relative")
+
+        # Check relative links point to existing files
+        for match in re.finditer(r'href="([\w-]+\.html)"', content):
+            target = match.group(1)
             if not os.path.exists(os.path.join(project_dir, target)):
                 issues += 1
                 _log(log_fn, f"    ⚠️ {fname}: broken link to {target}")
@@ -272,7 +434,7 @@ def _generate_favicon(project_dir: str, blueprint: dict, log_fn) -> None:
         with open(fpath, "r", encoding="utf-8") as f:
             html = f.read()
         if "favicon" not in html:
-            html = html.replace("</head>", '  <link rel="icon" href="/favicon.svg" type="image/svg+xml">\n</head>', 1)
+            html = html.replace("</head>", '  <link rel="icon" href="favicon.svg" type="image/svg+xml">\n</head>', 1)
             with open(fpath, "w", encoding="utf-8") as f:
                 f.write(html)
 
