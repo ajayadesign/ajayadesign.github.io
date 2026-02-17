@@ -140,7 +140,7 @@ async def create_contract(req: ContractCreateRequest, db: AsyncSession = Depends
     """Create a new contract."""
     contract = Contract(
         short_id=_short_id(),
-        build_id=uuid.UUID(req.build_id) if req.build_id else None,
+        build_id=req.build_id or None,
         client_name=req.client_name,
         client_email=req.client_email,
         client_address=req.client_address,
@@ -211,13 +211,11 @@ async def delete_contract(short_id: str, db: AsyncSession = Depends(get_db)):
 @router.get("/sign/{sign_token}")
 async def get_contract_for_signing(sign_token: str, db: AsyncSession = Depends(get_db)):
     """Public endpoint: get contract details for the signing page."""
-    try:
-        token_uuid = uuid.UUID(sign_token)
-    except ValueError:
+    if not sign_token:
         raise HTTPException(400, "Invalid signing token")
 
     result = await db.execute(
-        select(Contract).where(Contract.sign_token == token_uuid)
+        select(Contract).where(Contract.sign_token == sign_token)
     )
     contract = result.scalar_one_or_none()
     if not contract:
@@ -254,13 +252,11 @@ async def sign_contract(
     db: AsyncSession = Depends(get_db),
 ):
     """Public endpoint: sign a contract."""
-    try:
-        token_uuid = uuid.UUID(sign_token)
-    except ValueError:
+    if not sign_token:
         raise HTTPException(400, "Invalid signing token")
 
     result = await db.execute(
-        select(Contract).where(Contract.sign_token == token_uuid)
+        select(Contract).where(Contract.sign_token == sign_token)
     )
     contract = result.scalar_one_or_none()
     if not contract:
@@ -371,8 +367,8 @@ async def create_invoice(req: InvoiceCreateRequest, db: AsyncSession = Depends(g
 
     invoice = Invoice(
         invoice_number=inv_number,
-        contract_id=uuid.UUID(req.contract_id) if req.contract_id else None,
-        build_id=uuid.UUID(req.build_id) if req.build_id else None,
+        contract_id=req.contract_id or None,
+        build_id=req.build_id or None,
         client_name=req.client_name,
         client_email=req.client_email,
         items=[item.model_dump() for item in req.items],

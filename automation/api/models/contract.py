@@ -9,7 +9,6 @@ from sqlalchemy import (
     Column, String, Text, DateTime, Date, Numeric,
     ForeignKey, JSON, Integer, func,
 )
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from api.database import Base
@@ -19,11 +18,11 @@ class Contract(Base):
     """A contract between AjayaDesign and a client."""
     __tablename__ = "contracts"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     short_id = Column(String(8), unique=True, nullable=False)
 
     # Link to a build (optional — portfolio items may not have a build)
-    build_id = Column(UUID(as_uuid=True), ForeignKey("builds.id"), nullable=True)
+    build_id = Column(String(36), ForeignKey("builds.id"), nullable=True)
 
     # Client info
     client_name = Column(String(200), nullable=False)
@@ -58,7 +57,7 @@ class Contract(Base):
     status = Column(String(20), default="draft")
 
     # Signing
-    sign_token = Column(UUID(as_uuid=True), default=uuid.uuid4, unique=True)
+    sign_token = Column(String(36), default=lambda: str(uuid.uuid4()), unique=True)
     signed_at = Column(DateTime(timezone=True), nullable=True)
     signature_data = Column(Text, nullable=True)  # base64 PNG of signature
     signer_ip = Column(String(50), nullable=True)
@@ -80,13 +79,13 @@ class Invoice(Base):
     """An invoice for services rendered."""
     __tablename__ = "invoices"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     invoice_number = Column(String(20), unique=True, nullable=False)
 
     # Link to contract (optional)
-    contract_id = Column(UUID(as_uuid=True), ForeignKey("contracts.id"), nullable=True)
+    contract_id = Column(String(36), ForeignKey("contracts.id"), nullable=True)
     # Link to build (optional)
-    build_id = Column(UUID(as_uuid=True), ForeignKey("builds.id"), nullable=True)
+    build_id = Column(String(36), ForeignKey("builds.id"), nullable=True)
 
     # Client info
     client_name = Column(String(200), nullable=False)
