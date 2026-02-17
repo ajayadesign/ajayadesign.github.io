@@ -376,3 +376,80 @@ def delete_invoice_from_firebase(invoice_number: str) -> bool:
     except Exception as e:
         logger.error(f"Firebase delete invoices/{invoice_number} failed: {e}")
         return False
+
+
+# ── Public Contract Signing via Firebase ─────────────────────────
+
+
+def publish_contract_for_signing(sign_token: str, contract_data: dict) -> bool:
+    """
+    Publish contract data to Firebase at signing/{sign_token} so the
+    public sign.html page can read it without hitting our local API.
+    This is the same pattern as leads — Firebase is the public bridge.
+    """
+    if not _initialized:
+        return False
+
+    try:
+        ref = firebase_db.reference(f"signing/{sign_token}")
+        ref.set({
+            "short_id": contract_data.get("short_id", ""),
+            "client_name": contract_data.get("client_name", ""),
+            "project_name": contract_data.get("project_name", ""),
+            "project_description": contract_data.get("project_description", ""),
+            "total_amount": contract_data.get("total_amount", 0),
+            "deposit_amount": contract_data.get("deposit_amount", 0),
+            "payment_method": contract_data.get("payment_method", ""),
+            "payment_terms": contract_data.get("payment_terms", ""),
+            "start_date": contract_data.get("start_date", None),
+            "estimated_completion_date": contract_data.get("estimated_completion_date", None),
+            "clauses": contract_data.get("clauses", []),
+            "custom_notes": contract_data.get("custom_notes", ""),
+            "provider_name": contract_data.get("provider_name", "AjayaDesign"),
+            "provider_email": contract_data.get("provider_email", "ajayadesign@gmail.com"),
+            "provider_address": contract_data.get("provider_address", ""),
+            "status": "sent",
+            "signed_at": None,
+            "signer_name": None,
+            "signature_data": None,
+            "published_at": {'.sv': 'timestamp'},
+        })
+        logger.info(f"Firebase signing/{sign_token} published for signing")
+        return True
+    except Exception as e:
+        logger.error(f"Firebase publish_contract_for_signing failed: {e}")
+        return False
+
+
+def get_pending_signatures() -> list[dict]:
+    """
+    Poll Firebase for contracts that have been signed by clients.
+    Returns list of signing records where signed_at is set but not yet processed.
+    """
+    if not _initialized:
+        return []
+
+    try:
+        ref = firebase_db.reference("signing")
+        snapshot = ref.order_by_child("status").equal_to("signed").get()
+        if not snapshot:
+            return []
+        return [{"sign_token": k, **v} for k, v in snapshot.items()]
+    except Exception as e:
+        logger.error(f"Firebase get_pending_signatures failed: {e}")
+        return []
+
+
+def mark_signature_processed(sign_token: str) -> bool:
+    """Mark a signing record as processed after syncing to Postgres."""
+    if not _initialized:
+        return False
+    try:
+        firebase_db.reference(f"signing/{sign_token}").update({
+            "status": "processed",
+            "processed_at": {'.sv': 'timestamp'},
+        })
+        return True
+    except Exception as e:
+        logger.error(f"Firebase mark_signature_processed failed: {e}")
+        return False

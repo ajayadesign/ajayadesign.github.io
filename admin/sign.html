@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Contract — AjayaDesign</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase SDK (compat — same version as admin panel) -->
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-database-compat.js"></script>
+  <!-- Shared Firebase config (atob-encoded API key) -->
+  <script src="../js/firebase-config.js"></script>
   <style>
     body { background: #f9fafb; }
     .sign-pad { touch-action: none; cursor: crosshair; }
@@ -162,15 +167,23 @@
 
   <script>
     // ── Config ──────────────────────────────────────────
-    const API_BASE = window.location.hostname === 'localhost'
-      ? 'http://localhost:3001/api/v1'
-      : 'http://localhost:3001/api/v1'; // TODO: replace with tunnel URL
+    // No API calls needed! Everything goes through Firebase RTDB.
+    // Flow: API publishes to Firebase → sign.html reads/writes Firebase → API polls Firebase
 
     let signToken = null;
     let contractData = null;
     let canvas, ctx;
     let isDrawing = false;
     let hasDrawn = false;
+    let firebaseDb = null;
+
+    // ── Firebase init ───────────────────────────────────
+    function initFirebase() {
+      const cfg = window.__firebaseConfig;
+      if (!cfg) throw new Error('Firebase config not loaded');
+      const app = firebase.initializeApp(cfg);
+      firebaseDb = firebase.database();
+    }
 
     // ── Init ────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', async () => {
@@ -183,23 +196,27 @@
       }
 
       try {
-        const res = await fetch(`${API_BASE}/contracts/sign/${signToken}`);
-        if (!res.ok) {
-          if (res.status === 404) throw new Error('Contract not found or link expired.');
-          throw new Error(`Server error: ${res.status}`);
+        initFirebase();
+
+        // Read contract from Firebase RTDB at signing/{token}
+        const snapshot = await firebaseDb.ref('signing/' + signToken).once('value');
+        contractData = snapshot.val();
+
+        if (!contractData) {
+          throw new Error('Contract not found or link expired.');
         }
-        contractData = await res.json();
       } catch (err) {
         showError(err.message);
         return;
       }
 
       // Check if already signed
-      if (contractData.signed_at) {
+      if (contractData.signed_at || contractData.status === 'signed' || contractData.status === 'processed') {
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('signed-screen').classList.remove('hidden');
         document.getElementById('signed-info').textContent =
-          `Signed by ${contractData.signer_name || 'client'} on ${new Date(contractData.signed_at).toLocaleString()}`;
+          `Signed by ${contractData.signer_name || 'client'}` +
+          (contractData.signed_at ? ` on ${new Date(contractData.signed_at).toLocaleString()}` : '.');
         return;
       }
 
@@ -313,19 +330,14 @@
       $btn.textContent = '⏳ Signing...';
 
       try {
-        const res = await fetch(`${API_BASE}/contracts/sign/${signToken}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            signer_name: name,
-            signature_data: signatureData,
-          }),
+        // Write signature directly to Firebase RTDB
+        // The API polls this path and picks it up automatically
+        await firebaseDb.ref('signing/' + signToken).update({
+          signer_name: name,
+          signature_data: signatureData,
+          signed_at: new Date().toISOString(),
+          status: 'signed',
         });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.detail || `Error ${res.status}`);
-        }
 
         // Show success
         document.getElementById('contract-page').classList.add('hidden');

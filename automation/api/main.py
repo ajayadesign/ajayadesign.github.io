@@ -18,6 +18,7 @@ from api.routes import router
 from api.services.firebase import (
     init_firebase, get_new_leads, get_all_leads, update_lead_status, is_initialized,
     get_pending_parse_requests, update_parse_request,
+    get_pending_signatures, mark_signature_processed,
 )
 from api.services.queue import BuildQueue
 
@@ -138,6 +139,9 @@ async def periodic_firebase_poll(interval: int = 60) -> None:
             # Poll for parse requests
             await process_parse_requests()
 
+            # Poll for signatures submitted via Firebase bridge
+            await process_firebase_signatures()
+
         except asyncio.CancelledError:
             break
         except Exception as e:
@@ -193,6 +197,100 @@ async def process_parse_requests() -> None:
                 "status": "failed",
                 "error": str(exc),
             })
+
+
+async def process_firebase_signatures() -> None:
+    """
+    Poll Firebase for contracts that clients signed via the public page.
+    Same bridge pattern as leads: Firebase → API → Postgres.
+    """
+    pending = get_pending_signatures()
+    if not pending:
+        return
+
+    from api.models.contract import Contract
+    from api.services.email_service import (
+        send_email, build_signed_notification_email,
+    )
+    from api.services.firebase import sync_contract_to_firebase
+
+    logger.info("🖊️ Found %d pending signature(s) in Firebase", len(pending))
+
+    async with async_session() as session:
+        for sig in pending:
+            token = sig.get("sign_token", "")
+            signer_name = sig.get("signer_name", "Unknown")
+            signature_data = sig.get("signature_data", "")
+            signed_at_ts = sig.get("signed_at")  # might be ISO string or timestamp
+
+            if not token or not signature_data:
+                logger.warning("Skipping malformed signature record: %s", token)
+                mark_signature_processed(token)
+                continue
+
+            # Find contract in Postgres
+            result = await session.execute(
+                select(Contract).where(Contract.sign_token == token)
+            )
+            contract = result.scalar_one_or_none()
+            if not contract:
+                logger.warning("Signature for unknown token %s — skipping", token)
+                mark_signature_processed(token)
+                continue
+
+            if contract.signed_at:
+                logger.info("Contract %s already signed — marking processed", contract.short_id)
+                mark_signature_processed(token)
+                continue
+
+            # Record the signature
+            from datetime import datetime, timezone
+            now = datetime.now(timezone.utc)
+            contract.signed_at = now
+            contract.signature_data = signature_data
+            contract.signer_name = signer_name
+            contract.signer_ip = sig.get("signer_ip", "firebase-bridge")
+            contract.status = "signed"
+
+            await session.commit()
+            await session.refresh(contract)
+
+            logger.info("✅ Contract %s signed by %s (via Firebase bridge)",
+                        contract.short_id, signer_name)
+
+            # Sync back to Firebase contracts node
+            try:
+                sync_contract_to_firebase({
+                    "short_id": contract.short_id,
+                    "client_name": contract.client_name,
+                    "client_email": contract.client_email,
+                    "project_name": contract.project_name,
+                    "total_amount": float(contract.total_amount or 0),
+                    "status": "signed",
+                    "signed_at": now.isoformat(),
+                    "signer_name": signer_name,
+                })
+            except Exception:
+                pass
+
+            # Mark Firebase signing record as processed
+            mark_signature_processed(token)
+
+            # Send notification to admin
+            try:
+                subject, html = build_signed_notification_email(
+                    contract.short_id,
+                    contract.client_name,
+                    contract.project_name,
+                    now.strftime("%B %d, %Y at %I:%M %p UTC"),
+                )
+                await send_email(
+                    to=contract.provider_email or "ajayadesign@gmail.com",
+                    subject=subject,
+                    body_html=html,
+                )
+            except Exception as e:
+                logger.warning("Failed to send signing notification: %s", e)
 
 
 @asynccontextmanager
