@@ -7,16 +7,19 @@
 let currentContract = null;  // Currently loaded contract
 let contractClauses = [];    // Current clause list
 let defaultClauses = [];     // Default clause library
+let contractDefaults = {};   // Default form values from JSON
 
-// ── Load default clause library ────────────────────────
+// ── Load default clause library + form defaults ────────
 async function loadDefaultClauses() {
   try {
     const res = await fetch('templates/contract-clauses.json');
     const data = await res.json();
     defaultClauses = data.clauses || [];
+    contractDefaults = data.defaults || {};
   } catch (err) {
     console.warn('[Contracts] Failed to load default clauses:', err);
     defaultClauses = [];
+    contractDefaults = {};
   }
 }
 
@@ -48,7 +51,18 @@ function openNewContract(prefill = {}) {
   // Clear form
   _clearContractForm();
 
-  // Pre-fill
+  // Apply defaults from JSON first, then override with prefill
+  const d = contractDefaults;
+  if (d.client_name) document.getElementById('ct-client-name').value = d.client_name;
+  if (d.client_email) document.getElementById('ct-client-email').value = d.client_email;
+  if (d.project_name) document.getElementById('ct-project-name').value = d.project_name;
+  if (d.project_description) document.getElementById('ct-project-desc').value = d.project_description;
+  if (d.total_amount) document.getElementById('ct-total-amount').value = d.total_amount;
+  if (d.deposit_amount) document.getElementById('ct-deposit-amount').value = d.deposit_amount;
+  if (d.payment_method) document.getElementById('ct-payment-method').value = d.payment_method;
+  if (d.payment_terms) document.getElementById('ct-payment-terms').value = d.payment_terms;
+
+  // Override with explicit prefill values
   if (prefill.client_name) document.getElementById('ct-client-name').value = prefill.client_name;
   if (prefill.client_email) document.getElementById('ct-client-email').value = prefill.client_email;
   if (prefill.project_name) document.getElementById('ct-project-name').value = prefill.project_name;
@@ -135,6 +149,7 @@ function renderClauses() {
       technical: 'border-neon-purple/20',
       legal: 'border-neon-yellow/20',
       support: 'border-neon-green/20',
+      custom: 'border-neon-orange/20',
     };
     const borderColor = categoryColors[clause.category] || 'border-border';
 
@@ -179,6 +194,102 @@ function updateClauseBody(index, newBody) {
 function resetClausesToDefault() {
   contractClauses = defaultClauses.map(c => ({ ...c }));
   renderClauses();
+}
+
+// ── Add a custom clause ────────────────────────────────
+function addCustomClause() {
+  const title = prompt('Clause heading:');
+  if (!title || !title.trim()) return;
+
+  const body = prompt('Clause body text (you can edit it after adding):') || '';
+
+  contractClauses.push({
+    id: 'custom-' + Date.now(),
+    title: title.trim(),
+    body: body.trim(),
+    category: 'custom',
+    enabled: true,
+  });
+  renderClauses();
+
+  // Scroll to the newly added clause
+  const $container = document.getElementById('ct-clauses-container');
+  if ($container) $container.scrollTop = $container.scrollHeight;
+}
+
+// ── Log a past contract event (manual history entry) ───
+async function logPastContractEvent() {
+  if (!currentContract || !currentContract.short_id) {
+    alert('Please save the contract first, then log past events.');
+    return;
+  }
+
+  const action = prompt('What happened? (e.g., "sent", "signed", "payment_received", "voided")');
+  if (!action || !action.trim()) return;
+
+  const description = prompt('Description (e.g., "First contract sent to client via email"):') || '';
+  const dateStr = prompt('When did this happen? (YYYY-MM-DD, leave blank for today):') || '';
+
+  const metadata = { manual_entry: true };
+  if (dateStr) metadata.event_date = dateStr;
+
+  // If this is a payment, ask for amount
+  if (action.toLowerCase().includes('payment')) {
+    const amount = prompt('Payment amount ($):');
+    if (amount) metadata.payment_amount = parseFloat(amount);
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/activity`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        entity_type: 'contract',
+        entity_id: currentContract.short_id,
+        action: action.trim().toLowerCase().replace(/\s+/g, '_'),
+        description: description.trim() || `Manual log: ${action}`,
+        icon: _actionIcon(action),
+        actor: 'admin',
+        metadata,
+      }),
+    });
+    if (res.ok) {
+      alert('✅ Event logged to history!');
+    } else {
+      // Fallback: log directly to Firebase
+      if (window.__db) {
+        const logId = 'manual-' + Date.now();
+        await window.__db.ref(`activity_logs/${logId}`).set({
+          id: logId,
+          entity_type: 'contract',
+          entity_id: currentContract.short_id,
+          action: action.trim().toLowerCase().replace(/\s+/g, '_'),
+          description: description.trim() || `Manual log: ${action}`,
+          icon: _actionIcon(action),
+          actor: 'admin',
+          metadata,
+          created_at: dateStr ? new Date(dateStr).toISOString() : new Date().toISOString(),
+        });
+        alert('✅ Event logged to Firebase!');
+      } else {
+        alert('⚠️ Failed to log event (API returned ' + res.status + ')');
+      }
+    }
+  } catch (err) {
+    console.error('[Contracts] Log event failed:', err);
+    alert('Failed to log event: ' + err.message);
+  }
+}
+
+function _actionIcon(action) {
+  const a = (action || '').toLowerCase();
+  if (a.includes('sent')) return '📧';
+  if (a.includes('sign')) return '✍️';
+  if (a.includes('payment') || a.includes('paid')) return '💵';
+  if (a.includes('void') || a.includes('cancel')) return '🚫';
+  if (a.includes('create')) return '📝';
+  if (a.includes('update') || a.includes('amend')) return '✏️';
+  return '📋';
 }
 
 // ── Save contract ──────────────────────────────────────

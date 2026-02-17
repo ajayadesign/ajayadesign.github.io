@@ -401,3 +401,65 @@ function downloadInvoicePDF() {
   const filename = `AjayaDesign-${invNum}-${(data.client_name || 'client').replace(/\s+/g, '-')}.pdf`;
   doc.save(filename);
 }
+
+// ── Log a past invoice event (manual history entry) ────
+async function logPastInvoiceEvent() {
+  if (!currentInvoice || !currentInvoice.invoice_number) {
+    alert('Please save the invoice first, then log past events.');
+    return;
+  }
+
+  const action = prompt('What happened? (e.g., "sent", "payment_received", "partial_payment", "refunded")');
+  if (!action || !action.trim()) return;
+
+  const description = prompt('Description (e.g., "Client paid $500 deposit via Zelle"):') || '';
+  const dateStr = prompt('When did this happen? (YYYY-MM-DD, leave blank for today):') || '';
+
+  const metadata = { manual_entry: true };
+  if (dateStr) metadata.event_date = dateStr;
+
+  if (action.toLowerCase().includes('payment') || action.toLowerCase().includes('paid')) {
+    const amount = prompt('Payment amount ($):');
+    if (amount) metadata.payment_amount = parseFloat(amount);
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/activity`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        entity_type: 'invoice',
+        entity_id: currentInvoice.invoice_number,
+        action: action.trim().toLowerCase().replace(/\s+/g, '_'),
+        description: description.trim() || `Manual log: ${action}`,
+        icon: action.toLowerCase().includes('payment') || action.toLowerCase().includes('paid') ? '💵' : '📋',
+        actor: 'admin',
+        metadata,
+      }),
+    });
+    if (res.ok) {
+      alert('✅ Event logged to history!');
+    } else {
+      if (window.__db) {
+        const logId = 'manual-' + Date.now();
+        await window.__db.ref(`activity_logs/${logId}`).set({
+          id: logId,
+          entity_type: 'invoice',
+          entity_id: currentInvoice.invoice_number,
+          action: action.trim().toLowerCase().replace(/\s+/g, '_'),
+          description: description.trim() || `Manual log: ${action}`,
+          icon: '📋',
+          actor: 'admin',
+          metadata,
+          created_at: dateStr ? new Date(dateStr).toISOString() : new Date().toISOString(),
+        });
+        alert('✅ Event logged to Firebase!');
+      } else {
+        alert('⚠️ Failed to log event.');
+      }
+    }
+  } catch (err) {
+    console.error('[Invoices] Log event failed:', err);
+    alert('Failed to log event: ' + err.message);
+  }
+}
