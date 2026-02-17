@@ -41,15 +41,25 @@ test('intake form has all required fields and submits', async ({ page }) => {
   await expect(form.locator('#location')).toBeAttached();
 
   // Intercept all outbound calls so the test doesn't create real leads
-  // 1) Firebase RTDB writes
-  await page.route('**/ajayadesign-6d739-default-rtdb.firebaseio.com/**', route =>
-    route.fulfill({ status: 200, contentType: 'application/json', body: '{"name":"test-mock"}' })
-  );
-  // 2) FormSubmit email
+  // 1) Neuter Firebase SDK at the source — page.route() can't intercept
+  //    WebSocket connections used by firebase-database-compat, so we
+  //    replace window.__db with a harmless stub before the form submits.
+  await page.evaluate(() => {
+    const noop = () => ({
+      set: () => Promise.resolve(),
+      update: () => Promise.resolve(),
+      remove: () => Promise.resolve(),
+      push: () => ({ set: () => Promise.resolve(), key: 'test-stub' }),
+      on: () => {},
+      off: () => {},
+      once: () => Promise.resolve({ val: () => null }),
+    });
+    window.__db = { ref: noop, goOffline: () => {} };
+  });
+  // 2) HTTP fallbacks (FormSubmit + API)
   await page.route('**/formsubmit.co/**', route =>
     route.fulfill({ status: 200, contentType: 'application/json', body: '{"success":"true"}' })
   );
-  // 3) Python API build trigger
   await page.route('**/localhost:3001/**', route =>
     route.fulfill({ status: 200, contentType: 'application/json', body: '{"id":"mock","short_id":"mock"}' })
   );
