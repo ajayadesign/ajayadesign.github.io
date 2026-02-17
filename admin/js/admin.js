@@ -110,37 +110,65 @@ function initDashboard() {
   initConnectionMonitor();
   subscribeToLeads();
   subscribeToBuildsFirebase();
+  if (typeof loadPortfolio === 'function') loadPortfolio();
 }
 
 // ── Tab switching ──────────────────────────────────────
 function switchTab(tab) {
   const $tabBuilds = document.getElementById('tab-builds');
   const $tabLeads  = document.getElementById('tab-leads');
+  const $tabPortfolio = document.getElementById('tab-portfolio');
   const $buildsTab = document.getElementById('builds-tab');
   const $leadsPanel = document.getElementById('leads-panel');
+  const $portfolioPanel = document.getElementById('portfolio-panel');
+
+  const inactiveClass = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition';
+  const activeClass   = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition';
+
+  // Reset all tabs to inactive
+  $tabBuilds.className = inactiveClass;
+  $tabLeads.className  = inactiveClass;
+  if ($tabPortfolio) $tabPortfolio.className = inactiveClass;
+
+  // Hide all sidebar panels
+  $buildsTab.classList.add('hidden');
+  $leadsPanel.classList.add('hidden');
+  if ($portfolioPanel) $portfolioPanel.classList.add('hidden');
+
+  // Hide all main panels
+  $buildDetail.classList.add('hidden');
+  document.getElementById('lead-detail').classList.add('hidden');
+  const $portfolioDetail = document.getElementById('portfolio-detail');
+  const $contractDetail  = document.getElementById('contract-detail');
+  const $invoiceDetail   = document.getElementById('invoice-detail');
+  if ($portfolioDetail) $portfolioDetail.classList.add('hidden');
+  if ($contractDetail)  $contractDetail.classList.add('hidden');
+  if ($invoiceDetail)   $invoiceDetail.classList.add('hidden');
 
   if (tab === 'leads') {
-    $tabBuilds.className  = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition';
-    $tabLeads.className   = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition';
-    $buildsTab.classList.add('hidden');
+    $tabLeads.className = activeClass;
     $leadsPanel.classList.remove('hidden');
-    // Show lead detail if one was selected, otherwise empty state
-    $buildDetail.classList.add('hidden');
     if (selectedLeadId) {
       $emptyState.classList.add('hidden');
       document.getElementById('lead-detail').classList.remove('hidden');
     } else {
       $emptyState.classList.remove('hidden');
-      document.getElementById('lead-detail').classList.add('hidden');
     }
     renderLeadsPanel();
+  } else if (tab === 'portfolio') {
+    if ($tabPortfolio) $tabPortfolio.className = activeClass;
+    if ($portfolioPanel) $portfolioPanel.classList.remove('hidden');
+    if (typeof selectedPortfolioId !== 'undefined' && selectedPortfolioId) {
+      $emptyState.classList.add('hidden');
+      if ($portfolioDetail) $portfolioDetail.classList.remove('hidden');
+    } else {
+      $emptyState.classList.remove('hidden');
+    }
+    if (typeof loadPortfolio === 'function') loadPortfolio();
   } else {
-    $tabBuilds.className  = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition';
-    $tabLeads.className   = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition';
+    // builds (default)
+    $tabBuilds.className = activeClass;
     $buildsTab.classList.remove('hidden');
-    $leadsPanel.classList.add('hidden');
-    // Show build detail if one was selected, otherwise empty state
-    document.getElementById('lead-detail').classList.add('hidden');
     if (selectedBuildId) {
       $emptyState.classList.add('hidden');
       $buildDetail.classList.remove('hidden');

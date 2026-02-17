@@ -253,6 +253,10 @@
           class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
           📬 Leads <span id="stat-leads" class="ml-1 px-1.5 py-0.5 rounded-full bg-electric/20 text-electric text-[0.6rem]">0</span>
         </button>
+        <button onclick="switchTab('portfolio')" id="tab-portfolio"
+          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+          📁 Portfolio
+        </button>
       </div>
 
       <!-- Builds Tab -->
@@ -309,6 +313,45 @@
         <!-- Archived leads list (hidden initially) -->
         <div id="archived-panel-content" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3 hidden">
           <div class="text-center text-gray-600 text-xs font-mono py-8">No archived leads</div>
+        </div>
+      </div>
+
+      <!-- Portfolio Tab (hidden initially) -->
+      <div id="portfolio-panel" class="flex-1 overflow-hidden hidden flex flex-col">
+        <div class="p-4 border-b border-border">
+          <div class="flex items-center justify-between">
+            <h2 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">Finished Sites</h2>
+            <button onclick="seedPortfolioSites()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-neon-green/10 text-neon-green hover:bg-neon-green/20 transition" title="Seed existing sites">
+              🌱 Seed
+            </button>
+          </div>
+        </div>
+        <!-- Portfolio sub-tabs -->
+        <div class="flex border-b border-border bg-surface-1">
+          <button onclick="switchPortfolioSubTab('sites')" id="portfolio-subtab-sites"
+            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition">
+            🌐 Sites
+          </button>
+          <button onclick="switchPortfolioSubTab('contracts')" id="portfolio-subtab-contracts"
+            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+            📝 Contracts
+          </button>
+          <button onclick="switchPortfolioSubTab('invoices')" id="portfolio-subtab-invoices"
+            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+            💰 Invoices
+          </button>
+        </div>
+        <!-- Sites list -->
+        <div id="portfolio-sites-list" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3">
+          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading portfolio...</div>
+        </div>
+        <!-- Contracts list (hidden) -->
+        <div id="portfolio-contracts-list" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3 hidden">
+          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading contracts...</div>
+        </div>
+        <!-- Invoices list (hidden) -->
+        <div id="portfolio-invoices-list" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3 hidden">
+          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading invoices...</div>
         </div>
       </div>
     </aside>
@@ -397,6 +440,266 @@
                 ♻️ Restore
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ Portfolio Site Detail (hidden initially) ═══ -->
+      <div id="portfolio-detail" class="flex-1 flex flex-col overflow-hidden hidden">
+        <div class="p-6 bg-surface-1 border-b border-border">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <span class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold bg-neon-green/20 text-neon-green">DEPLOYED</span>
+              <h2 id="pf-client-name" class="font-mono text-xl font-bold text-white"></h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="savePortfolioEdit()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-green/10 text-neon-green border border-neon-green/30 hover:bg-neon-green/20 transition">💾 Save</button>
+              <button onclick="createContractForSite()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20 transition">📝 New Contract</button>
+              <button onclick="createInvoiceForSite()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-purple/10 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/20 transition">💰 New Invoice</button>
+            </div>
+          </div>
+          <div id="pf-meta" class="flex gap-6 text-sm text-gray-400"></div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+          <!-- Editable Fields Grid -->
+          <div>
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">📋 Client Details</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Name</label>
+                <input id="pf-edit-name" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Email</label>
+                <input id="pf-edit-email" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Phone</label>
+                <input id="pf-edit-phone" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Niche</label>
+                <input id="pf-edit-niche" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Location</label>
+                <input id="pf-edit-location" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Live URL</label>
+                <input id="pf-edit-url" class="w-full bg-transparent border-b border-border text-sm text-electric font-mono focus:border-electric focus:outline-none py-1" />
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Brand Colors</label>
+                <input id="pf-edit-colors" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+              </div>
+              <div class="bg-surface-2 rounded-xl border border-border p-4">
+                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Tagline</label>
+                <input id="pf-edit-tagline" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+              </div>
+              <div class="col-span-2 bg-surface-2 rounded-xl border border-border p-4">
+                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Goals</label>
+                <textarea id="pf-edit-goals" rows="3" class="w-full bg-transparent border-b border-border text-sm text-gray-300 font-mono focus:border-electric focus:outline-none py-1 resize-none"></textarea>
+              </div>
+            </div>
+          </div>
+          <!-- Site Contracts -->
+          <div id="pf-contracts-section">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">📝 Contracts</h3>
+            <div id="pf-contracts-list" class="space-y-2">
+              <p class="text-xs text-gray-600 font-mono">No contracts yet</p>
+            </div>
+          </div>
+          <!-- Site Invoices -->
+          <div id="pf-invoices-section">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">💰 Invoices</h3>
+            <div id="pf-invoices-list" class="space-y-2">
+              <p class="text-xs text-gray-600 font-mono">No invoices yet</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ Contract Detail / Builder (hidden initially) ═══ -->
+      <div id="contract-detail" class="flex-1 flex flex-col overflow-hidden hidden">
+        <div class="p-6 bg-surface-1 border-b border-border">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-3">
+              <span id="ct-status-badge" class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold bg-gray-800 text-gray-400">DRAFT</span>
+              <h2 class="font-mono text-lg font-bold text-white">📝 Contract Builder</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="saveContract()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-green/10 text-neon-green border border-neon-green/30 hover:bg-neon-green/20 transition">💾 Save</button>
+              <button onclick="sendContract()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20 transition">📧 Send to Client</button>
+              <button onclick="downloadContractPDF()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-purple/10 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/20 transition">📄 Download PDF</button>
+            </div>
+          </div>
+          <div id="ct-meta" class="text-xs font-mono text-gray-500"></div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+          <!-- Client & Project Info -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Name *</label>
+              <input id="ct-client-name" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Email *</label>
+              <input id="ct-client-email" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Phone</label>
+              <input id="ct-client-phone" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Address</label>
+              <input id="ct-client-address" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Project Name *</label>
+              <input id="ct-project-name" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Total Amount ($)</label>
+              <input id="ct-total-amount" type="number" step="0.01" class="w-full bg-transparent border-b border-border text-sm text-neon-green font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Deposit Amount ($)</label>
+              <input id="ct-deposit-amount" type="number" step="0.01" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Payment Method</label>
+              <select id="ct-payment-method" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1">
+                <option value="" class="bg-surface">Select...</option>
+                <option value="venmo" class="bg-surface">Venmo</option>
+                <option value="zelle" class="bg-surface">Zelle</option>
+                <option value="paypal" class="bg-surface">PayPal</option>
+                <option value="bank" class="bg-surface">Bank Transfer</option>
+              </select>
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Start Date</label>
+              <input id="ct-start-date" type="date" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Est. Completion</label>
+              <input id="ct-completion-date" type="date" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="col-span-2 bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Project Description</label>
+              <textarea id="ct-project-desc" rows="3" class="w-full bg-transparent border-b border-border text-sm text-gray-300 font-mono focus:border-electric focus:outline-none py-1 resize-none"></textarea>
+            </div>
+            <div class="col-span-2 bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Payment Terms</label>
+              <textarea id="ct-payment-terms" rows="2" class="w-full bg-transparent border-b border-border text-sm text-gray-300 font-mono focus:border-electric focus:outline-none py-1 resize-none"></textarea>
+            </div>
+          </div>
+
+          <!-- Clauses -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">📋 Contract Clauses</h3>
+              <button onclick="resetClausesToDefault()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-surface-2 text-gray-500 hover:text-gray-300 transition">↻ Reset Defaults</button>
+            </div>
+            <div id="ct-clauses-container" class="space-y-3">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Custom Notes -->
+          <div>
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">📝 Custom Notes</h3>
+            <textarea id="ct-custom-notes" rows="4" class="w-full bg-surface-2 rounded-xl border border-border p-4 text-sm text-gray-300 font-mono focus:border-electric focus:outline-none resize-none" placeholder="Additional terms or notes..."></textarea>
+          </div>
+
+          <!-- Signature Section (read-only, shows after signing) -->
+          <div id="ct-signature-section" class="hidden">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">✍️ Signature</h3>
+            <div class="bg-surface-2 rounded-xl border border-neon-green/30 p-4">
+              <div class="flex items-center gap-4">
+                <img id="ct-signature-img" src="" class="h-16 border border-border rounded" alt="Client signature" />
+                <div>
+                  <p id="ct-signer-name" class="font-mono text-sm text-white"></p>
+                  <p id="ct-signed-at" class="text-xs text-gray-500 font-mono"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ Invoice Detail (hidden initially) ═══ -->
+      <div id="invoice-detail" class="flex-1 flex flex-col overflow-hidden hidden">
+        <div class="p-6 bg-surface-1 border-b border-border">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-3">
+              <span id="inv-status-badge" class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold bg-gray-800 text-gray-400">DRAFT</span>
+              <h2 id="inv-number" class="font-mono text-lg font-bold text-white">💰 Invoice</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="saveInvoice()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-green/10 text-neon-green border border-neon-green/30 hover:bg-neon-green/20 transition">💾 Save</button>
+              <button onclick="sendInvoice()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20 transition">📧 Send to Client</button>
+              <button onclick="markInvoicePaid()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-green/10 text-neon-green border border-neon-green/30 hover:bg-neon-green/20 transition">✅ Mark Paid</button>
+              <button onclick="downloadInvoicePDF()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-purple/10 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/20 transition">📄 Download PDF</button>
+            </div>
+          </div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+          <!-- Client Info -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Name</label>
+              <input id="inv-client-name" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Email</label>
+              <input id="inv-client-email" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Payment Method</label>
+              <select id="inv-payment-method" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1">
+                <option value="" class="bg-surface">Select...</option>
+                <option value="venmo" class="bg-surface">Venmo</option>
+                <option value="zelle" class="bg-surface">Zelle</option>
+                <option value="paypal" class="bg-surface">PayPal</option>
+                <option value="bank" class="bg-surface">Bank Transfer</option>
+              </select>
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Due Date</label>
+              <input id="inv-due-date" type="date" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+          </div>
+
+          <!-- Line Items -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">📦 Line Items</h3>
+              <button onclick="addInvoiceItem()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-electric/10 text-electric hover:bg-electric/20 transition">+ Add Item</button>
+            </div>
+            <div id="inv-items-container" class="space-y-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Totals -->
+          <div class="bg-surface-2 rounded-xl border border-border p-4">
+            <div class="grid grid-cols-2 gap-3 text-sm font-mono">
+              <div class="text-gray-500">Subtotal</div>
+              <div id="inv-subtotal" class="text-right text-white">$0.00</div>
+              <div class="text-gray-500">Tax Rate (%)</div>
+              <div><input id="inv-tax-rate" type="number" step="0.01" value="0" class="w-full bg-transparent text-right text-white font-mono focus:outline-none" onchange="recalcInvoice()" /></div>
+              <div class="text-gray-500">Tax</div>
+              <div id="inv-tax-amount" class="text-right text-white">$0.00</div>
+              <div class="text-white font-bold text-lg border-t border-border pt-2">Total</div>
+              <div id="inv-total" class="text-right text-neon-green font-bold text-lg border-t border-border pt-2">$0.00</div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">📝 Notes</h3>
+            <textarea id="inv-notes" rows="3" class="w-full bg-surface-2 rounded-xl border border-border p-4 text-sm text-gray-300 font-mono focus:border-electric focus:outline-none resize-none" placeholder="Payment instructions, thank you note..."></textarea>
           </div>
         </div>
       </div>
@@ -647,5 +950,10 @@
   </script>
   <script src="js/pipeline.js"></script>
   <script src="js/admin.js"></script>
+  <script src="js/portfolio.js"></script>
+  <script src="js/contracts.js"></script>
+  <script src="js/invoices.js"></script>
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 </body>
 </html>

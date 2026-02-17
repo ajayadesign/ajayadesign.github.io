@@ -84,6 +84,10 @@ class Settings(BaseSettings):
     # Image sourcing (optional — graceful no-op without key)
     unsplash_access_key: str = Field(default="", description="Unsplash API access key for stock images")
 
+    # Email / SMTP (Gmail)
+    smtp_email: str = Field(default="", description="Gmail address for sending emails")
+    smtp_app_password: str = Field(default="", description="Gmail App Password (16 chars, no spaces)")
+
     # Host ownership fix (Docker → host)
     host_uid: int = Field(default=1000)
     host_gid: int = Field(default=1000)

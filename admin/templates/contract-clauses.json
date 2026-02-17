@@ -1,0 +1,110 @@
+{
+  "version": "1.0",
+  "clauses": [
+    {
+      "id": "scope-of-work",
+      "title": "Scope of Work",
+      "body": "Provider agrees to design, develop, and deploy a custom website for Client as described in the project description above. The website will include all pages, features, and functionality discussed and agreed upon prior to the signing of this contract.",
+      "category": "core",
+      "enabled": true
+    },
+    {
+      "id": "timeline",
+      "title": "Project Timeline",
+      "body": "Provider will deliver the initial website draft within 2–4 weeks of contract signing and deposit receipt. Final delivery is estimated by the completion date listed above, subject to timely feedback from Client. Delays caused by Client's response time may extend the timeline accordingly.",
+      "category": "core",
+      "enabled": true
+    },
+    {
+      "id": "payment-terms",
+      "title": "Payment Terms",
+      "body": "Client agrees to pay the total amount specified above. A deposit of the specified amount is due upon contract signing to begin work. The remaining balance is due upon project completion, before the final files and live site are transferred to Client. Late payments beyond 15 days will incur a 5% monthly fee.",
+      "category": "core",
+      "enabled": true
+    },
+    {
+      "id": "revisions",
+      "title": "Revisions",
+      "body": "The project includes up to 3 rounds of revisions after the initial draft delivery. Each revision round allows Client to request reasonable changes to layout, content, colors, and imagery. Additional revision rounds beyond the included 3 will be billed at $50/hour.",
+      "category": "core",
+      "enabled": true
+    },
+    {
+      "id": "content",
+      "title": "Client Content",
+      "body": "Client is responsible for providing all text content, logos, images, and brand assets needed for the website within 7 days of request. If Client cannot provide content, Provider may use placeholder content or stock imagery. Provider is not liable for delays caused by missing content.",
+      "category": "core",
+      "enabled": true
+    },
+    {
+      "id": "hosting-domain",
+      "title": "Hosting & Domain",
+      "body": "The website will be hosted on GitHub Pages (or equivalent static hosting) at no additional cost for the first year. Client is responsible for domain registration and renewal costs. Provider will assist with DNS setup at no extra charge.",
+      "category": "technical",
+      "enabled": true
+    },
+    {
+      "id": "responsive-design",
+      "title": "Responsive Design",
+      "body": "The website will be fully responsive and optimized for desktop, tablet, and mobile devices. Provider will test across major browsers (Chrome, Firefox, Safari, Edge) to ensure consistent functionality.",
+      "category": "technical",
+      "enabled": true
+    },
+    {
+      "id": "seo-basics",
+      "title": "Basic SEO",
+      "body": "Provider will implement basic search engine optimization including proper meta tags, semantic HTML structure, image alt text, sitemap.xml, and robots.txt. Advanced SEO services or ongoing optimization are not included unless separately agreed upon.",
+      "category": "technical",
+      "enabled": true
+    },
+    {
+      "id": "ownership",
+      "title": "Intellectual Property & Ownership",
+      "body": "Upon full payment, Client receives full ownership of the final website files, custom code, and original design elements created for this project. Third-party assets (stock photos, fonts, libraries) remain subject to their respective licenses. Provider retains the right to showcase the project in their portfolio.",
+      "category": "legal",
+      "enabled": true
+    },
+    {
+      "id": "confidentiality",
+      "title": "Confidentiality",
+      "body": "Both parties agree to keep confidential any proprietary information shared during this project, including but not limited to business plans, client data, login credentials, and trade secrets. This obligation survives the termination of this contract.",
+      "category": "legal",
+      "enabled": true
+    },
+    {
+      "id": "termination",
+      "title": "Termination",
+      "body": "Either party may terminate this contract with 7 days written notice. If Client terminates, the deposit is non-refundable and Client pays for all work completed to date. If Provider terminates, Provider will refund any prepaid amounts for undelivered work and provide all completed files.",
+      "category": "legal",
+      "enabled": true
+    },
+    {
+      "id": "liability",
+      "title": "Limitation of Liability",
+      "body": "Provider's total liability under this contract shall not exceed the total contract amount. Provider is not liable for any indirect, incidental, or consequential damages including lost profits, data loss, or business interruption. Client is responsible for maintaining backups of their content.",
+      "category": "legal",
+      "enabled": true
+    },
+    {
+      "id": "warranty",
+      "title": "Warranty & Support",
+      "body": "Provider warrants the website will function as described for 30 days after delivery. During this period, Provider will fix any bugs or issues at no additional cost. After the warranty period, support and maintenance are available at $50/hour or via a separate maintenance agreement.",
+      "category": "support",
+      "enabled": true
+    },
+    {
+      "id": "maintenance",
+      "title": "Ongoing Maintenance",
+      "body": "This contract does not include ongoing website maintenance, content updates, or hosting management beyond the initial delivery and 30-day warranty. These services can be arranged under a separate monthly maintenance agreement.",
+      "category": "support",
+      "enabled": false
+    },
+    {
+      "id": "force-majeure",
+      "title": "Force Majeure",
+      "body": "Neither party shall be liable for delays or failure to perform due to circumstances beyond their reasonable control, including but not limited to natural disasters, pandemics, internet outages, or government actions. Affected timelines will be adjusted accordingly.",
+      "category": "legal",
+      "enabled": false
+    }
+  ]
+}

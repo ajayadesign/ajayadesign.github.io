@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Contract — AjayaDesign</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #f9fafb; }
+    .sign-pad { touch-action: none; cursor: crosshair; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: fadeIn 0.4s ease-out; }
+  </style>
+</head>
+<body class="min-h-screen text-gray-800 font-sans antialiased">
+
+  <!-- Loading -->
+  <div id="loading" class="min-h-screen flex items-center justify-center">
+    <div class="text-center">
+      <div class="text-4xl mb-4">📝</div>
+      <p class="text-gray-500">Loading contract...</p>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div id="error-screen" class="min-h-screen flex items-center justify-center hidden">
+    <div class="text-center max-w-md">
+      <div class="text-4xl mb-4">⚠️</div>
+      <h1 class="text-xl font-bold text-gray-800 mb-2">Contract Not Found</h1>
+      <p id="error-message" class="text-gray-500">This link may have expired or is invalid.</p>
+    </div>
+  </div>
+
+  <!-- Already Signed -->
+  <div id="signed-screen" class="min-h-screen flex items-center justify-center hidden">
+    <div class="text-center max-w-md animate-in">
+      <div class="text-5xl mb-4">✅</div>
+      <h1 class="text-2xl font-bold text-green-700 mb-2">Contract Signed!</h1>
+      <p id="signed-info" class="text-gray-500">This contract has already been signed.</p>
+    </div>
+  </div>
+
+  <!-- Contract Content -->
+  <div id="contract-page" class="max-w-3xl mx-auto py-8 px-4 hidden">
+    <div class="animate-in">
+
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-red-500 to-indigo-500 flex items-center justify-center mx-auto mb-4">
+          <span class="text-white font-bold text-xl">A</span>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-900">Service Agreement</h1>
+        <p class="text-gray-500 mt-1">AjayaDesign Web Development Services</p>
+        <p class="text-xs text-gray-400 mt-2">Contract #<span id="sign-contract-id"></span></p>
+      </div>
+
+      <!-- Parties -->
+      <div class="bg-white rounded-xl border p-6 mb-6 shadow-sm">
+        <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Parties</h2>
+        <div class="grid grid-cols-2 gap-6 text-sm">
+          <div>
+            <p class="text-gray-500 text-xs mb-1">Provider</p>
+            <p class="font-semibold" id="sign-provider-name">AjayaDesign</p>
+            <p class="text-gray-500" id="sign-provider-address">13721 Andrew Abernathy Pass, Manor, TX 78653</p>
+            <p class="text-gray-500" id="sign-provider-email">ajayadesign@gmail.com</p>
+          </div>
+          <div>
+            <p class="text-gray-500 text-xs mb-1">Client</p>
+            <p class="font-semibold" id="sign-client-name"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project Details -->
+      <div class="bg-white rounded-xl border p-6 mb-6 shadow-sm">
+        <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Project Details</h2>
+        <div class="space-y-3 text-sm">
+          <div><span class="text-gray-500">Project:</span> <span id="sign-project-name" class="font-semibold"></span></div>
+          <div><span class="text-gray-500">Description:</span> <span id="sign-project-desc" class="text-gray-700"></span></div>
+        </div>
+      </div>
+
+      <!-- Financial -->
+      <div class="bg-white rounded-xl border p-6 mb-6 shadow-sm">
+        <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Financial Terms</h2>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <span class="text-gray-500">Total Amount:</span>
+            <span id="sign-total" class="font-bold text-green-600 ml-1"></span>
+          </div>
+          <div>
+            <span class="text-gray-500">Deposit:</span>
+            <span id="sign-deposit" class="font-semibold ml-1"></span>
+          </div>
+          <div>
+            <span class="text-gray-500">Payment Method:</span>
+            <span id="sign-payment-method" class="ml-1"></span>
+          </div>
+          <div>
+            <span class="text-gray-500">Payment Terms:</span>
+            <span id="sign-payment-terms" class="ml-1"></span>
+          </div>
+          <div>
+            <span class="text-gray-500">Start Date:</span>
+            <span id="sign-start-date" class="ml-1"></span>
+          </div>
+          <div>
+            <span class="text-gray-500">Est. Completion:</span>
+            <span id="sign-end-date" class="ml-1"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clauses -->
+      <div id="sign-clauses-container" class="space-y-4 mb-6">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Custom Notes -->
+      <div id="sign-custom-notes-section" class="bg-white rounded-xl border p-6 mb-6 shadow-sm hidden">
+        <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Additional Notes</h2>
+        <p id="sign-custom-notes" class="text-sm text-gray-700 whitespace-pre-line"></p>
+      </div>
+
+      <!-- Signature Section -->
+      <div class="bg-white rounded-xl border p-6 mb-6 shadow-sm">
+        <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">✍️ Electronic Signature</h2>
+
+        <div class="mb-4">
+          <label class="text-sm text-gray-600 block mb-1">Your Full Name *</label>
+          <input id="sign-your-name" type="text" placeholder="Type your full legal name"
+            class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+        </div>
+
+        <div class="mb-4">
+          <label class="text-sm text-gray-600 block mb-2">Draw Your Signature *</label>
+          <div class="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-white relative">
+            <canvas id="sign-canvas" class="sign-pad w-full" height="150"></canvas>
+            <button onclick="clearSignature()" class="absolute top-2 right-2 text-xs text-gray-400 hover:text-gray-600 bg-white rounded px-2 py-1 shadow-sm">Clear</button>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">Use your mouse or finger to draw your signature</p>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4 text-sm text-amber-800">
+          <strong>By signing below, you agree to all terms outlined in this contract.</strong>
+          Your electronic signature is legally binding.
+        </div>
+
+        <button onclick="submitSignature()" id="sign-submit-btn"
+          class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg hover:bg-indigo-700 transition text-sm">
+          ✍️ Sign Contract
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <div class="text-center text-xs text-gray-400 py-8">
+        <p>AjayaDesign · 13721 Andrew Abernathy Pass, Manor, TX 78653</p>
+        <p class="mt-1">Questions? Email ajayadesign@gmail.com</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Config ──────────────────────────────────────────
+    const API_BASE = window.location.hostname === 'localhost'
+      ? 'http://localhost:8000/api/v1'
+      : 'http://localhost:8000/api/v1'; // TODO: replace with tunnel URL
+
+    let signToken = null;
+    let contractData = null;
+    let canvas, ctx;
+    let isDrawing = false;
+    let hasDrawn = false;
+
+    // ── Init ────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      signToken = params.get('token');
+
+      if (!signToken) {
+        showError('No signing token provided. Please use the link from your email.');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/contracts/sign/${signToken}`);
+        if (!res.ok) {
+          if (res.status === 404) throw new Error('Contract not found or link expired.');
+          throw new Error(`Server error: ${res.status}`);
+        }
+        contractData = await res.json();
+      } catch (err) {
+        showError(err.message);
+        return;
+      }
+
+      // Check if already signed
+      if (contractData.signed_at) {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('signed-screen').classList.remove('hidden');
+        document.getElementById('signed-info').textContent =
+          `Signed by ${contractData.signer_name || 'client'} on ${new Date(contractData.signed_at).toLocaleString()}`;
+        return;
+      }
+
+      populateContract();
+      initSignaturePad();
+
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('contract-page').classList.remove('hidden');
+    });
+
+    function showError(msg) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('error-screen').classList.remove('hidden');
+      document.getElementById('error-message').textContent = msg;
+    }
+
+    function populateContract() {
+      const c = contractData;
+      document.getElementById('sign-contract-id').textContent = c.short_id;
+      document.getElementById('sign-provider-name').textContent = c.provider_name || 'AjayaDesign';
+      document.getElementById('sign-provider-address').textContent = c.provider_address || '';
+      document.getElementById('sign-provider-email').textContent = c.provider_email || '';
+      document.getElementById('sign-client-name').textContent = c.client_name;
+      document.getElementById('sign-project-name').textContent = c.project_name;
+      document.getElementById('sign-project-desc').textContent = c.project_description || '-';
+      document.getElementById('sign-total').textContent = `$${(c.total_amount || 0).toFixed(2)}`;
+      document.getElementById('sign-deposit').textContent = `$${(c.deposit_amount || 0).toFixed(2)}`;
+      document.getElementById('sign-payment-method').textContent = c.payment_method ? c.payment_method.charAt(0).toUpperCase() + c.payment_method.slice(1) : '-';
+      document.getElementById('sign-payment-terms').textContent = c.payment_terms || '-';
+      document.getElementById('sign-start-date').textContent = c.start_date || '-';
+      document.getElementById('sign-end-date').textContent = c.estimated_completion_date || '-';
+
+      // Clauses
+      const $clauses = document.getElementById('sign-clauses-container');
+      const enabledClauses = (c.clauses || []).filter(cl => cl.enabled !== false);
+      $clauses.innerHTML = enabledClauses.map((cl, i) => `
+        <div class="bg-white rounded-xl border p-6 shadow-sm">
+          <h3 class="text-sm font-bold text-gray-900 mb-2">${i + 1}. ${escH(cl.title)}</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">${escH(cl.body)}</p>
+        </div>
+      `).join('');
+
+      // Custom notes
+      if (c.custom_notes) {
+        document.getElementById('sign-custom-notes-section').classList.remove('hidden');
+        document.getElementById('sign-custom-notes').textContent = c.custom_notes;
+      }
+    }
+
+    // ── Signature Pad ───────────────────────────────────
+    function initSignaturePad() {
+      canvas = document.getElementById('sign-canvas');
+      ctx = canvas.getContext('2d');
+
+      // Resize canvas to match display size
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = 150;
+        ctx.strokeStyle = '#1f2937';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // Mouse events
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDraw);
+      canvas.addEventListener('mouseleave', stopDraw);
+
+      // Touch events
+      canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e.touches[0]); });
+      canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
+      canvas.addEventListener('touchend', stopDraw);
+    }
+
+    function startDraw(e) {
+      isDrawing = true;
+      hasDrawn = true;
+      const rect = canvas.getBoundingClientRect();
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+      ctx.stroke();
+    }
+
+    function stopDraw() { isDrawing = false; }
+
+    function clearSignature() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      hasDrawn = false;
+    }
+
+    // ── Submit signature ────────────────────────────────
+    async function submitSignature() {
+      const name = document.getElementById('sign-your-name').value.trim();
+      if (!name) { alert('Please type your full name.'); return; }
+      if (!hasDrawn) { alert('Please draw your signature.'); return; }
+
+      const signatureData = canvas.toDataURL('image/png');
+      const $btn = document.getElementById('sign-submit-btn');
+      $btn.disabled = true;
+      $btn.textContent = '⏳ Signing...';
+
+      try {
+        const res = await fetch(`${API_BASE}/contracts/sign/${signToken}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            signer_name: name,
+            signature_data: signatureData,
+          }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || `Error ${res.status}`);
+        }
+
+        // Show success
+        document.getElementById('contract-page').classList.add('hidden');
+        document.getElementById('signed-screen').classList.remove('hidden');
+        document.getElementById('signed-info').textContent =
+          `Thank you, ${name}! Your signature has been recorded.`;
+
+      } catch (err) {
+        alert('Signing failed: ' + err.message);
+        $btn.disabled = false;
+        $btn.textContent = '✍️ Sign Contract';
+      }
+    }
+
+    function escH(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+  </script>
+</body>
+</html>
