@@ -77,10 +77,20 @@ async def reconcile_firebase_leads() -> list[dict]:
 
     missed: list[dict] = []
 
+    # Emails / patterns that should never create builds (Playwright tests, etc.)
+    _TEST_EMAILS = {"test@example.com", "e2e@test.com", "playwright@test.com"}
+
     async with async_session() as session:
         for lead in leads:
             fid = lead.get("firebase_id", "")
             if not fid:
+                continue
+
+            # Skip known test leads
+            email = (lead.get("email") or "").strip().lower()
+            if email in _TEST_EMAILS or email.endswith("@example.com"):
+                update_lead_status(fid, "test-ignored")
+                logger.debug("⏭️  Skipping test lead %s (%s)", fid, email)
                 continue
 
             # Check if build already exists for this Firebase lead
