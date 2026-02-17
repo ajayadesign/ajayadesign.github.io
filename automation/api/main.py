@@ -19,6 +19,7 @@ from api.services.firebase import (
     init_firebase, get_new_leads, get_all_leads, update_lead_status, is_initialized,
     get_pending_parse_requests, update_parse_request,
     get_pending_signatures, mark_signature_processed,
+    deploy_database_rules,
 )
 from api.services.queue import BuildQueue
 
@@ -317,6 +318,9 @@ async def lifespan(app: FastAPI):
     )
     if fb_ok:
         logger.info("✅ Firebase bridge ready")
+
+        # Deploy RTDB security rules (idempotent)
+        deploy_database_rules()
 
         # Reconcile any missed leads
         missed = await reconcile_firebase_leads()

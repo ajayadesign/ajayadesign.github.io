@@ -388,6 +388,7 @@ def publish_contract_for_signing(sign_token: str, contract_data: dict) -> bool:
     This is the same pattern as leads — Firebase is the public bridge.
     """
     if not _initialized:
+        logger.warning("publish_contract_for_signing skipped — Firebase not initialized")
         return False
 
     try:
@@ -468,4 +469,45 @@ def sync_activity_to_firebase(activity_data: dict) -> bool:
         return True
     except Exception as e:
         logger.error(f"Firebase sync_activity failed: {e}")
+        return False
+
+
+def deploy_database_rules(rules_path: str = "") -> bool:
+    """
+    Deploy Firebase RTDB security rules using the Admin SDK REST API.
+    Falls back to the local firebase-database.rules.json if no path given.
+    """
+    import json
+
+    if not _initialized:
+        logger.warning("deploy_database_rules skipped — Firebase not initialized")
+        return False
+
+    if not rules_path:
+        import os
+        rules_path = os.path.join(os.path.dirname(__file__), "..", "..", "firebase-database.rules.json")
+
+    try:
+        with open(rules_path) as f:
+            rules = json.load(f)
+
+        from api.config import settings
+        db_url = settings.firebase_db_url.rstrip("/")
+
+        # Use the Firebase Admin SDK's own credential for the access token
+        app = firebase_admin.get_app()
+        credential = app.credential
+        access_token = credential.get_access_token().access_token
+
+        import urllib.request
+        url = f"{db_url}/.settings/rules.json?access_token={access_token}"
+        data = json.dumps(rules).encode("utf-8")
+        req = urllib.request.Request(url, data=data, method="PUT")
+        req.add_header("Content-Type", "application/json")
+        with urllib.request.urlopen(req) as resp:
+            body = resp.read().decode()
+            logger.info(f"✅ Firebase RTDB rules deployed: {body}")
+        return True
+    except Exception as e:
+        logger.error(f"Firebase deploy_database_rules failed: {e}")
         return False

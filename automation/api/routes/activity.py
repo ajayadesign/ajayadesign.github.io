@@ -45,7 +45,7 @@ async def log_activity(
         description=description,
         icon=icon,
         actor=actor,
-        metadata=metadata or {},
+        extra_data=metadata or {},
     )
 
     try:
@@ -146,7 +146,7 @@ async def list_activities(
                 "description": log.description,
                 "icon": log.icon,
                 "actor": log.actor,
-                "metadata": log.metadata or {},
+                "metadata": log.extra_data or {},
                 "created_at": log.created_at.isoformat() if log.created_at else None,
             }
             for log in logs
@@ -180,7 +180,7 @@ async def get_entity_history(
                 "description": log.description,
                 "icon": log.icon,
                 "actor": log.actor,
-                "metadata": log.metadata or {},
+                "metadata": log.extra_data or {},
                 "created_at": log.created_at.isoformat() if log.created_at else None,
             }
             for log in logs

@@ -23,6 +23,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy source
 COPY api/ api/
+COPY firebase-database.rules.json /app/firebase-database.rules.json
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 
 # Set git identity + safe.directory for mounted volumes

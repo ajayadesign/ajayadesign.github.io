@@ -30,7 +30,7 @@ class ActivityLog(Base):
     actor = Column(String(200), default="admin")         # "admin", "client:John Doe", "system"
 
     # Optional extra data (status changes, amounts, etc.)
-    metadata = Column(JSON, default=dict)
+    extra_data = Column("metadata", JSON, default=dict)
 
     # Timestamp
     created_at = Column(DateTime(timezone=True), server_default=func.now())
