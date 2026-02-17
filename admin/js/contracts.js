@@ -700,7 +700,7 @@ async function sendContract() {
 }
 
 // ── PDF Generation (client-side with jsPDF) ────────────
-function downloadContractPDF() {
+async function downloadContractPDF() {
   const data = currentContract && currentContract.short_id ? currentContract : _gatherContractData();
   if (!data.client_name || !data.project_name) {
     alert('Please fill in at least Client Name and Project Name.');
@@ -973,25 +973,28 @@ function downloadContractPDF() {
     );
   }
 
-  // Download — mobile Chrome ignores the download attribute on blob: URLs
-  // and uses the blob UUID as the filename. Convert to data URI first so
-  // the <a download="..."> attribute is honoured on every platform.
+  // Download — Chrome ignores the `download` attribute on blob: URLs and
+  // uses the blob UUID as the filename. The File System Access API
+  // (showSaveFilePicker) is the only reliable way to guarantee the
+  // filename in Chrome. Falls back to doc.save() for Firefox / Safari / mobile.
   const filename = `AjayaDesign-Contract-${contractId}-${(data.client_name || 'client').replace(/\s+/g, '-')}.pdf`;
-  try {
-    const pdfBlob = doc.output('blob');
-    const reader = new FileReader();
-    reader.onloadend = function () {
-      const a = document.createElement('a');
-      a.href = reader.result;          // data:application/pdf;base64,…
-      a.download = filename;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => document.body.removeChild(a), 200);
-    };
-    reader.readAsDataURL(pdfBlob);
-  } catch (e) {
-    console.warn('[PDF] Data-URI download failed, falling back:', e);
-    doc.save(filename);                // Desktop fallback
+
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{ description: 'PDF Document', accept: { 'application/pdf': ['.pdf'] } }],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(doc.output('arraybuffer'));
+      await writable.close();
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return;   // user cancelled picker
+      console.warn('[PDF] File picker failed, using fallback:', e);
+    }
   }
+
+  // Fallback for Firefox, Safari, mobile — doc.save works fine there
+  doc.save(filename);
 }
