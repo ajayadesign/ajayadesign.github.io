@@ -113,7 +113,7 @@ function renderPortfolioSites() {
         </div>
         <div class="grid grid-cols-2 gap-2 text-xs mb-2">
           <div><span class="text-gray-600">Niche:</span> <span class="text-gray-400">${esc(site.niche || '-')}</span></div>
-          <div><span class="text-gray-600">Email:</span> <span class="text-gray-400">${esc(site.email || '-')}</span></div>
+          <div class="overflow-hidden"><span class="text-gray-600">Email:</span> <span class="text-gray-400 truncate inline-block max-w-[90px] align-bottom" title="${esc(site.email || '')}">${esc(site.email || '-')}</span></div>
         </div>
         ${site.live_url ? `<a href="${site.live_url}" target="_blank" class="text-[0.65rem] text-electric font-mono hover:underline" onclick="event.stopPropagation()">🔗 ${site.live_url}</a>` : ''}
       </div>`;

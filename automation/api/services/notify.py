@@ -59,6 +59,52 @@ async def send_telegram(
         "parse_mode": "MarkdownV2",
     }
 
+    return await _send_tg_message(payload)
+
+
+async def send_telegram_contract_signed(
+    contract_id: str,
+    client_name: str,
+    project_name: str,
+    total_amount: float,
+    signer_name: str,
+    signed_at: str,
+) -> bool:
+    """Send Telegram notification when a contract is signed. Returns True on success."""
+    token = settings.telegram_bot_token
+    chat_id = settings.telegram_chat_id
+
+    if not token or not chat_id:
+        logger.warning("Telegram not configured — skipping signing notification")
+        return False
+
+    amount_str = f"${total_amount:,.2f}" if total_amount else "N/A"
+
+    message = "\n".join([
+        "✍️ *CONTRACT SIGNED\\!*",
+        "",
+        f"📝 *Contract:* `{_esc_md(contract_id)}`",
+        f"🏢 *Client:* {_esc_md(client_name)}",
+        f"📁 *Project:* {_esc_md(project_name)}",
+        f"💰 *Amount:* {_esc_md(amount_str)}",
+        f"✍️ *Signed by:* {_esc_md(signer_name)}",
+        f"🕐 *Signed at:* {_esc_md(signed_at)}",
+        "",
+        "🎉 _Time to start building\\!_",
+    ])
+
+    payload = {
+        "chat_id": chat_id,
+        "text": message,
+        "parse_mode": "MarkdownV2",
+    }
+
+    return await _send_tg_message(payload)
+
+
+async def _send_tg_message(payload: dict) -> bool:
+    """Low-level Telegram sendMessage wrapper."""
+    token = settings.telegram_bot_token
     try:
         timeout = aiohttp.ClientTimeout(total=10)
         async with aiohttp.ClientSession(timeout=timeout) as session:

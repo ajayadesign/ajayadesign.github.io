@@ -24,6 +24,7 @@ from api.services.email_service import (
     send_email, build_contract_email, build_invoice_email,
     build_signed_notification_email,
 )
+from api.services.notify import send_telegram_contract_signed
 from api.services.firebase import (
     sync_contract_to_firebase, delete_contract_from_firebase,
     sync_invoice_to_firebase, delete_invoice_from_firebase,
@@ -113,6 +114,8 @@ def _contract_to_response(c: Contract) -> dict:
         "sign_token": str(c.sign_token) if c.sign_token else "",
         "signed_at": c.signed_at,
         "signer_name": c.signer_name,
+        "signature_data": c.signature_data,
+        "signer_ip": c.signer_ip,
         "created_at": c.created_at,
         "updated_at": c.updated_at,
         "sent_at": c.sent_at,
@@ -261,13 +264,18 @@ async def update_contract(
 
 @router.delete("/{short_id}", status_code=204)
 async def delete_contract(short_id: str, db: AsyncSession = Depends(get_db)):
-    """Delete a contract."""
+    """Delete a contract. Only draft/sent contracts can be deleted."""
     result = await db.execute(
         select(Contract).where(Contract.short_id == short_id)
     )
     contract = result.scalar_one_or_none()
     if not contract:
         raise HTTPException(404, f"Contract {short_id} not found")
+    if contract.status in ("signed", "executed", "completed"):
+        raise HTTPException(
+            403,
+            f"Cannot delete a {contract.status} contract. Signed/executed contracts are permanent records.",
+        )
     client_name = contract.client_name
     await db.delete(contract)
     await db.commit()
@@ -359,7 +367,7 @@ async def sign_contract(
         metadata={"signer_name": req.signer_name, "signer_ip": contract.signer_ip},
     )
 
-    # Send notification to admin
+    # Send notification to admin (email + Telegram)
     try:
         subject, html = build_signed_notification_email(
             contract.short_id,
@@ -373,7 +381,22 @@ async def sign_contract(
             body_html=html,
         )
     except Exception as e:
-        logger.warning(f"Failed to send signing notification: {e}")
+        logger.warning(f"Failed to send signing email notification: {e}")
+
+    try:
+        from datetime import timezone, timedelta
+        cst = timezone(timedelta(hours=-6))
+        now_cst = now.replace(tzinfo=timezone.utc).astimezone(cst)
+        await send_telegram_contract_signed(
+            contract_id=contract.short_id,
+            client_name=contract.client_name,
+            project_name=contract.project_name,
+            total_amount=float(contract.total_amount or 0),
+            signer_name=req.signer_name,
+            signed_at=now_cst.strftime("%B %d, %Y at %I:%M %p CST"),
+        )
+    except Exception as e:
+        logger.warning(f"Failed to send signing Telegram notification: {e}")
 
     return {"success": True, "message": "Contract signed successfully", "signed_at": now.isoformat()}
 
@@ -478,7 +501,7 @@ async def create_invoice(req: InvoiceCreateRequest, db: AsyncSession = Depends(g
         build_id=req.build_id or None,
         client_name=req.client_name,
         client_email=req.client_email,
-        items=[item.model_dump() for item in req.items],
+        items=[item.model_dump(mode="json") for item in req.items],
         subtotal=req.subtotal,
         tax_rate=req.tax_rate,
         tax_amount=req.tax_amount,
@@ -521,7 +544,7 @@ async def update_invoice(
     update_data = req.model_dump(exclude_unset=True)
     if "items" in update_data and update_data["items"] is not None:
         update_data["items"] = [
-            item.model_dump() if hasattr(item, "model_dump") else item
+            item.model_dump(mode="json") if hasattr(item, "model_dump") else item
             for item in update_data["items"]
         ]
 
@@ -576,8 +599,8 @@ async def send_invoice(invoice_number: str, db: AsyncSession = Depends(get_db)):
     items_rows = "".join(
         f'<tr><td style="padding:8px;border-bottom:1px solid #e5e7eb">{item.get("description","")}</td>'
         f'<td style="padding:8px;border-bottom:1px solid #e5e7eb;text-align:center">{item.get("quantity",1)}</td>'
-        f'<td style="padding:8px;border-bottom:1px solid #e5e7eb;text-align:right">${item.get("unit_price",0):.2f}</td>'
-        f'<td style="padding:8px;border-bottom:1px solid #e5e7eb;text-align:right">${item.get("amount",0):.2f}</td></tr>'
+        f'<td style="padding:8px;border-bottom:1px solid #e5e7eb;text-align:right">${float(item.get("unit_price",0)):.2f}</td>'
+        f'<td style="padding:8px;border-bottom:1px solid #e5e7eb;text-align:right">${float(item.get("amount",0)):.2f}</td></tr>'
         for item in items
     )
     items_html = f"""

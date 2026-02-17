@@ -115,6 +115,46 @@ def build_contract_email(
     return subject, html
 
 
+# PayPal fee config (must match frontend)
+PAYPAL_ME = "ajayadesign"
+PAYPAL_FEE_PERCENT = 0.0349   # 3.49%
+PAYPAL_FEE_FIXED = 0.49
+
+
+def _paypal_gross(net: float) -> float:
+    """Calculate gross so seller nets exactly `net` after PayPal fees."""
+    import math
+    return math.ceil((net + PAYPAL_FEE_FIXED) / (1 - PAYPAL_FEE_PERCENT) * 100) / 100
+
+
+def _build_paypal_button_html(total_amount_str: str, payment_method: str) -> str:
+    """Return a PayPal payment button HTML block for the invoice email."""
+    if payment_method and payment_method.lower() != "paypal":
+        return ""
+    try:
+        net = float(total_amount_str.replace(",", "").replace("$", ""))
+    except (ValueError, TypeError):
+        return ""
+    if net <= 0:
+        return ""
+    gross = _paypal_gross(net)
+    fee = gross - net
+    link = f"https://paypal.me/{PAYPAL_ME}/{gross:.2f}USD"
+    return f"""
+      <div style="text-align: center; margin-bottom: 24px;">
+        <a href="{link}" target="_blank"
+           style="display: inline-block; background: #0070ba; color: #fff; font-size: 16px;
+                  font-weight: 700; text-decoration: none; padding: 14px 40px;
+                  border-radius: 8px; letter-spacing: 0.5px;">
+          Pay ${gross:.2f} with PayPal
+        </a>
+        <p style="color: #888; font-size: 11px; margin-top: 8px;">
+          Includes ${fee:.2f} processing fee &middot; Invoice total: ${net:.2f}
+        </p>
+      </div>
+    """
+
+
 def build_invoice_email(
     client_name: str,
     invoice_number: str,
@@ -168,6 +208,8 @@ def build_invoice_email(
           If you have questions about payment, reply to this email.
         </p>
       </div>
+
+      {_build_paypal_button_html(total_amount, payment_method)}
 
       <p style="color: #9ca3af; font-size: 13px; text-align: center; margin-top: 32px;">
         {provider_name} · 13721 Andrew Abernathy Pass, Manor, TX 78653

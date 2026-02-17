@@ -121,13 +121,114 @@ async def reconcile_firebase_leads() -> list[dict]:
     return missed
 
 
+async def reconcile_contracts_invoices_to_firebase() -> None:
+    """
+    On startup, re-sync all active contracts and invoices from Postgres → Firebase.
+    This covers the case where the server was down and Firebase mirror is stale.
+    Also picks up any pending signatures that arrived while we were offline.
+    """
+    if not is_initialized():
+        return
+
+    from api.models.contract import Contract, Invoice
+    from api.services.firebase import sync_contract_to_firebase, sync_invoice_to_firebase
+
+    synced_contracts = 0
+    synced_invoices = 0
+
+    async with async_session() as session:
+        # Re-sync all non-cancelled contracts
+        result = await session.execute(
+            select(Contract).where(Contract.status.notin_(["cancelled"]))
+        )
+        contracts = result.scalars().all()
+        for c in contracts:
+            try:
+                # Resolve build short_id if linked
+                build_short_id = ""
+                if c.build_id:
+                    b = await session.execute(
+                        select(Build.short_id).where(Build.id == c.build_id)
+                    )
+                    row = b.scalar_one_or_none()
+                    if row:
+                        build_short_id = row
+
+                sync_contract_to_firebase({
+                    "short_id": c.short_id,
+                    "client_name": c.client_name,
+                    "client_email": c.client_email,
+                    "project_name": c.project_name,
+                    "total_amount": float(c.total_amount or 0),
+                    "deposit_amount": float(c.deposit_amount or 0),
+                    "payment_method": c.payment_method or "",
+                    "status": c.status,
+                    "signed_at": c.signed_at.isoformat() if c.signed_at else None,
+                    "signer_name": c.signer_name,
+                    "sent_at": c.sent_at.isoformat() if c.sent_at else None,
+                    "build_short_id": build_short_id,
+                })
+                synced_contracts += 1
+            except Exception as e:
+                logger.warning("Failed to sync contract %s to Firebase: %s", c.short_id, e)
+
+        # Re-sync all non-cancelled invoices
+        result = await session.execute(
+            select(Invoice).where(Invoice.status.notin_(["cancelled"]))
+        )
+        invoices = result.scalars().all()
+        for inv in invoices:
+            try:
+                # Resolve contract short_id if linked
+                contract_short_id = ""
+                if inv.contract_id:
+                    cr = await session.execute(
+                        select(Contract.short_id).where(Contract.id == inv.contract_id)
+                    )
+                    row = cr.scalar_one_or_none()
+                    if row:
+                        contract_short_id = row
+
+                sync_invoice_to_firebase({
+                    "invoice_number": inv.invoice_number,
+                    "client_name": inv.client_name,
+                    "client_email": inv.client_email,
+                    "total_amount": float(inv.total_amount or 0),
+                    "subtotal": float(inv.subtotal or 0),
+                    "tax_amount": float(inv.tax_amount or 0),
+                    "amount_paid": float(inv.amount_paid or 0),
+                    "payment_status": inv.payment_status or "unpaid",
+                    "payment_method": inv.payment_method or "",
+                    "status": inv.status,
+                    "due_date": inv.due_date.isoformat() if inv.due_date else None,
+                    "paid_at": inv.paid_at.isoformat() if inv.paid_at else None,
+                    "contract_short_id": contract_short_id,
+                    "items_count": len(inv.items) if inv.items else 0,
+                })
+                synced_invoices += 1
+            except Exception as e:
+                logger.warning("Failed to sync invoice %s to Firebase: %s", inv.invoice_number, e)
+
+    if synced_contracts or synced_invoices:
+        logger.info(
+            "🔄 Synced %d contracts, %d invoices → Firebase",
+            synced_contracts, synced_invoices,
+        )
+
+
 async def periodic_firebase_poll(interval: int = 60) -> None:
-    """Poll Firebase for new leads and parse requests every ``interval`` seconds."""
+    """Poll Firebase for new leads, parse requests, and signatures every ``interval`` seconds.
+    Every 5th cycle (~5 min) also re-syncs contracts/invoices Postgres → Firebase."""
+    cycle = 0
+    RESYNC_EVERY = 5  # cycles — re-sync contracts/invoices every ~5 min
+
     while True:
         try:
             await asyncio.sleep(interval)
             if not is_initialized():
                 continue
+
+            cycle += 1
 
             # Poll for new leads
             leads = get_new_leads()
@@ -142,6 +243,10 @@ async def periodic_firebase_poll(interval: int = 60) -> None:
 
             # Poll for signatures submitted via Firebase bridge
             await process_firebase_signatures()
+
+            # Periodically re-sync contracts & invoices → Firebase mirror
+            if cycle % RESYNC_EVERY == 0:
+                await reconcile_contracts_invoices_to_firebase()
 
         except asyncio.CancelledError:
             break
@@ -214,6 +319,7 @@ async def process_firebase_signatures() -> None:
         send_email, build_signed_notification_email,
     )
     from api.services.firebase import sync_contract_to_firebase
+    from api.services.notify import send_telegram_contract_signed
 
     logger.info("🖊️ Found %d pending signature(s) in Firebase", len(pending))
 
@@ -287,7 +393,7 @@ async def process_firebase_signatures() -> None:
             # Mark Firebase signing record as processed
             mark_signature_processed(token)
 
-            # Send notification to admin
+            # Send notification to admin (email + Telegram)
             try:
                 subject, html = build_signed_notification_email(
                     contract.short_id,
@@ -301,7 +407,22 @@ async def process_firebase_signatures() -> None:
                     body_html=html,
                 )
             except Exception as e:
-                logger.warning("Failed to send signing notification: %s", e)
+                logger.warning("Failed to send signing email notification: %s", e)
+
+            try:
+                from datetime import timezone, timedelta
+                cst = timezone(timedelta(hours=-6))
+                now_cst = now.replace(tzinfo=timezone.utc).astimezone(cst)
+                await send_telegram_contract_signed(
+                    contract_id=contract.short_id,
+                    client_name=contract.client_name,
+                    project_name=contract.project_name,
+                    total_amount=float(contract.total_amount or 0),
+                    signer_name=signer_name,
+                    signed_at=now_cst.strftime("%B %d, %Y at %I:%M %p CST"),
+                )
+            except Exception as e:
+                logger.warning("Failed to send signing Telegram notification: %s", e)
 
 
 @asynccontextmanager
@@ -326,6 +447,12 @@ async def lifespan(app: FastAPI):
         missed = await reconcile_firebase_leads()
         if missed:
             logger.info("🔄 Found %d unprocessed leads — queueing builds", len(missed))
+
+        # Pick up any signatures submitted while we were offline
+        await process_firebase_signatures()
+
+        # Re-sync active contracts & invoices → Firebase mirror
+        await reconcile_contracts_invoices_to_firebase()
 
         # Wire up the queue processor
         build_queue.set_processor(_process_build)

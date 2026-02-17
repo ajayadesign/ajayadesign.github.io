@@ -40,6 +40,20 @@ test('intake form has all required fields and submits', async ({ page }) => {
   await expect(form.locator('#phone')).toBeAttached();
   await expect(form.locator('#location')).toBeAttached();
 
+  // Intercept all outbound calls so the test doesn't create real leads
+  // 1) Firebase RTDB writes
+  await page.route('**/ajayadesign-6d739-default-rtdb.firebaseio.com/**', route =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: '{"name":"test-mock"}' })
+  );
+  // 2) FormSubmit email
+  await page.route('**/formsubmit.co/**', route =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: '{"success":"true"}' })
+  );
+  // 3) Python API build trigger
+  await page.route('**/localhost:3001/**', route =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: '{"id":"mock","short_id":"mock"}' })
+  );
+
   // Fill all required fields and submit
   await form.locator('#business-name').scrollIntoViewIfNeeded();
   await form.locator('#business-name').fill('Test Biz');
