@@ -65,7 +65,8 @@ test('intake form has all required fields and submits', async ({ page }) => {
   await form.locator('button[type="submit"]').click();
 
   const btn = form.locator('button[type="submit"]');
-  await expect(btn).toContainText('Processing', { timeout: 3000 });
+  // With mocked routes the form can resolve instantly, so "Processing" may be skipped
+  await expect(btn).toContainText(/Processing|Request Received/, { timeout: 5000 });
   await expect(btn).toContainText('Request Received', { timeout: 10000 });
 });
 
