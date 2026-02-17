@@ -254,7 +254,9 @@ async function loadSiteContracts(shortId) {
 
   const site = portfolioSites.find(s => s.short_id === shortId);
   const siteContracts = contracts.filter(c =>
-    c.client_name === site?.client_name || c.build_id === site?.id || c.build_short_id === shortId
+    c.client_name === site?.client_name ||
+    (c.build_id && site?.id && c.build_id === site.id) ||
+    (c.build_short_id && c.build_short_id === shortId)
   );
 
   if (siteContracts.length === 0) {
@@ -305,7 +307,8 @@ async function loadSiteInvoices(shortId) {
 
   const site = portfolioSites.find(s => s.short_id === shortId);
   const siteInvoices = invoices.filter(inv =>
-    inv.client_name === site?.client_name || inv.build_id === site?.id
+    inv.client_name === site?.client_name ||
+    (inv.build_id && site?.id && inv.build_id === site.id)
   );
 
   if (siteInvoices.length === 0) {
