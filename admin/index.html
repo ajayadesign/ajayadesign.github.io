@@ -229,6 +229,41 @@
     @media (min-width: 768px) {
       #sidebar { bottom: 3rem; box-shadow: none !important; }
     }
+
+    /* ═══ Mobile slide-up panel for Pipeline/AI/Log ═══ */
+    @media (max-width: 767px) {
+      #content-wrapper.panel-open {
+        position: fixed;
+        left: 0; right: 0;
+        /* stop above the 3rem (h-12) bottom nav bar */
+        bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
+        top: 10vh;
+        z-index: 45;
+        background: var(--surface-1, #12121A);
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+        box-shadow: 0 -8px 30px rgba(0,0,0,0.5);
+        transform: translateY(0);
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+      }
+      #content-wrapper.panel-open .tab-content {
+        flex: 1 1 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+      }
+      #content-wrapper.panel-closing {
+        transform: translateY(100%);
+      }
+      #content-wrapper:not(.panel-open) {
+        /* normal flow — just limit height so it's a preview stripe */
+      }
+      #content-wrapper.panel-open #content-handle {
+        display: flex !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-surface text-gray-300 font-sans antialiased h-screen overflow-hidden">
@@ -919,8 +954,16 @@
           </div>
         </div>
 
+        <!-- Mobile overlay backdrop -->
+        <div id="content-overlay" class="hidden fixed inset-0 bg-black/60 z-40 md:hidden" onclick="closeContentPanel()"></div>
+
         <!-- Content Area: Pipeline / AI / Logs -->
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <div id="content-wrapper" class="flex-1 flex flex-col overflow-hidden md:relative">
+
+          <!-- Mobile drag-handle -->
+          <div id="content-handle" class="hidden items-center justify-center py-2 bg-surface-1 rounded-t-2xl cursor-pointer md:!hidden" onclick="closeContentPanel()">
+            <div class="w-10 h-1 rounded-full bg-gray-600"></div>
+          </div>
 
           <!-- Content Tabs -->
           <div class="flex border-b border-border bg-surface-1 overflow-x-auto no-scrollbar">
