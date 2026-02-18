@@ -357,6 +357,14 @@ def sync_invoice_to_firebase(invoice_data: dict) -> bool:
 
     try:
         ref = firebase_db.reference(f"invoices/{inv_num}")
+        # Build lightweight payment plan for Firebase
+        raw_plan = invoice_data.get("payment_plan", [])
+        fb_plan = [
+            {"id": p.get("id", ""), "due_date": p.get("due_date", ""),
+             "amount": p.get("amount", 0), "status": p.get("status", "pending"),
+             "paid_at": p.get("paid_at", None)}
+            for p in (raw_plan if isinstance(raw_plan, list) else [])
+        ]
         ref.update({
             "client_name": invoice_data.get("client_name", ""),
             "client_email": invoice_data.get("client_email", ""),
@@ -370,7 +378,12 @@ def sync_invoice_to_firebase(invoice_data: dict) -> bool:
             "due_date": invoice_data.get("due_date", None),
             "paid_at": invoice_data.get("paid_at", None),
             "contract_short_id": invoice_data.get("contract_short_id", ""),
+            "items": invoice_data.get("items", []),
             "items_count": invoice_data.get("items_count", 0),
+            "notes": invoice_data.get("notes", ""),
+            "payment_plan": fb_plan,
+            "payment_plan_enabled": invoice_data.get("payment_plan_enabled", "false"),
+            "pending_installments": invoice_data.get("pending_installments", 0),
             "updated_at": {'.sv': 'timestamp'},
         })
         logger.info(f"Firebase invoices/{inv_num} synced → {invoice_data.get('status')}")

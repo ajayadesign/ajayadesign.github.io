@@ -218,12 +218,10 @@
     .scroll-contain { overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
     /* Safe area for iPhones with home indicator */
     #mobile-tab-bar { padding-bottom: env(safe-area-inset-bottom, 0); }
-    /* Mobile sidebar */
-    @media (max-width: 767px) {
-      #sidebar.translate-x-0 { box-shadow: 4px 0 25px rgba(0,0,0,0.6); }
-      /* sidebar ends above bottom tab bar */
-      #sidebar { bottom: 3rem; }
-    }
+    /* Sidebar overlay */
+    #sidebar.translate-x-0 { box-shadow: 4px 0 25px rgba(0,0,0,0.6); }
+    /* sidebar ends above bottom tab bar */
+    #sidebar { bottom: 3rem; }
   </style>
 </head>
 <body class="bg-surface text-gray-300 font-sans antialiased h-screen overflow-hidden">
@@ -231,7 +229,7 @@
   <!-- ═══ Top Bar ═══ -->
   <header class="h-14 bg-surface-1 border-b border-border flex items-center justify-between px-3 md:px-4 z-50 fixed top-0 left-0 right-0">
     <div class="flex items-center gap-2 md:gap-3">
-      <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-400 hover:text-white p-1" aria-label="Toggle sidebar">
+      <button onclick="toggleMobileSidebar()" class="text-gray-400 hover:text-white p-1" aria-label="Toggle sidebar">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amd-red to-electric flex items-center justify-center">
@@ -253,39 +251,21 @@
   </header>
 
   <!-- ═══ Mobile Sidebar Backdrop ═══ -->
-  <div id="sidebar-backdrop" class="fixed inset-0 bg-black/60 z-30 hidden md:hidden" onclick="toggleMobileSidebar()"></div>
+  <div id="sidebar-backdrop" class="fixed inset-0 bg-black/60 z-30 hidden" onclick="toggleMobileSidebar()"></div>
 
   <!-- ═══ Main Layout ═══ -->
-  <div class="flex mt-14 h-[calc(100dvh-6.5rem)] md:h-[calc(100vh-3.5rem)]">
+  <div class="flex mt-14 h-[calc(100dvh-6.5rem)]">
 
     <!-- ═══ Sidebar ═══ -->
-    <aside id="sidebar" class="fixed top-14 bottom-0 left-0 z-40 w-72 min-w-[18rem] bg-surface-1 border-r border-border flex flex-col -translate-x-full transition-transform duration-300 ease-in-out md:static md:z-auto md:translate-x-0 md:transition-none">
-      <!-- Tab Switcher (desktop only — mobile uses bottom bar) -->
-      <div class="hidden md:flex border-b border-border overflow-x-auto no-scrollbar">
-        <button onclick="switchTab('builds')" id="tab-builds"
-          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition">
-          🔨 Builds
-        </button>
-        <button onclick="switchTab('leads')" id="tab-leads"
-          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
-          📬 Leads <span id="stat-leads" class="ml-1 px-1.5 py-0.5 rounded-full bg-electric/20 text-electric text-[0.6rem]">0</span>
-        </button>
-        <button onclick="switchTab('portfolio')" id="tab-portfolio"
-          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
-          📁 Portfolio
-        </button>
-        <button onclick="switchTab('history')" id="tab-history"
-          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
-          📜 History
-        </button>
-        <button onclick="switchTab('analytics')" id="tab-analytics"
-          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
-          📊 Analytics
-        </button>
-        <button onclick="switchTab('traffic')" id="tab-traffic"
-          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
-          🌐 Traffic
-        </button>
+    <aside id="sidebar" class="fixed top-14 bottom-0 left-0 z-40 w-72 min-w-[18rem] bg-surface-1 border-r border-border flex flex-col -translate-x-full transition-transform duration-300 ease-in-out">
+      <!-- Hidden tab buttons (referenced by switchTab JS — IDs still needed) -->
+      <div id="desktop-tab-row" class="hidden">
+        <button id="tab-builds"></button>
+        <button id="tab-leads"><span id="stat-leads">0</span></button>
+        <button id="tab-portfolio"></button>
+        <button id="tab-history"></button>
+        <button id="tab-analytics"></button>
+        <button id="tab-traffic"></button>
       </div>
 
       <!-- Builds Tab -->
@@ -1473,7 +1453,7 @@
   </div>
 
   <!-- ═══ Mobile Bottom Tab Bar ═══ -->
-  <nav id="mobile-tab-bar" class="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-surface-1 border-t border-border">
+  <nav id="mobile-tab-bar" class="fixed bottom-0 left-0 right-0 z-50 bg-surface-1 border-t border-border">
     <div class="flex h-12">
       <button onclick="switchTab('builds')" id="mtab-builds"
         class="mobile-tab flex-1 flex flex-col items-center justify-center text-electric transition">
@@ -1540,13 +1520,14 @@
       sb.classList.toggle('translate-x-0', isHidden);
       bd.classList.toggle('hidden', !isHidden);
     }
-    /* Auto-close sidebar on mobile when an item is selected */
+    /* Auto-close sidebar when an item is selected */
     ['build-list','leads-panel-content','archived-panel-content',
      'portfolio-sites-list','portfolio-contracts-list','portfolio-invoices-list',
      'history-list'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('click', () => {
-        if (window.innerWidth < 768) toggleMobileSidebar();
+        const sb = document.getElementById('sidebar');
+        if (sb && sb.classList.contains('translate-x-0')) toggleMobileSidebar();
       });
     });
   </script>
