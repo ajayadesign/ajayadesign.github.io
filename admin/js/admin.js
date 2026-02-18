@@ -6,9 +6,10 @@
 // ── Configuration ──────────────────────────────────────
 // Change this when Cloudflare Tunnel is set up:
 //   e.g. 'https://api.ajayadesign.com'
-const API_BASE = window.location.hostname === 'localhost'
-  ? 'http://localhost:3001/api/v1'
-  : 'http://localhost:3001/api/v1'; // TODO: replace with tunnel URL
+// API_BASE points to the local Docker API.
+// When the admin is opened remotely (e.g. GitHub Pages), API calls will fail
+// gracefully and fall back to Firebase RTDB commands that the server polls for.
+const API_BASE = 'http://localhost:3001/api/v1';
 
 const POLL_INTERVAL = 5000;
 const ALLOWED_EMAIL = 'ajayadahal1000@gmail.com'; // Only this user can access admin
@@ -487,7 +488,7 @@ function _updateBuildStatusBadge(status) {
   $buildStatus.className = `px-2.5 py-1 rounded-full text-xs font-mono font-semibold ${s.cls}`;
 }
 
-/** Retry a stalled or failed build. */
+/** Retry a stalled or failed build — tries API first, falls back to Firebase RTDB. */
 async function retryBuild() {
   if (!selectedBuildId) return;
 
@@ -497,6 +498,9 @@ async function retryBuild() {
     $btn.textContent = '⏳ Retrying...';
   }
 
+  let apiOk = false;
+
+  // ── Attempt 1: direct API call ──
   try {
     const res = await fetch(`${API_BASE}/builds/${selectedBuildId}/retry`, {
       method: 'POST',
@@ -507,35 +511,57 @@ async function retryBuild() {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.detail || `HTTP ${res.status}`);
     }
-
-    // Reset pipeline graph and reconnect
-    if (typeof resetPipeline === 'function') {
-      resetPipeline();
-      renderPipeline();
-    }
-
-    aiEvents = [];
-    logLines = [];
-    renderLog();
-    renderAI();
-
-    _updateBuildStatusBadge('queued');
-    if ($btn) { $btn.classList.add('hidden'); }
-
-    // Reconnect SSE for the retried build
-    if (eventSource) { eventSource.close(); eventSource = null; }
-    connectSSE(selectedBuildId);
-
-    // Refresh build list
-    setTimeout(refreshBuilds, 1000);
-
+    apiOk = true;
   } catch (err) {
-    alert(`Retry failed: ${err.message}`);
-    if ($btn) {
-      $btn.disabled = false;
-      $btn.textContent = '🔄 Retry Build';
+    console.warn('[Admin] API retry failed, trying Firebase fallback:', err.message);
+  }
+
+  // ── Attempt 2: Firebase RTDB command (picked up by server-side poller) ──
+  if (!apiOk && window.__db) {
+    try {
+      const cmdRef = window.__db.ref('commands/retry').push();
+      await cmdRef.set({
+        build_id: selectedBuildId,
+        status: 'pending',
+        requested_at: new Date().toISOString(),
+        requested_by: currentUser ? currentUser.email : 'admin',
+      });
+      console.info('[Admin] Retry command written to Firebase — server will pick it up');
+      apiOk = true; // treat as success; server-side will process
+    } catch (fbErr) {
+      console.error('[Admin] Firebase retry fallback also failed:', fbErr);
+      alert(`Retry failed: API unreachable and Firebase write failed.\n${fbErr.message}`);
+      if ($btn) { $btn.disabled = false; $btn.textContent = '🔄 Retry Build'; }
+      return;
     }
   }
+
+  if (!apiOk) {
+    alert('Retry failed: API unreachable and Firebase is not connected.');
+    if ($btn) { $btn.disabled = false; $btn.textContent = '🔄 Retry Build'; }
+    return;
+  }
+
+  // ── Success path — reset UI ──
+  if (typeof resetPipeline === 'function') {
+    resetPipeline();
+    renderPipeline();
+  }
+
+  aiEvents = [];
+  logLines = [];
+  renderLog();
+  renderAI();
+
+  _updateBuildStatusBadge('queued');
+  if ($btn) { $btn.classList.add('hidden'); }
+
+  // Reconnect SSE for the retried build
+  if (eventSource) { eventSource.close(); eventSource = null; }
+  connectSSE(selectedBuildId);
+
+  // Refresh build list
+  setTimeout(refreshBuilds, 1000);
 }
 
 /** Attach Firebase real-time listeners for a build's status, phases, and logs. */
