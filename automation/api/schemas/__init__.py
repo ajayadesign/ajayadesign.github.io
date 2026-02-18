@@ -74,15 +74,6 @@ class PhaseDetail(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class BuildDetailResponse(BuildResponse):
-    goals: str | None = None
-    email: str | None = None
-    repo_name: str | None = None
-    blueprint: dict | None = None
-    design_system: dict | None = None
-    phases: list[PhaseDetail] = []
-
-
 class LogEntry(BaseModel):
     sequence: int
     level: str
@@ -91,6 +82,16 @@ class LogEntry(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class BuildDetailResponse(BuildResponse):
+    goals: str | None = None
+    email: str | None = None
+    repo_name: str | None = None
+    blueprint: dict | None = None
+    design_system: dict | None = None
+    phases: list[PhaseDetail] = []
+    log: list[LogEntry] = []
 
 
 class HealthResponse(BaseModel):
