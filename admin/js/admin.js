@@ -244,38 +244,306 @@ function switchContentTab(tab) {
     }
   });
   // On mobile, open the slide-up panel when a tab is tapped
-  if (window.innerWidth < 768) openContentPanel();
+  if (window.innerWidth < 768) sheetSnapTo('half');
 }
 
-// ── Mobile slide-up panel for Pipeline/AI/Log ─────────
-function openContentPanel() {
-  const wrap = document.getElementById('content-wrapper');
-  const overlay = document.getElementById('content-overlay');
-  if (!wrap || !overlay) return;
-  wrap.classList.remove('panel-closing');
-  wrap.classList.add('panel-open');
-  overlay.classList.remove('hidden');
-  // prevent body scroll while panel is open
-  document.body.style.overflow = 'hidden';
+// ═══════════════════════════════════════════════════════
+//  Mobile bottom-sheet — 3-state gesture-driven drawer
+//  States: peek (tabs only) → half (~50%) → full (~90%)
+// ═══════════════════════════════════════════════════════
+
+const SHEET_STATES = ['peek', 'half', 'full'];
+let _sheetState = 'peek';          // current snap state
+let _sheetDragging = false;
+let _sheetStartY = 0;
+let _sheetStartH = 0;
+let _sheetVelocity = 0;
+let _sheetLastY = 0;
+let _sheetLastTime = 0;
+let _sheetInitialized = false;
+
+/** Heights (px) for each state — computed once on init */
+function _sheetHeights() {
+  const navH = 48;  // h-12 bottom nav
+  const safeBottom = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-area-bottom') || '0') || 0;
+  const available = window.innerHeight - navH - safeBottom;
+  const handleH = document.getElementById('content-handle')?.offsetHeight || 16;
+  const dotsH = document.getElementById('sheet-dots')?.offsetHeight || 15;
+  const tabsH = document.querySelector('#content-wrapper .sheet-tabs')?.offsetHeight || 42;
+  const peekH = handleH + dotsH + tabsH + 2;  // show handle + dots + tabs
+  return {
+    peek: Math.min(peekH, available * 0.15),
+    half: available * 0.50,
+    full: available * 0.90,
+    max: available
+  };
 }
 
-function closeContentPanel() {
-  const wrap = document.getElementById('content-wrapper');
-  const overlay = document.getElementById('content-overlay');
-  if (!wrap || !overlay) return;
-  wrap.classList.add('panel-closing');
-  overlay.classList.add('hidden');
-  document.body.style.overflow = '';
-  // remove classes after transition ends
-  wrap.addEventListener('transitionend', function handler() {
-    wrap.classList.remove('panel-open', 'panel-closing');
-    wrap.removeEventListener('transitionend', handler);
-  }, { once: true });
-  // fallback in case transitionend doesn't fire
-  setTimeout(() => {
-    wrap.classList.remove('panel-open', 'panel-closing');
-  }, 400);
+function _sheetHeight(state) {
+  return _sheetHeights()[state] || _sheetHeights().peek;
 }
+
+/** Update the three indicator dots */
+function _sheetUpdateDots(state) {
+  const dots = document.querySelectorAll('#sheet-dots .dot');
+  if (!dots.length) return;
+  const idx = SHEET_STATES.indexOf(state);
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+
+/** Update overlay visibility */
+function _sheetUpdateOverlay(state) {
+  const overlay = document.getElementById('content-overlay');
+  if (!overlay) return;
+  if (state === 'peek') {
+    overlay.classList.add('hidden');
+    overlay.classList.remove('visible', 'fading');
+  } else {
+    overlay.classList.remove('hidden', 'fading');
+    overlay.classList.add('visible');
+  }
+}
+
+/** Snap the sheet to a state with spring animation */
+function sheetSnapTo(state, skipGlow) {
+  if (window.innerWidth >= 768) return;  // desktop: no-op
+  const wrap = document.getElementById('content-wrapper');
+  if (!wrap) return;
+
+  _initSheet();
+
+  const h = _sheetHeight(state);
+  _sheetState = state;
+
+  // Prevent body scroll when sheet is expanded
+  document.body.style.overflow = (state === 'peek') ? '' : 'hidden';
+
+  // Animate
+  wrap.classList.remove('sheet-dragging');
+  wrap.classList.add('sheet-animating');
+  wrap.style.height = h + 'px';
+
+  _sheetUpdateDots(state);
+  _sheetUpdateOverlay(state);
+
+  // Clean up animation class after transition
+  const cleanup = () => {
+    wrap.classList.remove('sheet-animating');
+    wrap.removeEventListener('transitionend', cleanup);
+  };
+  wrap.addEventListener('transitionend', cleanup, { once: true });
+  setTimeout(cleanup, 400);  // fallback
+}
+
+/** Keep old names working for onclick handlers in HTML */
+function openContentPanel() { sheetSnapTo('half'); }
+function closeContentPanel() { sheetSnapTo('peek'); }
+
+/** Init gesture tracking — called once */
+function _initSheet() {
+  if (_sheetInitialized || window.innerWidth >= 768) return;
+  _sheetInitialized = true;
+
+  const wrap = document.getElementById('content-wrapper');
+  const handle = document.getElementById('content-handle');
+  const tabsBar = document.querySelector('#content-wrapper .sheet-tabs');
+  if (!wrap) return;
+
+  // Set initial peek height
+  requestAnimationFrame(() => {
+    wrap.style.height = _sheetHeight('peek') + 'px';
+    _sheetUpdateDots('peek');
+  });
+
+  // ── Touch events on handle AND tabs bar ──
+  const touchTargets = [handle, tabsBar].filter(Boolean);
+  touchTargets.forEach(target => {
+    target.addEventListener('touchstart', _onSheetTouchStart, { passive: true });
+    target.addEventListener('touchmove', _onSheetTouchMove, { passive: false });
+    target.addEventListener('touchend', _onSheetTouchEnd, { passive: true });
+  });
+
+  // Also allow dragging from the top edge of content areas
+  wrap.addEventListener('touchstart', (e) => {
+    // Only start drag from within ~20px of the top of the sheet body
+    const bodyEl = wrap.querySelector('.sheet-body');
+    if (!bodyEl) return;
+    // If body is scrolled to top and swiping down, take over
+    if (bodyEl.scrollTop <= 0 && _sheetState !== 'peek') {
+      // Will handle in touchmove if direction is down
+      _sheetEdgeDragReady = true;
+      _sheetEdgeDragStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  wrap.addEventListener('touchmove', (e) => {
+    if (!_sheetEdgeDragReady) return;
+    const dy = e.touches[0].clientY - _sheetEdgeDragStartY;
+    if (dy > 10 && !_sheetDragging) {
+      // Swiping down from scroll-top → start sheet drag
+      _sheetStartY = e.touches[0].clientY;
+      _sheetStartH = wrap.offsetHeight;
+      _sheetLastY = _sheetStartY;
+      _sheetLastTime = Date.now();
+      _sheetDragging = true;
+      wrap.classList.add('sheet-dragging');
+      wrap.classList.remove('sheet-animating');
+    }
+    if (_sheetDragging) {
+      e.preventDefault();
+      _onSheetDrag(e.touches[0].clientY, wrap);
+    }
+  }, { passive: false });
+
+  wrap.addEventListener('touchend', (e) => {
+    _sheetEdgeDragReady = false;
+    if (_sheetDragging) {
+      _onSheetRelease(wrap);
+    }
+  }, { passive: true });
+}
+
+let _sheetEdgeDragReady = false;
+let _sheetEdgeDragStartY = 0;
+
+function _onSheetTouchStart(e) {
+  const wrap = document.getElementById('content-wrapper');
+  if (!wrap) return;
+  const t = e.touches[0];
+  _sheetStartY = t.clientY;
+  _sheetStartH = wrap.offsetHeight;
+  _sheetLastY = t.clientY;
+  _sheetLastTime = Date.now();
+  _sheetVelocity = 0;
+  _sheetDragging = true;
+  wrap.classList.add('sheet-dragging');
+  wrap.classList.remove('sheet-animating');
+}
+
+function _onSheetTouchMove(e) {
+  if (!_sheetDragging) return;
+  e.preventDefault();
+  const wrap = document.getElementById('content-wrapper');
+  if (!wrap) return;
+  _onSheetDrag(e.touches[0].clientY, wrap);
+}
+
+function _onSheetDrag(currentY, wrap) {
+  const dy = _sheetStartY - currentY;  // positive = dragging up
+  const heights = _sheetHeights();
+  let newH = Math.max(heights.peek * 0.5, Math.min(heights.max, _sheetStartH + dy));
+
+  // Rubber-band effect past limits
+  if (newH > heights.full) {
+    const over = newH - heights.full;
+    newH = heights.full + over * 0.15;
+  }
+
+  wrap.style.height = newH + 'px';
+
+  // Track velocity
+  const now = Date.now();
+  const dt = now - _sheetLastTime;
+  if (dt > 0) {
+    _sheetVelocity = (currentY - _sheetLastY) / dt;  // px/ms, negative = up
+  }
+  _sheetLastY = currentY;
+  _sheetLastTime = now;
+
+  // Update dots based on current height proximity
+  const mid1 = (heights.peek + heights.half) / 2;
+  const mid2 = (heights.half + heights.full) / 2;
+  if (newH < mid1) _sheetUpdateDots('peek');
+  else if (newH < mid2) _sheetUpdateDots('half');
+  else _sheetUpdateDots('full');
+
+  // Update overlay opacity proportionally
+  const overlay = document.getElementById('content-overlay');
+  if (overlay) {
+    const progress = Math.max(0, Math.min(1, (newH - heights.peek) / (heights.half - heights.peek)));
+    if (progress > 0.05) {
+      overlay.classList.remove('hidden');
+      overlay.style.opacity = Math.min(1, progress);
+    } else {
+      overlay.classList.add('hidden');
+    }
+  }
+}
+
+function _onSheetTouchEnd(e) {
+  if (!_sheetDragging) return;
+  const wrap = document.getElementById('content-wrapper');
+  if (!wrap) return;
+  _onSheetRelease(wrap);
+}
+
+function _onSheetRelease(wrap) {
+  _sheetDragging = false;
+  wrap.classList.remove('sheet-dragging');
+
+  const currentH = wrap.offsetHeight;
+  const heights = _sheetHeights();
+  const v = _sheetVelocity;  // px/ms — negative = swiped up
+
+  // Fling detection: fast swipe overrides position
+  const FLING_THRESHOLD = 0.4;  // px/ms
+  let target;
+
+  if (Math.abs(v) > FLING_THRESHOLD) {
+    // Fast swipe
+    if (v < 0) {
+      // Swiped UP → go to next higher state
+      if (_sheetState === 'peek') target = 'half';
+      else target = 'full';
+    } else {
+      // Swiped DOWN → go to next lower state
+      if (_sheetState === 'full') target = 'half';
+      else target = 'peek';
+    }
+  } else {
+    // Slow drag — snap to nearest
+    const distances = SHEET_STATES.map(s => ({
+      state: s,
+      dist: Math.abs(currentH - _sheetHeight(s))
+    }));
+    distances.sort((a, b) => a.dist - b.dist);
+    target = distances[0].state;
+  }
+
+  sheetSnapTo(target);
+}
+
+/** Flash the sheet border to attract attention (called when a build is selected) */
+function sheetGlow() {
+  if (window.innerWidth >= 768) return;
+  const wrap = document.getElementById('content-wrapper');
+  if (!wrap) return;
+  _initSheet();
+  wrap.classList.remove('sheet-glow');
+  void wrap.offsetWidth;  // force reflow
+  wrap.classList.add('sheet-glow');
+  setTimeout(() => wrap.classList.remove('sheet-glow'), 3100);
+}
+
+/** Re-compute sheet heights on resize/orientation change */
+window.addEventListener('resize', () => {
+  if (_sheetInitialized && window.innerWidth < 768) {
+    const wrap = document.getElementById('content-wrapper');
+    if (wrap) {
+      wrap.style.height = _sheetHeight(_sheetState) + 'px';
+    }
+  }
+  // Reset init if crossing breakpoint
+  if (window.innerWidth >= 768) {
+    const wrap = document.getElementById('content-wrapper');
+    if (wrap) {
+      wrap.style.height = '';
+      wrap.classList.remove('sheet-dragging', 'sheet-animating', 'sheet-glow');
+    }
+    _sheetInitialized = false;
+    document.body.style.overflow = '';
+  }
+});
 
 // ── Connection check (Firebase-first, API fallback) ───
 let firebaseConnected = false;
@@ -456,6 +724,12 @@ async function selectBuild(buildId) {
   $emptyState.classList.add('hidden');
   $buildDetail.classList.remove('hidden');
   document.getElementById('lead-detail').classList.add('hidden');
+
+  // Mobile: initialize sheet & glow to attract attention
+  if (window.innerWidth < 768) {
+    _initSheet();
+    setTimeout(sheetGlow, 300);
+  }
 
   // ── Strategy: Try API first, fall back to Firebase ──
   let loaded = false;
