@@ -125,6 +125,11 @@
     if (!r) return { total: 0, sessions: new Set(), pages: {}, sources: {}, referrers: {} };
     var snap = await r.once('value');
     var data = snap.val();
+    // Fall back to yesterday if today has no data (timezone edge)
+    if (!data) {
+      var r2 = fbRef('/pageViews/' + getDateOffset(1));
+      if (r2) { snap = await r2.once('value'); data = snap.val(); }
+    }
     if (!data) return { total: 0, sessions: new Set(), pages: {}, sources: {}, referrers: {} };
 
     var sessions = new Set(), total = 0, pages = {}, sources = {}, referrers = {};
@@ -151,10 +156,16 @@
   }
 
   async function fetchScrollDepth() {
+    // Try today first, fall back to yesterday (timezone edge)
     var r = fbRef('/scrollDepth/' + getToday());
     if (!r) return {};
     var snap = await r.once('value');
-    return snap.val() || {};
+    var data = snap.val();
+    if (!data) {
+      var r2 = fbRef('/scrollDepth/' + getDateOffset(1));
+      if (r2) { snap = await r2.once('value'); data = snap.val(); }
+    }
+    return data || {};
   }
 
   async function fetchClicks(pageSlug) {
@@ -162,26 +173,41 @@
     if (!r) return [];
     var snap = await r.once('value');
     var data = snap.val();
+    if (!data) {
+      // Try yesterday (timezone edge)
+      var r2 = fbRef('/clicks/' + getDateOffset(1) + '/' + pageSlug);
+      if (r2) { snap = await r2.once('value'); data = snap.val(); }
+    }
     if (!data) return [];
     return Object.values(data);
   }
 
   async function fetchPerformance() {
-    var r = fbRef('/performance/' + getToday());
-    if (!r) return [];
-    var snap = await r.once('value');
-    var data = snap.val();
-    if (!data) return [];
-    return Object.values(data);
+    var results = [];
+    // Try today + yesterday to handle timezone edge cases
+    for (var d = 0; d <= 1; d++) {
+      var r = fbRef('/performance/' + getDateOffset(d));
+      if (!r) continue;
+      var snap = await r.once('value');
+      var data = snap.val();
+      if (data) results = results.concat(Object.values(data));
+      if (results.length > 0 && d === 0) break;  // today has data, skip yesterday
+    }
+    return results;
   }
 
   async function fetchSessions() {
-    var r = fbRef('/sessions/' + getToday());
-    if (!r) return [];
-    var snap = await r.once('value');
-    var data = snap.val();
-    if (!data) return [];
-    return Object.values(data);
+    var results = [];
+    // Try today + yesterday to handle timezone edge cases
+    for (var d = 0; d <= 1; d++) {
+      var r = fbRef('/sessions/' + getDateOffset(d));
+      if (!r) continue;
+      var snap = await r.once('value');
+      var data = snap.val();
+      if (data) results = results.concat(Object.values(data));
+      if (results.length > 0 && d === 0) break;
+    }
+    return results;
   }
 
   /* ═══════════════════════════════════════════════════════════════════════
@@ -391,16 +417,20 @@
   /* ── Click Heatmap ── */
   async function renderClickHeatmap() {
     var select = document.getElementById('traffic-heatmap-page');
-    var container = document.getElementById('traffic-heatmap-canvas');
+    var container = document.getElementById('traffic-chart-clicks');
     if (!select || !container) return;
 
-    // Populate page selector from today's clicks
+    // Populate page selector from today + yesterday clicks
     try {
-      var cr = fbRef('/clicks/' + getToday());
-      if (!cr) return;
-      var snap = await cr.once('value');
-      var data = snap.val() || {};
-      var pages = Object.keys(data);
+      var allPages = {};
+      for (var d = 0; d <= 1; d++) {
+        var cr = fbRef('/clicks/' + getDateOffset(d));
+        if (!cr) continue;
+        var snap = await cr.once('value');
+        var dd = snap.val();
+        if (dd) Object.keys(dd).forEach(function (p) { allPages[p] = true; });
+      }
+      var pages = Object.keys(allPages);
 
       select.innerHTML = '<option value="">Select page…</option>';
       pages.forEach(function (p) {
