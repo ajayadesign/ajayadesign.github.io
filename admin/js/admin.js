@@ -394,6 +394,7 @@ function renderBuildList() {
 // ── Select a build ─────────────────────────────────────
 let _firebaseBuildRef = null;  // Active Firebase listener for build detail
 let _firebaseLogRef = null;    // Active Firebase listener for log lines
+let _seenLogKeys = new Set();  // Dedup: tracks seen log sequence numbers or message fingerprints
 
 async function selectBuild(buildId) {
   selectedBuildId = buildId;
@@ -406,7 +407,12 @@ async function selectBuild(buildId) {
   // Reset panels
   aiEvents = [];
   logLines = [];
+  _seenLogKeys = new Set();
   currentStepData = { current: 0, total: 8 };
+
+  // Immediately render the empty state so stale content from the previous build is cleared
+  renderLog();
+  renderAI();
 
   // Reset pipeline graph
   if (typeof resetPipeline === 'function') {
@@ -434,6 +440,25 @@ async function selectBuild(buildId) {
       renderLog();
       renderAI();
       scrollLogToBottom();
+    }
+
+    // Hydrate pipeline graph from stored phases (works for completed/failed builds)
+    if (build.phases && build.phases.length > 0) {
+      _hydrateFromPhases(build.phases, build.status);
+    }
+
+    // Populate extra pipeline context from build metadata
+    if (build.client_name) {
+      pipeline.clientName = build.client_name;
+      pipeline.niche = build.niche || '';
+      pipeline.liveUrl = build.live_url || '';
+      if (pipeline.nodes.request.status === 'done') {
+        pipeline.nodes.request.detail = build.client_name;
+      }
+      if (build.live_url && pipeline.nodes.deploy.status === 'done') {
+        pipeline.nodes.deploy.detail = 'GitHub Pages live';
+      }
+      if (typeof renderPipeline === 'function') renderPipeline();
     }
 
     // SSE for live updates when API is reachable
@@ -795,15 +820,23 @@ function _attachFirebaseBuildListeners(buildId, isPrimary) {
     // Update protect/delete buttons from Firebase state
     _updateProtectDeleteButtons(data);
 
-    // Update phase progress from Firebase
+    // Update pipeline graph + step progress from Firebase phases
     if (data.phases) {
-      const phaseEntries = Object.values(data.phases);
-      const completedPhases = phaseEntries.filter(p => p.status === 'complete').length;
-      const runningPhase = phaseEntries.find(p => p.status === 'running');
-      const currentPhase = runningPhase
-        ? parseInt(Object.keys(data.phases).find(k => data.phases[k] === runningPhase) || '0')
-        : completedPhases;
-      renderStepProgress(currentPhase);
+      _hydrateFromPhases(data.phases, data.status);
+    }
+
+    // Populate pipeline metadata from Firebase
+    if (data.client_name && pipeline) {
+      pipeline.clientName = data.client_name || pipeline.clientName;
+      pipeline.niche = data.niche || pipeline.niche;
+      pipeline.liveUrl = data.live_url || pipeline.liveUrl;
+      if (pipeline.nodes.request.status === 'done') {
+        pipeline.nodes.request.detail = data.client_name;
+      }
+      if (data.live_url && pipeline.nodes.deploy.status === 'done') {
+        pipeline.nodes.deploy.detail = 'GitHub Pages live';
+      }
+      if (typeof renderPipeline === 'function') renderPipeline();
     }
 
     // Build finished or stalled — update stats
@@ -820,11 +853,12 @@ function _attachFirebaseBuildListeners(buildId, isPrimary) {
     const entry = snap.val();
     if (!entry || !entry.msg) return;
 
-    const line = entry.msg;
-    processLogLine(line, true);
+    // Pass full structured entry (msg, cat, lvl, ts) so processLogLine can extract AI events by category
+    processLogLine(entry, true);
 
-    if (typeof pipelineHandleLog === 'function') pipelineHandleLog(line);
+    if (typeof pipelineHandleLog === 'function') pipelineHandleLog(entry.msg);
     renderLog();
+    renderAI();   // AI events are extracted inside processLogLine — re-render
     if ($autoScroll && $autoScroll.checked) scrollLogToBottom();
   });
 }
@@ -906,18 +940,62 @@ function connectSSE(buildId) {
 }
 
 // ── Process a log line ─────────────────────────────────
-function processLogLine(line, isLive) {
+// Accepts either a plain string OR a structured log object:
+//   API shape:     { sequence, level, category, message, created_at }
+//   Firebase shape: { seq, msg, cat, lvl, ts }
+function processLogLine(lineOrObj, isLive) {
+  if (!lineOrObj) return;
+
+  // Normalise: extract message string + optional category
+  let line, category, level, timestamp;
+  if (typeof lineOrObj === 'object') {
+    line = lineOrObj.message || lineOrObj.msg || '';
+    category = (lineOrObj.category || lineOrObj.cat || '').toLowerCase();
+    level = (lineOrObj.level || lineOrObj.lvl || '').toLowerCase();
+    timestamp = lineOrObj.created_at || (lineOrObj.ts ? new Date(lineOrObj.ts).toISOString() : null);
+  } else {
+    line = lineOrObj;
+    category = '';
+    level = '';
+    timestamp = null;
+  }
   if (!line) return;
 
-  // Deduplicate
-  if (logLines.length > 0 && logLines[logLines.length - 1].raw === line) return;
+  // Deduplicate using sequence number or message fingerprint
+  const dedupKey = (typeof lineOrObj === 'object')
+    ? (lineOrObj.sequence || lineOrObj.seq || line)
+    : line;
+  if (_seenLogKeys.has(dedupKey)) return;
+  _seenLogKeys.add(dedupKey);
 
   const entry = { raw: line, cssClass: 'text-gray-400' };
 
-  // Classify
-  if (/\[STEP:\d+:\d+:\w+\]/.test(line)) {
+  // ── AI-relevant categories → aiEvents ──
+  const AI_CATEGORIES = { council: true, design: true, generate: true };
+  if (AI_CATEGORIES[category]) {
+    entry.cssClass = 'log-ai';
+    const action = _inferAIAction(line);
+    aiEvents.push({
+      type: 'ai',
+      action: action,
+      message: line,
+      category: category,
+      timestamp: timestamp || new Date().toISOString(),
+    });
+  } else if (category === 'test') {
+    const action = _inferTestAction(line);
+    entry.cssClass = action === 'pass' ? 'log-test-pass' : action === 'fail' ? 'log-test-fail' : 'text-neon-yellow';
+    aiEvents.push({
+      type: 'test',
+      action: action,
+      message: line,
+      timestamp: timestamp || new Date().toISOString(),
+    });
+  } else if (category === 'deploy') {
+    entry.cssClass = 'log-deploy';
+  // ── Legacy tag-based parsing (SSE) ──
+  } else if (/\[STEP:\d+:\d+:\w+\]/.test(line)) {
     entry.cssClass = 'log-step';
-    // Parse step
     const m = line.match(/\[STEP:(\d+):(\d+)/);
     if (m) {
       currentStepData = { current: parseInt(m[1]), total: parseInt(m[2]) };
@@ -925,7 +1003,6 @@ function processLogLine(line, isLive) {
     }
   } else if (/\[AI:/.test(line)) {
     entry.cssClass = 'log-ai';
-    // Also add to AI events
     const m = line.match(/\[AI:(\w+)(?::(\d+))?\]\s*(.*)/);
     if (m) {
       aiEvents.push({
@@ -936,14 +1013,9 @@ function processLogLine(line, isLive) {
         timestamp: new Date().toISOString(),
       });
     }
-  } else if (/\[TEST:PASS/.test(line)) {
-    entry.cssClass = 'log-test-pass';
-  } else if (/\[TEST:FAIL/.test(line)) {
-    entry.cssClass = 'log-test-fail';
   } else if (/\[TEST:/.test(line)) {
-    entry.cssClass = 'text-neon-yellow';
-    // Add test events to AI panel
     const m = line.match(/\[TEST:(\w+)(?::(\d+))?\]\s*(.*)/);
+    entry.cssClass = /PASS/.test(line) ? 'log-test-pass' : /FAIL/.test(line) ? 'log-test-fail' : 'text-neon-yellow';
     if (m) {
       aiEvents.push({
         type: 'test',
@@ -955,6 +1027,7 @@ function processLogLine(line, isLive) {
     }
   } else if (/\[DEPLOY\]/.test(line)) {
     entry.cssClass = 'log-deploy';
+  // ── General styling ──
   } else if (/STDERR:|❌|Error|error/.test(line)) {
     entry.cssClass = 'log-error';
   } else if (/✅/.test(line)) {
@@ -966,7 +1039,106 @@ function processLogLine(line, isLive) {
   logLines.push(entry);
 }
 
+/** Infer AI action from message content (emoji/keyword patterns). */
+function _inferAIAction(msg) {
+  if (/🧠/.test(msg)) return 'call';
+  if (/🎨|✨/.test(msg)) return 'done';
+  if (/🔧/.test(msg)) return 'fix';
+  if (/💬|📝/.test(msg)) return 'prompt';
+  if (/✅/.test(msg)) return 'done';
+  if (/❌|⚠️/.test(msg)) return 'error';
+  if (/📄/.test(msg)) return 'fallback';
+  if (/📡/.test(msg)) return 'call';
+  if (/generat/i.test(msg)) return 'done';
+  if (/creat|built/i.test(msg)) return 'done';
+  return 'response';
+}
+
+/** Infer test action from message content. */
+function _inferTestAction(msg) {
+  if (/✅|pass|passed/i.test(msg)) return 'pass';
+  if (/❌|fail|failed/i.test(msg)) return 'fail';
+  if (/🔧|fix|auto.?fix/i.test(msg)) return 'fix';
+  if (/attempt|run|🧪/i.test(msg)) return 'run';
+  return 'run';
+}
+
 // ── Render functions ───────────────────────────────────
+
+/**
+ * Hydrate the pipeline graph and step progress from stored phase data.
+ * Works with both API shape ({phase_name, status}) and Firebase shape ({name, status}).
+ */
+function _hydrateFromPhases(phases, buildStatus) {
+  if (!phases) return;
+
+  // Normalise — API returns an array, Firebase returns an object keyed by phase_number
+  const phaseList = Array.isArray(phases)
+    ? phases
+    : Object.entries(phases).map(([k, v]) => ({ ...v, phase_number: parseInt(k) }));
+
+  if (phaseList.length === 0) return;
+
+  // Map API/Firebase phase_name → pipeline node key
+  const nameToKey = {
+    repository: 'repo', repo: 'repo',
+    council: 'council',
+    design: 'design',
+    generate: 'generate',
+    assemble: 'assemble',
+    test: 'test',
+    deploy: 'deploy',
+    notify: 'notify',
+  };
+
+  let completedCount = 0;
+  let activeIdx = 0;
+
+  phaseList.forEach(p => {
+    const phaseName = p.phase_name || p.name || '';
+    const nodeKey = nameToKey[phaseName.toLowerCase()];
+    if (!nodeKey || !pipeline.nodes[nodeKey]) return;
+
+    const node = pipeline.nodes[nodeKey];
+    const st = (p.status || '').toLowerCase();
+
+    if (st === 'complete' || st === 'done') {
+      node.status = 'done';
+      completedCount++;
+    } else if (st === 'running') {
+      node.status = 'active';
+      activeIdx = p.phase_number || completedCount + 1;
+    } else if (st === 'failed') {
+      node.status = 'failed';
+    }
+
+    if (p.started_at) node.time = new Date(p.started_at);
+    if (p.error_message) node.detail = p.error_message;
+  });
+
+  // For fully complete builds, also mark request as done
+  if (completedCount > 0) {
+    pipeline.nodes.request.status = 'done';
+  }
+
+  // Update step progress bar
+  const current = activeIdx || completedCount;
+  renderStepProgress(current);
+
+  // If the build itself is complete/failed/stalled, apply terminal state
+  if (buildStatus === 'complete' || buildStatus === 'success') {
+    for (const n of Object.values(pipeline.nodes)) {
+      if (n.status === 'active') n.status = 'done';
+    }
+  } else if (buildStatus === 'failed' || buildStatus === 'stalled') {
+    for (const n of Object.values(pipeline.nodes)) {
+      if (n.status === 'active') n.status = 'failed';
+    }
+  }
+
+  // Re-render the pipeline graph
+  if (typeof renderPipeline === 'function') renderPipeline();
+}
 
 function renderStepProgress(current) {
   $stepProgress.innerHTML = STEPS.map((step, i) => {
@@ -1001,13 +1173,13 @@ function renderLog() {
   const html = logLines.map((entry, i) => {
     return `<div class="log-line ${entry.cssClass} py-0.5 px-2 rounded">${escHTML(entry.raw)}</div>`;
   }).join('');
-  if ($logPanel) $logPanel.innerHTML = html || '<div class="text-gray-600">Waiting for build output...</div>';
+  if ($logPanel) $logPanel.innerHTML = html || '<div class="text-center text-gray-500 text-xs font-mono py-8">No logs found</div>';
   if ($logCount) $logCount.textContent = logLines.length;
 }
 
 function renderAI() {
   if (aiEvents.length === 0) {
-    $aiPanel.innerHTML = '<div class="text-center text-gray-600 text-xs font-mono py-8">No AI activity yet</div>';
+    $aiPanel.innerHTML = '<div class="text-center text-gray-500 text-xs font-mono py-8">No AI activity found</div>';
     return;
   }
 

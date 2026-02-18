@@ -177,6 +177,7 @@ async def get_build(
         .where(Build.short_id == short_id)
         .options(
             selectinload(Build.phases),
+            selectinload(Build.logs),
             selectinload(Build.pages),
         )
     )
@@ -210,6 +211,16 @@ async def get_build(
                 finished_at=p.finished_at.isoformat() if p.finished_at else None,
             )
             for p in sorted(build.phases, key=lambda x: x.phase_number)
+        ],
+        log=[
+            LogEntry(
+                sequence=log.sequence,
+                level=log.level,
+                category=log.category,
+                message=log.message,
+                created_at=log.created_at,
+            )
+            for log in sorted(build.logs, key=lambda x: x.sequence)
         ],
         created_at=build.created_at.isoformat() if build.created_at else None,
         started_at=build.started_at.isoformat() if build.started_at else None,
