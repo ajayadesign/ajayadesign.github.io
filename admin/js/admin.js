@@ -345,7 +345,7 @@ async function refreshBuilds() {
 function updateStats() {
   $statTotal.textContent = builds.length;
   $statSuccess.textContent = builds.filter(b => b.status === 'success' || b.status === 'complete').length;
-  $statFailed.textContent = builds.filter(b => b.status === 'failed').length;
+  $statFailed.textContent = builds.filter(b => b.status === 'failed' || b.status === 'stalled').length;
 }
 
 // ── Render build list ──────────────────────────────────
@@ -362,8 +362,9 @@ function renderBuildList() {
   $buildList.innerHTML = builds.map(b => {
     const isSelected = b.id === selectedBuildId;
     const isSuccess = b.status === 'success' || b.status === 'complete';
-    const statusIcon = b.status === 'queued' ? '⏳' : b.status === 'running' ? '🔄' : isSuccess ? '✅' : '❌';
-    const statusClass = b.status === 'queued' ? 'text-gray-500' : b.status === 'running' ? 'text-electric' : isSuccess ? 'text-neon-green' : 'text-brand-link';
+    const isStalled = b.status === 'stalled';
+    const statusIcon = b.status === 'queued' ? '⏳' : b.status === 'running' ? '🔄' : isStalled ? '⚠️' : isSuccess ? '✅' : '❌';
+    const statusClass = b.status === 'queued' ? 'text-gray-500' : b.status === 'running' ? 'text-electric' : isStalled ? 'text-neon-orange' : isSuccess ? 'text-neon-green' : 'text-brand-link';
     const time = formatTime(b.started);
     const duration = b.finished ? formatDuration(b.started, b.finished) : b.status === 'running' ? 'running...' : '';
 
@@ -381,6 +382,7 @@ function renderBuildList() {
         </div>
         ${duration ? `<div class="text-[0.65rem] text-gray-600 mt-1">⏱ ${duration}</div>` : ''}
         ${b.status === 'running' ? '<div class="mt-1.5 h-1 bg-surface-3 rounded-full overflow-hidden"><div class="h-full bg-electric rounded-full animate-pulse" style="width:60%"></div></div>' : ''}
+        ${isStalled ? '<div class="text-[0.6rem] text-neon-orange mt-1">⚠️ Interrupted — tap to retry</div>' : ''}
       </button>`;
   }).join('');
 }
@@ -450,6 +452,16 @@ function _populateBuildHeader(build) {
 
   _updateBuildStatusBadge(build.status);
 
+  // Show/hide retry button for stalled or failed builds
+  const $retryBtn = document.getElementById('build-retry-btn');
+  if ($retryBtn) {
+    if (build.status === 'stalled' || build.status === 'failed') {
+      $retryBtn.classList.remove('hidden');
+    } else {
+      $retryBtn.classList.add('hidden');
+    }
+  }
+
   const metas = [];
   if (build.niche) metas.push(`<span>🏷 ${esc(build.niche)}</span>`);
   if (build.email) metas.push(`<span>📧 ${esc(build.email)}</span>`);
@@ -467,11 +479,63 @@ function _updateBuildStatusBadge(status) {
     running: { text: 'RUNNING', cls: 'bg-electric/20 text-electric' },
     success: { text: 'SUCCESS', cls: 'bg-neon-green/20 text-neon-green' },
     complete:{ text: 'SUCCESS', cls: 'bg-neon-green/20 text-neon-green' },
+    stalled: { text: 'STALLED', cls: 'bg-neon-orange/20 text-neon-orange' },
     failed:  { text: 'FAILED',  cls: 'bg-brand-link/20 text-brand-link' },
   };
   const s = statusMap[displayStatus] || { text: (status || '').toUpperCase(), cls: 'bg-gray-800 text-gray-400' };
   $buildStatus.textContent = s.text;
   $buildStatus.className = `px-2.5 py-1 rounded-full text-xs font-mono font-semibold ${s.cls}`;
+}
+
+/** Retry a stalled or failed build. */
+async function retryBuild() {
+  if (!selectedBuildId) return;
+
+  const $btn = document.getElementById('build-retry-btn');
+  if ($btn) {
+    $btn.disabled = true;
+    $btn.textContent = '⏳ Retrying...';
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/builds/${selectedBuildId}/retry`, {
+      method: 'POST',
+      signal: AbortSignal.timeout(10000),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
+    // Reset pipeline graph and reconnect
+    if (typeof resetPipeline === 'function') {
+      resetPipeline();
+      renderPipeline();
+    }
+
+    aiEvents = [];
+    logLines = [];
+    renderLog();
+    renderAI();
+
+    _updateBuildStatusBadge('queued');
+    if ($btn) { $btn.classList.add('hidden'); }
+
+    // Reconnect SSE for the retried build
+    if (eventSource) { eventSource.close(); eventSource = null; }
+    connectSSE(selectedBuildId);
+
+    // Refresh build list
+    setTimeout(refreshBuilds, 1000);
+
+  } catch (err) {
+    alert(`Retry failed: ${err.message}`);
+    if ($btn) {
+      $btn.disabled = false;
+      $btn.textContent = '🔄 Retry Build';
+    }
+  }
 }
 
 /** Attach Firebase real-time listeners for a build's status, phases, and logs. */
@@ -494,6 +558,18 @@ function _attachFirebaseBuildListeners(buildId, isPrimary) {
     // Always update status badge in real-time
     _updateBuildStatusBadge(data.status);
 
+    // Show/hide retry button based on Firebase status
+    const $retryBtn = document.getElementById('build-retry-btn');
+    if ($retryBtn) {
+      if (data.status === 'stalled' || data.status === 'failed') {
+        $retryBtn.classList.remove('hidden');
+        $retryBtn.disabled = false;
+        $retryBtn.textContent = '🔄 Retry Build';
+      } else {
+        $retryBtn.classList.add('hidden');
+      }
+    }
+
     // Update phase progress from Firebase
     if (data.phases) {
       const phaseEntries = Object.values(data.phases);
@@ -505,8 +581,8 @@ function _attachFirebaseBuildListeners(buildId, isPrimary) {
       renderStepProgress(currentPhase);
     }
 
-    // Build finished — update stats
-    if (data.status === 'complete' || data.status === 'failed') {
+    // Build finished or stalled — update stats
+    if (data.status === 'complete' || data.status === 'failed' || data.status === 'stalled') {
       refreshBuilds();
     }
   });

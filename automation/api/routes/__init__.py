@@ -16,7 +16,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from api.database import get_db
-from api.models.build import Build, BuildLog
+from api.models.build import Build, BuildLog, BuildPhase, BuildPage
 from api.schemas import (
     BuildRequest,
     BuildResponse,
@@ -242,6 +242,87 @@ async def get_build_logs(
         )
         for log in sorted(build.logs, key=lambda x: x.sequence)
     ]
+
+
+# ── Retry Build ─────────────────────────────────────────
+
+@router.post("/builds/{short_id}/retry", response_model=BuildResponse, tags=["builds"])
+async def retry_build(
+    short_id: str,
+    background_tasks: BackgroundTasks,
+    session: AsyncSession = Depends(get_db),
+):
+    """Retry a stalled or failed build — clears partial data and relaunches the pipeline."""
+    stmt = (
+        select(Build)
+        .where(Build.short_id == short_id)
+        .options(
+            selectinload(Build.phases),
+            selectinload(Build.logs),
+            selectinload(Build.pages),
+        )
+    )
+    result = await session.execute(stmt)
+    build = result.scalar_one_or_none()
+
+    if not build:
+        raise HTTPException(status_code=404, detail=f"Build {short_id} not found")
+
+    if build.status not in ("stalled", "failed"):
+        raise HTTPException(
+            status_code=409,
+            detail=f"Build {short_id} is '{build.status}' — only stalled or failed builds can be retried",
+        )
+
+    # Clear partial phases, logs, and pages from previous attempt
+    for phase in list(build.phases):
+        await session.delete(phase)
+    for log in list(build.logs):
+        await session.delete(log)
+    for page in list(build.pages):
+        await session.delete(page)
+
+    # Reset build state
+    build.status = "queued"
+    build.started_at = None
+    build.finished_at = None
+    build.error_message = None
+    build.blueprint = None
+    build.design_system = None
+    build.pages_count = None
+    # Keep repo_name/repo_full/live_url if they exist (Phase 1 may have succeeded)
+
+    await session.commit()
+
+    # Clear stale Firebase build data (phases, logs) for fresh start
+    try:
+        from api.services.firebase import sync_build_to_firebase
+        import firebase_admin.db as firebase_db_mod
+        ref = firebase_db_mod.reference(f"builds/{short_id}")
+        ref.update({
+            "status": "queued",
+            "started_at": "",
+            "finished_at": "",
+            "phases": None,
+            "log": None,
+        })
+    except Exception:
+        pass  # Non-critical
+
+    # Create fresh SSE queue and launch pipeline
+    _event_queues[short_id] = asyncio.Queue()
+    background_tasks.add_task(_run_pipeline, build.id, short_id)
+
+    logger.info("🔁 Retrying build %s (%s)", short_id, build.client_name)
+
+    return BuildResponse(
+        id=build.id,
+        short_id=short_id,
+        status="queued",
+        client_name=build.client_name,
+        niche=build.niche,
+        message=f"Build {short_id} retrying. Stream at /api/v1/builds/{short_id}/stream",
+    )
 
 
 # ── SSE Stream ──────────────────────────────────────────
