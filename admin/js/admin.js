@@ -243,6 +243,38 @@ function switchContentTab(tab) {
       $panel.classList.add('hidden');
     }
   });
+  // On mobile, open the slide-up panel when a tab is tapped
+  if (window.innerWidth < 768) openContentPanel();
+}
+
+// ── Mobile slide-up panel for Pipeline/AI/Log ─────────
+function openContentPanel() {
+  const wrap = document.getElementById('content-wrapper');
+  const overlay = document.getElementById('content-overlay');
+  if (!wrap || !overlay) return;
+  wrap.classList.remove('panel-closing');
+  wrap.classList.add('panel-open');
+  overlay.classList.remove('hidden');
+  // prevent body scroll while panel is open
+  document.body.style.overflow = 'hidden';
+}
+
+function closeContentPanel() {
+  const wrap = document.getElementById('content-wrapper');
+  const overlay = document.getElementById('content-overlay');
+  if (!wrap || !overlay) return;
+  wrap.classList.add('panel-closing');
+  overlay.classList.add('hidden');
+  document.body.style.overflow = '';
+  // remove classes after transition ends
+  wrap.addEventListener('transitionend', function handler() {
+    wrap.classList.remove('panel-open', 'panel-closing');
+    wrap.removeEventListener('transitionend', handler);
+  }, { once: true });
+  // fallback in case transitionend doesn't fire
+  setTimeout(() => {
+    wrap.classList.remove('panel-open', 'panel-closing');
+  }, 400);
 }
 
 // ── Connection check (Firebase-first, API fallback) ───
