@@ -42,6 +42,15 @@
       ".read": "auth != null",
       ".write": true,
       ".indexOn": ["status"]
+    },
+    "commands": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "site_analytics": {
+      ".read": "auth != null",
+      ".write": true,
+      ".indexOn": ["timestamp"]
     }
   }
 }
