@@ -14,6 +14,7 @@ class BuildStatus(str, Enum):
     COMPLETE = "complete"
     FAILED = "failed"
     CANCELLED = "cancelled"
+    STALLED = "stalled"
 
 
 class BuildRequest(BaseModel):

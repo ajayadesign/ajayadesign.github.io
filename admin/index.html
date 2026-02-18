@@ -127,6 +127,10 @@
       border-color: rgba(255,107,107,0.4);
       background: rgba(255,107,107,0.03);
     }
+    .pipe-node.stalled {
+      border-color: rgba(255,152,0,0.4);
+      background: rgba(255,152,0,0.05);
+    }
 
     /* Vertical connector lines */
     .pipe-connector {
@@ -896,6 +900,7 @@
             <div class="flex items-center gap-3">
               <span id="build-status-badge" class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold"></span>
               <h2 id="build-client" class="font-mono text-lg font-bold text-white"></h2>
+              <button id="build-retry-btn" onclick="retryBuild()" class="hidden px-3 py-1 rounded-lg text-xs font-mono font-semibold bg-neon-orange/20 text-neon-orange border border-neon-orange/30 hover:bg-neon-orange/30 transition">🔄 Retry Build</button>
             </div>
             <div class="flex items-center gap-3 text-xs font-mono text-gray-500">
               <span id="build-id-display"></span>

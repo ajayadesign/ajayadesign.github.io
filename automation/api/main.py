@@ -6,6 +6,7 @@ import asyncio
 import uuid
 import logging
 from contextlib import asynccontextmanager
+from datetime import datetime, timedelta, timezone
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -61,6 +62,112 @@ async def _process_build(build_id: str) -> None:
             await orchestrator.run()
         except Exception as e:
             logger.error("Queued build %s failed: %s", build_id, e)
+
+
+# ── Build Watchdog ──────────────────────────────────────────────
+# Detects builds stuck in "running" with no progress and marks them
+# "stalled" so the admin can see and retry.  Runs on startup (stale_minutes=0
+# catches anything orphaned by the previous process) and periodically
+# (stale_minutes=15 catches live hangs).
+
+STALE_BUILD_MINUTES = 15  # a phase should never take this long
+
+
+async def recover_stale_builds(stale_minutes: int = STALE_BUILD_MINUTES) -> int:
+    """
+    Find builds stuck in 'running' longer than *stale_minutes*.
+    On startup call with stale_minutes=0 to catch every orphan.
+    Returns count of builds marked stalled.
+    """
+    from sqlalchemy.orm import selectinload
+    from api.services.firebase import sync_build_to_firebase
+    from api.routes.activity import log_activity
+
+    cutoff = datetime.now(timezone.utc) - timedelta(minutes=stale_minutes)
+    stalled = 0
+
+    async with async_session() as session:
+        stmt = (
+            select(Build)
+            .where(Build.status == "running")
+            .options(selectinload(Build.phases))
+        )
+        if stale_minutes > 0:
+            # Only catch builds whose last activity is older than cutoff
+            stmt = stmt.where(Build.started_at < cutoff)
+        result = await session.execute(stmt)
+        orphans = result.scalars().all()
+
+        for build in orphans:
+            # Determine which phase it was stuck on
+            running_phase = next(
+                (p for p in sorted(build.phases, key=lambda p: p.phase_number)
+                 if p.status == "running"),
+                None,
+            )
+            stuck_phase = running_phase.phase_name if running_phase else "unknown"
+            stuck_num   = running_phase.phase_number if running_phase else "?"
+
+            age_min = 0
+            if build.started_at:
+                age_min = int((datetime.now(timezone.utc) - build.started_at).total_seconds() / 60)
+
+            reason = (
+                f"Build stalled during phase {stuck_num} ({stuck_phase}) "
+                f"after {age_min} min with no progress. "
+                f"Use the Retry button to restart."
+            )
+
+            build.status = "stalled"
+            build.error_message = reason
+            await session.commit()
+
+            # Sync to Firebase
+            try:
+                sync_build_to_firebase({
+                    "short_id": build.short_id,
+                    "client_name": build.client_name,
+                    "niche": build.niche,
+                    "email": build.email or "",
+                    "status": "stalled",
+                    "created_at": build.created_at.isoformat() if build.created_at else "",
+                    "started_at": build.started_at.isoformat() if build.started_at else "",
+                    "finished_at": "",
+                    "live_url": build.live_url or "",
+                    "repo_full": build.repo_full or "",
+                    "pages_count": build.pages_count or 0,
+                })
+            except Exception:
+                pass
+
+            # Log to activity history
+            try:
+                await log_activity(
+                    entity_type="build",
+                    entity_id=build.short_id,
+                    action="auto_stalled",
+                    icon="⚠️🔧",
+                    description=(
+                        f"Build for {build.client_name} auto-marked stalled — "
+                        f"stuck in phase {stuck_num} ({stuck_phase}) for {age_min} min"
+                    ),
+                    actor="system:watchdog",
+                    metadata={
+                        "stuck_phase": stuck_phase,
+                        "stuck_phase_number": stuck_num,
+                        "age_minutes": age_min,
+                    },
+                )
+            except Exception:
+                pass  # activity log is best-effort
+
+            stalled += 1
+            logger.warning(
+                "⚠️  Watchdog: build %s (%s) stalled in phase %s/%s after %d min",
+                build.short_id, build.client_name, stuck_num, stuck_phase, age_min,
+            )
+
+    return stalled
 
 
 async def reconcile_firebase_leads() -> list[dict]:
@@ -434,11 +541,16 @@ async def periodic_firebase_poll(interval: int = 60) -> None:
             # Poll for signatures submitted via Firebase bridge
             await process_firebase_signatures()
 
-            # Periodically re-sync contracts & invoices → Firebase mirror
-            # and check for payment reminders
+            # Periodically re-sync contracts & invoices → Firebase mirror,
+            # check for payment reminders, and detect stalled builds
             if cycle % RESYNC_EVERY == 0:
                 await reconcile_contracts_invoices_to_firebase()
                 await check_payment_plan_reminders()
+
+                # Watchdog: catch builds stuck in "running" for 15+ min
+                stalled = await recover_stale_builds(STALE_BUILD_MINUTES)
+                if stalled:
+                    logger.warning("🔧 Watchdog recovered %d stalled build(s)", stalled)
 
         except asyncio.CancelledError:
             break
@@ -637,6 +749,11 @@ async def lifespan(app: FastAPI):
     logger.info("🚀 Starting AjayaDesign Automation API v2.0.0-python")
     await init_db()
     logger.info("✅ Database ready")
+
+    # Recover builds orphaned by a previous API restart (stale_minutes=0 → all running)
+    stalled_count = await recover_stale_builds(stale_minutes=0)
+    if stalled_count:
+        logger.warning("⚠️  Startup: recovered %d orphaned build(s) → marked stalled", stalled_count)
 
     # Initialize Firebase bridge (optional — needs service account key)
     fb_ok = init_firebase(
