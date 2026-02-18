@@ -250,7 +250,10 @@ async def reconcile_contracts_invoices_to_firebase() -> None:
                     "due_date": inv.due_date.isoformat() if inv.due_date else None,
                     "paid_at": inv.paid_at.isoformat() if inv.paid_at else None,
                     "contract_short_id": contract_short_id,
+                    "items": inv.items or [],
                     "items_count": len(inv.items) if inv.items else 0,
+                    "notes": inv.notes or "",
+                    "payment_plan": plan,
                     "payment_plan_enabled": inv.payment_plan_enabled or "false",
                     "pending_installments": pending_installments,
                 })

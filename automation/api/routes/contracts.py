@@ -92,7 +92,10 @@ def _sync_invoice_fb(inv: Invoice) -> None:
             "due_date": str(inv.due_date) if inv.due_date else None,
             "paid_at": inv.paid_at.isoformat() if inv.paid_at else None,
             "contract_short_id": "",
+            "items": inv.items or [],
             "items_count": len(inv.items or []),
+            "notes": inv.notes or "",
+            "payment_plan": plan,
             "payment_plan_enabled": inv.payment_plan_enabled or "false",
             "pending_installments": pending_installments,
         })
