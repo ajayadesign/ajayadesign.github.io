@@ -250,7 +250,7 @@ async def reconcile_contracts_invoices_to_firebase() -> None:
         return
 
     from api.models.contract import Contract, Invoice
-    from api.services.firebase import sync_contract_to_firebase, sync_invoice_to_firebase, sync_portfolio_site_to_firebase, sync_activity_to_firebase
+    from api.services.firebase import sync_contract_to_firebase, sync_invoice_to_firebase, sync_portfolio_site_to_firebase, sync_activity_to_firebase, sync_build_to_firebase
 
     synced_contracts = 0
     synced_invoices = 0
@@ -277,6 +277,20 @@ async def reconcile_contracts_invoices_to_firebase() -> None:
                     "brand_colors": getattr(b, "brand_colors", "") or "",
                     "tagline": getattr(b, "tagline", "") or "",
                     "status": b.status or "complete",
+                })
+                # Also sync to builds/ node for admin dashboard Firebase fallback
+                sync_build_to_firebase({
+                    "short_id": b.short_id,
+                    "client_name": b.client_name or "",
+                    "niche": b.niche or "",
+                    "email": getattr(b, "email", "") or "",
+                    "status": b.status or "complete",
+                    "created_at": b.created_at.isoformat() if b.created_at else "",
+                    "started_at": b.started_at.isoformat() if getattr(b, "started_at", None) else "",
+                    "finished_at": b.finished_at.isoformat() if getattr(b, "finished_at", None) else "",
+                    "live_url": b.live_url or "",
+                    "repo_full": getattr(b, "repo_full", "") or "",
+                    "protected": getattr(b, "protected", False),
                 })
                 synced_portfolio += 1
             except Exception as e:
