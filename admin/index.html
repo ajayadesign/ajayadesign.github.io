@@ -230,39 +230,107 @@
       #sidebar { bottom: 3rem; box-shadow: none !important; }
     }
 
-    /* ═══ Mobile slide-up panel for Pipeline/AI/Log ═══ */
+    /* ═══ Mobile bottom-sheet drawer for Pipeline/AI/Log ═══ */
     @media (max-width: 767px) {
-      #content-wrapper.panel-open {
-        position: fixed;
+      /* The drawer is always fixed on mobile once a build is selected */
+      #content-wrapper {
+        position: fixed !important;
         left: 0; right: 0;
-        /* stop above the 3rem (h-12) bottom nav bar */
         bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
-        top: 10vh;
         z-index: 45;
         background: var(--surface-1, #12121A);
-        border-top-left-radius: 1rem;
-        border-top-right-radius: 1rem;
-        box-shadow: 0 -8px 30px rgba(0,0,0,0.5);
-        transform: translateY(0);
-        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        border-top-left-radius: 1.25rem;
+        border-top-right-radius: 1.25rem;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
         display: flex;
         flex-direction: column;
+        will-change: transform;
+        /* Default: collapsed peek state — only tabs visible */
+        /* Height is set dynamically by JS; initial = peek height */
+        overflow: hidden;
       }
-      #content-wrapper.panel-open .tab-content {
+      /* When JS is driving the gesture, no CSS transition (instant follow) */
+      #content-wrapper.sheet-dragging {
+        transition: none !important;
+      }
+      /* Animated snap transitions between states */
+      #content-wrapper.sheet-animating {
+        transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      /* The drag handle — always visible on mobile */
+      #content-handle {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 0 4px;
+        cursor: grab;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      #content-handle .handle-pill {
+        width: 36px;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255,255,255,0.25);
+        transition: background 0.2s, width 0.2s;
+      }
+      #content-wrapper.sheet-dragging #content-handle .handle-pill {
+        width: 48px;
+        background: rgba(0,200,255,0.6);
+      }
+      /* Glow pulse to attract attention when build loads */
+      @keyframes sheetPeekGlow {
+        0%, 100% { box-shadow: 0 -4px 20px rgba(0,0,0,0.4); }
+        50% { box-shadow: 0 -4px 30px rgba(0,200,255,0.35), 0 -2px 10px rgba(0,200,255,0.15); }
+      }
+      #content-wrapper.sheet-glow {
+        animation: sheetPeekGlow 1.5s ease-in-out 2;
+      }
+      /* Tabs bar styling in sheet */
+      #content-wrapper .sheet-tabs {
+        flex-shrink: 0;
+      }
+      /* Content area fills remaining space & scrolls */
+      #content-wrapper .sheet-body {
         flex: 1 1 0;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-y: contain;
+        min-height: 0;
       }
-      #content-wrapper.panel-closing {
-        transform: translateY(100%);
+      /* State indicator dots */
+      #sheet-dots {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+        padding: 0 0 6px;
       }
-      #content-wrapper:not(.panel-open) {
-        /* normal flow — just limit height so it's a preview stripe */
+      #sheet-dots .dot {
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.15);
+        transition: background 0.3s, transform 0.3s;
       }
-      #content-wrapper.panel-open #content-handle {
-        display: flex !important;
+      #sheet-dots .dot.active {
+        background: rgba(0,200,255,0.8);
+        transform: scale(1.4);
       }
+      /* Overlay */
+      #content-overlay {
+        transition: opacity 0.3s;
+      }
+      #content-overlay.visible {
+        opacity: 1;
+      }
+      #content-overlay.fading {
+        opacity: 0;
+      }
+    }
+    /* Desktop: hide sheet-only elements */
+    @media (min-width: 768px) {
+      #sheet-dots { display: none !important; }
+      #content-handle { display: none !important; }
     }
   </style>
 </head>
@@ -960,13 +1028,19 @@
         <!-- Content Area: Pipeline / AI / Logs -->
         <div id="content-wrapper" class="flex-1 flex flex-col overflow-hidden md:relative">
 
-          <!-- Mobile drag-handle -->
-          <div id="content-handle" class="hidden items-center justify-center py-2 bg-surface-1 rounded-t-2xl cursor-pointer md:!hidden" onclick="closeContentPanel()">
-            <div class="w-10 h-1 rounded-full bg-gray-600"></div>
+          <!-- Mobile drag-handle (touch target for gestures) -->
+          <div id="content-handle" class="hidden">
+            <div class="handle-pill"></div>
+          </div>
+          <!-- State indicator dots (peek · half · full) -->
+          <div id="sheet-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
           </div>
 
           <!-- Content Tabs -->
-          <div class="flex border-b border-border bg-surface-1 overflow-x-auto no-scrollbar">
+          <div class="sheet-tabs flex border-b border-border bg-surface-1 overflow-x-auto no-scrollbar">
             <button onclick="switchContentTab('pipeline')" id="ctab-pipeline"
               class="px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-widest border-b-2 border-electric text-electric transition">
               ⚡ Pipeline
@@ -987,25 +1061,28 @@
             </div>
           </div>
 
-          <!-- ═══ Pipeline Graph View ═══ -->
-          <div id="content-pipeline" class="flex-1 overflow-y-auto p-3 md:p-6">
-            <div id="pipeline-graph" class="pipeline-container max-w-4xl mx-auto">
-              <!-- Rendered by JS -->
-              <div class="text-center text-gray-600 text-xs font-mono py-12">Waiting for build to start...</div>
+          <!-- Sheet body: scrollable content area -->
+          <div class="sheet-body">
+            <!-- ═══ Pipeline Graph View ═══ -->
+            <div id="content-pipeline" class="flex-1 overflow-y-auto p-3 md:p-6">
+              <div id="pipeline-graph" class="pipeline-container max-w-4xl mx-auto">
+                <!-- Rendered by JS -->
+                <div class="text-center text-gray-600 text-xs font-mono py-12">Waiting for build to start...</div>
+              </div>
             </div>
-          </div>
 
-          <!-- ═══ AI Activity Panel (hidden initially) ═══ -->
-          <div id="content-ai" class="flex-1 overflow-y-auto p-3 space-y-3 hidden">
-            <div id="ai-panel" class="space-y-3">
-              <div class="text-center text-gray-600 text-xs font-mono py-8">No AI activity yet</div>
+            <!-- ═══ AI Activity Panel (hidden initially) ═══ -->
+            <div id="content-ai" class="flex-1 overflow-y-auto p-3 space-y-3 hidden">
+              <div id="ai-panel" class="space-y-3">
+                <div class="text-center text-gray-600 text-xs font-mono py-8">No AI activity yet</div>
+              </div>
             </div>
-          </div>
 
-          <!-- ═══ Build Log Panel (hidden initially) ═══ -->
-          <div id="content-log" class="flex-1 overflow-y-auto p-4 font-mono text-xs leading-relaxed hidden">
-            <div id="log-panel">
-              <div class="text-gray-600">Waiting for build output...</div>
+            <!-- ═══ Build Log Panel (hidden initially) ═══ -->
+            <div id="content-log" class="flex-1 overflow-y-auto p-4 font-mono text-xs leading-relaxed hidden">
+              <div id="log-panel">
+                <div class="text-gray-600">Waiting for build output...</div>
+              </div>
             </div>
           </div>
 
