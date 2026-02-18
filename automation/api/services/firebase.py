@@ -536,6 +536,43 @@ def clear_retry_command(key: str, result_status: str = "done", message: str = ""
         return False
 
 
+def get_pending_build_commands(command_type: str) -> list[dict]:
+    """Fetch pending commands from /commands/{command_type}/ (protect, delete)."""
+    if not _initialized:
+        return []
+    try:
+        ref = firebase_db.reference(f"commands/{command_type}")
+        data = ref.get()
+        if not data or not isinstance(data, dict):
+            return []
+        results = []
+        for key, val in data.items():
+            if isinstance(val, dict) and val.get("status") == "pending":
+                val["_key"] = key
+                results.append(val)
+        return results
+    except Exception as e:
+        logger.error(f"get_pending_build_commands({command_type}) failed: {e}")
+        return []
+
+
+def clear_build_command(command_type: str, key: str, result_status: str = "done", message: str = "") -> bool:
+    """Mark a build command as processed so it isn't picked up again."""
+    if not _initialized:
+        return False
+    try:
+        ref = firebase_db.reference(f"commands/{command_type}/{key}")
+        ref.update({
+            "status": result_status,
+            "result": message,
+            "processed_at": datetime.now(timezone.utc).isoformat(),
+        })
+        return True
+    except Exception as e:
+        logger.error(f"clear_build_command({command_type}/{key}) failed: {e}")
+        return False
+
+
 def deploy_database_rules(rules_path: str = "") -> bool:
     """
     Deploy Firebase RTDB security rules using the Admin SDK REST API.

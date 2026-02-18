@@ -612,6 +612,9 @@ async function toggleProtection() {
   const $btn = document.getElementById('build-protect-btn');
   if ($btn) { $btn.disabled = true; $btn.textContent = '⏳...'; }
 
+  let apiOk = false;
+
+  // ── Attempt 1: direct API call ──
   try {
     const res = await fetch(`${API_BASE}/builds/${selectedBuildId}/protect`, {
       method: 'PATCH',
@@ -630,12 +633,35 @@ async function toggleProtection() {
     // Update UI
     _updateProtectDeleteButtons({ protected: data.protected, status: build?.status || 'complete' });
     renderBuildList();
+    apiOk = true;
   } catch (err) {
-    console.error('[Admin] Toggle protection failed:', err);
-    alert(`Failed to toggle protection: ${err.message}`);
-  } finally {
-    if ($btn) $btn.disabled = false;
+    console.warn('[Admin] API protect toggle failed, trying Firebase fallback:', err.message);
   }
+
+  // ── Attempt 2: Firebase RTDB command (server picks it up on next poll / startup) ──
+  if (!apiOk && window.__db) {
+    try {
+      const cmdRef = window.__db.ref('commands/protect').push();
+      await cmdRef.set({
+        build_id: selectedBuildId,
+        status: 'pending',
+        requested_at: new Date().toISOString(),
+        requested_by: currentUser ? currentUser.email : 'admin',
+      });
+      console.info('[Admin] Protect command written to Firebase — server will pick it up');
+      alert('Server unreachable — protection toggle queued. It will apply when the server comes back online.');
+      apiOk = true;
+    } catch (fbErr) {
+      console.error('[Admin] Firebase protect fallback also failed:', fbErr);
+      alert(`Toggle protection failed: API unreachable and Firebase write failed.\n${fbErr.message}`);
+    }
+  }
+
+  if (!apiOk && !window.__db) {
+    alert('Toggle protection failed: API unreachable and Firebase is not connected.');
+  }
+
+  if ($btn) $btn.disabled = false;
 }
 
 /** Delete a build — confirms, calls API, cleans up GitHub repo + submodule. */
@@ -669,6 +695,9 @@ async function deleteBuild() {
   const $btn = document.getElementById('build-delete-btn');
   if ($btn) { $btn.disabled = true; $btn.textContent = '⏳ Deleting...'; }
 
+  let apiOk = false;
+
+  // ── Attempt 1: direct API call ──
   try {
     const res = await fetch(`${API_BASE}/builds/${selectedBuildId}`, {
       method: 'DELETE',
@@ -687,22 +716,48 @@ async function deleteBuild() {
       resultMsg += `\n\n⚠️ Some cleanup steps had issues:\n` + data.cleanup_errors.join('\n');
     }
     alert(resultMsg);
-
-    // Reset UI
-    selectedBuildId = null;
-    _detachFirebaseBuildListeners();
-    if (eventSource) { eventSource.close(); eventSource = null; }
-    $buildDetail.classList.add('hidden');
-    $emptyState.classList.remove('hidden');
-
-    // Refresh
-    await refreshBuilds();
-
+    apiOk = true;
   } catch (err) {
-    console.error('[Admin] Delete build failed:', err);
-    alert(`Delete failed: ${err.message}`);
-    if ($btn) { $btn.disabled = false; $btn.textContent = '🗑️ Delete'; }
+    console.warn('[Admin] API delete failed, trying Firebase fallback:', err.message);
   }
+
+  // ── Attempt 2: Firebase RTDB command (server picks it up on next poll / startup) ──
+  if (!apiOk && window.__db) {
+    try {
+      const cmdRef = window.__db.ref('commands/delete').push();
+      await cmdRef.set({
+        build_id: selectedBuildId,
+        client_name: name,
+        status: 'pending',
+        requested_at: new Date().toISOString(),
+        requested_by: currentUser ? currentUser.email : 'admin',
+      });
+      console.info('[Admin] Delete command written to Firebase — server will pick it up');
+      alert(`Server unreachable — delete command for "${name}" queued.\nIt will be processed when the server comes back online (repo + submodule cleanup included).`);
+      apiOk = true;
+    } catch (fbErr) {
+      console.error('[Admin] Firebase delete fallback also failed:', fbErr);
+      alert(`Delete failed: API unreachable and Firebase write failed.\n${fbErr.message}`);
+      if ($btn) { $btn.disabled = false; $btn.textContent = '🗑️ Delete'; }
+      return;
+    }
+  }
+
+  if (!apiOk) {
+    alert('Delete failed: API unreachable and Firebase is not connected.');
+    if ($btn) { $btn.disabled = false; $btn.textContent = '🗑️ Delete'; }
+    return;
+  }
+
+  // Reset UI
+  selectedBuildId = null;
+  _detachFirebaseBuildListeners();
+  if (eventSource) { eventSource.close(); eventSource = null; }
+  $buildDetail.classList.add('hidden');
+  $emptyState.classList.remove('hidden');
+
+  // Refresh
+  await refreshBuilds();
 }
 
 /** Attach Firebase real-time listeners for a build's status, phases, and logs. */

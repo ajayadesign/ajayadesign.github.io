@@ -601,6 +601,166 @@ async def process_firebase_retry_commands() -> None:
             clear_retry_command(key, "error", str(e))
 
 
+async def _delete_build_internal(short_id: str) -> dict:
+    """Shared delete logic — used by both the API route and the Firebase command poller.
+
+    Returns dict with {deleted, client_name, repo_deleted, cleanup_errors}.
+    Raises ValueError if the build can't be deleted.
+    """
+    from sqlalchemy.orm import selectinload
+    import os, shutil
+
+    async with async_session() as session:
+        stmt = (
+            select(Build)
+            .where(Build.short_id == short_id)
+            .options(
+                selectinload(Build.phases),
+                selectinload(Build.logs),
+                selectinload(Build.pages),
+            )
+        )
+        result = await session.execute(stmt)
+        build = result.scalar_one_or_none()
+
+        if not build:
+            raise ValueError(f"Build {short_id} not found")
+        if build.protected:
+            raise ValueError(f"Build {short_id} is protected — unprotect first")
+        if build.status == "running":
+            raise ValueError(f"Build {short_id} is running — wait for it to finish")
+
+        repo_name = build.repo_name
+        repo_full = build.repo_full
+        client_name = build.client_name
+
+        # 1. Delete from DB (cascades)
+        await session.delete(build)
+        await session.commit()
+
+    # 2. Cleanup GitHub repo + submodule (best-effort)
+    cleanup_errors = []
+
+    if repo_full:
+        try:
+            from api.services.git import try_cmd
+            ok, output = await try_cmd(f'gh repo delete "{repo_full}" --yes', timeout=30)
+            if ok:
+                logger.info("🗑️ Deleted GitHub repo: %s", repo_full)
+            else:
+                cleanup_errors.append(f"GitHub repo delete failed: {output}")
+                logger.warning("Failed to delete GitHub repo %s: %s", repo_full, output)
+        except Exception as exc:
+            cleanup_errors.append(f"GitHub repo delete error: {exc}")
+
+    if repo_name:
+        try:
+            from api.services.git import try_cmd
+            parent_repo = os.environ.get("MAIN_SITE_DIR", "/site/ajayadesign.github.io")
+            if os.path.isdir(parent_repo):
+                await try_cmd(f'git submodule deinit -f "{repo_name}"', cwd=parent_repo, timeout=30)
+                await try_cmd(f'git rm -f "{repo_name}"', cwd=parent_repo, timeout=30)
+                modules_path = os.path.join(parent_repo, ".git", "modules", repo_name)
+                if os.path.isdir(modules_path):
+                    shutil.rmtree(modules_path, ignore_errors=True)
+                await try_cmd(
+                    f'git add -A && git commit -m "chore: remove {repo_name} submodule (build deleted)"',
+                    cwd=parent_repo, timeout=30,
+                )
+                await try_cmd('git push', cwd=parent_repo, timeout=60)
+                logger.info("🗑️ Removed submodule: %s", repo_name)
+            else:
+                cleanup_errors.append(f"Parent repo not found at {parent_repo}")
+        except Exception as exc:
+            cleanup_errors.append(f"Submodule removal error: {exc}")
+
+    # 3. Remove from Firebase
+    try:
+        import firebase_admin.db as firebase_db_mod
+        firebase_db_mod.reference(f"builds/{short_id}").delete()
+        logger.info("🗑️ Removed Firebase build data: %s", short_id)
+    except Exception:
+        pass
+
+    logger.info("🗑️ Deleted build %s (%s) — repo: %s", short_id, client_name, repo_full or "none")
+
+    return {
+        "short_id": short_id,
+        "deleted": True,
+        "client_name": client_name,
+        "repo_deleted": repo_full if repo_full and not cleanup_errors else None,
+        "cleanup_errors": cleanup_errors if cleanup_errors else None,
+    }
+
+
+async def process_firebase_build_commands() -> None:
+    """Pick up protect/delete commands written to Firebase RTDB by the admin UI
+    (when the admin can't reach the API directly)."""
+    from api.services.firebase import get_pending_build_commands, clear_build_command, is_initialized
+
+    if not is_initialized():
+        return
+
+    # ── Protect commands ──
+    for cmd in get_pending_build_commands("protect"):
+        short_id = cmd.get("build_id", "")
+        key = cmd.get("_key", "")
+        if not short_id:
+            clear_build_command("protect", key, "error", "Missing build_id")
+            continue
+
+        logger.info("🔒 Firebase protect command for build %s", short_id)
+        try:
+            async with async_session() as session:
+                stmt = select(Build).where(Build.short_id == short_id)
+                result = await session.execute(stmt)
+                build = result.scalar_one_or_none()
+                if not build:
+                    clear_build_command("protect", key, "error", f"Build {short_id} not found")
+                    continue
+
+                build.protected = not build.protected
+                await session.commit()
+                new_state = build.protected
+
+            # Sync to Firebase
+            try:
+                import firebase_admin.db as firebase_db_mod
+                firebase_db_mod.reference(f"builds/{short_id}/protected").set(new_state)
+            except Exception:
+                pass
+
+            label = "🔒 Protected" if new_state else "🔓 Unprotected"
+            clear_build_command("protect", key, "done", f"{label} build {short_id}")
+            logger.info("%s build %s (via Firebase command)", label, short_id)
+
+        except Exception as e:
+            logger.error("Firebase protect command failed for %s: %s", short_id, e)
+            clear_build_command("protect", key, "error", str(e))
+
+    # ── Delete commands ──
+    for cmd in get_pending_build_commands("delete"):
+        short_id = cmd.get("build_id", "")
+        key = cmd.get("_key", "")
+        if not short_id:
+            clear_build_command("delete", key, "error", "Missing build_id")
+            continue
+
+        logger.info("🗑️ Firebase delete command for build %s", short_id)
+        try:
+            result = await _delete_build_internal(short_id)
+            clear_build_command("delete", key, "done",
+                               f"Deleted {result['client_name']} ({short_id})")
+            logger.info("✅ Firebase delete: build %s deleted", short_id)
+
+        except ValueError as ve:
+            clear_build_command("delete", key, "error", str(ve))
+            logger.warning("Firebase delete command rejected for %s: %s", short_id, ve)
+        except Exception as e:
+            logger.error("Firebase delete command failed for %s: %s", short_id, e)
+            clear_build_command("delete", key, "error", str(e))
+
+
 async def periodic_firebase_poll(interval: int = 60) -> None:
     """Poll Firebase for new leads, parse requests, signatures, and retry commands
     every ``interval`` seconds.
@@ -633,6 +793,9 @@ async def periodic_firebase_poll(interval: int = 60) -> None:
 
             # Poll for retry commands from the admin UI
             await process_firebase_retry_commands()
+
+            # Poll for protect/delete commands from the admin UI
+            await process_firebase_build_commands()
 
             # Periodically re-sync contracts & invoices → Firebase mirror,
             # check for payment reminders, and detect stalled builds
@@ -894,6 +1057,9 @@ async def lifespan(app: FastAPI):
 
         # Pick up any signatures submitted while we were offline
         await process_firebase_signatures()
+
+        # Pick up protect/delete commands submitted while we were offline
+        await process_firebase_build_commands()
 
         # Re-sync active contracts & invoices → Firebase mirror
         await reconcile_contracts_invoices_to_firebase()

@@ -373,104 +373,22 @@ async def delete_build(
     Protected builds cannot be deleted (toggle protection first).
     Also deletes the GitHub repo and removes the git submodule.
     """
-    stmt = (
-        select(Build)
-        .where(Build.short_id == short_id)
-        .options(
-            selectinload(Build.phases),
-            selectinload(Build.logs),
-            selectinload(Build.pages),
-        )
-    )
-    result = await session.execute(stmt)
-    build = result.scalar_one_or_none()
+    from api.main import _delete_build_internal
 
-    if not build:
-        raise HTTPException(status_code=404, detail=f"Build {short_id} not found")
-
-    if build.protected:
-        raise HTTPException(
-            status_code=403,
-            detail=f"Build {short_id} is protected. Unprotect it first before deleting.",
-        )
-
-    if build.status == "running":
-        raise HTTPException(
-            status_code=409,
-            detail=f"Build {short_id} is currently running. Wait for it to finish or mark it stalled.",
-        )
-
-    repo_name = build.repo_name
-    repo_full = build.repo_full
-    client_name = build.client_name
-
-    # 1. Delete from database (cascades to phases, logs, pages)
-    await session.delete(build)
-    await session.commit()
-
-    # 2. Clean up GitHub repo + submodule (best-effort, in background)
-    cleanup_errors = []
-
-    # 2a. Delete GitHub repo
-    if repo_full:
-        try:
-            from api.services.git import try_cmd
-            ok, output = await try_cmd(f'gh repo delete "{repo_full}" --yes', timeout=30)
-            if ok:
-                logger.info("🗑️ Deleted GitHub repo: %s", repo_full)
-            else:
-                cleanup_errors.append(f"GitHub repo delete failed: {output}")
-                logger.warning("Failed to delete GitHub repo %s: %s", repo_full, output)
-        except Exception as exc:
-            cleanup_errors.append(f"GitHub repo delete error: {exc}")
-
-    # 2b. Remove git submodule from parent repo
-    if repo_name:
-        try:
-            from api.services.git import try_cmd
-            import os
-            parent_repo = os.environ.get("MAIN_SITE_DIR", "/site/ajayadesign.github.io")
-            if os.path.isdir(parent_repo):
-                await try_cmd(f'git submodule deinit -f "{repo_name}"', cwd=parent_repo, timeout=30)
-                await try_cmd(f'git rm -f "{repo_name}"', cwd=parent_repo, timeout=30)
-                # Clean .git/modules entry
-                modules_path = os.path.join(parent_repo, ".git", "modules", repo_name)
-                if os.path.isdir(modules_path):
-                    import shutil
-                    shutil.rmtree(modules_path, ignore_errors=True)
-                # Commit the removal
-                await try_cmd(
-                    f'git add -A && git commit -m "chore: remove {repo_name} submodule (build deleted)"',
-                    cwd=parent_repo,
-                    timeout=30,
-                )
-                await try_cmd('git push', cwd=parent_repo, timeout=60)
-                logger.info("🗑️ Removed submodule: %s", repo_name)
-            else:
-                cleanup_errors.append(f"Parent repo not found at {parent_repo}")
-        except Exception as exc:
-            cleanup_errors.append(f"Submodule removal error: {exc}")
-
-    # 3. Remove from Firebase
     try:
-        import firebase_admin.db as firebase_db_mod
-        firebase_db_mod.reference(f"builds/{short_id}").delete()
-        logger.info("🗑️ Removed Firebase build data: %s", short_id)
-    except Exception:
-        pass
+        result = await _delete_build_internal(short_id)
+    except ValueError as ve:
+        msg = str(ve)
+        if "not found" in msg:
+            raise HTTPException(status_code=404, detail=msg)
+        elif "protected" in msg:
+            raise HTTPException(status_code=403, detail=msg)
+        elif "running" in msg:
+            raise HTTPException(status_code=409, detail=msg)
+        else:
+            raise HTTPException(status_code=400, detail=msg)
 
-    logger.info(
-        "🗑️ Deleted build %s (%s) — repo: %s",
-        short_id, client_name, repo_full or "none",
-    )
-
-    return {
-        "short_id": short_id,
-        "deleted": True,
-        "client_name": client_name,
-        "repo_deleted": repo_full if repo_full and not cleanup_errors else None,
-        "cleanup_errors": cleanup_errors if cleanup_errors else None,
-    }
+    return result
 
 
 # ── SSE Stream ──────────────────────────────────────────
