@@ -188,9 +188,11 @@
       var data = snap.val() || {};
       var entries = Object.entries(data);
 
-      // Update KPI
+      // Update KPI in sidebar + main panel
       var el = document.getElementById('traffic-kpi-live');
       if (el) el.textContent = entries.length;
+      var el2 = document.getElementById('traffic-live-count');
+      if (el2) el2.textContent = entries.length;
 
       // Update table
       var container = document.getElementById('traffic-live-table');
@@ -214,6 +216,10 @@
       });
       html += '</div>';
       container.innerHTML = html;
+    }, function (err) {
+      console.error('[Traffic] Presence listener error:', err.message);
+      // Reset so we can retry
+      presenceUnsub = null;
     });
   }
 
