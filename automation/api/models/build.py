@@ -60,6 +60,7 @@ class Build(Base):
     competitor_urls: Mapped[str | None] = mapped_column(Text, nullable=True)
     additional_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     rebuild: Mapped[bool] = mapped_column(Boolean, default=False)
+    protected: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
 
     # Result
     status: Mapped[str] = mapped_column(String(20), default="queued", index=True)
@@ -118,6 +119,7 @@ class Build(Base):
             "finished_at": self.finished_at.isoformat() if self.finished_at else None,
             "duration_secs": self.duration_secs,
             "error_message": self.error_message,
+            "protected": self.protected,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
