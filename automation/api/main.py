@@ -20,6 +20,7 @@ from api.services.firebase import (
     init_firebase, get_new_leads, get_all_leads, update_lead_status, is_initialized,
     get_pending_parse_requests, update_parse_request,
     get_pending_signatures, mark_signature_processed,
+    get_pending_retry_commands, clear_retry_command,
     deploy_database_rules,
 )
 from api.services.queue import BuildQueue
@@ -512,8 +513,97 @@ async def check_payment_plan_reminders() -> None:
             logger.info("🔔 Sent %d automatic payment reminder(s)", reminders_sent)
 
 
+async def process_firebase_retry_commands() -> None:
+    """Pick up retry commands written to Firebase RTDB by the admin UI
+    (when the admin can't reach the API directly)."""
+    from api.services.firebase import get_pending_retry_commands, clear_retry_command, is_initialized
+    from api.routes import _event_queues, _run_pipeline
+    from sqlalchemy.orm import selectinload
+
+    if not is_initialized():
+        return
+
+    commands = get_pending_retry_commands()
+    if not commands:
+        return
+
+    for cmd in commands:
+        short_id = cmd.get("build_id", "")
+        key = cmd.get("_key", "")
+        if not short_id:
+            clear_retry_command(key, "error", "Missing build_id")
+            continue
+
+        logger.info("🔁 Firebase retry command for build %s", short_id)
+
+        try:
+            async with async_session() as session:
+                stmt = (
+                    select(Build)
+                    .where(Build.short_id == short_id)
+                    .options(
+                        selectinload(Build.phases),
+                        selectinload(Build.logs),
+                        selectinload(Build.pages),
+                    )
+                )
+                result = await session.execute(stmt)
+                build = result.scalar_one_or_none()
+
+                if not build:
+                    clear_retry_command(key, "error", f"Build {short_id} not found")
+                    continue
+
+                if build.status not in ("stalled", "failed"):
+                    clear_retry_command(key, "skipped", f"Build is '{build.status}', not stalled/failed")
+                    continue
+
+                # Clear partial phases, logs, and pages
+                for phase in list(build.phases):
+                    await session.delete(phase)
+                for log in list(build.logs):
+                    await session.delete(log)
+                for page in list(build.pages):
+                    await session.delete(page)
+
+                build.status = "queued"
+                build.started_at = None
+                build.finished_at = None
+                build.error_message = None
+                build.blueprint = None
+                build.design_system = None
+                build.pages_count = None
+                await session.commit()
+
+                # Clear Firebase build sub-nodes
+                try:
+                    import firebase_admin.db as firebase_db_mod
+                    ref = firebase_db_mod.reference(f"builds/{short_id}")
+                    ref.update({
+                        "status": "queued",
+                        "started_at": "",
+                        "finished_at": "",
+                        "phases": None,
+                        "log": None,
+                    })
+                except Exception:
+                    pass
+
+                # Launch pipeline
+                _event_queues[short_id] = asyncio.Queue()
+                asyncio.create_task(_run_pipeline(build.id, short_id))
+
+                clear_retry_command(key, "done", f"Build {short_id} retrying")
+                logger.info("✅ Firebase retry: build %s (%s) re-queued", short_id, build.client_name)
+
+        except Exception as e:
+            logger.error("Firebase retry command failed for %s: %s", short_id, e)
+            clear_retry_command(key, "error", str(e))
+
+
 async def periodic_firebase_poll(interval: int = 60) -> None:
-    """Poll Firebase for new leads, parse requests, and signatures every ``interval`` seconds.
+    """Poll Firebase for new leads, parse requests, signatures, and retry commands
+    every ``interval`` seconds.
     Every 5th cycle (~5 min) also re-syncs contracts/invoices Postgres → Firebase
     and checks for overdue payment plan installments that need reminders."""
     cycle = 0
@@ -540,6 +630,9 @@ async def periodic_firebase_poll(interval: int = 60) -> None:
 
             # Poll for signatures submitted via Firebase bridge
             await process_firebase_signatures()
+
+            # Poll for retry commands from the admin UI
+            await process_firebase_retry_commands()
 
             # Periodically re-sync contracts & invoices → Firebase mirror,
             # check for payment reminders, and detect stalled builds

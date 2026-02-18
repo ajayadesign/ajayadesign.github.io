@@ -6,6 +6,7 @@ Requires firebase-admin SDK and a service account key.
 """
 
 import logging
+from datetime import datetime, timezone
 from typing import Optional
 
 logger = logging.getLogger(__name__)
@@ -499,6 +500,39 @@ def sync_activity_to_firebase(activity_data: dict) -> bool:
         return True
     except Exception as e:
         logger.error(f"Firebase sync_activity failed: {e}")
+        return False
+
+
+def get_pending_retry_commands() -> list[dict]:
+    """Fetch pending retry commands from /commands/retry/."""
+    if not _initialized:
+        return []
+    try:
+        ref = firebase_db.reference("commands/retry")
+        data = ref.get()
+        if not data or not isinstance(data, dict):
+            return []
+        results = []
+        for key, val in data.items():
+            if isinstance(val, dict) and val.get("status") == "pending":
+                val["_key"] = key
+                results.append(val)
+        return results
+    except Exception as e:
+        logger.error(f"get_pending_retry_commands failed: {e}")
+        return []
+
+
+def clear_retry_command(key: str, result_status: str = "done", message: str = "") -> bool:
+    """Mark a retry command as processed so it isn't picked up again."""
+    if not _initialized:
+        return False
+    try:
+        ref = firebase_db.reference(f"commands/retry/{key}")
+        ref.update({"status": result_status, "result": message, "processed_at": datetime.now(timezone.utc).isoformat() if True else ""})
+        return True
+    except Exception as e:
+        logger.error(f"clear_retry_command failed: {e}")
         return False
 
 
