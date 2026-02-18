@@ -101,8 +101,10 @@
     var promises = [];
     for (var i = days - 1; i >= 0; i--) {
       (function (d) {
+        var r = fbRef('/pageViews/' + d);
+        if (!r) return;
         promises.push(
-          fbRef('/pageViews/' + d).once('value').then(function (snap) {
+          r.once('value').then(function (snap) {
             var data = snap.val();
             var count = 0;
             if (data) Object.values(data).forEach(function (pg) {
@@ -119,7 +121,9 @@
 
   async function fetchTodayData() {
     var today = getToday();
-    var snap = await fbRef('/pageViews/' + today).once('value');
+    var r = fbRef('/pageViews/' + today);
+    if (!r) return { total: 0, sessions: new Set(), pages: {}, sources: {}, referrers: {} };
+    var snap = await r.once('value');
     var data = snap.val();
     if (!data) return { total: 0, sessions: new Set(), pages: {}, sources: {}, referrers: {} };
 
@@ -147,26 +151,34 @@
   }
 
   async function fetchScrollDepth() {
-    var snap = await fbRef('/scrollDepth/' + getToday()).once('value');
+    var r = fbRef('/scrollDepth/' + getToday());
+    if (!r) return {};
+    var snap = await r.once('value');
     return snap.val() || {};
   }
 
   async function fetchClicks(pageSlug) {
-    var snap = await fbRef('/clicks/' + getToday() + '/' + pageSlug).once('value');
+    var r = fbRef('/clicks/' + getToday() + '/' + pageSlug);
+    if (!r) return [];
+    var snap = await r.once('value');
     var data = snap.val();
     if (!data) return [];
     return Object.values(data);
   }
 
   async function fetchPerformance() {
-    var snap = await fbRef('/performance/' + getToday()).once('value');
+    var r = fbRef('/performance/' + getToday());
+    if (!r) return [];
+    var snap = await r.once('value');
     var data = snap.val();
     if (!data) return [];
     return Object.values(data);
   }
 
   async function fetchSessions() {
-    var snap = await fbRef('/sessions/' + getToday()).once('value');
+    var r = fbRef('/sessions/' + getToday());
+    if (!r) return [];
+    var snap = await r.once('value');
     var data = snap.val();
     if (!data) return [];
     return Object.values(data);
@@ -301,7 +313,7 @@
         html += '</div>';
       });
       container.innerHTML = html;
-    } catch (_) { container.innerHTML = '<p class="text-gray-500 text-xs font-mono">Error loading</p>'; }
+    } catch (err) { console.error('[Traffic] Top pages error:', err); container.innerHTML = '<p class="text-gray-500 text-xs font-mono">No page data yet</p>'; }
   }
 
   /* ── Traffic Sources (pie) ── */
@@ -384,7 +396,9 @@
 
     // Populate page selector from today's clicks
     try {
-      var snap = await fbRef('/clicks/' + getToday()).once('value');
+      var cr = fbRef('/clicks/' + getToday());
+      if (!cr) return;
+      var snap = await cr.once('value');
       var data = snap.val() || {};
       var pages = Object.keys(data);
 
@@ -473,7 +487,7 @@
       });
       container.innerHTML = html;
     } catch (_) {
-      container.innerHTML = '<p class="text-gray-500 text-xs font-mono text-center py-6 col-span-full">Error loading</p>';
+      container.innerHTML = '<p class="text-gray-500 text-xs font-mono text-center py-6 col-span-full">No performance data yet</p>';
     }
   }
 
@@ -502,8 +516,9 @@
       });
       html += '</div>';
       container.innerHTML = html;
-    } catch (_) {
-      container.innerHTML = '<p class="text-gray-500 text-xs font-mono text-center py-6">Error loading</p>';
+    } catch (err) {
+      console.error('[Traffic] Sessions error:', err);
+      container.innerHTML = '<p class="text-gray-500 text-xs font-mono text-center py-6">No session data yet</p>';
     }
   }
 

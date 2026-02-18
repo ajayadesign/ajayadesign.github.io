@@ -65,6 +65,17 @@
     return s.length > max ? s.substring(0, max) : s;
   }
 
+  /** Strip NaN / Infinity / undefined from an object (Firebase rejects these) */
+  function sanitize(obj) {
+    if (obj === null || obj === undefined) return null;
+    if (typeof obj === 'number') return isFinite(obj) ? obj : 0;
+    if (typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) return obj.map(sanitize);
+    var out = {};
+    Object.keys(obj).forEach(function (k) { out[k] = sanitize(obj[k]); });
+    return out;
+  }
+
   function deviceType() {
     var w = window.innerWidth || screen.width;
     if (w < 768) return 'mobile';
@@ -142,13 +153,15 @@
         ref(op.path).transaction(function (v) { return (v || 0) + 1; });
       } else if (op.type === 'push') {
         var key = db.ref(PREFIX + op.path).push().key;
-        updates[PREFIX + op.path + '/' + key] = op.data;
+        updates[PREFIX + op.path + '/' + key] = sanitize(op.data);
       } else if (op.type === 'set') {
-        updates[PREFIX + op.path] = op.data;
+        updates[PREFIX + op.path] = sanitize(op.data);
       }
     });
     if (Object.keys(updates).length) {
-      db.ref().update(updates);
+      db.ref().update(updates).catch(function (err) {
+        console.warn('[ad-tracker] batch update failed:', err.message);
+      });
     }
   }
 
@@ -265,18 +278,20 @@
     var fcp = 0;
     paint.forEach(function (p) { if (p.name === 'first-contentful-paint') fcp = Math.round(p.startTime); });
 
+    function safeRound(v) { var n = Math.round(v); return isFinite(n) ? n : 0; }
+
     enqueue({
       type: 'push',
       path: '/performance/' + date,
       data: {
         slug: slug,
         device: deviceType(),
-        dns: Math.round(nav.domainLookupEnd - nav.domainLookupStart),
-        tcp: Math.round(nav.connectEnd - nav.connectStart),
-        ttfb: Math.round(nav.responseStart - nav.requestStart),
-        domLoad: Math.round(nav.domContentLoadedEventEnd - nav.navigationStart),
-        fullLoad: Math.round(nav.loadEventEnd - nav.navigationStart),
-        fcp: fcp,
+        dns: safeRound(nav.domainLookupEnd - nav.domainLookupStart),
+        tcp: safeRound(nav.connectEnd - nav.connectStart),
+        ttfb: safeRound(nav.responseStart - nav.requestStart),
+        domLoad: safeRound(nav.domContentLoadedEventEnd - nav.startTime),
+        fullLoad: safeRound(nav.loadEventEnd - nav.startTime),
+        fcp: fcp || 0,
         transferSize: nav.transferSize || 0,
         timestamp: nowISO()
       }
