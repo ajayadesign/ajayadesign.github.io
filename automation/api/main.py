@@ -836,12 +836,40 @@ async def process_firebase_signatures() -> None:
                 logger.warning("Failed to send signing Telegram notification: %s", e)
 
 
+async def _migrate_protected_column():
+    """One-time migration: add 'protected' column and protect the 4 paying-customer builds."""
+    from sqlalchemy import text
+    async with async_session() as session:
+        # Add column if missing (PostgreSQL supports IF NOT EXISTS)
+        await session.execute(text(
+            "ALTER TABLE builds ADD COLUMN IF NOT EXISTS protected BOOLEAN DEFAULT false"
+        ))
+        # Protect only the 4 paying-customer builds (by short_id)
+        result = await session.execute(text(
+            "UPDATE builds SET protected = true "
+            "WHERE short_id IN (:s1, :s2, :s3, :s4) AND protected = false"
+        ), {"s1": "95a213fe", "s2": "de0460c4", "s3": "9aae04a4", "s4": "efccf3b6"})
+        # Make sure non-paying builds stay unprotected
+        await session.execute(text(
+            "UPDATE builds SET protected = false "
+            "WHERE short_id NOT IN (:s1, :s2, :s3, :s4) AND protected = true"
+        ), {"s1": "95a213fe", "s2": "de0460c4", "s3": "9aae04a4", "s4": "efccf3b6"})
+        await session.commit()
+        if result.rowcount:
+            logger.info("🔒 Protected %d build(s)", result.rowcount)
+        else:
+            logger.info("🔒 Protection migration OK — no changes needed")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup / shutdown hook."""
     logger.info("🚀 Starting AjayaDesign Automation API v2.0.0-python")
     await init_db()
     logger.info("✅ Database ready")
+
+    # Migrate: add 'protected' column if it doesn't exist, and protect existing builds
+    await _migrate_protected_column()
 
     # Recover builds orphaned by a previous API restart (stale_minutes=0 → all running)
     stalled_count = await recover_stale_builds(stale_minutes=0)

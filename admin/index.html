@@ -901,6 +901,8 @@
               <span id="build-status-badge" class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold"></span>
               <h2 id="build-client" class="font-mono text-lg font-bold text-white"></h2>
               <button id="build-retry-btn" onclick="retryBuild()" class="hidden px-3 py-1 rounded-lg text-xs font-mono font-semibold bg-neon-orange/20 text-neon-orange border border-neon-orange/30 hover:bg-neon-orange/30 transition">🔄 Retry Build</button>
+              <button id="build-protect-btn" onclick="toggleProtection()" class="hidden px-3 py-1 rounded-lg text-xs font-mono font-semibold transition" title="Toggle protection"></button>
+              <button id="build-delete-btn" onclick="deleteBuild()" class="hidden px-3 py-1 rounded-lg text-xs font-mono font-semibold bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition" title="Delete build">🗑️ Delete</button>
             </div>
             <div class="flex items-center gap-3 text-xs font-mono text-gray-500">
               <span id="build-id-display"></span>

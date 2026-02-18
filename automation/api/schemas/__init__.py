@@ -52,6 +52,7 @@ class BuildResponse(BaseModel):
     duration_secs: float | None = None
     error_message: str | None = None
     stream_url: str | None = None
+    protected: bool = False
 
     model_config = {"from_attributes": True}
 

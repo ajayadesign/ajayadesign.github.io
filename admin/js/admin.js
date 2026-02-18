@@ -304,6 +304,8 @@ async function refreshBuilds() {
       started: b.created_at || b.started_at,
       finished: b.finished_at,
       liveUrl: b.live_url,
+      protected: !!b.protected,
+      repoFull: b.repo_full || '',
     }));
     loaded = true;
   } catch (err) {
@@ -366,6 +368,7 @@ function renderBuildList() {
     const isStalled = b.status === 'stalled';
     const statusIcon = b.status === 'queued' ? '⏳' : b.status === 'running' ? '🔄' : isStalled ? '⚠️' : isSuccess ? '✅' : '❌';
     const statusClass = b.status === 'queued' ? 'text-gray-500' : b.status === 'running' ? 'text-electric' : isStalled ? 'text-neon-orange' : isSuccess ? 'text-neon-green' : 'text-brand-link';
+    const lockIcon = b.protected ? '<span title="Protected" class="text-neon-yellow">🔒</span>' : '';
     const time = formatTime(b.started);
     const duration = b.finished ? formatDuration(b.started, b.finished) : b.status === 'running' ? 'running...' : '';
 
@@ -375,7 +378,7 @@ function renderBuildList() {
           ${isSelected ? 'selected border-electric/30 bg-electric/5' : 'border-transparent hover:border-border'}">
         <div class="flex items-center justify-between mb-1">
           <span class="font-mono text-sm font-semibold text-white truncate max-w-[160px]">${esc(b.client || 'Unknown')}</span>
-          <span class="text-xs ${statusClass}">${statusIcon}</span>
+          <span class="text-xs flex items-center gap-1">${lockIcon}<span class="${statusClass}">${statusIcon}</span></span>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-[0.65rem] font-mono text-gray-500">${b.id}</span>
@@ -462,6 +465,9 @@ function _populateBuildHeader(build) {
       $retryBtn.classList.add('hidden');
     }
   }
+
+  // Show protect/delete buttons
+  _updateProtectDeleteButtons(build);
 
   const metas = [];
   if (build.niche) metas.push(`<span>🏷 ${esc(build.niche)}</span>`);
@@ -564,6 +570,141 @@ async function retryBuild() {
   setTimeout(refreshBuilds, 1000);
 }
 
+/** Update the protect & delete button states in the build detail header. */
+function _updateProtectDeleteButtons(build) {
+  const $protectBtn = document.getElementById('build-protect-btn');
+  const $deleteBtn  = document.getElementById('build-delete-btn');
+  const isProtected = !!(build.protected);
+  const isRunning = build.status === 'running' || build.status === 'queued';
+
+  // Always show protect button for completed/stalled/failed builds
+  if ($protectBtn) {
+    if (!isRunning) {
+      $protectBtn.classList.remove('hidden');
+      if (isProtected) {
+        $protectBtn.textContent = '🔒 Protected';
+        $protectBtn.className = 'px-3 py-1 rounded-lg text-xs font-mono font-semibold bg-neon-yellow/20 text-neon-yellow border border-neon-yellow/30 hover:bg-neon-yellow/30 transition';
+        $protectBtn.title = 'Click to unprotect (allow deletion)';
+      } else {
+        $protectBtn.textContent = '🔓 Unprotected';
+        $protectBtn.className = 'px-3 py-1 rounded-lg text-xs font-mono font-semibold bg-gray-800 text-gray-400 border border-gray-700 hover:bg-gray-700 transition';
+        $protectBtn.title = 'Click to protect (prevent deletion)';
+      }
+    } else {
+      $protectBtn.classList.add('hidden');
+    }
+  }
+
+  // Show delete button only for unprotected, non-running builds
+  if ($deleteBtn) {
+    if (!isProtected && !isRunning) {
+      $deleteBtn.classList.remove('hidden');
+    } else {
+      $deleteBtn.classList.add('hidden');
+    }
+  }
+}
+
+/** Toggle build protection (lock/unlock). */
+async function toggleProtection() {
+  if (!selectedBuildId) return;
+
+  const $btn = document.getElementById('build-protect-btn');
+  if ($btn) { $btn.disabled = true; $btn.textContent = '⏳...'; }
+
+  try {
+    const res = await fetch(`${API_BASE}/builds/${selectedBuildId}/protect`, {
+      method: 'PATCH',
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+
+    // Update local build state
+    const build = builds.find(b => b.id === selectedBuildId);
+    if (build) build.protected = data.protected;
+
+    // Update UI
+    _updateProtectDeleteButtons({ protected: data.protected, status: build?.status || 'complete' });
+    renderBuildList();
+  } catch (err) {
+    console.error('[Admin] Toggle protection failed:', err);
+    alert(`Failed to toggle protection: ${err.message}`);
+  } finally {
+    if ($btn) $btn.disabled = false;
+  }
+}
+
+/** Delete a build — confirms, calls API, cleans up GitHub repo + submodule. */
+async function deleteBuild() {
+  if (!selectedBuildId) return;
+
+  const build = builds.find(b => b.id === selectedBuildId);
+  if (!build) return;
+
+  if (build.protected) {
+    alert('This build is protected. Unprotect it first before deleting.');
+    return;
+  }
+
+  const name = build.client || 'this build';
+  const repo = build.repoFull || '';
+  const msg = `⚠️ DELETE BUILD: "${name}" (${selectedBuildId})\n\n`
+    + `This will permanently:\n`
+    + `• Remove from database\n`
+    + (repo ? `• Delete GitHub repo: ${repo}\n` : '')
+    + `• Remove git submodule\n`
+    + `• Remove from Firebase\n\n`
+    + `Type "DELETE" to confirm:`;
+
+  const input = prompt(msg);
+  if (input !== 'DELETE') {
+    if (input !== null) alert('Deletion cancelled. You must type DELETE to confirm.');
+    return;
+  }
+
+  const $btn = document.getElementById('build-delete-btn');
+  if ($btn) { $btn.disabled = true; $btn.textContent = '⏳ Deleting...'; }
+
+  try {
+    const res = await fetch(`${API_BASE}/builds/${selectedBuildId}`, {
+      method: 'DELETE',
+      signal: AbortSignal.timeout(60000), // submodule cleanup may take time
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+
+    // Show result
+    let resultMsg = `✅ Build "${data.client_name}" deleted.`;
+    if (data.repo_deleted) resultMsg += `\n📦 GitHub repo deleted: ${data.repo_deleted}`;
+    if (data.cleanup_errors && data.cleanup_errors.length > 0) {
+      resultMsg += `\n\n⚠️ Some cleanup steps had issues:\n` + data.cleanup_errors.join('\n');
+    }
+    alert(resultMsg);
+
+    // Reset UI
+    selectedBuildId = null;
+    _detachFirebaseBuildListeners();
+    if (eventSource) { eventSource.close(); eventSource = null; }
+    $buildDetail.classList.add('hidden');
+    $emptyState.classList.remove('hidden');
+
+    // Refresh
+    await refreshBuilds();
+
+  } catch (err) {
+    console.error('[Admin] Delete build failed:', err);
+    alert(`Delete failed: ${err.message}`);
+    if ($btn) { $btn.disabled = false; $btn.textContent = '🗑️ Delete'; }
+  }
+}
+
 /** Attach Firebase real-time listeners for a build's status, phases, and logs. */
 function _attachFirebaseBuildListeners(buildId, isPrimary) {
   if (!window.__db) return;
@@ -595,6 +736,9 @@ function _attachFirebaseBuildListeners(buildId, isPrimary) {
         $retryBtn.classList.add('hidden');
       }
     }
+
+    // Update protect/delete buttons from Firebase state
+    _updateProtectDeleteButtons(data);
 
     // Update phase progress from Firebase
     if (data.phases) {
@@ -913,11 +1057,12 @@ function subscribeToBuildsFirebase() {
         started: b.created_at || b.started_at,
         finished: b.finished_at,
         liveUrl: b.live_url || '',
+        protected: !!b.protected,
+        repoFull: b.repo_full || '',
       });
     });
     fbBuilds.reverse();
-    // Only use Firebase data if API hasn't provided builds
-    if (builds.length === 0 && fbBuilds.length > 0) {
+    if (fbBuilds.length > 0) {
       builds = fbBuilds;
       renderBuildList();
       updateStats();
