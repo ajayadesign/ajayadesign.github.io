@@ -218,10 +218,13 @@
     .scroll-contain { overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
     /* Safe area for iPhones with home indicator */
     #mobile-tab-bar { padding-bottom: env(safe-area-inset-bottom, 0); }
-    /* Sidebar overlay */
+    /* Sidebar overlay (mobile only) */
     #sidebar.translate-x-0 { box-shadow: 4px 0 25px rgba(0,0,0,0.6); }
-    /* sidebar ends above bottom tab bar */
+    /* sidebar ends above bottom tab bar on mobile */
     #sidebar { bottom: 3rem; }
+    @media (min-width: 768px) {
+      #sidebar { bottom: 3rem; box-shadow: none !important; }
+    }
   </style>
 </head>
 <body class="bg-surface text-gray-300 font-sans antialiased h-screen overflow-hidden">
@@ -229,7 +232,7 @@
   <!-- ═══ Top Bar ═══ -->
   <header class="h-14 bg-surface-1 border-b border-border flex items-center justify-between px-3 md:px-4 z-50 fixed top-0 left-0 right-0">
     <div class="flex items-center gap-2 md:gap-3">
-      <button onclick="toggleMobileSidebar()" class="text-gray-400 hover:text-white p-1" aria-label="Toggle sidebar">
+      <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-400 hover:text-white p-1" aria-label="Toggle sidebar">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amd-red to-electric flex items-center justify-center">
@@ -251,13 +254,13 @@
   </header>
 
   <!-- ═══ Mobile Sidebar Backdrop ═══ -->
-  <div id="sidebar-backdrop" class="fixed inset-0 bg-black/60 z-30 hidden" onclick="toggleMobileSidebar()"></div>
+  <div id="sidebar-backdrop" class="fixed inset-0 bg-black/60 z-30 hidden md:!hidden" onclick="toggleMobileSidebar()"></div>
 
   <!-- ═══ Main Layout ═══ -->
   <div class="flex mt-14 h-[calc(100dvh-6.5rem)]">
 
     <!-- ═══ Sidebar ═══ -->
-    <aside id="sidebar" class="fixed top-14 bottom-0 left-0 z-40 w-72 min-w-[18rem] bg-surface-1 border-r border-border flex flex-col -translate-x-full transition-transform duration-300 ease-in-out">
+    <aside id="sidebar" class="fixed top-14 bottom-0 left-0 z-40 w-72 min-w-[18rem] bg-surface-1 border-r border-border flex flex-col -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
       <!-- Hidden tab buttons (referenced by switchTab JS — IDs still needed) -->
       <div id="desktop-tab-row" class="hidden">
         <button id="tab-builds"></button>
@@ -485,7 +488,7 @@
     </aside>
 
     <!-- ═══ Main Content ═══ -->
-    <main class="flex-1 flex flex-col overflow-hidden">
+    <main class="flex-1 flex flex-col overflow-hidden md:ml-72">
 
       <!-- No Build Selected State -->
       <div id="empty-state" class="flex-1 flex items-center justify-center">
@@ -1513,6 +1516,7 @@
   <script>
     /* ═══ Mobile Sidebar Toggle ═══ */
     function toggleMobileSidebar() {
+      if (window.innerWidth >= 768) return;  // Desktop sidebar is always open
       const sb = document.getElementById('sidebar');
       const bd = document.getElementById('sidebar-backdrop');
       const isHidden = sb.classList.contains('-translate-x-full');
@@ -1526,8 +1530,10 @@
      'history-list'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('click', () => {
-        const sb = document.getElementById('sidebar');
-        if (sb && sb.classList.contains('translate-x-0')) toggleMobileSidebar();
+        if (window.innerWidth < 768) {
+          const sb = document.getElementById('sidebar');
+          if (sb && sb.classList.contains('translate-x-0')) toggleMobileSidebar();
+        }
       });
     });
   </script>

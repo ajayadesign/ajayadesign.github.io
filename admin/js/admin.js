@@ -218,10 +218,12 @@ function switchTab(tab) {
   const $mtab = document.getElementById('mtab-' + tab);
   if ($mtab) { $mtab.classList.remove('text-gray-500'); $mtab.classList.add('text-electric'); }
 
-  // ── Auto-close sidebar on tab switch ──
-  const sb = document.getElementById('sidebar');
-  if (sb && sb.classList.contains('translate-x-0')) {
-    toggleMobileSidebar();
+  // ── Auto-close sidebar on tab switch (mobile only) ──
+  if (window.innerWidth < 768) {
+    const sb = document.getElementById('sidebar');
+    if (sb && sb.classList.contains('translate-x-0')) {
+      toggleMobileSidebar();
+    }
   }
 }
 
