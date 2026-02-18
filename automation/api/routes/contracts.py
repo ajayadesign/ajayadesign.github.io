@@ -66,6 +66,9 @@ def _sync_contract_fb(c: Contract) -> None:
             "status": c.status or "draft",
             "signed_at": c.signed_at.isoformat() if c.signed_at else None,
             "signer_name": c.signer_name,
+            "signature_data": c.signature_data,
+            "signer_ip": c.signer_ip or "",
+            "sign_token": c.sign_token or "",
             "sent_at": c.sent_at.isoformat() if c.sent_at else None,
             "build_short_id": "",  # TODO: resolve if needed
         })
