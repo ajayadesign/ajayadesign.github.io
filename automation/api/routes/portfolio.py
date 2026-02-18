@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.database import get_db
 from api.models.build import Build
 from api.schemas.contract import BuildPatchRequest, PortfolioSeedRequest
-from api.services.firebase import sync_portfolio_site_to_firebase
+from api.services.firebase import sync_portfolio_site_to_firebase, sync_build_to_firebase
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["portfolio"])
@@ -76,8 +76,8 @@ async def patch_build(
 
     logger.info(f"✅ Build {short_id} patched: {list(update_data.keys())}")
 
-    # Sync to Firebase
-    sync_portfolio_site_to_firebase({
+    # Sync to Firebase (both portfolio/ and builds/ nodes)
+    portfolio_data = {
         "short_id": build.short_id,
         "client_name": build.client_name or "",
         "email": getattr(build, "email", "") or "",
@@ -90,6 +90,20 @@ async def patch_build(
         "brand_colors": getattr(build, "brand_colors", "") or "",
         "tagline": getattr(build, "tagline", "") or "",
         "status": build.status or "complete",
+    }
+    sync_portfolio_site_to_firebase(portfolio_data)
+    sync_build_to_firebase({
+        "short_id": build.short_id,
+        "client_name": build.client_name or "",
+        "niche": build.niche or "",
+        "email": getattr(build, "email", "") or "",
+        "status": build.status or "complete",
+        "created_at": build.created_at.isoformat() if build.created_at else "",
+        "started_at": "",
+        "finished_at": "",
+        "live_url": build.live_url or "",
+        "repo_full": "",
+        "protected": build.protected if hasattr(build, 'protected') else False,
     })
 
     return {
@@ -142,7 +156,7 @@ async def seed_portfolio(req: PortfolioSeedRequest, db: AsyncSession = Depends(g
 
     await db.commit()
 
-    # Sync all newly created sites to Firebase
+    # Sync all newly created sites to Firebase (both portfolio/ and builds/ nodes)
     for item in created:
         sid = item["short_id"]
         # Find the matching site data from request
@@ -161,6 +175,20 @@ async def seed_portfolio(req: PortfolioSeedRequest, db: AsyncSession = Depends(g
                 "brand_colors": site_data.brand_colors or "",
                 "tagline": site_data.tagline or "",
                 "status": site_data.status or "complete",
+            })
+            # Also sync to builds/ node for admin dashboard Firebase fallback
+            sync_build_to_firebase({
+                "short_id": sid,
+                "client_name": site_data.client_name,
+                "niche": site_data.niche or "",
+                "email": site_data.email or "",
+                "status": site_data.status or "complete",
+                "created_at": "",
+                "started_at": "",
+                "finished_at": "",
+                "live_url": site_data.live_url or "",
+                "repo_full": "",
+                "protected": True,
             })
 
     created_names = [c["client_name"] for c in created]
