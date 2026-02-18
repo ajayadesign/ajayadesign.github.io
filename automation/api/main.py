@@ -210,6 +210,9 @@ async def reconcile_contracts_invoices_to_firebase() -> None:
                     "status": c.status,
                     "signed_at": c.signed_at.isoformat() if c.signed_at else None,
                     "signer_name": c.signer_name,
+                    "signature_data": c.signature_data,
+                    "signer_ip": c.signer_ip or "",
+                    "sign_token": c.sign_token or "",
                     "sent_at": c.sent_at.isoformat() if c.sent_at else None,
                     "build_short_id": build_short_id,
                 })
@@ -561,6 +564,9 @@ async def process_firebase_signatures() -> None:
                     "status": "signed",
                     "signed_at": now.isoformat(),
                     "signer_name": signer_name,
+                    "signature_data": contract.signature_data,
+                    "signer_ip": contract.signer_ip or "",
+                    "sign_token": contract.sign_token or "",
                     "sent_at": contract.sent_at.isoformat() if contract.sent_at else None,
                 })
             except Exception:
