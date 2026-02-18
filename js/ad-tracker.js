@@ -150,7 +150,8 @@
     var updates = {};
     ops.forEach(function (op) {
       if (op.type === 'increment') {
-        ref(op.path).transaction(function (v) { return (v || 0) + 1; });
+        // Use ServerValue.increment — only needs write permission (no read)
+        updates[PREFIX + op.path] = firebase.database.ServerValue.increment(1);
       } else if (op.type === 'push') {
         var key = db.ref(PREFIX + op.path).push().key;
         updates[PREFIX + op.path + '/' + key] = sanitize(op.data);
