@@ -142,7 +142,7 @@ async def reconcile_contracts_invoices_to_firebase() -> None:
         return
 
     from api.models.contract import Contract, Invoice
-    from api.services.firebase import sync_contract_to_firebase, sync_invoice_to_firebase, sync_portfolio_site_to_firebase
+    from api.services.firebase import sync_contract_to_firebase, sync_invoice_to_firebase, sync_portfolio_site_to_firebase, sync_activity_to_firebase
 
     synced_contracts = 0
     synced_invoices = 0
@@ -264,10 +264,34 @@ async def reconcile_contracts_invoices_to_firebase() -> None:
             except Exception as e:
                 logger.warning("Failed to sync invoice %s to Firebase: %s", inv.invoice_number, e)
 
-    if synced_contracts or synced_invoices or synced_portfolio:
+        # Re-sync all activity logs
+        from api.models.activity_log import ActivityLog
+        synced_activity = 0
+        result = await session.execute(
+            select(ActivityLog).order_by(ActivityLog.created_at.desc()).limit(200)
+        )
+        logs = result.scalars().all()
+        for log in logs:
+            try:
+                sync_activity_to_firebase({
+                    "id": log.id,
+                    "entity_type": log.entity_type,
+                    "entity_id": log.entity_id,
+                    "action": log.action,
+                    "description": log.description,
+                    "icon": log.icon,
+                    "actor": log.actor,
+                    "metadata": log.extra_data or {},
+                    "created_at": log.created_at.isoformat() if log.created_at else None,
+                })
+                synced_activity += 1
+            except Exception as e:
+                logger.warning("Failed to sync activity %s to Firebase: %s", log.id, e)
+
+    if synced_contracts or synced_invoices or synced_portfolio or synced_activity:
         logger.info(
-            "🔄 Synced %d portfolio sites, %d contracts, %d invoices → Firebase",
-            synced_portfolio, synced_contracts, synced_invoices,
+            "🔄 Synced %d portfolio sites, %d contracts, %d invoices, %d activity logs → Firebase",
+            synced_portfolio, synced_contracts, synced_invoices, synced_activity,
         )
 
 
