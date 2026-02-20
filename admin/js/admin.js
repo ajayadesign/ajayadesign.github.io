@@ -4,10 +4,12 @@
    ═══════════════════════════════════════════════════════ */
 
 // ── Configuration ──────────────────────────────────────
-// Auto-detect API base: use the current hostname so the dashboard works
-// from localhost, LAN IP (192.168.x.x), or a future tunnel domain.
+// API host detection priority:
+//   1. ?api=192.168.1.x  query param (LAN access from prod URL)
+//   2. location.hostname  (works for localhost or direct IP access)
 // Falls back gracefully to Firebase if the API is unreachable.
-const API_BASE = `http://${location.hostname}:3001/api/v1`;
+const _apiHost = new URLSearchParams(location.search).get('api') || location.hostname;
+const API_BASE = `http://${_apiHost}:3001/api/v1`;
 
 const POLL_INTERVAL = 5000;
 const ALLOWED_EMAILS = [
