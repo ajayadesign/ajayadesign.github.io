@@ -8,7 +8,8 @@
   'use strict';
 
   // ── Constants ────────────────────────────────────────
-  const API_BASE = 'http://localhost:3001/api/v1';
+  // Use the global API_BASE from admin.js (auto-detects hostname + ?api= param)
+  const _API = (typeof API_BASE !== 'undefined') ? API_BASE : `http://${location.hostname}:3001/api/v1`;
   const MODE_CHECK_INTERVAL = 30000; // 30s
 
   // ── State ────────────────────────────────────────────
@@ -35,7 +36,7 @@
     try {
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 3000);
-      const res = await fetch(`${API_BASE}/health`, { signal: ctrl.signal });
+      const res = await fetch(`${_API}/health`, { signal: ctrl.signal });
       clearTimeout(timer);
       if (res.ok) {
         _apiAvailable = true;
@@ -285,7 +286,7 @@
     try {
       const opts = { method, headers: { 'Content-Type': 'application/json' } };
       if (body) opts.body = JSON.stringify(body);
-      const res = await fetch(`${API_BASE}${path}`, opts);
+      const res = await fetch(`${_API}${path}`, opts);
       if (!res.ok) return null;
       return await res.json();
     } catch {
@@ -995,7 +996,7 @@
     const notes = document.getElementById(`activity-notes-${prospectId}`)?.value?.trim() || null;
 
     try {
-      const res = await fetch(`${API_BASE}/outreach/prospects/${prospectId}/activities`, {
+      const res = await fetch(`${_API}/outreach/prospects/${prospectId}/activities`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1018,7 +1019,7 @@
   window.outreachDeleteActivity = async function (activityId, prospectId) {
     if (!confirm('Delete this activity log?')) return;
     try {
-      const res = await fetch(`${API_BASE}/outreach/activities/${activityId}`, { method: 'DELETE' });
+      const res = await fetch(`${_API}/outreach/activities/${activityId}`, { method: 'DELETE' });
       if (!res.ok) throw new Error(await res.text());
       _toast('Activity deleted');
       outreachViewProspect(prospectId);
@@ -1031,7 +1032,7 @@
     const btn = document.getElementById(`btnTestEmail-${prospectId}`);
     if (btn) { btn.disabled = true; btn.innerHTML = '<span class="animate-spin inline-block">⏳</span> Generating…'; }
     try {
-      const res = await fetch(`${API_BASE}/outreach/prospects/${prospectId}/test-email`, {
+      const res = await fetch(`${_API}/outreach/prospects/${prospectId}/test-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ step: 1 }),
@@ -1069,7 +1070,7 @@
     const name = (document.getElementById(`edit-owner-name-${prospectId}`)?.value || '').trim();
     const email = (document.getElementById(`edit-owner-email-${prospectId}`)?.value || '').trim();
     try {
-      const res = await fetch(`${API_BASE}/outreach/prospects/${prospectId}`, {
+      const res = await fetch(`${_API}/outreach/prospects/${prospectId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ owner_name: name || null, owner_email: email || null }),
@@ -1102,7 +1103,7 @@
 
       // If no email exists, generate one first
       if (!emailId) {
-        const genRes = await fetch(`${API_BASE}/outreach/prospects/${prospectId}/test-email`, {
+        const genRes = await fetch(`${_API}/outreach/prospects/${prospectId}/test-email`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ step: 1 }),
@@ -1120,7 +1121,7 @@
       }
 
       // Send it
-      const sendRes = await fetch(`${API_BASE}/outreach/emails/${emailId}/send-test`, {
+      const sendRes = await fetch(`${_API}/outreach/emails/${emailId}/send-test`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ to_email: toEmail }),
@@ -1137,7 +1138,7 @@
 
   window.outreachTriggerAudit = async function (prospectId) {
     try {
-      const res = await fetch(`${API_BASE}/outreach/prospects/${prospectId}/audit`, { method: 'POST' });
+      const res = await fetch(`${_API}/outreach/prospects/${prospectId}/audit`, { method: 'POST' });
       if (!res.ok) throw new Error(await res.text());
       _toast('⚡ Audit started — this may take 30-60 seconds');
     } catch (e) { _toast('Audit failed: ' + e.message, true); }
@@ -1145,7 +1146,7 @@
 
   window.outreachTriggerRecon = async function (prospectId) {
     try {
-      const res = await fetch(`${API_BASE}/outreach/prospects/${prospectId}/recon`, { method: 'POST' });
+      const res = await fetch(`${_API}/outreach/prospects/${prospectId}/recon`, { method: 'POST' });
       if (!res.ok) throw new Error(await res.text());
       _toast('🔍 Recon started — looking for owner info');
     } catch (e) { _toast('Recon failed: ' + e.message, true); }
@@ -1153,7 +1154,7 @@
 
   window.outreachEnqueue = async function (prospectId) {
     try {
-      const res = await fetch(`${API_BASE}/outreach/prospects/${prospectId}/enqueue`, { method: 'POST' });
+      const res = await fetch(`${_API}/outreach/prospects/${prospectId}/enqueue`, { method: 'POST' });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
       _toast('📧 Email draft created — check the Approval Queue');
@@ -1826,7 +1827,7 @@
       }
 
       // Send test
-      const sendRes = await fetch(`${API_BASE}/outreach/emails/${emailId}/send-test`, {
+      const sendRes = await fetch(`${_API}/outreach/emails/${emailId}/send-test`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ to_email: toEmail }),
@@ -2371,7 +2372,7 @@
   /** Fetch real pipeline logs from API (incremental) */
   async function _mcFetchPipelineLogs() {
     try {
-      const res = await fetch(`${API_BASE}/outreach/pipeline/logs?since=${_pipelineLogSince}&limit=50`);
+      const res = await fetch(`${_API}/outreach/pipeline/logs?since=${_pipelineLogSince}&limit=50`);
       if (!res.ok) return;
       const data = await res.json();
       if (data.logs && data.logs.length > 0) {
