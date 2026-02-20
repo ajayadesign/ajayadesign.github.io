@@ -332,6 +332,266 @@
       #sheet-dots { display: none !important; }
       #content-handle { display: none !important; }
     }
+
+    /* ═══ Outreach Mission Control — Sci-Fi Styles ═══ */
+    @keyframes mc-scanline {
+      0% { top: -4px; }
+      100% { top: 100%; }
+    }
+    @keyframes mc-radar-sweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes mc-pulse-ring {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.6; }
+    }
+    @keyframes mc-blink-cursor {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .animate-spin { animation: spin 1s linear infinite; }
+    @keyframes mc-glow-border {
+      0%, 100% { border-color: rgba(0,212,255,0.15); box-shadow: 0 0 8px rgba(0,212,255,0.05); }
+      50% { border-color: rgba(0,212,255,0.45); box-shadow: 0 0 20px rgba(0,212,255,0.15), inset 0 0 15px rgba(0,212,255,0.02); }
+    }
+    @keyframes mc-glitch {
+      0%, 90%, 100% { transform: translate(0); filter: none; }
+      92% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
+      94% { transform: translate(2px, -1px); filter: hue-rotate(-90deg); }
+      96% { transform: translate(-1px, -1px); filter: hue-rotate(45deg); }
+      98% { transform: translate(1px, 1px); filter: hue-rotate(-45deg); }
+    }
+    @keyframes mc-text-reveal {
+      0% { width: 0; }
+      100% { width: 100%; }
+    }
+    @keyframes mc-data-stream {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-100%); opacity: 0; }
+    }
+    @keyframes mc-hex-pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+    @keyframes mc-orbit {
+      0% { transform: rotate(0deg) translateX(28px) rotate(0deg); }
+      100% { transform: rotate(360deg) translateX(28px) rotate(-360deg); }
+    }
+
+    .mc-panel {
+      position: relative;
+      border: 1px solid rgba(0,212,255,0.15);
+      background: linear-gradient(135deg, #06060A 0%, #0A0A14 100%);
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+    .mc-panel.mc-active {
+      animation: mc-glow-border 3s ease-in-out infinite;
+    }
+    .mc-panel::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, rgba(0,212,255,0.4), transparent);
+      animation: mc-scanline 4s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    .mc-panel.mc-active::before {
+      opacity: 1;
+    }
+
+    .mc-header-bar {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      background: rgba(0,212,255,0.03);
+      border-bottom: 1px solid rgba(0,212,255,0.1);
+      gap: 0.5rem;
+    }
+    .mc-header-bar .mc-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #00D4FF;
+      animation: live-pulse 1.5s ease-in-out infinite;
+    }
+    .mc-header-bar .mc-dot.idle { background: #555; animation: none; }
+    .mc-header-bar .mc-dot.paused { background: #FFD600; animation: mc-blink-cursor 1s step-end infinite; }
+    .mc-header-bar .mc-dot.error { background: #FF6B6B; }
+
+    /* Radar mini-display */
+    .mc-radar {
+      position: relative;
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,212,255,0.2);
+      background: radial-gradient(circle at center, rgba(0,212,255,0.03) 0%, transparent 70%);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .mc-radar .mc-sweep {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 50%; height: 2px;
+      transform-origin: 0 50%;
+      background: linear-gradient(90deg, rgba(0,212,255,0.6), transparent);
+      animation: mc-radar-sweep 3s linear infinite;
+      animation-play-state: paused;
+    }
+    .mc-radar.mc-active .mc-sweep {
+      animation-play-state: running;
+    }
+    .mc-radar .mc-ring-line {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(0,212,255,0.08);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .mc-radar .mc-blip {
+      position: absolute;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: #00FF88;
+      box-shadow: 0 0 6px rgba(0,255,136,0.6);
+    }
+
+    /* Terminal window */
+    .mc-terminal {
+      background: #020208;
+      border: 1px solid rgba(0,212,255,0.1);
+      border-radius: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      line-height: 1.7;
+      overflow: hidden;
+      position: relative;
+    }
+    .mc-terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      background: rgba(0,212,255,0.04);
+      border-bottom: 1px solid rgba(0,212,255,0.08);
+    }
+    .mc-terminal-header span { font-size: 0.6rem; color: #555; }
+    .mc-terminal-body {
+      padding: 8px 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .mc-terminal-body::-webkit-scrollbar { width: 3px; }
+    .mc-terminal-body::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.2); border-radius: 2px; }
+    .mc-log-line {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mc-log-line .mc-ts { color: #333; }
+    .mc-log-line .mc-tag-crawl { color: #00D4FF; }
+    .mc-log-line .mc-tag-audit { color: #A855F7; }
+    .mc-log-line .mc-tag-recon { color: #FFD600; }
+    .mc-log-line .mc-tag-email { color: #00FF88; }
+    .mc-log-line .mc-tag-score { color: #FF8A00; }
+    .mc-log-line .mc-tag-ring { color: #FF6B6B; }
+    .mc-log-line .mc-tag-sys { color: #555; }
+    .mc-log-line .mc-msg { color: #888; }
+
+    .mc-cursor {
+      display: inline-block;
+      width: 7px; height: 12px;
+      background: #00D4FF;
+      animation: mc-blink-cursor 1s step-end infinite;
+      vertical-align: middle;
+      margin-left: 2px;
+    }
+
+    /* Status grid */
+    .mc-status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+    @media (max-width: 640px) {
+      .mc-status-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .mc-stat-card {
+      padding: 0.5rem 0.625rem;
+      border: 1px solid rgba(0,212,255,0.08);
+      border-radius: 0.5rem;
+      background: rgba(0,212,255,0.02);
+      transition: all 0.3s;
+    }
+    .mc-stat-card.mc-active {
+      border-color: rgba(0,212,255,0.25);
+      box-shadow: 0 0 12px rgba(0,212,255,0.06);
+    }
+    .mc-stat-label {
+      font-size: 0.55rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 2px;
+    }
+    .mc-stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #DDD;
+    }
+    .mc-stat-delta {
+      font-size: 0.55rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Geo coordinates ticker */
+    .mc-coord-ticker {
+      overflow: hidden;
+      white-space: nowrap;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(0,212,255,0.5);
+      padding: 4px 10px;
+      border-top: 1px solid rgba(0,212,255,0.06);
+      background: rgba(0,0,0,0.3);
+    }
+    .mc-coord-ticker .mc-ticker-inner {
+      display: inline-block;
+      animation: mc-ticker-scroll 30s linear infinite;
+    }
+    @keyframes mc-ticker-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Agent button enhancements */
+    .mc-btn-start {
+      position: relative;
+      overflow: hidden;
+    }
+    .mc-btn-start::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,255,136,0.1), transparent);
+      transition: left 0.5s;
+    }
+    .mc-btn-start:hover::after {
+      left: 100%;
+    }
   </style>
 </head>
 <body class="bg-surface text-gray-300 font-sans antialiased h-screen overflow-hidden">
@@ -376,6 +636,7 @@
         <button id="tab-history"></button>
         <button id="tab-analytics"></button>
         <button id="tab-traffic"></button>
+        <button id="tab-outreach"></button>
       </div>
 
       <!-- Builds Tab -->
@@ -590,6 +851,73 @@
           <button onclick="scrollTraffic('sec-click-heatmap')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">🔥 Click Heatmap</button>
           <button onclick="scrollTraffic('sec-performance')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">⚡ Performance</button>
           <button onclick="scrollTraffic('sec-sessions')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">🗂️ Sessions</button>
+        </div>
+      </div>
+
+      <!-- Outreach Tab (hidden initially) -->
+      <div id="outreach-sidebar" class="flex-1 overflow-hidden hidden flex flex-col">
+        <div class="p-4 border-b border-border">
+          <div class="flex items-center justify-between">
+            <h2 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">🎯 Outreach Agent</h2>
+            <span id="outreach-alerts-badge" class="hidden px-1.5 py-0.5 bg-red-500 text-white text-[0.6rem] font-bold rounded-full"></span>
+          </div>
+        </div>
+        <!-- Agent Status + Controls -->
+        <div class="p-3 border-b border-border">
+          <div id="outreach-agent-indicator" class="flex items-center gap-3 mb-3">
+            <div class="text-2xl">⚪</div>
+            <div>
+              <div class="text-xs font-mono font-bold uppercase text-gray-500">Not started</div>
+              <div id="outreach-agent-task" class="text-[0.6rem] font-mono text-gray-600 truncate max-w-[180px]"></div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="outreachAgentStart()" class="mc-btn-start flex-1 py-1.5 bg-emerald-600/20 text-emerald-400 border border-emerald-600/30 rounded-lg text-xs font-mono hover:bg-emerald-600/30 transition">▶ Start</button>
+            <button onclick="outreachAgentPause()" class="flex-1 py-1.5 bg-yellow-600/20 text-yellow-400 border border-yellow-600/30 rounded-lg text-xs font-mono hover:bg-yellow-600/30 transition">⏸ Pause</button>
+            <button onclick="outreachAgentKill()" class="w-10 py-1.5 bg-red-600/20 text-red-400 border border-red-600/30 rounded-lg text-xs font-mono hover:bg-red-600/30 transition" title="Emergency Stop">🛑</button>
+          </div>
+        </div>
+        <!-- Mini Radar -->
+        <div class="p-3 border-b border-border flex items-center justify-center">
+          <div id="outreach-sidebar-radar" class="mc-radar">
+            <div class="mc-sweep"></div>
+            <div class="mc-ring-line" style="width:30px;height:30px;"></div>
+            <div class="mc-ring-line" style="width:50px;height:50px;"></div>
+            <div class="mc-ring-line" style="width:70px;height:70px;"></div>
+          </div>
+        </div>
+        <!-- KPI Cards -->
+        <div class="p-3 space-y-1.5 border-b border-border">
+          <div id="kpi-prospects" class="flex justify-between text-xs font-mono"><span class="text-gray-500">📊 Prospects</span> <span class="text-gray-200">0</span></div>
+          <div id="kpi-audited" class="flex justify-between text-xs font-mono"><span class="text-gray-500">🔍 Audited</span> <span class="text-gray-200">0</span></div>
+          <div id="kpi-enriched" class="flex justify-between text-xs font-mono"><span class="text-gray-500">🧬 Enriched</span> <span class="text-gray-200">0</span></div>
+          <div id="kpi-contacted" class="flex justify-between text-xs font-mono"><span class="text-gray-500">📧 Contacted</span> <span class="text-gray-200">0</span></div>
+          <div id="kpi-replied" class="flex justify-between text-xs font-mono"><span class="text-gray-500">⭐ Replied</span> <span class="text-gray-200">0</span></div>
+          <div id="kpi-meetings" class="flex justify-between text-xs font-mono"><span class="text-gray-500">📅 Meetings</span> <span class="text-gray-200">0</span></div>
+        </div>
+        <!-- Ring Progress -->
+        <div class="p-3 border-b border-border">
+          <div class="flex items-center gap-1 mb-2">
+            <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono">Ring Progress</p>
+            <span class="text-gray-600 cursor-help relative group" title="Geo-rings expand outward from Manor, TX. Ring 0 = Manor core (5mi), Ring 1 = Pflugerville (10mi), Ring 2 = Round Rock (20mi), etc.">
+              ⓘ
+              <span class="absolute hidden group-hover:block bg-gray-900 text-gray-300 text-[0.6rem] font-mono p-2 rounded shadow-lg border border-gray-700 z-50 w-52 left-0 top-4 leading-relaxed">
+                <strong class="text-electric">Geo-Ring System</strong><br>
+                Concentric rings expanding outward from Manor, TX center (30.34°N, 97.56°W).<br><br>
+                Each ring crawls local businesses by category within its radius. Progress shows categories completed vs. total.
+              </span>
+            </span>
+          </div>
+          <div id="outreach-ring-progress">
+            <div class="text-xs text-gray-500 font-mono">No rings configured</div>
+          </div>
+        </div>
+        <!-- Recent Activity -->
+        <div class="flex-1 overflow-y-auto no-scrollbar p-3">
+          <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Recent Activity</p>
+          <div id="outreach-activity-feed" class="space-y-0.5">
+            <div class="text-xs text-gray-500 font-mono">No activity yet</div>
+          </div>
         </div>
       </div>
     </aside>
@@ -1422,6 +1750,446 @@
         </div>
       </div>
 
+      <!-- ═══ Outreach Panel ═══ -->
+      <div id="outreach-panel" class="hidden flex-1 overflow-y-auto p-3 md:p-6 space-y-4 md:space-y-6">
+        <!-- Mode Banner -->
+        <div id="outreach-mode-banner" class="hidden px-4 py-2 text-xs font-mono rounded-lg mb-2"></div>
+
+        <!-- ═══ MISSION CONTROL — Sci-Fi Hero ═══ -->
+        <div id="mc-hero" class="mc-panel">
+          <!-- Header bar -->
+          <div class="mc-header-bar">
+            <div id="mc-status-dot" class="mc-dot idle"></div>
+            <span class="font-mono text-[0.65rem] text-gray-400 tracking-wider uppercase flex-1">Mission Control</span>
+            <span id="mc-uptime" class="font-mono text-[0.6rem] text-gray-600">00:00:00</span>
+            <span id="mc-heartbeat" class="text-[0.55rem] text-gray-700 font-mono">♡</span>
+          </div>
+
+          <!-- Main mission visual -->
+          <div class="p-3 md:p-4">
+            <div class="flex flex-col md:flex-row gap-3 md:gap-4">
+
+              <!-- Left: Radar + Status -->
+              <div class="flex flex-row md:flex-col items-center gap-3 md:gap-2">
+                <div id="mc-radar" class="mc-radar" style="width:100px;height:100px;">
+                  <div class="mc-sweep"></div>
+                  <div class="mc-ring-line" style="width:36px;height:36px;"></div>
+                  <div class="mc-ring-line" style="width:62px;height:62px;"></div>
+                  <div class="mc-ring-line" style="width:88px;height:88px;"></div>
+                  <div id="mc-blips"></div>
+                </div>
+                <div class="text-center flex-1 md:flex-none">
+                  <div id="mc-status-text" class="font-mono text-xs text-gray-500 uppercase tracking-widest">Standby</div>
+                  <div id="mc-current-task" class="font-mono text-[0.6rem] text-electric/60 mt-0.5 truncate max-w-[160px] md:max-w-[120px]"></div>
+                </div>
+              </div>
+
+              <!-- Center: Live Terminal -->
+              <div class="flex-1 min-w-0">
+                <div class="mc-terminal">
+                  <div class="mc-terminal-header">
+                    <div style="width:6px;height:6px;border-radius:50%;background:#FF5F56;"></div>
+                    <div style="width:6px;height:6px;border-radius:50%;background:#FFBD2E;"></div>
+                    <div style="width:6px;height:6px;border-radius:50%;background:#27C93F;"></div>
+                    <span class="ml-2">outreach-agent — v1.0</span>
+                  </div>
+                  <div id="mc-terminal-body" class="mc-terminal-body">
+                    <div class="mc-log-line"><span class="mc-ts">--:--:--</span> <span class="mc-tag-sys">[SYS]</span> <span class="mc-msg">Awaiting launch sequence…</span><span class="mc-cursor"></span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Quick stats column (hidden on very small screens) -->
+              <div class="hidden sm:flex flex-col gap-1.5 min-w-[110px]">
+                <div class="mc-stat-card">
+                  <div class="mc-stat-label">Scanned</div>
+                  <div id="mc-stat-scanned" class="mc-stat-value text-sm">0</div>
+                </div>
+                <div class="mc-stat-card">
+                  <div class="mc-stat-label">Qualified</div>
+                  <div id="mc-stat-qualified" class="mc-stat-value text-sm text-emerald-400">0</div>
+                </div>
+                <div class="mc-stat-card">
+                  <div class="mc-stat-label">Contacted</div>
+                  <div id="mc-stat-contacted" class="mc-stat-value text-sm text-electric">0</div>
+                </div>
+                <div class="mc-stat-card">
+                  <div class="mc-stat-label">Replies</div>
+                  <div id="mc-stat-replies" class="mc-stat-value text-sm text-neon-green">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom ticker: scanning coordinates -->
+          <div id="mc-coord-ticker" class="mc-coord-ticker">
+            <div class="mc-ticker-inner">
+              <span>// STANDBY — Launch agent to begin geo-scanning //</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI Row (mobile-friendly, visible always) -->
+        <div class="mc-status-grid sm:hidden">
+          <div class="mc-stat-card"><div class="mc-stat-label">Scanned</div><div id="mc-stat-scanned-m" class="mc-stat-value text-sm">0</div></div>
+          <div class="mc-stat-card"><div class="mc-stat-label">Qualified</div><div id="mc-stat-qualified-m" class="mc-stat-value text-sm text-emerald-400">0</div></div>
+          <div class="mc-stat-card"><div class="mc-stat-label">Contacts</div><div id="mc-stat-contacted-m" class="mc-stat-value text-sm text-electric">0</div></div>
+          <div class="mc-stat-card"><div class="mc-stat-label">Replies</div><div id="mc-stat-replies-m" class="mc-stat-value text-sm text-neon-green">0</div></div>
+        </div>
+
+        <!-- Full Mode: Prospect Table -->
+        <div class="outreach-full-only" style="display: none;">
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <!-- Toolbar: filters + search -->
+            <div class="flex flex-wrap items-center gap-2 mb-4">
+              <h3 class="font-mono text-sm font-semibold text-gray-300 uppercase tracking-wide mr-auto">
+                Prospects <span id="outreach-prospects-count" class="text-gray-500 text-xs font-normal ml-1">(0)</span>
+              </h3>
+              <input id="outreach-search" type="text" placeholder="Search..." onkeyup="outreachSearchProspects()" class="px-3 py-1.5 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 placeholder-gray-600 focus:outline-none focus:border-electric/50 w-36">
+              <select id="outreach-filter-status" onchange="outreachSearchProspects()" class="px-2 py-1.5 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-400 focus:outline-none focus:border-electric/50">
+                <option value="">All Status</option>
+                <option value="discovered">Discovered</option>
+                <option value="audited">Audited</option>
+                <option value="enriched">Enriched</option>
+                <option value="contacted">Contacted</option>
+                <option value="replied">Replied</option>
+                <option value="meeting_booked">Meeting</option>
+                <option value="promoted">Promoted</option>
+              </select>
+              <select id="outreach-filter-type" onchange="outreachSearchProspects()" class="px-2 py-1.5 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-400 focus:outline-none focus:border-electric/50">
+                <option value="">All Types</option>
+              </select>
+              <button id="outreach-filter-nosite" onclick="outreachToggleNoWebsite()" class="px-3 py-1.5 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-400 hover:border-red-500/50 hover:text-red-400 transition" title="Show businesses WITHOUT a website — your top prospects!">🚫🌐 No Website</button>
+              <select id="outreach-page-size" onchange="outreachSearchProspects()" class="px-2 py-1.5 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-400 focus:outline-none focus:border-electric/50">
+                <option value="25">25/page</option>
+                <option value="50">50/page</option>
+                <option value="100">100/page</option>
+              </select>
+            </div>
+
+            <!-- Pipeline Worker Status -->
+            <div id="outreach-pipeline-bar" class="flex items-center gap-3 mb-3 px-3 py-2 bg-surface-2 rounded-lg border border-border">
+              <div class="flex items-center gap-2">
+                <span id="outreach-pipeline-dot" class="w-2 h-2 rounded-full bg-gray-600"></span>
+                <span class="text-[0.65rem] font-mono text-gray-400">Pipeline Worker</span>
+                <span id="outreach-pipeline-status" class="text-[0.65rem] font-mono text-gray-500">—</span>
+              </div>
+              <div class="flex-1"></div>
+              <div class="flex items-center gap-1 text-[0.6rem] font-mono text-gray-600">
+                <span class="text-gray-500">DB:</span>
+                <span id="outreach-pw-db-total" class="text-gray-300 font-semibold">0</span> prospects ·
+                <span id="outreach-pw-db-audited" class="text-emerald-400/70">0</span> audited ·
+                <span id="outreach-pw-db-enriched" class="text-blue-400/70">0</span> enriched ·
+                <span id="outreach-pw-db-queued" class="text-purple-400/70">0</span> queued
+                <span class="text-gray-700 mx-1">|</span>
+                <span class="text-gray-500" title="Processing totals this session">Session:</span>
+                <span title="Total crawl cycles completed — each discovers new businesses"><span id="outreach-pw-crawls">0</span> crawl</span> ·
+                <span title="Total website audits completed"><span id="outreach-pw-audits">0</span> audit</span> ·
+                <span title="Total recon lookups (email/owner discovery)"><span id="outreach-pw-recons">0</span> recon</span> ·
+                <span title="Total emails composed and queued for approval"><span id="outreach-pw-enqueues">0</span> enqueue</span>
+              </div>
+              <button onclick="outreachTogglePipeline()" id="outreach-pipeline-toggle" class="px-2 py-0.5 bg-emerald-600/20 text-emerald-400 border border-emerald-600/30 rounded text-[0.6rem] font-mono hover:bg-emerald-600/30 transition">Start</button>
+              <select id="outreach-agent-count" onchange="outreachScaleAgents(this.value)" class="bg-surface-2 border border-border text-gray-400 text-[0.6rem] font-mono rounded px-1 py-0.5 cursor-pointer" title="Number of concurrent agents">
+                <option value="1">1 agent</option>
+                <option value="2">2 agents</option>
+                <option value="3">3 agents</option>
+                <option value="5">5 agents</option>
+              </select>
+              <button onclick="outreachRecoverAll()" class="px-2 py-0.5 bg-amber-600/20 text-amber-400 border border-amber-600/30 rounded text-[0.6rem] font-mono hover:bg-amber-600/30 transition" title="Fix any stuck/bad states">🔧 Recover</button>
+            </div>
+
+            <!-- Bulk Action Toolbar (hidden until selection) -->
+            <div id="outreach-bulk-toolbar" class="hidden flex items-center gap-2 mb-3 px-3 py-2 bg-electric/5 rounded-lg border border-electric/20">
+              <span id="outreach-selected-count" class="text-xs font-mono text-electric">0 selected</span>
+              <div class="flex-1"></div>
+              <button onclick="outreachBulkAction('advance')" class="px-3 py-1 bg-electric/20 text-electric border border-electric/30 rounded text-[0.65rem] font-mono hover:bg-electric/30 transition">⚡ Auto-Advance</button>
+              <button onclick="outreachBulkAction('audit')" class="px-3 py-1 bg-amber-600/20 text-amber-400 border border-amber-600/30 rounded text-[0.65rem] font-mono hover:bg-amber-600/30 transition">🔍 Audit</button>
+              <button onclick="outreachBulkAction('recon')" class="px-3 py-1 bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded text-[0.65rem] font-mono hover:bg-blue-600/30 transition">🕵️ Recon</button>
+              <button onclick="outreachBulkAction('enqueue')" class="px-3 py-1 bg-emerald-600/20 text-emerald-400 border border-emerald-600/30 rounded text-[0.65rem] font-mono hover:bg-emerald-600/30 transition">📧 Generate Emails</button>
+              <button onclick="outreachClearSelection()" class="px-3 py-1 bg-gray-700/30 text-gray-400 border border-gray-700/40 rounded text-[0.65rem] font-mono hover:bg-gray-700/50 transition">✕ Clear</button>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b border-border">
+                    <th class="px-2 py-2 w-8"><input type="checkbox" id="outreach-select-all" onchange="outreachToggleSelectAll()" class="accent-electric cursor-pointer" /></th>
+                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('business_name')">Business <span id="sort-arrow-business_name" class="text-[0.5rem]"></span></th>
+                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('business_type')">Type <span id="sort-arrow-business_type" class="text-[0.5rem]"></span></th>
+                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('status')">Status <span id="sort-arrow-status" class="text-[0.5rem]"></span></th>
+                    <th class="text-center px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('priority_score')">Score <span id="sort-arrow-priority_score" class="text-[0.5rem]"></span></th>
+                    <th class="text-center px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('has_website')">🌐 <span id="sort-arrow-has_website" class="text-[0.5rem]"></span></th>
+                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('city')">City <span id="sort-arrow-city" class="text-[0.5rem]"></span></th>
+                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('google_rating')">Rating <span id="sort-arrow-google_rating" class="text-[0.5rem]"></span></th>
+                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('created_at')">Found <span id="sort-arrow-created_at" class="text-[0.5rem]"></span></th>
+                  </tr>
+                </thead>
+                <tbody id="outreach-prospects-tbody">
+                  <tr><td colspan="9" class="text-center text-gray-500 py-8 font-mono text-sm">Start the agent to begin discovery.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- Pagination -->
+            <div class="flex items-center justify-between mt-3 pt-3 border-t border-border">
+              <div id="outreach-page-info" class="text-xs text-gray-500 font-mono">Page 1</div>
+              <div class="flex gap-2">
+                <button id="outreach-prev-page" onclick="outreachPrevPage()" disabled class="px-3 py-1 bg-surface-2 border border-border rounded text-xs font-mono text-gray-500 disabled:opacity-30 hover:border-electric/50 transition">← Prev</button>
+                <button id="outreach-next-page" onclick="outreachNextPage()" disabled class="px-3 py-1 bg-surface-2 border border-border rounded text-xs font-mono text-gray-500 disabled:opacity-30 hover:border-electric/50 transition">Next →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ Prospect Detail Modal (full-screen overlay) ══ -->
+        <div id="outreach-prospect-modal" class="hidden fixed inset-0 z-50 flex items-start justify-center bg-black/80 backdrop-blur-sm overflow-y-auto pt-8 pb-8">
+          <div class="bg-surface-1 rounded-2xl border border-border w-full max-w-3xl shadow-2xl mx-4 relative">
+            <!-- Close button -->
+            <button onclick="outreachCloseProspect()" class="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center bg-gray-800/60 hover:bg-gray-700 text-gray-400 hover:text-white rounded-full transition text-lg">&times;</button>
+            <!-- Modal body filled by JS -->
+            <div id="outreach-prospect-modal-body" class="p-6"></div>
+          </div>
+        </div>
+
+        <!-- Full Mode: Email Approval Queue -->
+        <div id="outreach-email-queue" class="outreach-full-only mt-4" style="display: none;">
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-mono text-sm font-semibold text-gray-300 uppercase tracking-wide">
+                📧 Email Approval Queue <span id="outreach-pending-count" class="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[0.65rem] font-bold rounded-full ml-2">0</span>
+              </h3>
+              <div class="flex gap-2 items-center">
+                <select id="email-queue-page-size" onchange="outreachEmailQueuePageChange(0)" class="bg-surface-2 border border-border rounded px-2 py-1 text-xs text-gray-300 font-mono cursor-pointer">
+                  <option value="10">10/page</option>
+                  <option value="25" selected>25/page</option>
+                  <option value="100">100/page</option>
+                  <option value="500">500/page</option>
+                </select>
+                <button onclick="outreachRegenAllPending()" class="px-3 py-1.5 bg-amber-600/20 text-amber-400 border border-amber-600/30 rounded-lg text-xs font-mono hover:bg-amber-600/30 transition" title="Re-compose all pending emails with current audit data">🔄 Regen All</button>
+                <button onclick="outreachApproveAll()" class="px-3 py-1.5 bg-emerald-600/20 text-emerald-400 border border-emerald-600/30 rounded-lg text-xs font-mono hover:bg-emerald-600/30 transition">✓ Approve All</button>
+                <button onclick="outreachRefreshPending()" class="px-3 py-1.5 bg-gray-700/50 text-gray-400 rounded-lg text-xs font-mono hover:bg-gray-700 transition">↻ Refresh</button>
+              </div>
+            </div>
+            <div id="outreach-pending-emails" class="space-y-3">
+              <div class="text-center text-gray-500 py-4 font-mono text-sm">No emails pending approval.</div>
+            </div>
+            <div id="email-queue-pagination" class="hidden flex items-center justify-between mt-3 pt-3 border-t border-border">
+              <div id="email-queue-page-info" class="text-xs text-gray-500 font-mono"></div>
+              <div class="flex gap-2">
+                <button id="email-queue-prev" onclick="outreachEmailQueuePrev()" class="px-3 py-1 bg-gray-700/50 text-gray-400 rounded text-xs font-mono hover:bg-gray-700 transition disabled:opacity-40 disabled:cursor-not-allowed">← Prev</button>
+                <button id="email-queue-next" onclick="outreachEmailQueueNext()" class="px-3 py-1 bg-gray-700/50 text-gray-400 rounded text-xs font-mono hover:bg-gray-700 transition disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Mode: Email Tracking Stats -->
+        <div id="outreach-email-tracking" class="outreach-full-only mt-4" style="display: none;">
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-mono text-sm font-semibold text-gray-300 uppercase tracking-wide">
+                📈 Email Tracking <span id="tracking-total-sent" class="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-[0.65rem] font-bold rounded-full ml-2">0 sent</span>
+              </h3>
+              <button onclick="outreachRefreshTracking()" class="px-3 py-1.5 bg-gray-700/50 text-gray-400 rounded-lg text-xs font-mono hover:bg-gray-700 transition">↻ Refresh</button>
+            </div>
+
+            <!-- Delivery Funnel -->
+            <div class="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-4">
+              <div id="ts-pending" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div class="text-lg font-bold text-amber-400 font-mono">0</div>
+                <div class="text-[0.55rem] text-gray-500 uppercase">Pending</div>
+              </div>
+              <div id="ts-scheduled" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div class="text-lg font-bold text-blue-400 font-mono">0</div>
+                <div class="text-[0.55rem] text-gray-500 uppercase">Scheduled</div>
+              </div>
+              <div id="ts-sent" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div class="text-lg font-bold text-cyan-400 font-mono">0</div>
+                <div class="text-[0.55rem] text-gray-500 uppercase">Sent</div>
+              </div>
+              <div id="ts-opened" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div class="text-lg font-bold text-emerald-400 font-mono">0</div>
+                <div class="text-[0.55rem] text-gray-500 uppercase">Opened</div>
+              </div>
+              <div id="ts-clicked" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div class="text-lg font-bold text-purple-400 font-mono">0</div>
+                <div class="text-[0.55rem] text-gray-500 uppercase">Clicked</div>
+              </div>
+              <div id="ts-replied" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div class="text-lg font-bold text-yellow-400 font-mono">0</div>
+                <div class="text-[0.55rem] text-gray-500 uppercase">Replied</div>
+              </div>
+              <div id="ts-bounced" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div class="text-lg font-bold text-red-400 font-mono">0</div>
+                <div class="text-[0.55rem] text-gray-500 uppercase">Bounced</div>
+              </div>
+              <div id="ts-unsub" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div class="text-lg font-bold text-gray-400 font-mono">0</div>
+                <div class="text-[0.55rem] text-gray-500 uppercase">Unsub</div>
+              </div>
+            </div>
+
+            <!-- Rates Bar -->
+            <div id="tracking-rates" class="flex gap-3 mb-4 flex-wrap">
+              <div class="flex items-center gap-1.5 text-xs font-mono">
+                <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                <span class="text-gray-400">Open Rate:</span>
+                <span id="rate-open" class="text-emerald-400 font-bold">0%</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-xs font-mono">
+                <div class="w-2 h-2 rounded-full bg-purple-400"></div>
+                <span class="text-gray-400">Click Rate:</span>
+                <span id="rate-click" class="text-purple-400 font-bold">0%</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-xs font-mono">
+                <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
+                <span class="text-gray-400">Reply Rate:</span>
+                <span id="rate-reply" class="text-yellow-400 font-bold">0%</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-xs font-mono">
+                <div class="w-2 h-2 rounded-full bg-red-400"></div>
+                <span class="text-gray-400">Bounce Rate:</span>
+                <span id="rate-bounce" class="text-red-400 font-bold">0%</span>
+              </div>
+            </div>
+
+            <!-- Per-Step Breakdown -->
+            <div id="tracking-per-step" class="mb-4">
+              <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Per-Step Breakdown</p>
+              <div id="tracking-steps-table" class="text-xs text-gray-400 font-mono">
+                No step data yet.
+              </div>
+            </div>
+
+            <!-- Recent Engagement Feed -->
+            <div>
+              <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Recent Engagement</p>
+              <div id="tracking-recent" class="space-y-1 max-h-48 overflow-y-auto no-scrollbar">
+                <div class="text-xs text-gray-500 font-mono text-center py-3">No engagement yet — send some emails first!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Mode: Email Editor Modal (WYSIWYG) -->
+        <div id="outreach-email-editor" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div class="bg-surface-1 rounded-xl border border-border w-full max-w-4xl max-h-[92vh] overflow-y-auto shadow-2xl">
+            <div class="flex items-center justify-between p-4 border-b border-border">
+              <h3 class="font-mono text-sm font-semibold text-gray-200">✏️ Edit & Approve Email</h3>
+              <div class="flex items-center gap-2">
+                <button onclick="outreachRegenEmail()" class="px-2.5 py-1 bg-amber-600/20 text-amber-400 border border-amber-600/30 rounded text-[0.6rem] font-mono hover:bg-amber-600/30 transition" title="Regenerate with current audit data">🔄 Regen</button>
+                <button onclick="outreachCloseEditor()" class="text-gray-500 hover:text-gray-300 text-lg">&times;</button>
+              </div>
+            </div>
+            <div class="p-4 space-y-3">
+              <input type="hidden" id="email-editor-id">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs text-gray-500 font-mono mb-1">TO</label>
+                  <div id="email-editor-to" class="px-3 py-1.5 bg-surface-2 border border-border rounded-lg text-sm text-gray-300 font-mono"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-xs text-gray-500 font-mono">
+                  <div class="self-end pb-1">Prospect: <span id="email-editor-prospect" class="text-gray-300"></span></div>
+                  <div class="self-end pb-1">Sends: <span id="email-editor-scheduled" class="text-gray-300">after approval</span></div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 font-mono mb-1">Subject</label>
+                <input id="email-editor-subject" type="text" class="w-full px-3 py-1.5 bg-surface-2 border border-border rounded-lg text-sm text-gray-200 font-mono focus:outline-none focus:border-electric/50">
+              </div>
+              <!-- Rendered email preview (editable iframe) -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-xs text-gray-500 font-mono">Email Body</label>
+                  <div class="flex gap-1">
+                    <button id="email-editor-mode-preview" onclick="outreachToggleEditorMode('preview')" class="px-2 py-0.5 bg-electric/20 text-electric border border-electric/30 rounded text-[0.6rem] font-mono">Preview</button>
+                    <button id="email-editor-mode-source" onclick="outreachToggleEditorMode('source')" class="px-2 py-0.5 bg-gray-700/50 text-gray-400 border border-gray-700 rounded text-[0.6rem] font-mono">Source</button>
+                  </div>
+                </div>
+                <!-- PREVIEW mode: rendered HTML in iframe -->
+                <div id="email-editor-preview-wrap" class="border border-border rounded-lg overflow-hidden bg-white" style="height: 420px;">
+                  <iframe id="email-editor-iframe" class="w-full h-full border-0" sandbox="allow-same-origin"></iframe>
+                </div>
+                <!-- SOURCE mode: raw HTML textarea (hidden by default) -->
+                <textarea id="email-editor-body" rows="18" class="hidden w-full px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs text-gray-200 font-mono focus:outline-none focus:border-electric/50 leading-relaxed" style="height: 420px;"></textarea>
+              </div>
+            </div>
+            <div class="flex gap-2 p-4 border-t border-border justify-end">
+              <button onclick="outreachSendTestFromEditor()" class="px-4 py-2 bg-amber-600/20 text-amber-400 border border-amber-600/30 rounded-lg text-xs font-mono hover:bg-amber-600/30 transition mr-auto">📧 Send Test to Me</button>
+              <button onclick="outreachSaveEmail()" class="px-4 py-2 bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-lg text-xs font-mono hover:bg-blue-600/30 transition">💾 Save</button>
+              <button onclick="outreachApproveFromEditor()" class="px-4 py-2 bg-emerald-600/20 text-emerald-400 border border-emerald-600/30 rounded-lg text-xs font-mono hover:bg-emerald-600/30 transition">✓ Approve & Send</button>
+              <button onclick="outreachCloseEditor()" class="px-4 py-2 bg-gray-700/50 text-gray-400 rounded-lg text-xs font-mono hover:bg-gray-700 transition">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Light Mode Only: Alerts + Agent Log -->
+        <div id="outreach-light-panel" class="space-y-4">
+          <!-- Alerts -->
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">🔔 Alerts <span id="outreach-alerts-badge-main" class="hidden px-1.5 py-0.5 bg-red-500 text-white text-[0.6rem] font-bold rounded-full ml-1"></span></h3>
+            <div id="outreach-alerts-feed"></div>
+          </div>
+
+          <!-- Agent Log (light mode only — full mode has MC terminal) -->
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Agent Log</h3>
+            <div id="outreach-agent-log" class="max-h-48 overflow-y-auto no-scrollbar"></div>
+          </div>
+        </div>
+
+        <!-- ═══ Analytics Panels (visible in BOTH modes) ═══ -->
+
+        <!-- Funnel + Hot Prospects -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Pipeline Funnel</h3>
+            <div id="outreach-funnel"></div>
+          </div>
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">🔥 Hot Prospects</h3>
+            <div id="outreach-hot-prospects"></div>
+          </div>
+        </div>
+
+        <!-- Sparklines -->
+        <div class="bg-surface-1 rounded-xl border border-border p-4">
+          <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">90-Day Trend</h3>
+          <div id="outreach-sparklines"></div>
+        </div>
+
+        <!-- Scorecard + Templates -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Week vs Week</h3>
+            <div id="outreach-scorecard"></div>
+          </div>
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Best Templates</h3>
+            <div id="outreach-templates"></div>
+          </div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="bg-surface-1 rounded-xl border border-border p-4">
+          <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Best Send Times</h3>
+          <div id="outreach-heatmap"></div>
+        </div>
+
+        <!-- Industries + Health -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Top Industries</h3>
+            <div id="outreach-industries"></div>
+          </div>
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Agent Health (72h)</h3>
+            <div id="outreach-health"></div>
+          </div>
+        </div>
+
+      </div>
+
     </main>
   </div>
 
@@ -1615,6 +2383,11 @@
         <span class="text-base leading-none">🌐</span>
         <span class="text-[0.5rem] font-mono font-semibold uppercase tracking-wider mt-0.5">Traffic</span>
       </button>
+      <button onclick="switchTab('outreach')" id="mtab-outreach"
+        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-500 transition">
+        <span class="text-base leading-none">🎯</span>
+        <span class="text-[0.5rem] font-mono font-semibold uppercase tracking-wider mt-0.5">Outreach</span>
+      </button>
     </div>
   </nav>
 
@@ -1640,6 +2413,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="js/analytics.js"></script>
   <script src="js/traffic.js"></script>
+  <script src="js/outreach.js"></script>
   <script>
     /* ═══ Mobile Sidebar Toggle ═══ */
     function toggleMobileSidebar() {

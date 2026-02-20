@@ -51,6 +51,73 @@
       ".read": "auth != null",
       ".write": true,
       ".indexOn": ["timestamp"]
+    },
+    "outreach": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "agent": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".indexOn": ["last_heartbeat"]
+      },
+      "stats": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      "rings": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      "activity": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".indexOn": ["ts"]
+      },
+      "log": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".indexOn": ["ts"]
+      },
+      "alerts": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".indexOn": ["ts"]
+      },
+      "funnel": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      "hot": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      "snapshots": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".indexOn": [".key"]
+      },
+      "scorecard": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".indexOn": [".key"]
+      },
+      "heatmap": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      "tpl_stats": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      "industries": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      "health": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".indexOn": ["ts"]
+      }
     }
   }
 }

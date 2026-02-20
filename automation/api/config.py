@@ -88,6 +88,16 @@ class Settings(BaseSettings):
     smtp_email: str = Field(default="", description="Gmail address for sending emails")
     smtp_app_password: str = Field(default="", description="Gmail App Password (16 chars, no spaces)")
 
+    # Outreach Agent
+    google_maps_api_key: str = Field(default="", description="Google Maps/Places API key for business discovery")
+    sender_name: str = Field(default="Ajaya Dahal", description="Sender name for outreach emails")
+    tracking_base_url: str = Field(default="https://api.ajayadesign.com", description="Base URL for email open/click tracking")
+    hunter_api_key: str = Field(default="", description="Hunter.io API key for email enrichment (optional)")
+
+    # Safety caps — prevent runaway API costs
+    gmaps_daily_call_limit: int = Field(default=100, description="Max Google Maps API calls per day (Places Nearby ~$32/1000)")
+    hunter_daily_call_limit: int = Field(default=25, description="Max Hunter.io lookups per day (free plan: 25/mo)")
+
     # Host ownership fix (Docker → host)
     host_uid: int = Field(default=1000)
     host_gid: int = Field(default=1000)

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Audit — {{ business_name }}</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+  .metric { padding: 4px 0; }
+  .red { color: #dc2626; }
+  .green { color: #16a34a; }
+  .footer { margin-top: 30px; color: #666; font-size: 14px; border-top: 1px solid #e5e7eb; padding-top: 15px; }
+  .footer a { color: #2563eb; text-decoration: none; }
+  .unsubscribe { margin-top: 10px; font-size: 12px; color: #9ca3af; }
+  .unsubscribe a { color: #9ca3af; }
+</style>
+</head>
+<body>
+{% if owner_first_name == 'there' %}
+<p>Hi there,</p>
+{% else %}
+<p>Hi {{ owner_first_name }},</p>
+{% endif %}
+
+<p>I ran across <strong>{{ business_name }}</strong> while checking out {{ business_type }}s in {{ city }} — your {{ google_rating }}-star rating with {{ google_reviews }} reviews is impressive. Your customers clearly love what you do.</p>
+
+{% if all_good %}
+<p>I'm a web designer here in Manor, and out of professional curiosity I put your website through a quick performance audit. Honestly, you're doing better than most — here's the breakdown:</p>
+{% else %}
+<p>I'm a web designer here in Manor, and out of professional curiosity I put your website through a quick performance audit. Here's what I found:</p>
+{% endif %}
+
+{% if all_good %}
+<div style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+{% elif any_bad %}
+<div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+{% else %}
+<div style="background: #fefce8; border-left: 4px solid #ca8a04; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+{% endif %}
+  <div class="metric">{% if speed_good %}<span class="green">🟢</span>{% else %}<span class="red">🔴</span>{% endif %} <strong>Page Speed:</strong> {{ load_time }} load time{% if not speed_good %} (Google recommends under 2s){% else %} — nice and fast!{% endif %}</div>
+  <div class="metric">{% if mobile_good %}<span class="green">🟢</span>{% else %}<span class="red">🔴</span>{% endif %} <strong>Mobile Score:</strong> {{ mobile_score }}/100{% if not mobile_good %} ({{ bounce_rate_est }} of visitors likely leave){% endif %}</div>
+  <div class="metric">{% if seo_good %}<span class="green">🟢</span>{% else %}<span class="red">🔴</span>{% endif %} <strong>SEO:</strong> {% if seo_good %}All basics covered ✓{% else %}Missing {{ missing_seo }}{% endif %}</div>
+  {% if ssl_expired %}
+  <div class="metric"><span class="red">🔴</span> <strong>Security:</strong> SSL certificate {{ ssl_status }}</div>
+  {% endif %}
+  {% if has_broken_things %}
+  <div class="metric"><span class="red">🔴</span> <strong>Design:</strong> {{ worst_broken_thing }}</div>
+  {% endif %}
+</div>
+
+<p>For context, <strong>{{ competitor_name }}</strong> — another {{ business_type }} nearby — scores {{ competitor_score }}/100.</p>
+
+<p>I'm not sending this to scare you. I genuinely think a business with your reputation deserves a website that matches. I've helped {{ nearby_client }} get {{ nearby_result }}.</p>
+
+<p><strong>Would a 15-minute call to walk through the full audit be useful?</strong> No pitch, just data.</p>
+
+<div class="footer">
+  <p>— {{ sender_name }}<br>
+  {{ sender_company }} · {{ sender_location }}<br>
+  <a href="https://{{ sender_url }}">{{ sender_url }}</a></p>
+</div>
+
+<div class="unsubscribe">
+  <p>Not interested? <a href="{{ unsubscribe_url }}">Click here</a> and I won't email again.</p>
+</div>
+
+<img src="{{ tracking_pixel_url }}" width="1" height="1" alt="" style="display:none;">
+</body>
+</html>

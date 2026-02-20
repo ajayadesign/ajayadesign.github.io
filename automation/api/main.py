@@ -1062,21 +1062,47 @@ async def lifespan(app: FastAPI):
         logger.info("✅ Firebase bridge ready")
 
         # Deploy RTDB security rules (idempotent)
+        logger.info("⏳ Deploying RTDB rules...")
         deploy_database_rules()
+        logger.info("✅ RTDB rules deployed")
 
         # Reconcile any missed leads
+        logger.info("⏳ Reconciling Firebase leads...")
         missed = await reconcile_firebase_leads()
+        logger.info("✅ Reconciled %d leads", len(missed) if missed else 0)
         if missed:
             logger.info("🔄 Found %d unprocessed leads — queueing builds", len(missed))
 
         # Pick up any signatures submitted while we were offline
+        logger.info("⏳ Processing Firebase signatures...")
         await process_firebase_signatures()
+        logger.info("✅ Signatures processed")
 
         # Pick up protect/delete commands submitted while we were offline
+        logger.info("⏳ Processing Firebase build commands...")
         await process_firebase_build_commands()
+        logger.info("✅ Build commands processed")
 
         # Re-sync active contracts & invoices → Firebase mirror
+        logger.info("⏳ Reconciling contracts/invoices to Firebase...")
         await reconcile_contracts_invoices_to_firebase()
+        logger.info("✅ Contracts/invoices reconciled")
+
+        # Check if Firebase outreach data needs rebuilding
+        try:
+            from api.services.firebase_summarizer import check_and_rebuild_on_boot
+            async with async_session() as outreach_session:
+                await check_and_rebuild_on_boot(outreach_session)
+        except Exception as e:
+            logger.warning("Outreach Firebase boot check skipped: %s", e)
+
+        # Initialize outreach geo-rings (idempotent)
+        try:
+            from api.services.crawl_engine import ensure_default_rings
+            await ensure_default_rings()
+            logger.info("✅ Outreach geo-rings initialized")
+        except Exception as e:
+            logger.warning("Outreach ring init skipped: %s", e)
 
         # Wire up the queue processor
         build_queue.set_processor(_process_build)
@@ -1091,9 +1117,122 @@ async def lifespan(app: FastAPI):
         periodic_firebase_poll(interval=settings.firebase_poll_interval)
     )
 
+    # ── Start APScheduler for outreach engine jobs ──
+    outreach_scheduler = None
+    try:
+        from apscheduler.schedulers.asyncio import AsyncIOScheduler
+        from apscheduler.triggers.cron import CronTrigger
+        from apscheduler.triggers.interval import IntervalTrigger
+
+        outreach_scheduler = AsyncIOScheduler(timezone="America/Chicago")
+
+        # Send queue processor — every 15 minutes during business hours
+        async def _process_send_queue():
+            try:
+                from api.services.cadence_engine import process_send_queue
+                await process_send_queue()
+            except Exception as e:
+                logger.error("Outreach send queue error: %s", e)
+
+        outreach_scheduler.add_job(
+            _process_send_queue,
+            IntervalTrigger(minutes=15),
+            id="outreach_send_queue",
+            replace_existing=True,
+        )
+
+        # Batch enqueue — once daily at 8 AM CT
+        async def _batch_enqueue():
+            try:
+                from api.services.cadence_engine import batch_enqueue_prospects
+                count = await batch_enqueue_prospects(limit=10)
+                logger.info("Outreach: enqueued %d prospects", count)
+            except Exception as e:
+                logger.error("Outreach enqueue error: %s", e)
+
+        outreach_scheduler.add_job(
+            _batch_enqueue,
+            CronTrigger(hour=8, minute=0),
+            id="outreach_batch_enqueue",
+            replace_existing=True,
+        )
+
+        # Firebase daily summary — every day at 8 PM CT
+        async def _daily_summary():
+            try:
+                from api.services.firebase_summarizer import push_all_outreach_stats
+                async with async_session() as db:
+                    await push_all_outreach_stats(db)
+            except Exception as e:
+                logger.error("Outreach summary error: %s", e)
+
+        outreach_scheduler.add_job(
+            _daily_summary,
+            CronTrigger(hour=20, minute=0),
+            id="outreach_daily_summary",
+            replace_existing=True,
+        )
+
+        # Firebase janitor — nightly at 3 AM CT
+        async def _nightly_janitor():
+            try:
+                from api.services.firebase_janitor import nightly_prune
+                await nightly_prune()
+            except Exception as e:
+                logger.error("Firebase janitor error: %s", e)
+
+        outreach_scheduler.add_job(
+            _nightly_janitor,
+            CronTrigger(hour=3, minute=0),
+            id="outreach_nightly_janitor",
+            replace_existing=True,
+        )
+
+        # Health snapshot — every hour
+        async def _health_snapshot():
+            try:
+                from api.services.firebase_summarizer import push_health_snapshot
+                await push_health_snapshot()
+            except Exception as e:
+                logger.error("Outreach health snapshot error: %s", e)
+
+        outreach_scheduler.add_job(
+            _health_snapshot,
+            IntervalTrigger(hours=1),
+            id="outreach_health_snapshot",
+            replace_existing=True,
+        )
+
+        outreach_scheduler.start()
+        logger.info("✅ Outreach scheduler started (5 jobs)")
+
+    except ImportError:
+        logger.info("ℹ️ APScheduler not installed — outreach scheduler disabled")
+    except Exception as e:
+        logger.warning("Outreach scheduler failed to start: %s", e)
+
+    # ── Start Pipeline Worker (autonomous prospect processing) ──
+    pipeline_worker = None
+    try:
+        from api.services.pipeline_worker import start_pipeline_worker, stop_pipeline_worker, recover_all_bad_states
+        # Run one-shot recovery on boot to fix any bad states
+        recovery = await recover_all_bad_states()
+        if recovery.get("total", 0) > 0:
+            logger.info("🔧 Pipeline boot recovery: %s", recovery)
+        # Start the continuous worker
+        pipeline_worker = await start_pipeline_worker()
+        logger.info("✅ Pipeline worker started")
+    except Exception as e:
+        logger.warning("Pipeline worker failed to start: %s", e)
+
     yield
 
     # Shutdown
+    if pipeline_worker:
+        from api.services.pipeline_worker import stop_pipeline_worker
+        await stop_pipeline_worker()
+    if outreach_scheduler:
+        outreach_scheduler.shutdown(wait=False)
     poller_task.cancel()
     try:
         await poller_task
@@ -1134,6 +1273,10 @@ app.include_router(invoice_router, prefix="/api/v1")
 app.include_router(email_router, prefix="/api/v1")
 app.include_router(portfolio_router, prefix="/api/v1")
 app.include_router(activity_router, prefix="/api/v1")
+
+# Outreach agent routes
+from api.routes.outreach import outreach_router
+app.include_router(outreach_router, prefix="/api/v1")
 
 
 @app.get("/", include_in_schema=False)
