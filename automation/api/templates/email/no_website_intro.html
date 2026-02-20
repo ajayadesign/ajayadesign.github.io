@@ -3,37 +3,58 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get Found on Google — {{ business_name }}</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+  .highlight { background: #fef2f2; border-left: 4px solid #dc2626; padding: 12px 16px; margin: 16px 0; border-radius: 4px; }
+  .win { background: #f0fdf4; border-left: 4px solid #16a34a; padding: 12px 16px; margin: 16px 0; border-radius: 4px; }
+  .stat { padding: 4px 0; }
+  .red { color: #dc2626; }
+  .green { color: #16a34a; }
+  .footer { margin-top: 30px; color: #666; font-size: 14px; border-top: 1px solid #e5e7eb; padding-top: 15px; }
+  .footer a { color: #2563eb; text-decoration: none; }
+  .unsubscribe { margin-top: 10px; font-size: 12px; color: #9ca3af; }
+  .unsubscribe a { color: #9ca3af; }
+</style>
 </head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 580px; margin: 0 auto; padding: 20px; font-size: 15px;">
-
+<body>
 {% if owner_first_name == 'there' %}
-<p>Hey there,</p>
+<p>Hi there,</p>
 {% else %}
-<p>Hey {{ owner_first_name }},</p>
+<p>Hi {{ owner_first_name }},</p>
 {% endif %}
 
-<p>Found <strong>{{ business_name }}</strong> on Google Maps — {{ google_rating }} stars across {{ google_reviews }} reviews. That's genuinely impressive. Your customers clearly love what you do.</p>
+<p>I found <strong>{{ business_name }}</strong> on Google Maps — {{ google_rating }} stars across {{ google_reviews }} reviews is seriously impressive. Your customers love you.</p>
 
-<p>I noticed you don't have a website listed though. I know a lot of businesses do fine without one, but here's the thing — when someone searches "{{ business_type }} near me" on Google (and {{ industry_mobile_pct }}% of those searches are on mobile), only businesses with websites show up in Google Search results. Without one, you're only showing up on Maps, and a lot of people scroll right past that.</p>
+<p>But here's the thing: <strong>right now, you're invisible to everyone searching Google for a {{ business_type }} in {{ city }}.</strong> No website means Google can't rank you in search results — only on Maps.</p>
 
-<p>I'm Ajaya — I live here in Manor and I build websites for local businesses in the area. I'm not a big agency, just a one-person shop trying to help businesses around here get found online. I moved here from Nepal a while back and this community has been home since.</p>
+<div class="highlight">
+  <div class="stat"><span class="red">🔴</span> <strong>{{ industry_mobile_pct }}% of people search for "{{ business_type }} near me"</strong> on their phone — without a website, they scroll past you to competitors who have one</div>
+  <div class="stat"><span class="red">🔴</span> <strong>No online menu, hours, pricing, or booking</strong> — customers who find you have to call or hunt for a Facebook page</div>
+  <div class="stat"><span class="red">🔴</span> <strong>{{ competitor_name }}</strong> has a website and ranks above you in Google search — even with fewer reviews</div>
+</div>
 
-<p>If you've ever thought about getting a site up, I'd be happy to chat about what that would look like for {{ business_name }}. No pressure at all — I know it's not for everyone. But with your reviews, a simple site that shows up on Google could bring in a lot of people who are currently finding your competitors instead.</p>
+<div class="win">
+  <div class="stat"><span class="green">🟢</span> <strong>{{ google_rating }}★ across {{ google_reviews }} reviews</strong> — this is your biggest asset. A website with these reviews embedded converts visitors like crazy</div>
+  <div class="stat"><span class="green">🟢</span> <strong>An AI-optimized site gets you on Google Search</strong> — not just Maps. That means more traffic, more calls, more revenue</div>
+</div>
 
-<p>Just reply if you're curious. Or feel free to ignore this — no hard feelings either way.</p>
+<p>I build <strong>AI-optimized websites</strong> for local businesses in the Manor/Austin area. What does that mean? Your site is built to <strong>rank on Google, load in under 2 seconds, and look great on every phone.</strong> No generic templates — it's built around your business, your reviews, and your local SEO.</p>
 
-<p>– Ajaya</p>
+<p>I helped {{ nearby_client }} go from zero online presence to {{ nearby_result }}. <strong>Most of my clients launch in days, not months</strong> — and the ROI starts immediately.</p>
 
-<p style="color: #888; font-size: 13px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 12px;">
-Ajaya Dahal<br>
-AjayaDesign · Manor, TX<br>
-<a href="https://ajayadesign.github.io" style="color: #888;">ajayadesign.github.io</a>
-</p>
+<p><strong>Would a 15-minute call make sense?</strong> I'll show you exactly how a {{ business_type }} in {{ city }} can start getting Google traffic this month. No cost, no pressure — just a straightforward look at what you're leaving on the table.</p>
 
-<p style="font-size: 11px; color: #bbb;">
-Not your thing? <a href="{{ unsubscribe_url }}" style="color: #bbb;">Click here</a> and I won't email again.
-</p>
+<div class="footer">
+  <p>— {{ sender_name }}<br>
+  {{ sender_company }} · {{ sender_location }}<br>
+  <a href="https://{{ sender_url }}">{{ sender_url }}</a></p>
+</div>
 
-<img src="{{ tracking_pixel_url }}" width="1" height="1" alt="" style="display:none;">
+<div class="unsubscribe">
+  <p>Not interested? <a href="__UNSUBSCRIBE_URL__">Click here</a> and I won't email again.</p>
+</div>
+
+<img src="__TRACKING_PIXEL_URL__" width="1" height="1" alt="" style="display:none;">
 </body>
 </html>

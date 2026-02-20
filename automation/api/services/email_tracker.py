@@ -60,8 +60,11 @@ def inject_tracking(body_html: str, tracking_id: str) -> str:
     pixel_url = get_tracking_pixel_url(tracking_id)
     unsub_url = get_unsubscribe_url(tracking_id)
 
-    # Replace template placeholders
-    result = body_html.replace("{{ tracking_pixel_url }}", pixel_url)
+    # Replace template placeholders (non-Jinja tokens so Jinja2 doesn't eat them)
+    result = body_html.replace("__TRACKING_PIXEL_URL__", pixel_url)
+    result = result.replace("__UNSUBSCRIBE_URL__", unsub_url)
+    # Legacy Jinja-style placeholders (backwards compat)
+    result = result.replace("{{ tracking_pixel_url }}", pixel_url)
     result = result.replace("{{tracking_pixel_url}}", pixel_url)
     result = result.replace("{{ unsubscribe_url }}", unsub_url)
     result = result.replace("{{unsubscribe_url}}", unsub_url)

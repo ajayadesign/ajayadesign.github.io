@@ -3,28 +3,58 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Redirecting…</title>
+<title>Redirecting — AjayaDesign</title>
 <style>
-  body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #111; color: #999; }
-  .msg { text-align: center; }
-  a { color: #60a5fa; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    color: #e2e8f0;
+    padding: 20px;
+  }
+  .card {
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+  }
+  .loader {
+    width: 36px; height: 36px;
+    border: 3px solid rgba(99, 102, 241, 0.2);
+    border-top-color: #818cf8;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 20px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  p { color: #94a3b8; font-size: 0.95rem; }
+  #fallback { margin-top: 16px; }
+  a {
+    color: #818cf8;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(129, 140, 248, 0.3);
+    padding-bottom: 1px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  a:hover { color: #a5b4fc; border-color: #a5b4fc; }
 </style>
 </head>
 <body>
-<div class="msg">
+<div class="card">
+  <div class="loader"></div>
   <p>Redirecting…</p>
-  <p id="fallback" style="display:none">If you are not redirected, <a id="dest-link" href="#">click here</a>.</p>
+  <p id="fallback" style="display:none">If you're not redirected, <a id="dest-link" href="#">click here</a>.</p>
 </div>
 
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-  import { getDatabase, ref, push, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+  import { getDatabase, ref, push } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
   const params = new URLSearchParams(location.search);
   const trackingId = params.get('t') || '';
   const dest = params.get('url') || 'https://ajayadesign.github.io';
 
-  // Show fallback link immediately
   const destLink = document.getElementById('dest-link');
   destLink.href = dest;
 
@@ -45,15 +75,12 @@
         ua: navigator.userAgent.substring(0, 200),
       });
     } catch (e) {
-      // Don't block redirect on tracking failure
       console.warn('Track failed:', e);
     }
   }
 
-  // Redirect
   location.replace(dest);
 
-  // Fallback if redirect doesn't fire in 2s
   setTimeout(() => {
     document.getElementById('fallback').style.display = 'block';
   }, 2000);
