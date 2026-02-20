@@ -1994,6 +1994,15 @@
                 <button onclick="outreachRefreshPending()" class="px-3 py-1.5 bg-gray-700/50 text-gray-400 rounded-lg text-xs font-mono hover:bg-gray-700 transition">↻ Refresh</button>
               </div>
             </div>
+
+            <!-- Stage Tabs -->
+            <div class="flex gap-1 mb-4 border-b border-border" id="email-queue-stage-tabs">
+              <button onclick="outreachQueueStageFilter('')" id="eq-stage-all" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-electric text-electric transition">All <span id="eq-stage-all-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
+              <button onclick="outreachQueueStageFilter('1')" id="eq-stage-initial" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">Initial <span id="eq-stage-initial-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
+              <button onclick="outreachQueueStageFilter('2,3')" id="eq-stage-followup" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">Follow-up <span id="eq-stage-followup-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
+              <button onclick="outreachQueueStageFilter('4')" id="eq-stage-breakup" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">Breakup <span id="eq-stage-breakup-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
+              <button onclick="outreachQueueStageFilter('5')" id="eq-stage-resurrection" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">Resurrection <span id="eq-stage-resurrection-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
+            </div>
             <div id="outreach-pending-emails" class="space-y-3">
               <div class="text-center text-gray-500 py-4 font-mono text-sm">No emails pending approval.</div>
             </div>
@@ -2007,8 +2016,8 @@
           </div>
         </div>
 
-        <!-- Full Mode: Email Tracking Stats -->
-        <div id="outreach-email-tracking" class="outreach-full-only mt-4" style="display: none;">
+        <!-- Email Tracking Stats (works in both full + light mode) -->
+        <div id="outreach-email-tracking" class="mt-4" style="display: none;">
           <div class="bg-surface-1 rounded-xl border border-border p-4">
             <div class="flex items-center justify-between mb-4">
               <h3 class="font-mono text-sm font-semibold text-gray-300 uppercase tracking-wide">
@@ -2017,79 +2026,142 @@
               <button onclick="outreachRefreshTracking()" class="px-3 py-1.5 bg-gray-700/50 text-gray-400 rounded-lg text-xs font-mono hover:bg-gray-700 transition">↻ Refresh</button>
             </div>
 
-            <!-- Delivery Funnel -->
-            <div class="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-4">
-              <div id="ts-pending" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
-                <div class="text-lg font-bold text-amber-400 font-mono">0</div>
-                <div class="text-[0.55rem] text-gray-500 uppercase">Pending</div>
+            <!-- Tab Switcher: Overview | All Emails | Unsubscribed -->
+            <div class="flex gap-1 mb-4 border-b border-border">
+              <button onclick="outreachTrackingTab('overview')" id="tracking-tab-overview" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-electric text-electric transition">Overview</button>
+              <button onclick="outreachTrackingTab('emails')" id="tracking-tab-emails" class="tracking-api-only px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">All Emails</button>
+              <button onclick="outreachTrackingTab('unsubscribed')" id="tracking-tab-unsubscribed" class="tracking-api-only px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">Unsubscribed <span id="unsub-badge" class="ml-1 px-1.5 py-0.5 bg-red-500/20 text-red-400 text-[0.55rem] rounded-full">0</span></button>
+            </div>
+
+            <!-- TAB: Overview (existing stats) -->
+            <div id="tracking-panel-overview">
+              <!-- Delivery Funnel -->
+              <div class="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-4">
+                <div id="ts-pending" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                  <div class="text-lg font-bold text-amber-400 font-mono">0</div>
+                  <div class="text-[0.55rem] text-gray-500 uppercase">Pending</div>
+                </div>
+                <div id="ts-scheduled" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                  <div class="text-lg font-bold text-blue-400 font-mono">0</div>
+                  <div class="text-[0.55rem] text-gray-500 uppercase">Scheduled</div>
+                </div>
+                <div id="ts-sent" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                  <div class="text-lg font-bold text-cyan-400 font-mono">0</div>
+                  <div class="text-[0.55rem] text-gray-500 uppercase">Sent</div>
+                </div>
+                <div id="ts-opened" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                  <div class="text-lg font-bold text-emerald-400 font-mono">0</div>
+                  <div class="text-[0.55rem] text-gray-500 uppercase">Opened</div>
+                </div>
+                <div id="ts-clicked" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                  <div class="text-lg font-bold text-purple-400 font-mono">0</div>
+                  <div class="text-[0.55rem] text-gray-500 uppercase">Clicked</div>
+                </div>
+                <div id="ts-replied" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                  <div class="text-lg font-bold text-yellow-400 font-mono">0</div>
+                  <div class="text-[0.55rem] text-gray-500 uppercase">Replied</div>
+                </div>
+                <div id="ts-bounced" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                  <div class="text-lg font-bold text-red-400 font-mono">0</div>
+                  <div class="text-[0.55rem] text-gray-500 uppercase">Bounced</div>
+                </div>
+                <div id="ts-unsub" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                  <div class="text-lg font-bold text-gray-400 font-mono">0</div>
+                  <div class="text-[0.55rem] text-gray-500 uppercase">Unsub</div>
+                </div>
               </div>
-              <div id="ts-scheduled" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
-                <div class="text-lg font-bold text-blue-400 font-mono">0</div>
-                <div class="text-[0.55rem] text-gray-500 uppercase">Scheduled</div>
+
+              <!-- Rates Bar -->
+              <div id="tracking-rates" class="flex gap-3 mb-4 flex-wrap">
+                <div class="flex items-center gap-1.5 text-xs font-mono">
+                  <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                  <span class="text-gray-400">Open Rate:</span>
+                  <span id="rate-open" class="text-emerald-400 font-bold">0%</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-xs font-mono">
+                  <div class="w-2 h-2 rounded-full bg-purple-400"></div>
+                  <span class="text-gray-400">Click Rate:</span>
+                  <span id="rate-click" class="text-purple-400 font-bold">0%</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-xs font-mono">
+                  <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
+                  <span class="text-gray-400">Reply Rate:</span>
+                  <span id="rate-reply" class="text-yellow-400 font-bold">0%</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-xs font-mono">
+                  <div class="w-2 h-2 rounded-full bg-red-400"></div>
+                  <span class="text-gray-400">Bounce Rate:</span>
+                  <span id="rate-bounce" class="text-red-400 font-bold">0%</span>
+                </div>
               </div>
-              <div id="ts-sent" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
-                <div class="text-lg font-bold text-cyan-400 font-mono">0</div>
-                <div class="text-[0.55rem] text-gray-500 uppercase">Sent</div>
+
+              <!-- Per-Step Breakdown -->
+              <div id="tracking-per-step" class="mb-4">
+                <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Per-Step Breakdown</p>
+                <div id="tracking-steps-table" class="text-xs text-gray-400 font-mono">
+                  No step data yet.
+                </div>
               </div>
-              <div id="ts-opened" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
-                <div class="text-lg font-bold text-emerald-400 font-mono">0</div>
-                <div class="text-[0.55rem] text-gray-500 uppercase">Opened</div>
-              </div>
-              <div id="ts-clicked" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
-                <div class="text-lg font-bold text-purple-400 font-mono">0</div>
-                <div class="text-[0.55rem] text-gray-500 uppercase">Clicked</div>
-              </div>
-              <div id="ts-replied" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
-                <div class="text-lg font-bold text-yellow-400 font-mono">0</div>
-                <div class="text-[0.55rem] text-gray-500 uppercase">Replied</div>
-              </div>
-              <div id="ts-bounced" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
-                <div class="text-lg font-bold text-red-400 font-mono">0</div>
-                <div class="text-[0.55rem] text-gray-500 uppercase">Bounced</div>
-              </div>
-              <div id="ts-unsub" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
-                <div class="text-lg font-bold text-gray-400 font-mono">0</div>
-                <div class="text-[0.55rem] text-gray-500 uppercase">Unsub</div>
+
+              <!-- Recent Engagement Feed -->
+              <div>
+                <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Recent Engagement</p>
+                <div id="tracking-recent" class="space-y-1 max-h-48 overflow-y-auto no-scrollbar">
+                  <div class="text-xs text-gray-500 font-mono text-center py-3">No engagement yet — send some emails first!</div>
+                </div>
               </div>
             </div>
 
-            <!-- Rates Bar -->
-            <div id="tracking-rates" class="flex gap-3 mb-4 flex-wrap">
-              <div class="flex items-center gap-1.5 text-xs font-mono">
-                <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                <span class="text-gray-400">Open Rate:</span>
-                <span id="rate-open" class="text-emerald-400 font-bold">0%</span>
+            <!-- TAB: All Emails (paginated table with filters) -->
+            <div id="tracking-panel-emails" class="hidden">
+              <!-- Filters row -->
+              <div class="flex flex-wrap gap-2 mb-3 items-center">
+                <select id="tracking-list-filter" onchange="outreachTrackingListLoad(0)" class="bg-surface-2 border border-border rounded-lg px-2 py-1.5 text-xs text-gray-300 font-mono">
+                  <option value="all">All Sent</option>
+                  <option value="opened">Opened</option>
+                  <option value="clicked">Clicked</option>
+                  <option value="replied">Replied</option>
+                  <option value="bounced">Bounced</option>
+                  <option value="unsubscribed">Unsubscribed</option>
+                </select>
+                <select id="tracking-list-sort" onchange="outreachTrackingListLoad(0)" class="bg-surface-2 border border-border rounded-lg px-2 py-1.5 text-xs text-gray-300 font-mono">
+                  <option value="sent_at">Sort: Sent Date</option>
+                  <option value="opened_at">Sort: Opened Date</option>
+                  <option value="clicked_at">Sort: Clicked Date</option>
+                  <option value="open_count">Sort: Open Count</option>
+                  <option value="click_count">Sort: Click Count</option>
+                  <option value="business_name">Sort: Business Name</option>
+                </select>
+                <input id="tracking-list-search" type="text" placeholder="Search business or email…" onkeyup="if(event.key==='Enter')outreachTrackingListLoad(0)" class="bg-surface-2 border border-border rounded-lg px-3 py-1.5 text-xs text-gray-300 font-mono flex-1 min-w-[120px]">
+                <button onclick="outreachTrackingListLoad(0)" class="px-2.5 py-1.5 bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-lg text-xs font-mono hover:bg-blue-600/30 transition">🔍</button>
               </div>
-              <div class="flex items-center gap-1.5 text-xs font-mono">
-                <div class="w-2 h-2 rounded-full bg-purple-400"></div>
-                <span class="text-gray-400">Click Rate:</span>
-                <span id="rate-click" class="text-purple-400 font-bold">0%</span>
+
+              <!-- Results table -->
+              <div id="tracking-list-body" class="space-y-1">
+                <div class="text-xs text-gray-500 font-mono text-center py-3">Click "All Emails" tab to load.</div>
               </div>
-              <div class="flex items-center gap-1.5 text-xs font-mono">
-                <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
-                <span class="text-gray-400">Reply Rate:</span>
-                <span id="rate-reply" class="text-yellow-400 font-bold">0%</span>
-              </div>
-              <div class="flex items-center gap-1.5 text-xs font-mono">
-                <div class="w-2 h-2 rounded-full bg-red-400"></div>
-                <span class="text-gray-400">Bounce Rate:</span>
-                <span id="rate-bounce" class="text-red-400 font-bold">0%</span>
+
+              <!-- Pagination -->
+              <div id="tracking-list-pagination" class="flex items-center justify-between mt-3 hidden">
+                <div class="flex items-center gap-2">
+                  <select id="tracking-list-page-size" onchange="outreachTrackingListLoad(0)" class="bg-surface-2 border border-border rounded px-2 py-1 text-[0.65rem] text-gray-400 font-mono">
+                    <option value="10">10 / page</option>
+                    <option value="25" selected>25 / page</option>
+                    <option value="100">100 / page</option>
+                  </select>
+                  <span id="tracking-list-page-info" class="text-[0.65rem] text-gray-500 font-mono">0–0 of 0</span>
+                </div>
+                <div class="flex gap-1">
+                  <button id="tracking-list-prev" onclick="outreachTrackingListPrev()" class="px-2 py-1 bg-surface-2 border border-border rounded text-xs text-gray-400 font-mono hover:border-electric/30 disabled:opacity-30 transition" disabled>‹ Prev</button>
+                  <button id="tracking-list-next" onclick="outreachTrackingListNext()" class="px-2 py-1 bg-surface-2 border border-border rounded text-xs text-gray-400 font-mono hover:border-electric/30 disabled:opacity-30 transition" disabled>Next ›</button>
+                </div>
               </div>
             </div>
 
-            <!-- Per-Step Breakdown -->
-            <div id="tracking-per-step" class="mb-4">
-              <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Per-Step Breakdown</p>
-              <div id="tracking-steps-table" class="text-xs text-gray-400 font-mono">
-                No step data yet.
-              </div>
-            </div>
-
-            <!-- Recent Engagement Feed -->
-            <div>
-              <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Recent Engagement</p>
-              <div id="tracking-recent" class="space-y-1 max-h-48 overflow-y-auto no-scrollbar">
-                <div class="text-xs text-gray-500 font-mono text-center py-3">No engagement yet — send some emails first!</div>
+            <!-- TAB: Unsubscribed -->
+            <div id="tracking-panel-unsubscribed" class="hidden">
+              <div id="unsub-list-body" class="space-y-1">
+                <div class="text-xs text-gray-500 font-mono text-center py-3">Loading…</div>
               </div>
             </div>
           </div>

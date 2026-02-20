@@ -14,7 +14,7 @@ import random
 import time
 from datetime import date, datetime, timedelta, timezone
 
-from sqlalchemy import func, select, and_, extract
+from sqlalchemy import case, func, select, and_, extract
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.models.prospect import (
@@ -508,6 +508,98 @@ async def compute_weekly_scorecard(db: AsyncSession) -> dict:
     }
 
 
+async def _compute_email_tracking_stats(db: AsyncSession) -> dict:
+    """
+    Compute email tracking overview for Firebase (prod dashboard).
+    Same structure as GET /email-stats so the dashboard can render
+    the tracking overview panel in light mode.
+    """
+    # Status counts
+    status_q = await db.execute(
+        select(OutreachEmail.status, func.count(OutreachEmail.id))
+        .group_by(OutreachEmail.status)
+    )
+    status_counts = {row[0]: row[1] for row in status_q.all()}
+
+    total_sent = status_counts.get("sent", 0) + status_counts.get("delivered", 0)
+    total_bounced = status_counts.get("bounced", 0)
+    total_pending = status_counts.get("pending_approval", 0)
+    total_scheduled = status_counts.get("scheduled", 0)
+
+    # Engagement aggregates
+    agg = await db.execute(
+        select(
+            func.sum(OutreachEmail.open_count).label("opens"),
+            func.sum(OutreachEmail.click_count).label("clicks"),
+            func.count(case((OutreachEmail.opened_at.isnot(None), 1))).label("unique_opens"),
+            func.count(case((OutreachEmail.clicked_at.isnot(None), 1))).label("unique_clicks"),
+            func.count(case((OutreachEmail.replied_at.isnot(None), 1))).label("replies"),
+        ).where(OutreachEmail.sent_at.isnot(None))
+    )
+    row = agg.one()
+    unique_opens = row.unique_opens or 0
+    unique_clicks = row.unique_clicks or 0
+    total_replied = row.replies or 0
+
+    # Unsubscribed
+    unsub_q = await db.execute(
+        select(func.count(Prospect.id)).where(Prospect.status == "do_not_contact")
+    )
+    total_unsubscribed = unsub_q.scalar() or 0
+
+    # Per-step breakdown
+    step_q = await db.execute(
+        select(
+            OutreachEmail.sequence_step,
+            func.count(OutreachEmail.id).label("total"),
+            func.count(case((OutreachEmail.sent_at.isnot(None), 1))).label("sent"),
+            func.count(case((OutreachEmail.opened_at.isnot(None), 1))).label("opened"),
+            func.count(case((OutreachEmail.clicked_at.isnot(None), 1))).label("clicked"),
+            func.count(case((OutreachEmail.replied_at.isnot(None), 1))).label("replied"),
+            func.count(case((OutreachEmail.status == "bounced", 1))).label("bounced"),
+        )
+        .group_by(OutreachEmail.sequence_step)
+        .order_by(OutreachEmail.sequence_step)
+    )
+    per_step = {}
+    for r in step_q.all():
+        step_sent = r.sent or 0
+        per_step[str(r.sequence_step)] = {
+            "step": r.sequence_step,
+            "total": r.total,
+            "sent": step_sent,
+            "opened": r.opened,
+            "clicked": r.clicked,
+            "replied": r.replied,
+            "bounced": r.bounced,
+            "open_rate": round(r.opened / step_sent * 100, 1) if step_sent > 0 else 0,
+            "click_rate": round(r.clicked / step_sent * 100, 1) if step_sent > 0 else 0,
+        }
+
+    return {
+        "overview": {
+            "pending_approval": total_pending,
+            "scheduled": total_scheduled,
+            "sent": total_sent,
+            "bounced": total_bounced,
+            "unsubscribed": total_unsubscribed,
+        },
+        "engagement": {
+            "total_opens": row.opens or 0,
+            "unique_opens": unique_opens,
+            "total_clicks": row.clicks or 0,
+            "unique_clicks": unique_clicks,
+            "replied": total_replied,
+            "open_rate": round(unique_opens / total_sent * 100, 1) if total_sent > 0 else 0,
+            "click_rate": round(unique_clicks / total_sent * 100, 1) if total_sent > 0 else 0,
+            "reply_rate": round(total_replied / total_sent * 100, 1) if total_sent > 0 else 0,
+            "bounce_rate": round(total_bounced / total_sent * 100, 1) if total_sent > 0 else 0,
+        },
+        "per_step": per_step,
+        "updated_at": int(time.time()),
+    }
+
+
 # ────────────────────────────────────────────────────────
 # MAIN PUSH FUNCTIONS (called by scheduler)
 # ────────────────────────────────────────────────────────
@@ -564,6 +656,10 @@ async def push_firebase_summaries(db: AsyncSession):
         ring_rows = (await db.execute(select(GeoRing).order_by(GeoRing.ring_number))).scalars().all()
         if ring_rows:
             await push_ring_progress([r.to_dict() for r in ring_rows])
+
+        # 9. Email tracking stats (powers prod tracking overview)
+        tracking = await _compute_email_tracking_stats(db)
+        await _safe_set("outreach/tracking", tracking)
 
         logger.info("✅ Firebase summaries pushed successfully")
     except Exception as e:

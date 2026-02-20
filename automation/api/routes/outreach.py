@@ -539,6 +539,7 @@ async def list_pending_emails(
     order: str = "desc",
     has_website: Optional[str] = None,
     prospect_status: Optional[str] = None,
+    sequence_step: Optional[str] = None,
 ):
     """List emails awaiting operator approval, with prospect context. Supports pagination, sorting, and filtering."""
     # Base filter
@@ -557,12 +558,23 @@ async def list_pending_emails(
     if prospect_status:
         status_filter = Prospect.status == prospect_status
 
+    # Sequence step filter (supports single step or comma-separated range)
+    step_filter = None
+    if sequence_step:
+        steps = [int(s.strip()) for s in sequence_step.split(",") if s.strip().isdigit()]
+        if len(steps) == 1:
+            step_filter = OutreachEmail.sequence_step == steps[0]
+        elif steps:
+            step_filter = OutreachEmail.sequence_step.in_(steps)
+
     # Count
     count_q = select(func.count(OutreachEmail.id)).join(Prospect, join_cond).where(base_filter)
     if website_filter is not None:
         count_q = count_q.where(website_filter)
     if status_filter is not None:
         count_q = count_q.where(status_filter)
+    if step_filter is not None:
+        count_q = count_q.where(step_filter)
     total = (await db.execute(count_q)).scalar() or 0
 
     # Sorting
@@ -582,6 +594,8 @@ async def list_pending_emails(
         q = q.where(website_filter)
     if status_filter is not None:
         q = q.where(status_filter)
+    if step_filter is not None:
+        q = q.where(step_filter)
     q = q.order_by(order_col).limit(limit).offset(offset)
 
     result = await db.execute(q)
@@ -595,7 +609,22 @@ async def list_pending_emails(
         d["prospect_website"] = prospect.website_url
         d["prospect_score"] = prospect.priority_score
         out.append(d)
-    return {"emails": out, "total": total, "limit": limit, "offset": offset}
+
+    # Per-step counts for tab badges
+    step_counts_q = (
+        select(OutreachEmail.sequence_step, func.count(OutreachEmail.id))
+        .where(OutreachEmail.status == "pending_approval")
+        .group_by(OutreachEmail.sequence_step)
+    )
+    step_counts = {row[0]: row[1] for row in (await db.execute(step_counts_q)).all()}
+
+    return {
+        "emails": out,
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+        "step_counts": step_counts,
+    }
 
 
 @outreach_router.post("/emails/batch-approve")
@@ -886,6 +915,160 @@ async def get_email_stats(db: AsyncSession = Depends(get_db)):
 
 
 # ═══════════════════════════════════════════════════════════════════
+# EMAIL TRACKING LIST + UNSUBSCRIBE MANAGEMENT
+# ═══════════════════════════════════════════════════════════════════
+
+
+@outreach_router.get("/email-tracking-list")
+async def get_email_tracking_list(
+    db: AsyncSession = Depends(get_db),
+    limit: int = Query(25, le=200),
+    offset: int = Query(0, ge=0),
+    filter: str = Query("all"),  # all, sent, opened, clicked, replied, bounced, unsubscribed
+    sort: str = Query("sent_at"),  # sent_at, opened_at, clicked_at, business_name
+    order: str = Query("desc"),
+    search: str = Query(""),
+):
+    """
+    Paginated email tracking list with filter support.
+    Returns individual email records with tracking data.
+    """
+    base_q = select(
+        OutreachEmail.id,
+        OutreachEmail.subject,
+        Prospect.owner_email.label("to_email"),
+        OutreachEmail.status,
+        OutreachEmail.sequence_step,
+        OutreachEmail.sent_at,
+        OutreachEmail.opened_at,
+        OutreachEmail.clicked_at,
+        OutreachEmail.replied_at,
+        OutreachEmail.open_count,
+        OutreachEmail.click_count,
+        OutreachEmail.tracking_id,
+        Prospect.business_name,
+        Prospect.id.label("prospect_id"),
+        Prospect.status.label("prospect_status"),
+    ).join(Prospect, OutreachEmail.prospect_id == Prospect.id)
+
+    # Apply filter
+    if filter == "sent":
+        base_q = base_q.where(OutreachEmail.sent_at.isnot(None))
+    elif filter == "opened":
+        base_q = base_q.where(OutreachEmail.opened_at.isnot(None))
+    elif filter == "clicked":
+        base_q = base_q.where(OutreachEmail.clicked_at.isnot(None))
+    elif filter == "replied":
+        base_q = base_q.where(OutreachEmail.replied_at.isnot(None))
+    elif filter == "bounced":
+        base_q = base_q.where(OutreachEmail.status == "bounced")
+    elif filter == "unsubscribed":
+        base_q = base_q.where(Prospect.status == "do_not_contact")
+    else:
+        # "all" — show only emails that have been sent
+        base_q = base_q.where(OutreachEmail.sent_at.isnot(None))
+
+    # Search
+    if search:
+        base_q = base_q.where(
+            or_(
+                Prospect.business_name.ilike(f"%{search}%"),
+                Prospect.owner_email.ilike(f"%{search}%"),
+                OutreachEmail.subject.ilike(f"%{search}%"),
+            )
+        )
+
+    # Count
+    from sqlalchemy import func as fn2
+    count_q = select(fn2.count()).select_from(base_q.subquery())
+    total = (await db.execute(count_q)).scalar() or 0
+
+    # Sort
+    sort_map = {
+        "sent_at": OutreachEmail.sent_at,
+        "opened_at": OutreachEmail.opened_at,
+        "clicked_at": OutreachEmail.clicked_at,
+        "business_name": Prospect.business_name,
+        "open_count": OutreachEmail.open_count,
+        "click_count": OutreachEmail.click_count,
+    }
+    sort_col = sort_map.get(sort, OutreachEmail.sent_at)
+    if sort_col is not None:
+        base_q = base_q.order_by(sort_col.desc().nullslast() if order == "desc" else sort_col.asc().nullsfirst())
+    else:
+        base_q = base_q.order_by(OutreachEmail.sent_at.desc().nullslast())
+
+    base_q = base_q.offset(offset).limit(limit)
+    rows = (await db.execute(base_q)).all()
+
+    emails = []
+    for r in rows:
+        emails.append({
+            "id": str(r.id),
+            "subject": r.subject or "",
+            "to_email": r.to_email or "",
+            "status": r.status,
+            "sequence_step": r.sequence_step,
+            "sent_at": r.sent_at.isoformat() if r.sent_at else None,
+            "opened_at": r.opened_at.isoformat() if r.opened_at else None,
+            "clicked_at": r.clicked_at.isoformat() if r.clicked_at else None,
+            "replied_at": r.replied_at.isoformat() if r.replied_at else None,
+            "open_count": r.open_count or 0,
+            "click_count": r.click_count or 0,
+            "tracking_id": str(r.tracking_id) if r.tracking_id else None,
+            "business_name": r.business_name or "",
+            "prospect_id": str(r.prospect_id),
+            "prospect_status": r.prospect_status,
+        })
+
+    return {"emails": emails, "total": total, "limit": limit, "offset": offset}
+
+
+@outreach_router.post("/prospects/{prospect_id}/resubscribe")
+async def resubscribe_prospect(prospect_id: str, db: AsyncSession = Depends(get_db)):
+    """Re-subscribe a prospect that was marked do_not_contact."""
+    prospect = await db.get(Prospect, uuid.UUID(prospect_id))
+    if not prospect:
+        raise HTTPException(status_code=404, detail="Prospect not found")
+    if prospect.status != "do_not_contact":
+        raise HTTPException(status_code=400, detail=f"Prospect is '{prospect.status}', not do_not_contact")
+
+    prospect.status = "audited"  # Go back to audited so cadence can pick them up
+    await db.commit()
+
+    return {"message": f"Re-subscribed {prospect.business_name}", "status": prospect.status}
+
+
+@outreach_router.get("/unsubscribed-list")
+async def get_unsubscribed_list(db: AsyncSession = Depends(get_db)):
+    """List all prospects marked as do_not_contact (unsubscribed)."""
+    result = await db.execute(
+        select(
+            Prospect.id,
+            Prospect.business_name,
+            Prospect.owner_email,
+            Prospect.owner_name,
+            Prospect.business_type,
+            Prospect.city,
+            Prospect.updated_at,
+        )
+        .where(Prospect.status == "do_not_contact")
+        .order_by(Prospect.updated_at.desc())
+    )
+    prospects = []
+    for r in result.all():
+        prospects.append({
+            "id": str(r.id),
+            "business_name": r.business_name or "",
+            "email": r.owner_email or "",
+            "owner_name": r.owner_name or "",
+            "business_type": r.business_type or "",
+            "city": r.city or "",
+            "unsubscribed_at": r.updated_at.isoformat() if r.updated_at else None,
+        })
+    return {"prospects": prospects, "total": len(prospects)}
+
+
 # ═══════════════════════════════════════════════════════════════════
 
 from fastapi.responses import Response, RedirectResponse
