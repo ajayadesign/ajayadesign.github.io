@@ -94,6 +94,43 @@ def is_in_send_window(business_type: str) -> bool:
     return now.weekday() in window["days"] and start_h <= now.hour < end_h
 
 
+# ─── Domain Blocklist (registrar, platform, chain, generic addresses) ──
+
+_BLOCKED_EMAIL_DOMAINS = {
+    "namebright.com", "godaddy.com", "homedepot.com", "square.site",
+    "mysite.com", "key.me", "vagaro.com", "wix.com", "squarespace.com",
+    "weebly.com", "wordpress.com", "shopify.com", "sentry.io",
+}
+_BLOCKED_EMAIL_PREFIXES = {
+    "noreply", "no-reply", "donotreply", "do-not-reply",
+    "support", "postmaster", "mailer-daemon", "abuse",
+}
+_BLOCKED_BUSINESS_WORDS = {
+    "home depot", "elementary school", "middle school", "high school",
+    "walmart", "target", "starbucks", "mcdonalds", "dollar general",
+    "dollar tree", "family dollar", "autozone", "walgreens", "cvs",
+}
+
+
+def _is_blocked_email(email: str) -> bool:
+    """Return True if email goes to a registrar, platform, chain, etc."""
+    email = (email or "").lower().strip()
+    if not email or "@" not in email:
+        return True
+    local, domain = email.rsplit("@", 1)
+    if domain in _BLOCKED_EMAIL_DOMAINS:
+        return True
+    if local in _BLOCKED_EMAIL_PREFIXES:
+        return True
+    return False
+
+
+def _is_blocked_business(name: str) -> bool:
+    """Return True if business name matches a chain/non-local entity."""
+    name_lower = (name or "").lower()
+    return any(w in name_lower for w in _BLOCKED_BUSINESS_WORDS)
+
+
 # ─── Sequence Management ──────────────────────────────────────────────
 
 async def enqueue_prospect(prospect_id: str) -> Optional[str]:
@@ -118,6 +155,19 @@ async def enqueue_prospect(prospect_id: str) -> Optional[str]:
 
         if not prospect.owner_email:
             logger.warning("Cannot enqueue %s — no email", prospect.business_name)
+            return None
+
+        # Guard: block registrar/platform/chain emails
+        if _is_blocked_email(prospect.owner_email):
+            logger.warning("Blocked %s — bad email domain: %s", prospect.business_name, prospect.owner_email)
+            prospect.status = "dead"
+            await db.commit()
+            return None
+
+        if _is_blocked_business(prospect.business_name):
+            logger.warning("Blocked %s — chain/non-local business", prospect.business_name)
+            prospect.status = "dead"
+            await db.commit()
             return None
 
         # Guard: prevent duplicate step-1 emails

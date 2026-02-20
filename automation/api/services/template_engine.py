@@ -325,6 +325,11 @@ def _build_variables(prospect: Prospect, audit: Optional[WebsiteAudit]) -> dict:
         owner_name = "there"
         first_name = "there"
 
+    # Google data presence — guard against "N/A-star rating across 0 reviews"
+    has_google_rating = prospect.google_rating is not None and float(prospect.google_rating) > 0
+    has_google_reviews = prospect.google_reviews is not None and int(prospect.google_reviews) > 0
+    has_google_presence = has_google_rating and has_google_reviews
+
     variables = {
         # From Google Maps
         "business_name": prospect.business_name,
@@ -333,8 +338,11 @@ def _build_variables(prospect: Prospect, audit: Optional[WebsiteAudit]) -> dict:
         "city": prospect.city,
         "state": prospect.state or "TX",
         "business_type": (prospect.business_type or "business").replace("_", " "),
-        "google_rating": str(prospect.google_rating or "N/A"),
-        "google_reviews": str(prospect.google_reviews or "0"),
+        "google_rating": str(prospect.google_rating) if has_google_rating else "N/A",
+        "google_reviews": str(prospect.google_reviews) if has_google_reviews else "0",
+        "has_google_rating": has_google_rating,
+        "has_google_reviews": has_google_reviews,
+        "has_google_presence": has_google_presence,
 
         # Website (for website_down template)
         "website_url": prospect.website_url or "",

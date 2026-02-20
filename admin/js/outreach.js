@@ -63,7 +63,7 @@
   function _detachDataListeners() {
     const db = _db();
     if (!db) return;
-    const dataKeys = ['stats', 'rings', 'activity', 'log', 'alerts', 'funnel', 'hot', 'tplStats', 'industries'];
+    const dataKeys = ['stats', 'rings', 'activity', 'log', 'alerts', 'funnel', 'hot', 'tplStats', 'industries', 'tracking'];
     for (const key of dataKeys) {
       if (_listeners[key]) {
         try { db.ref(`outreach/${key === 'tplStats' ? 'tpl_stats' : key}`).off(); } catch (e) { /* ignore */ }
@@ -162,6 +162,13 @@
       _renderIndustryBreakdown(snap.val() || {});
     });
 
+    // 11. Email tracking stats (powers tracking panel in light/prod mode)
+    _listeners.tracking = db.ref('outreach/tracking').on('value', snap => {
+      if (_apiAvailable) return; // Full mode uses API data
+      const data = snap.val();
+      if (data) _renderTrackingFromFirebase(data);
+    });
+
     // ── One-shot loads (.once) — infrequently updated nodes ──
 
     // 11. 90-day sparklines
@@ -243,6 +250,11 @@
 
   function _initFullMode() {
     document.querySelectorAll('.outreach-full-only').forEach(el => el.style.display = '');
+    // Tracking panel is always visible (works in both modes)
+    const $tracking = document.getElementById('outreach-email-tracking');
+    if ($tracking) $tracking.style.display = '';
+    // Show API-only tracking tabs
+    document.querySelectorAll('.tracking-api-only').forEach(el => { el.style.display = ''; el.disabled = false; });
     const $light = document.getElementById('outreach-light-panel');
     if ($light) $light.style.display = 'none';
     _loadBusinessTypes();
@@ -258,6 +270,11 @@
 
   function _teardownFullMode() {
     document.querySelectorAll('.outreach-full-only').forEach(el => el.style.display = 'none');
+    // Tracking panel stays visible — Firebase provides overview data
+    const $tracking = document.getElementById('outreach-email-tracking');
+    if ($tracking) $tracking.style.display = '';
+    // Disable API-only tracking tabs in light mode
+    document.querySelectorAll('.tracking-api-only').forEach(el => { el.style.opacity = '0.4'; el.disabled = true; el.title = 'Requires local API'; });
     const $light = document.getElementById('outreach-light-panel');
     if ($light) $light.style.display = '';
     if (_liveRefreshTimer) { clearInterval(_liveRefreshTimer); _liveRefreshTimer = null; }
@@ -1196,7 +1213,8 @@
 
   let _emailQueueOffset = 0;
   let _emailQueueTotal = 0;
-  let _visibleEmailIds = [];  // Track IDs of emails currently shown on screen
+  let _visibleEmailIds = [];
+  let _emailQueueStageFilter = ''; // '' = all, '1' = initial, '2,3' = follow-up, '4' = breakup, '5' = resurrection  // Track IDs of emails currently shown on screen
 
   async function _loadPendingEmails(offset) {
     const limit = parseInt(document.getElementById('email-queue-page-size')?.value || '25', 10);
@@ -1207,6 +1225,7 @@
     let url = `/outreach/emails/pending?limit=${limit}&offset=${_emailQueueOffset}&sort=${sortVal}&order=${sortVal === 'score' ? 'desc' : sortVal === 'business_name' ? 'asc' : 'desc'}`;
     if (wsFilter) url += `&has_website=${wsFilter}`;
     if (statusFilter) url += `&prospect_status=${statusFilter}`;
+    if (_emailQueueStageFilter) url += `&sequence_step=${_emailQueueStageFilter}`;
     const data = await _api('GET', url);
     const $el = document.getElementById('outreach-pending-emails');
     const $count = document.getElementById('outreach-pending-count');
@@ -1218,12 +1237,23 @@
     _visibleEmailIds = emails.map(e => e.id);  // Track visible email IDs
     if ($count) $count.textContent = _emailQueueTotal;
 
+    // Update stage tab counts
+    const sc = data.step_counts || {};
+    const allCount = Object.values(sc).reduce((a, b) => a + b, 0);
+    _setCountBadge('eq-stage-all-count', allCount);
+    _setCountBadge('eq-stage-initial-count', sc[1] || sc['1'] || 0);
+    _setCountBadge('eq-stage-followup-count', (sc[2] || sc['2'] || 0) + (sc[3] || sc['3'] || 0));
+    _setCountBadge('eq-stage-breakup-count', sc[4] || sc['4'] || 0);
+    _setCountBadge('eq-stage-resurrection-count', sc[5] || sc['5'] || 0);
+
     if (emails.length === 0) {
       $el.innerHTML = '<div class="text-center text-gray-500 py-4 font-mono text-sm">No emails pending approval. 🎉</div>';
       if ($pag) $pag.classList.add('hidden');
       return;
     }
 
+    const stepLabel = (s) => ({1:'Initial',2:'Follow-up',3:'Social Proof',4:'Breakup',5:'Resurrection'}[s] || 'Step '+s);
+    const stepColor = (s) => ({1:'bg-blue-500/15 text-blue-400',2:'bg-cyan-500/15 text-cyan-400',3:'bg-teal-500/15 text-teal-400',4:'bg-orange-500/15 text-orange-400',5:'bg-pink-500/15 text-pink-400'}[s] || 'bg-gray-500/15 text-gray-400');
     $el.innerHTML = emails.map(e => `
       <div class="bg-surface-2 rounded-lg border border-border p-3 hover:border-electric/30 transition">
         <div class="cursor-pointer" onclick="outreachViewProspect('${e.prospect_id}')">
@@ -1232,7 +1262,10 @@
               <div class="font-mono text-sm text-gray-200 hover:text-electric transition">${_esc(e.prospect_name || '—')}</div>
               <div class="text-[0.65rem] text-gray-500 font-mono">${_esc(e.prospect_type || '')} · ${_esc(e.prospect_city || '')} · Score: ${e.prospect_score ?? '—'}</div>
             </div>
-            <span class="px-2 py-0.5 bg-amber-500/15 text-amber-400 text-[0.6rem] font-mono rounded-full">pending</span>
+            <div class="flex gap-1.5">
+              <span class="px-2 py-0.5 ${stepColor(e.sequence_step)} text-[0.6rem] font-mono rounded-full">${stepLabel(e.sequence_step)}</span>
+              <span class="px-2 py-0.5 bg-amber-500/15 text-amber-400 text-[0.6rem] font-mono rounded-full">pending</span>
+            </div>
           </div>
           <div class="mb-2">
             <div class="text-xs text-gray-400 font-mono">Subject: <span class="text-gray-200">${_esc(e.subject || '—')}</span></div>
@@ -1277,6 +1310,36 @@
     if ($btn) { $btn.disabled = true; $btn.innerHTML = '<span class="animate-spin inline-block">↻</span> Loading…'; }
     await _loadPendingEmails();
     if ($btn) { $btn.disabled = false; $btn.innerHTML = '↻ Refresh'; }
+  };
+
+  // ── Email Queue Stage Tabs ───────────────────────────
+  function _setCountBadge(id, count) {
+    const $el = document.getElementById(id);
+    if ($el) $el.textContent = count;
+  }
+
+  window.outreachQueueStageFilter = function (stepFilter) {
+    _emailQueueStageFilter = stepFilter;
+    // Update active tab styles
+    const tabs = {
+      '': 'eq-stage-all',
+      '1': 'eq-stage-initial',
+      '2,3': 'eq-stage-followup',
+      '4': 'eq-stage-breakup',
+      '5': 'eq-stage-resurrection',
+    };
+    for (const [filter, id] of Object.entries(tabs)) {
+      const $tab = document.getElementById(id);
+      if (!$tab) continue;
+      if (filter === stepFilter) {
+        $tab.classList.add('border-electric', 'text-electric');
+        $tab.classList.remove('border-transparent', 'text-gray-500');
+      } else {
+        $tab.classList.remove('border-electric', 'text-electric');
+        $tab.classList.add('border-transparent', 'text-gray-500');
+      }
+    }
+    _loadPendingEmails(0);
   };
 
   // ── Email Tracking Stats ─────────────────────────────
@@ -1366,8 +1429,225 @@
   window.outreachRefreshTracking = async function () {
     const $btn = document.querySelector('[onclick="outreachRefreshTracking()"]');
     if ($btn) { $btn.disabled = true; $btn.innerHTML = '<span class="animate-spin inline-block">↻</span>'; }
-    await _loadEmailTrackingStats();
+    if (_apiAvailable) {
+      await _loadEmailTrackingStats();
+    }
+    // Firebase-powered refresh is automatic via listener
     if ($btn) { $btn.disabled = false; $btn.innerHTML = '↻ Refresh'; }
+  };
+
+  // ── Render Tracking from Firebase (light/prod mode) ──
+  function _renderTrackingFromFirebase(data) {
+    const ov = data.overview || {};
+    const eg = data.engagement || {};
+
+    // Total sent badge
+    const $badge = document.getElementById('tracking-total-sent');
+    if ($badge) $badge.textContent = `${ov.sent || 0} sent`;
+
+    // Delivery funnel
+    const funnelMap = {
+      'ts-pending': ov.pending_approval || 0,
+      'ts-scheduled': ov.scheduled || 0,
+      'ts-sent': ov.sent || 0,
+      'ts-opened': eg.unique_opens || 0,
+      'ts-clicked': eg.unique_clicks || 0,
+      'ts-replied': eg.replied || 0,
+      'ts-bounced': ov.bounced || 0,
+      'ts-unsub': ov.unsubscribed || 0,
+    };
+    for (const [id, val] of Object.entries(funnelMap)) {
+      const $el = document.getElementById(id);
+      if ($el) { const $num = $el.querySelector('.font-bold'); if ($num) $num.textContent = val; }
+    }
+
+    // Rates
+    const setText = (id, val) => { const $el = document.getElementById(id); if ($el) $el.textContent = val + '%'; };
+    setText('rate-open', eg.open_rate || 0);
+    setText('rate-click', eg.click_rate || 0);
+    setText('rate-reply', eg.reply_rate || 0);
+    setText('rate-bounce', eg.bounce_rate || 0);
+
+    // Per-step breakdown (Firebase stores as object keyed by step number)
+    const perStep = data.per_step || {};
+    const steps = Object.values(perStep).sort((a, b) => (a.step || 0) - (b.step || 0));
+    const $steps = document.getElementById('tracking-steps-table');
+    if ($steps && steps.length > 0) {
+      const stepNames = { 1: 'Initial Audit', 2: 'Follow-up Value', 3: 'Social Proof', 4: 'Breakup', 5: 'Resurrection' };
+      $steps.innerHTML = `
+        <div class="grid grid-cols-7 gap-1 text-[0.55rem] text-gray-600 uppercase mb-1 font-semibold">
+          <div>Step</div><div>Total</div><div>Sent</div><div>Opened</div><div>Clicked</div><div>Replied</div><div>Bounced</div>
+        </div>
+        ${steps.map(s => `
+          <div class="grid grid-cols-7 gap-1 py-1 border-t border-gray-800/30">
+            <div class="text-gray-300">${stepNames[s.step] || 'Step ' + s.step}</div>
+            <div>${s.total}</div>
+            <div>${s.sent}</div>
+            <div class="text-emerald-400">${s.opened}${s.sent > 0 ? ' <span class="text-gray-600">(' + s.open_rate + '%)</span>' : ''}</div>
+            <div class="text-purple-400">${s.clicked}${s.sent > 0 ? ' <span class="text-gray-600">(' + s.click_rate + '%)</span>' : ''}</div>
+            <div class="text-yellow-400">${s.replied}</div>
+            <div class="text-red-400">${s.bounced}</div>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    // Unsub badge
+    const $unsub = document.getElementById('unsub-badge');
+    if ($unsub) $unsub.textContent = ov.unsubscribed || 0;
+
+    // Recent engagement — not available from Firebase (needs API)
+    const $recent = document.getElementById('tracking-recent');
+    if ($recent && !_apiAvailable) {
+      $recent.innerHTML = '<div class="text-xs text-gray-500 font-mono text-center py-3">Real-time engagement feed available with local API.</div>';
+    }
+  }
+
+  // ── Tracking Tab Switcher ─────────────────────────────
+  window.outreachTrackingTab = function (tab) {
+    const tabs = ['overview', 'emails', 'unsubscribed'];
+    tabs.forEach(t => {
+      const $tab = document.getElementById('tracking-tab-' + t);
+      const $panel = document.getElementById('tracking-panel-' + t);
+      if ($tab) {
+        if (t === tab) {
+          $tab.classList.add('border-electric', 'text-electric');
+          $tab.classList.remove('border-transparent', 'text-gray-500');
+        } else {
+          $tab.classList.remove('border-electric', 'text-electric');
+          $tab.classList.add('border-transparent', 'text-gray-500');
+        }
+      }
+      if ($panel) $panel.classList.toggle('hidden', t !== tab);
+    });
+    if (tab === 'emails') outreachTrackingListLoad(0);
+    if (tab === 'unsubscribed') _loadUnsubscribedList();
+  };
+
+  // ── Email Tracking List (paginated + filterable) ─────
+  let _trackingListOffset = 0;
+  let _trackingListTotal = 0;
+
+  window.outreachTrackingListLoad = async function (offset) {
+    if (typeof offset === 'number') _trackingListOffset = offset;
+    const limit = parseInt(document.getElementById('tracking-list-page-size')?.value || '25', 10);
+    const filter = document.getElementById('tracking-list-filter')?.value || 'all';
+    const sort = document.getElementById('tracking-list-sort')?.value || 'sent_at';
+    const search = document.getElementById('tracking-list-search')?.value || '';
+    const params = new URLSearchParams({ limit, offset: _trackingListOffset, filter, sort, order: 'desc', search });
+    const data = await _api('GET', '/outreach/email-tracking-list?' + params.toString());
+    const $body = document.getElementById('tracking-list-body');
+    const $pag = document.getElementById('tracking-list-pagination');
+    if (!$body || !data) return;
+
+    const emails = data.emails || [];
+    _trackingListTotal = data.total || 0;
+
+    if (emails.length === 0) {
+      $body.innerHTML = '<div class="text-xs text-gray-500 font-mono text-center py-6">No emails match this filter.</div>';
+      if ($pag) $pag.classList.add('hidden');
+      return;
+    }
+
+    // Table header
+    let html = `<div class="grid grid-cols-12 gap-1 text-[0.55rem] text-gray-600 uppercase font-semibold font-mono py-1 border-b border-border">
+      <div class="col-span-3">Business</div>
+      <div class="col-span-3">Subject</div>
+      <div class="col-span-1">Step</div>
+      <div class="col-span-1 text-center">Opens</div>
+      <div class="col-span-1 text-center">Clicks</div>
+      <div class="col-span-1 text-center">Status</div>
+      <div class="col-span-2 text-right">Sent</div>
+    </div>`;
+
+    html += emails.map(e => {
+      const statusBadge = e.replied_at ? '<span class="text-yellow-400">⭐ replied</span>'
+        : e.clicked_at ? '<span class="text-purple-400">🔗 clicked</span>'
+        : e.opened_at ? '<span class="text-emerald-400">👀 opened</span>'
+        : e.status === 'bounced' ? '<span class="text-red-400">✕ bounced</span>'
+        : e.prospect_status === 'do_not_contact' ? '<span class="text-gray-500">🚫 unsub</span>'
+        : '<span class="text-cyan-400">✓ sent</span>';
+      const sentDate = e.sent_at ? new Date(e.sent_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
+      return `<div class="grid grid-cols-12 gap-1 py-2 border-b border-gray-800/20 text-xs font-mono items-center hover:bg-surface-2/50 cursor-pointer" onclick="outreachViewProspect('${e.prospect_id}')">
+        <div class="col-span-3 text-gray-200 truncate">${_esc(e.business_name)}</div>
+        <div class="col-span-3 text-gray-400 truncate">${_esc(e.subject).substring(0, 40)}</div>
+        <div class="col-span-1 text-gray-500">${e.sequence_step || 1}</div>
+        <div class="col-span-1 text-center ${e.open_count > 0 ? 'text-emerald-400' : 'text-gray-600'}">${e.open_count}</div>
+        <div class="col-span-1 text-center ${e.click_count > 0 ? 'text-purple-400' : 'text-gray-600'}">${e.click_count}</div>
+        <div class="col-span-1 text-center text-[0.6rem]">${statusBadge}</div>
+        <div class="col-span-2 text-right text-gray-500">${sentDate}</div>
+      </div>`;
+    }).join('');
+
+    $body.innerHTML = html;
+
+    // Pagination
+    if ($pag) {
+      $pag.classList.remove('hidden');
+      const start = _trackingListOffset + 1;
+      const end = Math.min(_trackingListOffset + emails.length, _trackingListTotal);
+      document.getElementById('tracking-list-page-info').textContent = `${start}–${end} of ${_trackingListTotal}`;
+      document.getElementById('tracking-list-prev').disabled = (_trackingListOffset === 0);
+      document.getElementById('tracking-list-next').disabled = (end >= _trackingListTotal);
+    }
+  };
+
+  window.outreachTrackingListPrev = function () {
+    const limit = parseInt(document.getElementById('tracking-list-page-size')?.value || '25', 10);
+    outreachTrackingListLoad(Math.max(0, _trackingListOffset - limit));
+  };
+  window.outreachTrackingListNext = function () {
+    const limit = parseInt(document.getElementById('tracking-list-page-size')?.value || '25', 10);
+    if (_trackingListOffset + limit < _trackingListTotal) outreachTrackingListLoad(_trackingListOffset + limit);
+  };
+
+  // ── Unsubscribed List ─────────────────────────────────
+  async function _loadUnsubscribedList() {
+    const data = await _api('GET', '/outreach/unsubscribed-list');
+    const $body = document.getElementById('unsub-list-body');
+    const $badge = document.getElementById('unsub-badge');
+    if (!$body || !data) return;
+
+    const list = data.prospects || [];
+    if ($badge) $badge.textContent = list.length;
+
+    if (list.length === 0) {
+      $body.innerHTML = '<div class="text-xs text-gray-500 font-mono text-center py-6">No unsubscribed contacts. 🎉</div>';
+      return;
+    }
+
+    let html = `<div class="grid grid-cols-12 gap-1 text-[0.55rem] text-gray-600 uppercase font-semibold font-mono py-1 border-b border-border">
+      <div class="col-span-3">Business</div>
+      <div class="col-span-2">Contact</div>
+      <div class="col-span-3">Email</div>
+      <div class="col-span-2">Date</div>
+      <div class="col-span-2 text-right">Action</div>
+    </div>`;
+
+    html += list.map(p => {
+      const dt = p.unsubscribed_at ? new Date(p.unsubscribed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+      return `<div class="grid grid-cols-12 gap-1 py-2 border-b border-gray-800/20 text-xs font-mono items-center">
+        <div class="col-span-3 text-gray-200 truncate cursor-pointer hover:text-electric" onclick="outreachViewProspect('${p.id}')">${_esc(p.business_name)}</div>
+        <div class="col-span-2 text-gray-400 truncate">${_esc(p.owner_name || '—')}</div>
+        <div class="col-span-3 text-gray-500 truncate">${_esc(p.email || '—')}</div>
+        <div class="col-span-2 text-gray-500">${dt}</div>
+        <div class="col-span-2 text-right">
+          <button onclick="outreachResubscribe('${p.id}','${_esc(p.business_name)}')" class="px-2 py-1 bg-emerald-600/20 text-emerald-400 border border-emerald-600/30 rounded text-[0.6rem] font-mono hover:bg-emerald-600/30 transition">↩ Resubscribe</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    $body.innerHTML = html;
+  }
+
+  window.outreachResubscribe = async function (prospectId, name) {
+    if (!confirm(`Re-subscribe ${name}? They will be eligible for outreach again.`)) return;
+    const res = await _api('POST', `/outreach/prospects/${prospectId}/resubscribe`);
+    if (res) {
+      _showBanner(`✓ ${name} re-subscribed`, 'success');
+      _loadUnsubscribedList();
+      _loadEmailTrackingStats();
+    }
   };
 
   window.outreachApproveOne = async function (emailId) {
@@ -2350,6 +2630,9 @@
   window.initOutreachTab = async function () {
     if (_initialized) return;
     _initialized = true;
+    // Show tracking panel immediately (works in both modes)
+    const $tracking = document.getElementById('outreach-email-tracking');
+    if ($tracking) $tracking.style.display = '';
     // Detect mode FIRST — this determines whether to use Firebase or localhost
     await detectMode();
     // THEN set up Firebase listeners (skips data listeners if API is available)

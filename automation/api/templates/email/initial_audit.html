@@ -3,71 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quick Website Check — {{ business_name }}</title>
-<style>
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-  .metric { padding: 4px 0; }
-  .red { color: #dc2626; }
-  .green { color: #16a34a; }
-  .cta-box { background: #eff6ff; border: 2px solid #3b82f6; border-radius: 8px; padding: 16px; margin: 20px 0; text-align: center; }
-  .cta-box a { display: inline-block; background: #2563eb; color: #fff; padding: 10px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; }
-  .footer { margin-top: 30px; color: #666; font-size: 14px; border-top: 1px solid #e5e7eb; padding-top: 15px; }
-  .footer a { color: #2563eb; text-decoration: none; }
-  .unsubscribe { margin-top: 10px; font-size: 12px; color: #9ca3af; }
-  .unsubscribe a { color: #9ca3af; }
-</style>
 </head>
-<body>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; font-size: 15px;">
 {% if owner_first_name == 'there' %}
 <p>Hi there,</p>
 {% else %}
 <p>Hi {{ owner_first_name }},</p>
 {% endif %}
 
-<p>I came across <strong>{{ business_name }}</strong> while researching {{ business_type }}s in {{ city }} — {{ google_rating }} stars with {{ google_reviews }} reviews is no joke. People clearly love what you do.</p>
-
-<p>I build <strong>AI-optimized websites</strong> for local businesses here in the Manor/Austin area, and I ran a quick audit on your site. The goal of an AI-optimized site is simple: <strong>rank higher on Google, load faster, and turn more visitors into paying customers.</strong></p>
-
-<p>Here's where your current site stands:</p>
-
-{% if all_good %}
-<div style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
-{% elif any_bad %}
-<div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+{% if has_google_presence %}
+<p>I came across {{ business_name }} while looking at {{ business_type }}s in {{ city }} — {{ google_rating }} stars with {{ google_reviews }} reviews, that's really impressive. Your customers clearly love what you do.</p>
 {% else %}
-<div style="background: #fefce8; border-left: 4px solid #ca8a04; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+<p>I came across {{ business_name }} while looking at {{ business_type }}s in {{ city }}. Your customers clearly appreciate what you do.</p>
 {% endif %}
-  <div class="metric">{% if speed_good %}<span class="green">🟢</span>{% else %}<span class="red">🔴</span>{% endif %} <strong>Page Speed:</strong> {{ load_time }} load time{% if not speed_good %} — Google penalizes sites slower than 2s in search rankings{% else %} — solid, Google likes this{% endif %}</div>
-  <div class="metric">{% if mobile_good %}<span class="green">🟢</span>{% else %}<span class="red">🔴</span>{% endif %} <strong>Mobile:</strong> {{ mobile_score }}/100{% if not mobile_good %} — {{ bounce_rate_est }} of mobile visitors bounce before seeing your menu or services{% endif %}</div>
-  <div class="metric">{% if seo_good %}<span class="green">🟢</span>{% else %}<span class="red">🔴</span>{% endif %} <strong>SEO / Google Visibility:</strong> {% if seo_good %}Basics covered ✓{% else %}Missing {{ missing_seo }} — this means Google can't fully index your site{% endif %}</div>
-  {% if ssl_expired %}
-  <div class="metric"><span class="red">🔴</span> <strong>Security:</strong> SSL {{ ssl_status }} — Chrome shows "Not Secure" to every visitor</div>
-  {% endif %}
-  {% if has_broken_things %}
-  <div class="metric"><span class="red">🔴</span> <strong>UX Issue:</strong> {{ worst_broken_thing }}</div>
-  {% endif %}
-</div>
+
+<p>I'm a web developer here in Manor and I ran a quick check on your website out of curiosity. Here's what I found:</p>
+
+<p style="padding-left: 12px; border-left: 3px solid #ddd; margin: 16px 0;">
+{% if speed_good %}✅{% else %}⚠️{% endif %} <b>Speed:</b> {{ load_time }} load time{% if not speed_good %} (Google prefers under 2s){% endif %}<br>
+{% if mobile_good %}✅{% else %}⚠️{% endif %} <b>Mobile:</b> {{ mobile_score }}/100{% if not mobile_good %} — most of your customers are probably on their phones{% endif %}<br>
+{% if seo_good %}✅{% else %}⚠️{% endif %} <b>SEO:</b> {% if seo_good %}Basics look good{% else %}Missing {{ missing_seo }}{% endif %}
+{% if ssl_expired %}<br>⚠️ <b>Security:</b> SSL {{ ssl_status }} — browsers show a "Not Secure" warning{% endif %}
+</p>
 
 {% if any_bad %}
-<p>Here's the bottom line: <strong>every issue above is costing you real customers.</strong> People searching "{{ business_type }} near me" on Google are finding {{ competitor_name }} (scoring {{ competitor_score }}/100) instead of you.</p>
+<p>Some of these things can make it harder for people to find you on Google — especially versus {{ competitor_name }} nearby who scores {{ competitor_score }}/100.</p>
 {% else %}
-<p>You're ahead of most, but <strong>{{ competitor_name }}</strong> nearby scores {{ competitor_score }}/100 — staying competitive means staying fast.</p>
+<p>You're in good shape overall. {{ competitor_name }} nearby scores {{ competitor_score }}/100, so worth keeping an eye on.</p>
 {% endif %}
 
-<p>I've helped {{ nearby_client }} get {{ nearby_result }} with an AI-optimized redesign — faster load times, proper SEO structure, and a mobile experience that actually converts. <strong>Most of my clients launch in days, not months.</strong></p>
+<p>If you'd ever want to chat about it, I'm happy to walk you through a more detailed report — no charge, no sales pitch. I just genuinely enjoy helping local businesses with this stuff.</p>
 
-<p><strong>Can I show you what an AI-optimized version of your site would look like?</strong> It's a free 15-minute walkthrough — just the data, no pressure.</p>
+<p style="margin-top: 28px;">— {{ sender_name }}</p>
+<p style="color: #888; font-size: 13px; margin-top: 4px;">I'm a web developer in Manor, TX. I build fast, modern websites for local businesses — the kind that actually show up on Google. More about my work: <a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
 
-<div class="footer">
-  <p>— {{ sender_name }}<br>
-  {{ sender_company }} · {{ sender_location }}<br>
-  <a href="https://{{ sender_url }}">{{ sender_url }}</a></p>
-</div>
-
-<div class="unsubscribe">
-  <p>Not interested? <a href="__UNSUBSCRIBE_URL__">Click here</a> and I won't email again.</p>
-</div>
-
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a> if you'd rather not hear from me.</p>
 <img src="__TRACKING_PIXEL_URL__" width="1" height="1" alt="" style="display:none;">
 </body>
 </html>
