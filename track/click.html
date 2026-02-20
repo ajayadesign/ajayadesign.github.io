@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Redirecting…</title>
+<style>
+  body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #111; color: #999; }
+  .msg { text-align: center; }
+  a { color: #60a5fa; }
+</style>
+</head>
+<body>
+<div class="msg">
+  <p>Redirecting…</p>
+  <p id="fallback" style="display:none">If you are not redirected, <a id="dest-link" href="#">click here</a>.</p>
+</div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getDatabase, ref, push, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+  const params = new URLSearchParams(location.search);
+  const trackingId = params.get('t') || '';
+  const dest = params.get('url') || 'https://ajayadesign.github.io';
+
+  // Show fallback link immediately
+  const destLink = document.getElementById('dest-link');
+  destLink.href = dest;
+
+  const app = initializeApp({
+    apiKey: 'AIzaSyAXZkPmR9f9xBwLXZ_sskUtabalm6mXoRk',
+    databaseURL: 'https://ajayadesign-6d739-default-rtdb.firebaseio.com',
+    projectId: 'ajayadesign-6d739',
+  });
+
+  const db = getDatabase(app);
+
+  if (trackingId) {
+    try {
+      await push(ref(db, 'tracking/clicks'), {
+        tracking_id: trackingId,
+        url: dest,
+        ts: Date.now(),
+        ua: navigator.userAgent.substring(0, 200),
+      });
+    } catch (e) {
+      // Don't block redirect on tracking failure
+      console.warn('Track failed:', e);
+    }
+  }
+
+  // Redirect
+  location.replace(dest);
+
+  // Fallback if redirect doesn't fire in 2s
+  setTimeout(() => {
+    document.getElementById('fallback').style.display = 'block';
+  }, 2000);
+</script>
+</body>
+</html>

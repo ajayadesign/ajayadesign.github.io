@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unsubscribed</title>
+<style>
+  body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #111; color: #e5e5e5; }
+  .card { text-align: center; max-width: 420px; padding: 40px 30px; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; }
+  h1 { font-size: 1.5rem; margin: 0 0 12px; }
+  p { color: #999; font-size: 0.95rem; line-height: 1.5; margin: 8px 0; }
+  .check { font-size: 3rem; margin-bottom: 16px; }
+  .footer { margin-top: 20px; font-size: 0.8rem; color: #666; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="check">✓</div>
+  <h1>You've been unsubscribed</h1>
+  <p>You won't receive any more emails from AjayaDesign.</p>
+  <p>Sorry for the bother — I appreciate your time.</p>
+  <div class="footer">AjayaDesign · Manor, TX</div>
+</div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getDatabase, ref, push } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+  const params = new URLSearchParams(location.search);
+  const trackingId = params.get('t') || '';
+
+  if (!trackingId) {
+    // No tracking ID — nothing to do
+  } else {
+    const app = initializeApp({
+      apiKey: 'AIzaSyAXZkPmR9f9xBwLXZ_sskUtabalm6mXoRk',
+      databaseURL: 'https://ajayadesign-6d739-default-rtdb.firebaseio.com',
+      projectId: 'ajayadesign-6d739',
+    });
+
+    const db = getDatabase(app);
+
+    try {
+      await push(ref(db, 'tracking/unsubscribes'), {
+        tracking_id: trackingId,
+        ts: Date.now(),
+        ua: navigator.userAgent.substring(0, 200),
+      });
+    } catch (e) {
+      console.warn('Track unsubscribe failed:', e);
+    }
+  }
+</script>
+</body>
+</html>
