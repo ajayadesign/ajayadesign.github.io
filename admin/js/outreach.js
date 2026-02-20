@@ -217,6 +217,28 @@
     await _loadPendingEmails();
     // Refresh email tracking stats
     await _loadEmailTrackingStats();
+    // Refresh ring progress from DB
+    await _loadRingsFromAPI();
+  }
+
+  async function _loadRingsFromAPI() {
+    const data = await _api('GET', '/outreach/rings');
+    if (!data || !data.rings) return;
+    const rings = data.rings;
+    const mapped = {};
+    for (const r of rings) {
+      const totalCats = Math.max((r.categories_total || []).length, 1);
+      const doneCats = (r.categories_done || []).length;
+      mapped[r.ring_number] = {
+        name: r.name,
+        ring_number: r.ring_number,
+        status: r.status,
+        radius_miles: r.radius_miles,
+        pct: Math.round(doneCats / totalCats * 100 * 10) / 10,
+        businesses_found: r.businesses_found || 0,
+      };
+    }
+    _renderRingProgress(mapped);
   }
 
   function _initFullMode() {
