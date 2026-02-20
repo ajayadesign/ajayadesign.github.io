@@ -3,39 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>What {{ nearby_client }} saw after redesigning</title>
-<style>
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-  .stats { background: #f0fdf4; border-left: 4px solid #16a34a; padding: 12px 16px; margin: 16px 0; border-radius: 4px; }
-  .stat-item { padding: 2px 0; }
-  .footer { margin-top: 30px; color: #666; font-size: 14px; border-top: 1px solid #e5e7eb; padding-top: 15px; }
-  .footer a { color: #2563eb; text-decoration: none; }
-  .unsubscribe { margin-top: 10px; font-size: 12px; color: #9ca3af; }
-  .unsubscribe a { color: #9ca3af; }
-</style>
 </head>
-<body>
-<p>{{ owner_first_name }},</p>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 580px; margin: 0 auto; padding: 20px; font-size: 15px;">
 
-<p>Quick update — <strong>{{ nearby_client }}</strong> just shared their latest numbers with me:</p>
+{% if owner_first_name == 'there' %}
+<p>Hey — </p>
+{% else %}
+<p>{{ owner_first_name }} — </p>
+{% endif %}
 
-<div class="stats">
-  <div class="stat-item">• Organic traffic: <strong>+{{ traffic_increase }}%</strong></div>
-  <div class="stat-item">• Mobile conversions: <strong>+{{ mobile_increase }}%</strong></div>
-  <div class="stat-item">• Page load: from {{ old_speed }}s → <strong>{{ new_speed }}s</strong></div>
-</div>
+<p>Last thing, then I'll leave you alone (promise).</p>
 
-<p>They're about {{ distance_between }} miles from you in {{ nearby_city }}.</p>
+<p>I recently finished a site for a local business near {{ city }} and their Google Search traffic went up noticeably within the first month. Nothing fancy — just fast loading, proper mobile layout, and the SEO basics done right. It's wild how much of a difference that makes when competitors aren't doing it either.</p>
 
-<p>Still happy to share your free audit whenever you're ready.</p>
+<p>If you ever want to see what I put together for their site review, or talk through what yours could look like — I'm around. Just reply "interested" and I'll send it over.</p>
 
-<div class="footer">
-  <p>— {{ sender_name }}</p>
-</div>
+<p>– Ajaya</p>
 
-<div class="unsubscribe">
-  <p>Not interested? <a href="{{ unsubscribe_url }}">Unsubscribe</a></p>
-</div>
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;">
+<a href="{{ unsubscribe_url }}" style="color: #bbb;">Unsubscribe</a>
+</p>
 
 <img src="{{ tracking_pixel_url }}" width="1" height="1" alt="" style="display:none;">
 </body>

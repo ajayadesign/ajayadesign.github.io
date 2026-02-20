@@ -87,23 +87,20 @@ async def notify(message: str, reply_markup: dict | None = None) -> bool:
 
 
 # ── Convenience notifiers ───────────────────────────────
+# NOTE: Per-prospect notifications (discovery, audit, recon, open) are
+# intentionally silenced to reduce Telegram noise. They are logged but
+# not sent. Only aggregate/status/critical notifications are sent.
 
 async def notify_discovery(count: int, ring_name: str) -> bool:
-    """Notify: batch of prospects discovered."""
-    return await notify(
-        f"🔍 *Found {count} new businesses in {_esc(ring_name)}*"
-    )
+    """Silenced — too noisy. Logged only."""
+    logger.info("[TG-SILENT] Discovered %d in %s", count, ring_name)
+    return True
 
 
 async def notify_audit(business_name: str, score: int, url: str) -> bool:
-    """Notify: audit complete for a prospect."""
-    score = int(score) if score is not None else 0
-    grade = "🟢" if score >= 70 else "🟡" if score >= 40 else "🔴"
-    return await notify(
-        f"📊 Audited `{_esc(business_name)}`\n"
-        f"{grade} Score: *{score}/100*\n"
-        f"🔗 {_esc(url)}"
-    )
+    """Silenced — too noisy. Logged only."""
+    logger.info("[TG-SILENT] Audited %s score=%s", business_name, score)
+    return True
 
 
 async def notify_email_sent(count: int) -> bool:
@@ -112,11 +109,9 @@ async def notify_email_sent(count: int) -> bool:
 
 
 async def notify_open(business_name: str, open_count: int) -> bool:
-    """Notify: email opened by prospect."""
-    suffix = f" \\({_esc(str(open_count))} times\\)" if open_count > 1 else ""
-    return await notify(
-        f"👀 *{_esc(business_name)}* opened your email{suffix}"
-    )
+    """Silenced — too noisy. Logged only."""
+    logger.info("[TG-SILENT] %s opened email (%d times)", business_name, open_count)
+    return True
 
 
 async def notify_reply(business_name: str, classification: str, preview: str = "") -> bool:
@@ -165,13 +160,9 @@ async def notify_error(context: str, error: str) -> bool:
 
 
 async def notify_recon(business_name: str, email: str, source: str, verified: bool = False) -> bool:
-    """Notify: recon completed — email found for a prospect."""
-    v_icon = "✅" if verified else "⚠️"
-    return await notify(
-        f"🕵️ Recon complete: *{_esc(business_name)}*\n"
-        f"📧 {_esc(email)} {v_icon}\n"
-        f"🔍 Source: {_esc(source)}"
-    )
+    """Silenced — too noisy. Logged only."""
+    logger.info("[TG-SILENT] Recon %s: %s via %s (verified=%s)", business_name, email, source, verified)
+    return True
 
 
 # Alias used by services that send arbitrary messages

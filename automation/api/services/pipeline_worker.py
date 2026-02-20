@@ -45,6 +45,24 @@ STUCK_THRESHOLD_MIN = 15             # Minutes before a task is considered stuck
 MAX_RETRIES = 3                      # Max retries for any single prospect
 MAX_AGENTS = 5                       # Maximum number of concurrent agents
 
+# ─── Crawler Gate ──────────────────────────────────────────────────────
+# The crawler (Google Maps API discovery) is OFF by default.
+# User must explicitly enable it via the dashboard Start button.
+# The pipeline worker (audit/recon/enqueue/recovery) always runs.
+_crawl_enabled = False
+
+
+def set_crawl_enabled(enabled: bool):
+    """Enable or disable the auto-crawl phase (Maps API discovery)."""
+    global _crawl_enabled
+    _crawl_enabled = enabled
+    logger.info("Crawler %s", "ENABLED" if enabled else "DISABLED")
+
+
+def is_crawl_enabled() -> bool:
+    """Check if the crawler is currently enabled."""
+    return _crawl_enabled
+
 # Rate limits (respect API quotas)
 AUDIT_DELAY_SEC = 3                  # Seconds between audits
 RECON_DELAY_SEC = 2                  # Seconds between recons
@@ -164,8 +182,12 @@ class PipelineWorker:
         # Phase 0: Recovery — fix any stuck/bad states
         recovered = await self._recover_stuck_prospects()
 
-        # Phase 0.5: Auto-crawl — discover new businesses in active rings
-        crawled = await self._process_crawl()
+        # Phase 0.5: Auto-crawl — only runs when crawler is enabled by user
+        crawled = 0
+        if _crawl_enabled:
+            crawled = await self._process_crawl()
+        else:
+            pipeline_log("CRAWL", "Crawler paused — skipping auto-crawl (use Start Agent to enable)")
         
         # Phase 1: Audit discovered prospects that have websites
         audited = await self._process_audits()
@@ -345,13 +367,17 @@ class PipelineWorker:
         """Audit discovered prospects that have websites."""
         from api.services.intel_engine import audit_prospect
 
-        # Get top prospects needing audit
+        # Get top prospects needing audit (exclude already-unreachable sites)
         async with async_session_factory() as db:
             result = await db.execute(
                 select(Prospect.id).where(
                     Prospect.status == "discovered",
                     Prospect.has_website == True,
                     Prospect.website_url.isnot(None),
+                    or_(
+                        Prospect.notes.is_(None),
+                        ~Prospect.notes.ilike("%unreachable%"),
+                    ),
                 ).order_by(
                     Prospect.priority_score.desc()
                 ).limit(AUDIT_BATCH_SIZE)
@@ -403,6 +429,23 @@ class PipelineWorker:
         from api.services.recon_engine import recon_prospect
 
         async with async_session_factory() as db:
+            # Fast-track: audited prospects that ALREADY have owner_email → enriched
+            already_have_email = await db.execute(
+                select(Prospect.id).where(
+                    Prospect.status == "audited",
+                    Prospect.owner_email.isnot(None),
+                )
+            )
+            fast_track_ids = [r[0] for r in already_have_email.fetchall()]
+            if fast_track_ids:
+                await db.execute(
+                    update(Prospect)
+                    .where(Prospect.id.in_(fast_track_ids))
+                    .values(status="enriched", updated_at=datetime.now(timezone.utc))
+                )
+                await db.commit()
+                logger.info("Fast-tracked %d audited prospects (already have email) → enriched", len(fast_track_ids))
+
             # Path 1: Audited prospects needing recon
             result1 = await db.execute(
                 select(Prospect.id).where(
@@ -415,15 +458,27 @@ class PipelineWorker:
             audited_ids = [str(r[0]) for r in result1.fetchall()]
 
             # Path 2: No-website prospects — skip audit, go directly to recon
+            # Also includes website-down prospects (has URL but site unreachable)
             remaining = max(0, RECON_BATCH_SIZE - len(audited_ids))
             nosite_ids = []
             if remaining > 0:
                 result2 = await db.execute(
                     select(Prospect.id).where(
-                        Prospect.status == "discovered",
                         or_(
-                            Prospect.has_website == False,
-                            Prospect.website_url.is_(None),
+                            # No website at all
+                            and_(
+                                Prospect.status == "discovered",
+                                or_(
+                                    Prospect.has_website == False,
+                                    Prospect.website_url.is_(None),
+                                ),
+                            ),
+                            # Website exists but is down/unreachable
+                            and_(
+                                Prospect.status == "discovered",
+                                Prospect.has_website == True,
+                                Prospect.notes.ilike("%unreachable%"),
+                            ),
                         ),
                     ).order_by(
                         Prospect.priority_score.desc()
@@ -469,6 +524,17 @@ class PipelineWorker:
                     owner = result.get('owner_name', '?')
                     pipeline_log("RECON", f"Found: {owner} @ {biz_name} ({result['owner_email']})", biz=biz_name)
                 else:
+                    # Track failed recon attempts — mark dead after 3 tries
+                    async with async_session_factory() as fail_db:
+                        p = await fail_db.get(Prospect, __import__('uuid').UUID(pid))
+                        if p:
+                            attempts = (p.tags or []).count('recon_fail') + 1
+                            p.tags = (p.tags or []) + ['recon_fail']
+                            if attempts >= 3:
+                                p.status = 'dead'
+                                p.notes = (p.notes or '') + f' | Recon failed {attempts}x — marked dead'
+                                pipeline_log("RECON", f"Giving up on {biz_name} after {attempts} attempts → dead", biz=biz_name)
+                            await fail_db.commit()
                     pipeline_log("RECON", f"No contact found for {biz_name}", biz=biz_name)
             except Exception as e:
                 logger.error("Recon failed for %s: %s", pid, e)
@@ -661,9 +727,9 @@ def get_pipeline_worker() -> PipelineAgentManager:
 
 
 async def start_pipeline_worker():
-    """Start the default agent #0 (called from main.py lifespan)."""
+    """Start 5 agents by default (called from main.py lifespan)."""
     mgr = get_pipeline_manager()
-    mgr.start_agent(0)
+    mgr.start_multiple(5)
     return mgr
 
 

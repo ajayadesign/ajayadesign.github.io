@@ -615,8 +615,17 @@ async def audit_prospect(prospect_id: str, db: Optional[AsyncSession] = None) ->
         # 1. Fetch page
         html, headers, status_code, load_time_ms = await fetch_page(url)
         if not html:
-            logger.warning("Could not fetch %s — empty response", url)
-            prospect.website_status = "unreachable"
+            # Track fetch attempts via tags
+            attempts = (prospect.tags or []).count('audit_fail') + 1
+            prospect.tags = (prospect.tags or []) + ['audit_fail']
+            if attempts >= 3:
+                # Give up auditing — route through recon with website_down template
+                logger.warning("Could not fetch %s after %d attempts — routing to recon", url, attempts)
+                prospect.notes = f"Website unreachable ({url}) — skipped audit"
+                prospect.status = "discovered"  # stays discovered, recon path picks it up via notes
+            else:
+                logger.info("Fetch failed for %s (attempt %d/3) — will retry next cycle", url, attempts)
+            prospect.updated_at = datetime.now(timezone.utc)
             await db.commit()
             return None
 

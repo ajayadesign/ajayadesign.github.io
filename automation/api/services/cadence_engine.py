@@ -120,6 +120,20 @@ async def enqueue_prospect(prospect_id: str) -> Optional[str]:
             logger.warning("Cannot enqueue %s — no email", prospect.business_name)
             return None
 
+        # Guard: prevent duplicate step-1 emails
+        existing = await db.execute(
+            select(OutreachEmail.id).where(
+                OutreachEmail.prospect_id == prospect.id,
+                OutreachEmail.sequence_step == 1,
+            ).limit(1)
+        )
+        if existing.first():
+            logger.info("Skipping %s — step 1 email already exists", prospect.business_name)
+            if prospect.status != "queued":
+                prospect.status = "queued"
+                await db.commit()
+            return None
+
         # Compose step 1
         composed = await compose_email(str(prospect.id), sequence_step=1)
         if not composed:

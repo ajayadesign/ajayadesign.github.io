@@ -168,6 +168,7 @@ class Prospect(Base):
     geo_ring = relationship("GeoRing", back_populates="prospects")
     audits = relationship("WebsiteAudit", back_populates="prospect", lazy="selectin", cascade="all, delete-orphan")
     emails = relationship("OutreachEmail", back_populates="prospect", lazy="selectin", cascade="all, delete-orphan")
+    activities = relationship("ProspectActivity", back_populates="prospect", lazy="selectin", cascade="all, delete-orphan", order_by="ProspectActivity.created_at.desc()")
 
     def to_dict(self, brief=False):
         """Convert to dict. brief=True for lightweight list views."""
@@ -411,6 +412,40 @@ class OutreachEmail(Base):
             "reply_sentiment": self.reply_sentiment,
             "scheduled_for": self.scheduled_for.isoformat() if self.scheduled_for else None,
             "error_message": self.error_message,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+class ProspectActivity(Base):
+    """Activity log for prospect interactions — phone calls, meetings, notes, etc."""
+
+    __tablename__ = "prospect_activities"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    prospect_id = Column(UUID(as_uuid=True), ForeignKey("prospects.id", ondelete="CASCADE"), nullable=False)
+
+    activity_type = Column(String, nullable=False, default="phone_call")
+    # phone_call, meeting, voicemail, text_message, in_person, note
+
+    outcome = Column(String)  # interested, not_interested, callback, no_answer, voicemail, other
+    notes = Column(Text)
+    duration_minutes = Column(Integer)  # call duration
+    contact_name = Column(String)  # who we spoke with
+
+    created_at = Column(DateTime(timezone=True), default=_utcnow)
+
+    # Relationships
+    prospect = relationship("Prospect", back_populates="activities")
+
+    def to_dict(self):
+        return {
+            "id": str(self.id),
+            "prospect_id": str(self.prospect_id),
+            "activity_type": self.activity_type,
+            "outcome": self.outcome,
+            "notes": self.notes,
+            "duration_minutes": self.duration_minutes,
+            "contact_name": self.contact_name,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 

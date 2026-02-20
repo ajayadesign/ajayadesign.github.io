@@ -365,6 +365,8 @@
     if (search) params.set('search', search);
     if (bizType) params.set('business_type', bizType);
     if (_noWebsiteFilter) params.set('has_website', 'false');
+    const qualifiedVal = document.getElementById('outreach-filter-qualified')?.value || '';
+    if (qualifiedVal) params.set('qualified', qualifiedVal);
 
     const resp = await _api('GET', `/outreach/prospects?${params}`);
     const $table = document.getElementById('outreach-prospects-tbody');
@@ -441,6 +443,37 @@
       $btn.classList.toggle('bg-surface-2', !_noWebsiteFilter);
     }
     _loadProspectsTable(true);
+  };
+
+  window.outreachExportCSV = async function () {
+    const status = document.getElementById('outreach-filter-status')?.value || '';
+    const search = document.getElementById('outreach-search')?.value || '';
+    const bizType = document.getElementById('outreach-filter-type')?.value || '';
+    const qualifiedVal = document.getElementById('outreach-filter-qualified')?.value || '';
+
+    const params = new URLSearchParams({ sort: _sortCol, order: _sortOrder });
+    if (status) params.set('status', status);
+    if (search) params.set('search', search);
+    if (bizType) params.set('business_type', bizType);
+    if (_noWebsiteFilter) params.set('has_website', 'false');
+    if (qualifiedVal) params.set('qualified', qualifiedVal);
+
+    try {
+      const resp = await fetch(`${_BASE}/outreach/prospects/export?${params}`);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = resp.headers.get('content-disposition')?.match(/filename="(.+)"/)?.[1] || 'prospects.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('CSV export failed', e);
+      alert('Export failed — check console');
+    }
   };
 
   // ── Bulk Selection ──────────────────────────────────
@@ -800,8 +833,73 @@
         <div class="text-gray-600 text-sm font-mono">No emails sent to this prospect yet.</div>
       </div>`}
 
+      <!-- Activity Log (Phone Calls, Meetings, Notes) -->
+      <div class="mb-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide font-mono">📞 Activity Log${data.activities && data.activities.length ? ` (${data.activities.length})` : ''}</h3>
+          <button onclick="outreachToggleCallForm('${data.id}')" class="px-2.5 py-1 bg-orange-600/20 text-orange-400 border border-orange-600/30 rounded text-[0.65rem] font-mono hover:bg-orange-600/30 transition">+ Log Interaction</button>
+        </div>
+
+        <!-- Inline Log Form (hidden by default) -->
+        <div id="activity-form-${data.id}" class="hidden mb-3 bg-surface-1 border border-border rounded-lg p-3 space-y-2">
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[0.6rem] text-gray-600 uppercase font-mono">Type</label>
+              <select id="activity-type-${data.id}" class="w-full bg-surface-2 border border-border rounded px-2 py-1.5 text-xs text-gray-200 font-mono focus:border-electric outline-none">
+                <option value="phone_call">📞 Phone Call</option>
+                <option value="voicemail">📱 Voicemail</option>
+                <option value="text_message">💬 Text Message</option>
+                <option value="meeting">🤝 Meeting</option>
+                <option value="in_person">🏪 In-Person Visit</option>
+                <option value="note">📝 Note</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[0.6rem] text-gray-600 uppercase font-mono">Outcome</label>
+              <select id="activity-outcome-${data.id}" class="w-full bg-surface-2 border border-border rounded px-2 py-1.5 text-xs text-gray-200 font-mono focus:border-electric outline-none">
+                <option value="">— select —</option>
+                <option value="interested">✅ Interested</option>
+                <option value="callback">📅 Callback Requested</option>
+                <option value="not_interested">❌ Not Interested</option>
+                <option value="no_answer">📵 No Answer</option>
+                <option value="voicemail">📱 Left Voicemail</option>
+                <option value="other">🔸 Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[0.6rem] text-gray-600 uppercase font-mono">Spoke With</label>
+              <input id="activity-contact-${data.id}" type="text" placeholder="Person's name" class="w-full bg-surface-2 border border-border rounded px-2 py-1.5 text-xs text-gray-200 font-mono focus:border-electric outline-none" value="${_esc(data.owner_name || '')}">
+            </div>
+            <div>
+              <label class="text-[0.6rem] text-gray-600 uppercase font-mono">Duration (min)</label>
+              <input id="activity-duration-${data.id}" type="number" min="0" placeholder="5" class="w-full bg-surface-2 border border-border rounded px-2 py-1.5 text-xs text-gray-200 font-mono focus:border-electric outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="text-[0.6rem] text-gray-600 uppercase font-mono">Notes</label>
+            <textarea id="activity-notes-${data.id}" rows="2" placeholder="What was discussed? Any follow-up needed?" class="w-full bg-surface-2 border border-border rounded px-2 py-1.5 text-xs text-gray-200 font-mono focus:border-electric outline-none resize-none"></textarea>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="outreachSaveActivity('${data.id}')" class="px-3 py-1.5 bg-orange-600/20 text-orange-400 border border-orange-600/30 rounded text-[0.65rem] font-mono hover:bg-orange-600/30 transition">💾 Save</button>
+            <button onclick="outreachToggleCallForm('${data.id}')" class="px-3 py-1.5 bg-gray-600/20 text-gray-400 border border-gray-600/30 rounded text-[0.65rem] font-mono hover:bg-gray-600/30 transition">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Activity History -->
+        ${data.activities && data.activities.length > 0 ? `
+        <div class="space-y-2 max-h-48 overflow-y-auto" id="activity-list-${data.id}">
+          ${data.activities.map(a => _renderActivityCard(a)).join('')}
+        </div>` : `
+        <div class="bg-surface-2 rounded-lg border border-border p-3 text-center">
+          <div class="text-gray-600 text-xs font-mono">No interactions logged yet.</div>
+        </div>`}
+      </div>
+
       <!-- Actions -->
       <div class="flex flex-wrap gap-2 pt-3 border-t border-border">
+        <button onclick="outreachLogCall('${data.id}')" class="px-4 py-2 bg-orange-600/20 text-orange-400 border border-orange-600/30 rounded-lg text-xs font-mono hover:bg-orange-600/30 transition">📞 Log Call</button>
         <button id="btnTestEmail-${data.id}" onclick="outreachTestEmail('${data.id}')" class="px-4 py-2 bg-cyan-600/20 text-cyan-400 border border-cyan-600/30 rounded-lg text-xs font-mono hover:bg-cyan-600/30 transition">🧪 Generate Test Email</button>
         ${data.status !== 'promoted' ? `<button onclick="outreachPromote('${data.id}')" class="px-4 py-2 bg-emerald-600/20 text-emerald-400 border border-emerald-600/30 rounded-lg text-xs font-mono hover:bg-emerald-600/30 transition">💰 Promote to Lead</button>` : ''}
         ${data.status !== 'do_not_contact' ? `<button onclick="outreachDNC('${data.id}')" class="px-4 py-2 bg-red-600/10 text-red-400/70 border border-red-600/20 rounded-lg text-xs font-mono hover:bg-red-600/20 transition">🚫 Do Not Contact</button>` : ''}
@@ -818,6 +916,98 @@
     const $modal = document.getElementById('outreach-prospect-modal');
     if ($modal) $modal.classList.add('hidden');
     document.body.style.overflow = '';
+  };
+
+  // ── Activity Log Helpers ──────────────────────────────
+  const _activityIcons = {
+    phone_call: '📞', voicemail: '📱', text_message: '💬',
+    meeting: '🤝', in_person: '🏪', note: '📝',
+  };
+  const _outcomeColors = {
+    interested: 'text-emerald-400', callback: 'text-amber-400',
+    not_interested: 'text-red-400', no_answer: 'text-gray-500',
+    voicemail: 'text-blue-400', other: 'text-gray-400',
+  };
+
+  function _renderActivityCard(a) {
+    const icon = _activityIcons[a.activity_type] || '📋';
+    const outcomeColor = _outcomeColors[a.outcome] || 'text-gray-400';
+    const outcomeLabel = a.outcome ? a.outcome.replace(/_/g, ' ') : '';
+    return `
+      <div class="bg-surface-2 rounded-lg p-3 border border-border">
+        <div class="flex items-start justify-between">
+          <div class="flex items-start gap-2 flex-1 min-w-0">
+            <span class="text-sm mt-0.5">${icon}</span>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-gray-300 font-mono">${a.activity_type.replace(/_/g, ' ')}</span>
+                ${outcomeLabel ? `<span class="text-[0.6rem] ${outcomeColor} font-mono px-1.5 py-0.5 bg-surface-1 rounded-full">${outcomeLabel}</span>` : ''}
+                ${a.duration_minutes ? `<span class="text-[0.55rem] text-gray-600 font-mono">${a.duration_minutes} min</span>` : ''}
+              </div>
+              ${a.contact_name ? `<div class="text-[0.6rem] text-gray-500 mt-0.5">Spoke with: ${_esc(a.contact_name)}</div>` : ''}
+              ${a.notes ? `<div class="text-xs text-gray-400 mt-1">${_esc(a.notes)}</div>` : ''}
+            </div>
+          </div>
+          <div class="flex items-center gap-2 ml-2 shrink-0">
+            <span class="text-[0.55rem] text-gray-600 font-mono">${_timeAgo(a.created_at)}</span>
+            <button onclick="outreachDeleteActivity('${a.id}', '${a.prospect_id}')" class="text-gray-700 hover:text-red-400 text-[0.6rem] transition" title="Delete">✕</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  window.outreachToggleCallForm = function (prospectId) {
+    const $form = document.getElementById(`activity-form-${prospectId}`);
+    if ($form) $form.classList.toggle('hidden');
+  };
+
+  window.outreachLogCall = function (prospectId) {
+    // Scroll to and open the call form
+    const $form = document.getElementById(`activity-form-${prospectId}`);
+    if ($form) {
+      $form.classList.remove('hidden');
+      $form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  window.outreachSaveActivity = async function (prospectId) {
+    const type = document.getElementById(`activity-type-${prospectId}`)?.value || 'phone_call';
+    const outcome = document.getElementById(`activity-outcome-${prospectId}`)?.value || null;
+    const contact = document.getElementById(`activity-contact-${prospectId}`)?.value?.trim() || null;
+    const duration = parseInt(document.getElementById(`activity-duration-${prospectId}`)?.value) || null;
+    const notes = document.getElementById(`activity-notes-${prospectId}`)?.value?.trim() || null;
+
+    try {
+      const res = await fetch(`${API_BASE}/outreach/prospects/${prospectId}/activities`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          activity_type: type,
+          outcome,
+          contact_name: contact,
+          duration_minutes: duration,
+          notes,
+        }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      _toast(`${_activityIcons[type]} Activity logged`);
+      // Refresh the modal to show updated activity list
+      outreachViewProspect(prospectId);
+    } catch (e) {
+      _toast('Failed to log activity: ' + e.message, true);
+    }
+  };
+
+  window.outreachDeleteActivity = async function (activityId, prospectId) {
+    if (!confirm('Delete this activity log?')) return;
+    try {
+      const res = await fetch(`${API_BASE}/outreach/activities/${activityId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error(await res.text());
+      _toast('Activity deleted');
+      outreachViewProspect(prospectId);
+    } catch (e) {
+      _toast('Failed to delete: ' + e.message, true);
+    }
   };
 
   window.outreachTestEmail = async function (prospectId) {
@@ -1006,11 +1196,18 @@
 
   let _emailQueueOffset = 0;
   let _emailQueueTotal = 0;
+  let _visibleEmailIds = [];  // Track IDs of emails currently shown on screen
 
   async function _loadPendingEmails(offset) {
     const limit = parseInt(document.getElementById('email-queue-page-size')?.value || '25', 10);
     if (typeof offset === 'number') _emailQueueOffset = offset;
-    const data = await _api('GET', `/outreach/emails/pending?limit=${limit}&offset=${_emailQueueOffset}`);
+    const sortVal = document.getElementById('email-queue-sort')?.value || 'created_at';
+    const wsFilter = document.getElementById('email-queue-website-filter')?.value || '';
+    const statusFilter = document.getElementById('email-queue-status-filter')?.value || '';
+    let url = `/outreach/emails/pending?limit=${limit}&offset=${_emailQueueOffset}&sort=${sortVal}&order=${sortVal === 'score' ? 'desc' : sortVal === 'business_name' ? 'asc' : 'desc'}`;
+    if (wsFilter) url += `&has_website=${wsFilter}`;
+    if (statusFilter) url += `&prospect_status=${statusFilter}`;
+    const data = await _api('GET', url);
     const $el = document.getElementById('outreach-pending-emails');
     const $count = document.getElementById('outreach-pending-count');
     const $pag = document.getElementById('email-queue-pagination');
@@ -1018,6 +1215,7 @@
 
     const emails = data.emails || [];
     _emailQueueTotal = data.total || 0;
+    _visibleEmailIds = emails.map(e => e.id);  // Track visible email IDs
     if ($count) $count.textContent = _emailQueueTotal;
 
     if (emails.length === 0) {
@@ -1028,16 +1226,18 @@
 
     $el.innerHTML = emails.map(e => `
       <div class="bg-surface-2 rounded-lg border border-border p-3 hover:border-electric/30 transition">
-        <div class="flex items-start justify-between mb-2">
-          <div>
-            <div class="font-mono text-sm text-gray-200">${_esc(e.prospect_name || '—')}</div>
-            <div class="text-[0.65rem] text-gray-500 font-mono">${_esc(e.prospect_type || '')} · ${_esc(e.prospect_city || '')} · Score: ${e.prospect_score ?? '—'}</div>
+        <div class="cursor-pointer" onclick="outreachViewProspect('${e.prospect_id}')">
+          <div class="flex items-start justify-between mb-2">
+            <div>
+              <div class="font-mono text-sm text-gray-200 hover:text-electric transition">${_esc(e.prospect_name || '—')}</div>
+              <div class="text-[0.65rem] text-gray-500 font-mono">${_esc(e.prospect_type || '')} · ${_esc(e.prospect_city || '')} · Score: ${e.prospect_score ?? '—'}</div>
+            </div>
+            <span class="px-2 py-0.5 bg-amber-500/15 text-amber-400 text-[0.6rem] font-mono rounded-full">pending</span>
           </div>
-          <span class="px-2 py-0.5 bg-amber-500/15 text-amber-400 text-[0.6rem] font-mono rounded-full">pending</span>
-        </div>
-        <div class="mb-2">
-          <div class="text-xs text-gray-400 font-mono">Subject: <span class="text-gray-200">${_esc(e.subject || '—')}</span></div>
-          <div class="text-xs text-gray-500 font-mono mt-0.5">To: ${_esc(e.to_email || '—')} · Step ${e.sequence_step || 1}</div>
+          <div class="mb-2">
+            <div class="text-xs text-gray-400 font-mono">Subject: <span class="text-gray-200">${_esc(e.subject || '—')}</span></div>
+            <div class="text-xs text-gray-500 font-mono mt-0.5">To: ${_esc(e.to_email || '—')} · Step ${e.sequence_step || 1}</div>
+          </div>
         </div>
         <div class="flex gap-2">
           <button onclick="outreachEditEmail('${e.id}')" class="px-2.5 py-1 bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded text-[0.65rem] font-mono hover:bg-blue-600/30 transition">✏️ Edit</button>
@@ -1181,10 +1381,11 @@
   };
 
   window.outreachApproveAll = async function () {
-    if (!confirm('Approve ALL pending emails? They will be sent at the next queue cycle.')) return;
+    if (_visibleEmailIds.length === 0) { _toast('No emails visible to approve'); return; }
+    if (!confirm(`Approve ${_visibleEmailIds.length} visible emails? They will be sent at the next queue cycle.`)) return;
     const $btn = document.querySelector('[onclick="outreachApproveAll()"]');
     if ($btn) { $btn.disabled = true; $btn.dataset.origHtml = $btn.innerHTML; $btn.innerHTML = '⏳ Approving…'; }
-    const res = await _api('POST', '/outreach/emails/batch-approve', { all: true });
+    const res = await _api('POST', '/outreach/emails/batch-approve', { email_ids: _visibleEmailIds });
     if (res) {
       _showBanner(`✓ ${res.count || 0} emails approved — will send shortly`, 'success');
       _loadPendingEmails();
