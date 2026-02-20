@@ -112,6 +112,8 @@ function initDashboard() {
   subscribeToLeads();
   subscribeToBuildsFirebase();
   if (typeof loadPortfolio === 'function') loadPortfolio();
+  // Default to outreach tab
+  switchTab('outreach');
 }
 
 // ── Tab switching ──────────────────────────────────────
@@ -122,12 +124,14 @@ function switchTab(tab) {
   const $tabHistory = document.getElementById('tab-history');
   const $tabAnalytics = document.getElementById('tab-analytics');
   const $tabTraffic = document.getElementById('tab-traffic');
+  const $tabOutreach = document.getElementById('tab-outreach');
   const $buildsTab = document.getElementById('builds-tab');
   const $leadsPanel = document.getElementById('leads-panel');
   const $portfolioPanel = document.getElementById('portfolio-panel');
   const $historyPanel = document.getElementById('history-panel');
   const $analyticsSidebar = document.getElementById('analytics-sidebar');
   const $trafficSidebar = document.getElementById('traffic-sidebar');
+  const $outreachSidebar = document.getElementById('outreach-sidebar');
 
   const inactiveClass = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition';
   const activeClass   = 'flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-electric text-electric transition';
@@ -139,6 +143,7 @@ function switchTab(tab) {
   if ($tabHistory) $tabHistory.className = inactiveClass;
   if ($tabAnalytics) $tabAnalytics.className = inactiveClass;
   if ($tabTraffic) $tabTraffic.className = inactiveClass;
+  if ($tabOutreach) $tabOutreach.className = inactiveClass;
 
   // Hide all sidebar panels
   $buildsTab.classList.add('hidden');
@@ -147,6 +152,7 @@ function switchTab(tab) {
   if ($historyPanel) $historyPanel.classList.add('hidden');
   if ($analyticsSidebar) $analyticsSidebar.classList.add('hidden');
   if ($trafficSidebar) $trafficSidebar.classList.add('hidden');
+  if ($outreachSidebar) $outreachSidebar.classList.add('hidden');
 
   // Hide all main panels
   $buildDetail.classList.add('hidden');
@@ -156,11 +162,13 @@ function switchTab(tab) {
   const $invoiceDetail   = document.getElementById('invoice-detail');
   const $analyticsPanel  = document.getElementById('analytics-panel');
   const $trafficPanel    = document.getElementById('traffic-panel');
+  const $outreachPanel   = document.getElementById('outreach-panel');
   if ($portfolioDetail) $portfolioDetail.classList.add('hidden');
   if ($contractDetail)  $contractDetail.classList.add('hidden');
   if ($invoiceDetail)   $invoiceDetail.classList.add('hidden');
   if ($analyticsPanel)  $analyticsPanel.classList.add('hidden');
   if ($trafficPanel)    $trafficPanel.classList.add('hidden');
+  if ($outreachPanel)   $outreachPanel.classList.add('hidden');
 
   if (tab === 'leads') {
     $tabLeads.className = activeClass;
@@ -199,6 +207,12 @@ function switchTab(tab) {
     $emptyState.classList.add('hidden');
     if ($trafficPanel) $trafficPanel.classList.remove('hidden');
     if (typeof refreshTraffic === 'function') refreshTraffic();
+  } else if (tab === 'outreach') {
+    if ($tabOutreach) $tabOutreach.className = activeClass;
+    if ($outreachSidebar) $outreachSidebar.classList.remove('hidden');
+    $emptyState.classList.add('hidden');
+    if ($outreachPanel) $outreachPanel.classList.remove('hidden');
+    if (typeof initOutreachTab === 'function') initOutreachTab();
   } else {
     // builds (default)
     $tabBuilds.className = activeClass;

@@ -605,13 +605,19 @@ async def update_invoice(
 
 @invoice_router.delete("/{invoice_number}", status_code=204)
 async def delete_invoice(invoice_number: str, db: AsyncSession = Depends(get_db)):
-    """Delete an invoice."""
+    """Delete an invoice. Only draft/pending invoices can be deleted. Paid invoices are permanent records."""
     result = await db.execute(
         select(Invoice).where(Invoice.invoice_number == invoice_number)
     )
     invoice = result.scalar_one_or_none()
     if not invoice:
         raise HTTPException(404, f"Invoice {invoice_number} not found")
+    # Protect paid/partially-paid invoices — they are permanent financial records
+    if invoice.status in ("paid", "partial", "overdue"):
+        raise HTTPException(
+            403,
+            f"Cannot delete a {invoice.status} invoice. Paid and active invoices are permanent financial records.",
+        )
     client_name = invoice.client_name
     await db.delete(invoice)
     await db.commit()

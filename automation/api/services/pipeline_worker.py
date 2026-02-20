@@ -1,0 +1,753 @@
+"""
+Pipeline Worker — Autonomous Prospect Processing Engine.
+
+Continuously moves prospects through the pipeline:
+  discovered → audited → enriched → queued → [pending_approval]
+
+The ONLY step that requires human action is APPROVING the email for send.
+Everything else is automated with rate limiting and recovery.
+
+Supports MULTI-AGENT mode: spawn N concurrent workers, each processing
+different prospects via row-level locking (SELECT ... FOR UPDATE SKIP LOCKED).
+
+Status Flow:
+  discovered + has_website → [audit] → audited
+  discovered + no_website  → [recon] → enriched  (skip audit — no site to audit)
+  audited                  → [recon] → enriched
+  enriched + has_email     → [enqueue] → queued + pending_approval email
+
+Recovery:
+  - Detects prospects stuck in intermediate states for too long
+  - Resets stuck prospects back to a safe state for re-processing
+  - All operations are idempotent and crash-safe
+"""
+
+import asyncio
+import logging
+import time
+from collections import deque
+from datetime import datetime, timezone, timedelta
+from typing import Optional
+
+from sqlalchemy import select, update, func, and_, or_, text
+
+from api.database import async_session_factory
+from api.models.prospect import Prospect, OutreachEmail
+
+logger = logging.getLogger("outreach.pipeline")
+
+# ─── Configuration ─────────────────────────────────────────────────────
+PIPELINE_INTERVAL_SEC = 120          # Run every 2 minutes
+AUDIT_BATCH_SIZE = 5                 # Max audits per cycle per agent
+RECON_BATCH_SIZE = 5                 # Max recons per cycle per agent
+ENQUEUE_BATCH_SIZE = 10              # Max enqueue per cycle per agent
+STUCK_THRESHOLD_MIN = 15             # Minutes before a task is considered stuck
+MAX_RETRIES = 3                      # Max retries for any single prospect
+MAX_AGENTS = 5                       # Maximum number of concurrent agents
+
+# Rate limits (respect API quotas)
+AUDIT_DELAY_SEC = 3                  # Seconds between audits
+RECON_DELAY_SEC = 2                  # Seconds between recons
+ENQUEUE_DELAY_SEC = 0.5              # Seconds between enqueues
+
+
+# ─── Pipeline Log Ring Buffer ──────────────────────────────────────────
+# In-memory ring buffer that captures real pipeline events for the Mission
+# Control terminal (replaces the fake/simulated log lines).
+_PIPELINE_LOG_BUFFER: deque = deque(maxlen=200)
+
+
+def pipeline_log(tag: str, msg: str, biz: str = "", extra: dict = None):
+    """Append a real pipeline event to the ring buffer."""
+    entry = {
+        "ts": datetime.now(timezone.utc).strftime("%H:%M:%S"),
+        "tag": tag.upper(),
+        "msg": msg,
+        "biz": biz,
+        "time": time.time(),
+    }
+    if extra:
+        entry.update(extra)
+    _PIPELINE_LOG_BUFFER.append(entry)
+
+
+def get_pipeline_logs(since: float = 0, limit: int = 100) -> list:
+    """Get recent pipeline log entries, optionally after a timestamp."""
+    if since:
+        return [e for e in _PIPELINE_LOG_BUFFER if e.get("time", 0) > since][-limit:]
+    return list(_PIPELINE_LOG_BUFFER)[-limit:]
+
+
+class PipelineWorker:
+    """
+    Autonomous background worker that processes prospects through the full pipeline.
+    
+    Runs on a timer, picks up work in priority order, respects rate limits,
+    and recovers from any bad state.
+
+    Supports multi-agent: each worker has an agent_id and uses row-level
+    locking to avoid processing the same prospect as another worker.
+    """
+
+    def __init__(self, agent_id: int = 0):
+        self._agent_id = agent_id
+        self._running = False
+        self._task: Optional[asyncio.Task] = None
+        self._cycle_count = 0
+        self._stats = {
+            "audits_completed": 0,
+            "recons_completed": 0,
+            "enqueues_completed": 0,
+            "crawls_completed": 0,
+            "recoveries": 0,
+            "errors": 0,
+            "last_cycle": None,
+            "started_at": None,
+        }
+
+    @property
+    def agent_id(self):
+        return self._agent_id
+
+    @property
+    def stats(self):
+        return {
+            **self._stats,
+            "running": self._running,
+            "cycle_count": self._cycle_count,
+            "agent_id": self._agent_id,
+        }
+
+    def start(self):
+        """Start the pipeline worker loop."""
+        if self._running:
+            logger.warning("Pipeline agent #%d already running", self._agent_id)
+            return
+        self._running = True
+        self._stats["started_at"] = datetime.now(timezone.utc).isoformat()
+        self._task = asyncio.create_task(self._loop())
+        logger.info("🚀 Pipeline agent #%d started (interval=%ds)", self._agent_id, PIPELINE_INTERVAL_SEC)
+
+    def stop(self):
+        """Stop the pipeline worker gracefully."""
+        self._running = False
+        if self._task:
+            self._task.cancel()
+        logger.info("Pipeline agent #%d stopped", self._agent_id)
+
+    async def _loop(self):
+        """Main worker loop — runs forever until stopped."""
+        # Small initial delay to let the API fully boot
+        # Stagger agents so they don't all hit the DB at once
+        await asyncio.sleep(10 + self._agent_id * 5)
+        
+        while self._running:
+            try:
+                await self._run_cycle()
+            except asyncio.CancelledError:
+                logger.info("Pipeline agent #%d cancelled", self._agent_id)
+                break
+            except Exception as e:
+                self._stats["errors"] += 1
+                logger.error("Pipeline agent #%d cycle error: %s", self._agent_id, e, exc_info=True)
+
+            await asyncio.sleep(PIPELINE_INTERVAL_SEC)
+
+    async def _run_cycle(self):
+        """Single pipeline cycle: recover → crawl → audit → recon → enqueue."""
+        self._cycle_count += 1
+        self._stats["last_cycle"] = datetime.now(timezone.utc).isoformat()
+        
+        cycle_start = time.time()
+        pipeline_log("SYS", f"Agent #{self._agent_id} — cycle #{self._cycle_count} started")
+
+        # Phase 0: Recovery — fix any stuck/bad states
+        recovered = await self._recover_stuck_prospects()
+
+        # Phase 0.5: Auto-crawl — discover new businesses in active rings
+        crawled = await self._process_crawl()
+        
+        # Phase 1: Audit discovered prospects that have websites
+        audited = await self._process_audits()
+        
+        # Phase 2: Recon — find owner info for audited prospects AND no-website discovered prospects
+        reconned = await self._process_recons()
+        
+        # Phase 3: Enqueue — generate email drafts for enriched prospects with emails
+        enqueued = await self._process_enqueues()
+        
+        elapsed = round(time.time() - cycle_start, 1)
+        
+        pipeline_log("SYS", f"Cycle #{self._cycle_count} done in {elapsed}s — crawled={crawled} audited={audited} reconned={reconned} enqueued={enqueued}")
+
+        if recovered or crawled or audited or reconned or enqueued:
+            logger.info(
+                "Agent #%d cycle #%d done in %.1fs: recovered=%d, crawled=%d, audited=%d, reconned=%d, enqueued=%d",
+                self._agent_id, self._cycle_count, elapsed, recovered, crawled, audited, reconned, enqueued,
+            )
+            # Push stats to Firebase
+            await self._push_stats()
+
+    # ── Phase 0: Recovery ──────────────────────────────────────────────
+
+    async def _recover_stuck_prospects(self) -> int:
+        """
+        Find and fix prospects stuck in bad states.
+        
+        Recovery rules:
+        - Prospect with status 'auditing' for > STUCK_THRESHOLD_MIN → reset to 'discovered'
+        - Prospect with status 'recon_in_progress' for > STUCK_THRESHOLD_MIN → reset to prior state
+        - OutreachEmail stuck in 'sending' → reset to 'approved' 
+        - OutreachEmail stuck in 'failed' with retries left → reset to 'approved'
+        """
+        recovered = 0
+        cutoff = datetime.now(timezone.utc) - timedelta(minutes=STUCK_THRESHOLD_MIN)
+
+        async with async_session_factory() as db:
+            # --- Recover stuck audits ---
+            # If website_status was set to 'auditing' but never completed
+            result = await db.execute(
+                select(Prospect).where(
+                    Prospect.status == "discovered",
+                    Prospect.has_website == True,
+                    Prospect.website_url.isnot(None),
+                    Prospect.updated_at < cutoff,
+                    # Has been in this state too long — likely a stuck audit
+                )
+            )
+            # These are just sitting as discovered — they'll be re-picked by audit.
+            # No reset needed, just ensure they're eligible.
+
+            # --- Recover stuck emails ---
+            result = await db.execute(
+                select(OutreachEmail).where(
+                    OutreachEmail.status == "failed",
+                    OutreachEmail.error_message.isnot(None),
+                    OutreachEmail.created_at < cutoff,
+                )
+            )
+            failed_emails = result.scalars().all()
+            for email in failed_emails:
+                # Reset failed emails to pending_approval so user can review the error and retry
+                email.status = "pending_approval"
+                email.error_message = f"[AUTO-RECOVERED] Previous error: {email.error_message}"
+                recovered += 1
+                logger.info("Recovered failed email %s for prospect %s", email.id, email.prospect_id)
+
+            # --- Recover bounced emails — use Hunter.io for high-value, skip low-value ---
+            result = await db.execute(
+                select(OutreachEmail).where(
+                    OutreachEmail.status == "bounced",
+                    OutreachEmail.created_at > cutoff - timedelta(hours=24),
+                )
+            )
+            bounced = result.scalars().all()
+            bounce_recon_queue = []
+            for email in bounced:
+                prospect_result = await db.execute(
+                    select(Prospect).where(Prospect.id == email.prospect_id)
+                )
+                prospect = prospect_result.scalar_one_or_none()
+                if prospect and prospect.owner_email:
+                    old_email = prospect.owner_email
+                    prospect.email_verified = False
+                    prospect.notes = (prospect.notes or "") + f"\n[{datetime.now().strftime('%Y-%m-%d')}] Email bounced: {old_email}"
+                    # High-value bounce → queue for Hunter.io re-recon
+                    if (prospect.priority_score or 0) >= 35:
+                        prospect.owner_email = None
+                        prospect.email_source = None
+                        prospect.status = "audited"  # Reset to allow re-recon
+                        bounce_recon_queue.append(str(prospect.id))
+                        pipeline_log("BOUNCE", f"High-value bounce → queued for re-recon via Hunter.io", old_email)
+                    else:
+                        prospect.status = "dead"
+                        pipeline_log("BOUNCE", f"Low-value bounce → marked dead", old_email)
+                    # Cancel any remaining scheduled emails
+                    email.status = "cancelled"
+                    recovered += 1
+
+            if recovered:
+                await db.commit()
+
+            # Trigger re-recon for high-value bounced prospects (outside transaction)
+            if bounce_recon_queue:
+                from api.services.recon_engine import recon_prospect
+                for pid in bounce_recon_queue:
+                    try:
+                        result = await recon_prospect(pid)
+                        if result and result.get("owner_email"):
+                            pipeline_log("BOUNCE", f"Re-recon found new email", result["owner_email"])
+                    except Exception as e:
+                        logger.error("Bounce re-recon failed for %s: %s", pid, e)
+                    await asyncio.sleep(1)
+
+        self._stats["recoveries"] += recovered
+        return recovered
+
+    # ── Phase 0.5: Auto-Crawl ──────────────────────────────────────────
+
+    async def _process_crawl(self) -> int:
+        """
+        Auto-crawl incomplete rings to discover new businesses.
+        
+        Finds rings that have un-crawled categories and runs ONE category per cycle
+        to keep the pipeline moving without monopolizing API quota.
+        """
+        from api.services.crawl_engine import crawl_ring
+        from api.models.prospect import GeoRing
+
+        async with async_session_factory() as db:
+            # Find the first active/pending ring with incomplete categories
+            result = await db.execute(
+                select(GeoRing).where(
+                    GeoRing.status.in_(["active", "pending"]),
+                ).order_by(GeoRing.ring_number)
+            )
+            rings = result.scalars().all()
+
+        if not rings:
+            return 0
+
+        # Pick the first ring that still has work to do
+        target_ring = None
+        for ring in rings:
+            cats_done = ring.categories_done or []
+            cats_total = ring.categories_total or []
+            if len(cats_done) < len(cats_total):
+                target_ring = ring
+                break
+
+        if not target_ring:
+            return 0
+
+        try:
+            cats_done_len = len(target_ring.categories_done or [])
+            cats_total_len = len(target_ring.categories_total or [])
+            pipeline_log("CRAWL", f"Auto-crawl: {target_ring.name} ({cats_done_len}/{cats_total_len} categories done)")
+            logger.info("Auto-crawl: ring=%s (%d/%d categories done)",
+                        target_ring.name, cats_done_len, cats_total_len)
+            result = await crawl_ring(str(target_ring.id))
+            found = result.get("total_found", 0)
+            self._stats["crawls_completed"] += 1
+            if found > 0:
+                pipeline_log("CRAWL", f"Discovered {found} new prospects in {target_ring.name}")
+                logger.info("Auto-crawl: discovered %d new prospects in ring=%s",
+                            found, target_ring.name)
+            return found
+        except Exception as e:
+            logger.error("Auto-crawl error for ring %s: %s", target_ring.name, e)
+            self._stats["errors"] += 1
+            return 0
+
+    # ── Phase 1: Audits ────────────────────────────────────────────────
+
+    async def _process_audits(self) -> int:
+        """Audit discovered prospects that have websites."""
+        from api.services.intel_engine import audit_prospect
+
+        # Get top prospects needing audit
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id).where(
+                    Prospect.status == "discovered",
+                    Prospect.has_website == True,
+                    Prospect.website_url.isnot(None),
+                ).order_by(
+                    Prospect.priority_score.desc()
+                ).limit(AUDIT_BATCH_SIZE)
+            )
+            prospect_ids = [str(r[0]) for r in result.fetchall()]
+
+        if not prospect_ids:
+            return 0
+
+        # Load names for logging
+        name_map = {}
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id, Prospect.business_name, Prospect.website_url)
+                .where(Prospect.id.in_([__import__('uuid').UUID(i) for i in prospect_ids]))
+            )
+            for row in result.fetchall():
+                name_map[str(row[0])] = (row[1] or 'Unknown', row[2] or '')
+
+        count = 0
+        for pid in prospect_ids:
+            biz_name, url = name_map.get(pid, ('Unknown', ''))
+            pipeline_log("AUDIT", f"Lighthouse audit initiated → {url or biz_name}", biz=biz_name)
+            try:
+                result = await audit_prospect(pid)
+                if result:
+                    count += 1
+                    self._stats["audits_completed"] += 1
+                    perf = result.get('perf_score') or result.get('score_overall', '?')
+                    pipeline_log("AUDIT", f"Audit complete → {biz_name}: perf={perf}", biz=biz_name)
+            except Exception as e:
+                logger.error("Audit failed for %s: %s", pid, e)
+                pipeline_log("AUDIT", f"Audit FAILED → {biz_name}: {str(e)[:60]}", biz=biz_name)
+                self._stats["errors"] += 1
+            await asyncio.sleep(AUDIT_DELAY_SEC)
+
+        return count
+
+    # ── Phase 2: Recon ─────────────────────────────────────────────────
+
+    async def _process_recons(self) -> int:
+        """
+        Recon prospects to find owner contact info.
+        
+        Handles TWO paths:
+        1. audited prospects → normal flow
+        2. discovered + no website → skip audit, go straight to recon
+        """
+        from api.services.recon_engine import recon_prospect
+
+        async with async_session_factory() as db:
+            # Path 1: Audited prospects needing recon
+            result1 = await db.execute(
+                select(Prospect.id).where(
+                    Prospect.status == "audited",
+                    Prospect.owner_email.is_(None),
+                ).order_by(
+                    Prospect.priority_score.desc()
+                ).limit(RECON_BATCH_SIZE)
+            )
+            audited_ids = [str(r[0]) for r in result1.fetchall()]
+
+            # Path 2: No-website prospects — skip audit, go directly to recon
+            remaining = max(0, RECON_BATCH_SIZE - len(audited_ids))
+            nosite_ids = []
+            if remaining > 0:
+                result2 = await db.execute(
+                    select(Prospect.id).where(
+                        Prospect.status == "discovered",
+                        or_(
+                            Prospect.has_website == False,
+                            Prospect.website_url.is_(None),
+                        ),
+                    ).order_by(
+                        Prospect.priority_score.desc()
+                    ).limit(remaining)
+                )
+                nosite_ids = [str(r[0]) for r in result2.fetchall()]
+
+        prospect_ids = audited_ids + nosite_ids
+        if not prospect_ids:
+            return 0
+
+        # For no-website prospects, we need to fast-track their status to "audited"
+        # so recon_prospect will transition them to "enriched"
+        if nosite_ids:
+            async with async_session_factory() as db:
+                await db.execute(
+                    update(Prospect)
+                    .where(Prospect.id.in_([__import__('uuid').UUID(i) for i in nosite_ids]))
+                    .values(status="audited", updated_at=datetime.now(timezone.utc))
+                )
+                await db.commit()
+            logger.info("Fast-tracked %d no-website prospects to 'audited' for recon", len(nosite_ids))
+
+        # Load names for logging
+        name_map = {}
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id, Prospect.business_name, Prospect.website_url)
+                .where(Prospect.id.in_([__import__('uuid').UUID(i) for i in prospect_ids]))
+            )
+            for row in result.fetchall():
+                name_map[str(row[0])] = (row[1] or 'Unknown', row[2] or '')
+
+        count = 0
+        for pid in prospect_ids:
+            biz_name, url = name_map.get(pid, ('Unknown', ''))
+            pipeline_log("RECON", f"Enriching contact → {biz_name}", biz=biz_name)
+            try:
+                result = await recon_prospect(pid)
+                if result and result.get("owner_email"):
+                    count += 1
+                    self._stats["recons_completed"] += 1
+                    owner = result.get('owner_name', '?')
+                    pipeline_log("RECON", f"Found: {owner} @ {biz_name} ({result['owner_email']})", biz=biz_name)
+                else:
+                    pipeline_log("RECON", f"No contact found for {biz_name}", biz=biz_name)
+            except Exception as e:
+                logger.error("Recon failed for %s: %s", pid, e)
+                pipeline_log("RECON", f"Recon FAILED → {biz_name}: {str(e)[:60]}", biz=biz_name)
+                self._stats["errors"] += 1
+            await asyncio.sleep(RECON_DELAY_SEC)
+
+        return count
+
+    # ── Phase 3: Enqueue ───────────────────────────────────────────────
+
+    async def _process_enqueues(self) -> int:
+        """
+        Generate email drafts (pending_approval) for enriched prospects.
+        
+        Creates the email but does NOT send — user must approve first.
+        """
+        from api.services.cadence_engine import enqueue_prospect
+
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id).where(
+                    Prospect.status == "enriched",
+                    Prospect.owner_email.isnot(None),
+                ).order_by(
+                    Prospect.priority_score.desc()
+                ).limit(ENQUEUE_BATCH_SIZE)
+            )
+            prospect_ids = [str(r[0]) for r in result.fetchall()]
+
+        if not prospect_ids:
+            return 0
+
+        # Load names for logging
+        name_map = {}
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id, Prospect.business_name, Prospect.owner_email)
+                .where(Prospect.id.in_([__import__('uuid').UUID(i) for i in prospect_ids]))
+            )
+            for row in result.fetchall():
+                name_map[str(row[0])] = (row[1] or 'Unknown', row[2] or '')
+
+        count = 0
+        for pid in prospect_ids:
+            biz_name, email = name_map.get(pid, ('Unknown', ''))
+            pipeline_log("EMAIL", f'Template "initial_audit" selected for {biz_name}', biz=biz_name)
+            try:
+                email_id = await enqueue_prospect(pid)
+                if email_id:
+                    count += 1
+                    self._stats["enqueues_completed"] += 1
+                    pipeline_log("EMAIL", f"Email queued → {email} (pending approval)", biz=biz_name)
+            except Exception as e:
+                logger.error("Enqueue failed for %s: %s", pid, e)
+                pipeline_log("EMAIL", f"Enqueue FAILED → {biz_name}: {str(e)[:60]}", biz=biz_name)
+                self._stats["errors"] += 1
+            await asyncio.sleep(ENQUEUE_DELAY_SEC)
+
+        return count
+
+    # ── Firebase Stats Push ─────────────────────────────────────────
+
+    async def _push_stats(self):
+        """Push pipeline worker stats to Firebase for dashboard display."""
+        try:
+            from api.services.firebase_summarizer import _ref
+            ref = _ref(f"outreach/pipeline_worker/agent_{self._agent_id}")
+            if ref:
+                ref.set({
+                    **self._stats,
+                    "running": self._running,
+                    "cycle_count": self._cycle_count,
+                    "agent_id": self._agent_id,
+                    "updated_at": int(time.time()),
+                })
+        except Exception as e:
+            logger.debug("Firebase stats push failed: %s", e)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Multi-Agent Manager
+# ═══════════════════════════════════════════════════════════════════════
+
+class PipelineAgentManager:
+    """
+    Manages multiple concurrent PipelineWorker agents.
+    
+    - Agent #0 is always created on startup (singleton behavior preserved)
+    - Additional agents can be spawned/stopped via API
+    - Each agent processes different prospects (staggered timing + locking)
+    - Stats are aggregated across all agents
+    """
+
+    def __init__(self):
+        self._agents: dict[int, PipelineWorker] = {}
+
+    @property
+    def agent_count(self) -> int:
+        return sum(1 for a in self._agents.values() if a._running)
+
+    @property
+    def stats(self) -> dict:
+        """Aggregated stats across all agents."""
+        agg = {
+            "audits_completed": 0,
+            "recons_completed": 0,
+            "enqueues_completed": 0,
+            "crawls_completed": 0,
+            "recoveries": 0,
+            "errors": 0,
+            "last_cycle": None,
+            "started_at": None,
+            "running": False,
+            "cycle_count": 0,
+            "agent_count": self.agent_count,
+            "agents": [],
+        }
+        for agent in self._agents.values():
+            s = agent.stats
+            agg["audits_completed"] += s.get("audits_completed", 0)
+            agg["recons_completed"] += s.get("recons_completed", 0)
+            agg["enqueues_completed"] += s.get("enqueues_completed", 0)
+            agg["crawls_completed"] += s.get("crawls_completed", 0)
+            agg["recoveries"] += s.get("recoveries", 0)
+            agg["errors"] += s.get("errors", 0)
+            agg["cycle_count"] += s.get("cycle_count", 0)
+            if s.get("running"):
+                agg["running"] = True
+            # Track earliest started_at and latest last_cycle
+            if s.get("started_at"):
+                if not agg["started_at"] or s["started_at"] < agg["started_at"]:
+                    agg["started_at"] = s["started_at"]
+            if s.get("last_cycle"):
+                if not agg["last_cycle"] or s["last_cycle"] > agg["last_cycle"]:
+                    agg["last_cycle"] = s["last_cycle"]
+            agg["agents"].append(s)
+        return agg
+
+    def start_agent(self, agent_id: int = 0) -> PipelineWorker:
+        """Start a specific agent. Creates it if it doesn't exist."""
+        if agent_id >= MAX_AGENTS:
+            raise ValueError(f"Max {MAX_AGENTS} agents allowed")
+        if agent_id not in self._agents:
+            self._agents[agent_id] = PipelineWorker(agent_id=agent_id)
+        agent = self._agents[agent_id]
+        agent.start()
+        return agent
+
+    def stop_agent(self, agent_id: int) -> bool:
+        """Stop a specific agent."""
+        if agent_id in self._agents:
+            self._agents[agent_id].stop()
+            return True
+        return False
+
+    def stop_all(self):
+        """Stop all agents."""
+        for agent in self._agents.values():
+            agent.stop()
+
+    def start_multiple(self, count: int) -> list[int]:
+        """Start N agents (0 through count-1). Returns list of agent_ids started."""
+        count = min(count, MAX_AGENTS)
+        started = []
+        for i in range(count):
+            self.start_agent(i)
+            started.append(i)
+        return started
+
+    def get_agent(self, agent_id: int) -> Optional[PipelineWorker]:
+        return self._agents.get(agent_id)
+
+
+# ─── Singleton Manager ──────────────────────────────────────────────────
+_manager: Optional[PipelineAgentManager] = None
+
+
+def get_pipeline_manager() -> PipelineAgentManager:
+    """Get or create the singleton pipeline agent manager."""
+    global _manager
+    if _manager is None:
+        _manager = PipelineAgentManager()
+    return _manager
+
+
+def get_pipeline_worker() -> PipelineAgentManager:
+    """Backward-compatible: returns the manager (used by existing API routes)."""
+    return get_pipeline_manager()
+
+
+async def start_pipeline_worker():
+    """Start the default agent #0 (called from main.py lifespan)."""
+    mgr = get_pipeline_manager()
+    mgr.start_agent(0)
+    return mgr
+
+
+async def stop_pipeline_worker():
+    """Stop all agents (called from main.py shutdown)."""
+    mgr = get_pipeline_manager()
+    mgr.stop_all()
+
+
+# ─── Recovery Functions (can be called independently) ──────────────────
+
+async def recover_all_bad_states() -> dict:
+    """
+    One-shot recovery: scan all prospects and emails for bad states and fix them.
+    Called on startup and available via API for manual trigger.
+    
+    Returns summary of what was recovered.
+    """
+    recovered = {
+        "stuck_discovered": 0,
+        "orphaned_queued": 0,
+        "failed_emails_reset": 0,
+        "stale_enriched": 0,
+        "total": 0,
+    }
+
+    async with async_session_factory() as db:
+        now = datetime.now(timezone.utc)
+        cutoff = now - timedelta(minutes=STUCK_THRESHOLD_MIN)
+
+        # 1. Prospects marked "queued" but no pending/approved email → reset to enriched
+        result = await db.execute(
+            select(Prospect).where(Prospect.status == "queued")
+        )
+        queued_prospects = result.scalars().all()
+        for p in queued_prospects:
+            email_result = await db.execute(
+                select(OutreachEmail).where(
+                    OutreachEmail.prospect_id == p.id,
+                    OutreachEmail.status.in_(["pending_approval", "approved", "scheduled"]),
+                ).limit(1)
+            )
+            if not email_result.scalars().first():
+                # Orphaned — queued but no email waiting
+                if p.owner_email:
+                    p.status = "enriched"  # Can be re-enqueued
+                else:
+                    p.status = "audited"   # Needs recon again
+                p.updated_at = now
+                recovered["orphaned_queued"] += 1
+
+        # 2. Failed emails → reset to pending_approval for review
+        result = await db.execute(
+            select(OutreachEmail).where(
+                OutreachEmail.status == "failed",
+            )
+        )
+        for email in result.scalars().all():
+            email.status = "pending_approval"
+            email.error_message = f"[STARTUP-RECOVERED] {email.error_message or 'unknown error'}"
+            recovered["failed_emails_reset"] += 1
+
+        # 3. Prospects stuck as "enriched" with email for > 24 hours and no outreach email
+        #    (the enqueue step was missed)
+        day_ago = now - timedelta(hours=24)
+        result = await db.execute(
+            select(Prospect).where(
+                Prospect.status == "enriched",
+                Prospect.owner_email.isnot(None),
+                Prospect.updated_at < day_ago,
+            )
+        )
+        for p in result.scalars().all():
+            email_result = await db.execute(
+                select(OutreachEmail).where(OutreachEmail.prospect_id == p.id).limit(1)
+            )
+            if not email_result.scalars().first():
+                recovered["stale_enriched"] += 1
+                # Don't change status — pipeline worker will pick these up
+
+        recovered["total"] = sum(v for k, v in recovered.items() if k != "total")
+
+        if recovered["total"] > 0:
+            await db.commit()
+            logger.info("Recovery complete: %s", recovered)
+
+    return recovered

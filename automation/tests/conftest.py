@@ -335,6 +335,11 @@ def mock_settings(tmp_path):
     mock_s.firebase_db_url = "https://test.firebaseio.com"
     mock_s.firebase_poll_interval = 60
     mock_s.unsplash_access_key = ""
+    mock_s.sender_name = "Ajaya Dahal"
+    mock_s.sender_email = "ajayadahal10@gmail.com"
+    mock_s.sender_company = "AjayaDesign"
+    mock_s.smtp_email = "ajayadahal10@gmail.com"
+    mock_s.smtp_app_password = ""
     os.makedirs(mock_s.base_dir, exist_ok=True)
 
     with patch("api.config.settings", mock_s), \
