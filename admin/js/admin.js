@@ -4,12 +4,10 @@
    ═══════════════════════════════════════════════════════ */
 
 // ── Configuration ──────────────────────────────────────
-// Change this when Cloudflare Tunnel is set up:
-//   e.g. 'https://api.ajayadesign.com'
-// API_BASE points to the local Docker API.
-// When the admin is opened remotely (e.g. GitHub Pages), API calls will fail
-// gracefully and fall back to Firebase RTDB commands that the server polls for.
-const API_BASE = 'http://localhost:3001/api/v1';
+// Auto-detect API base: use the current hostname so the dashboard works
+// from localhost, LAN IP (192.168.x.x), or a future tunnel domain.
+// Falls back gracefully to Firebase if the API is unreachable.
+const API_BASE = `http://${location.hostname}:3001/api/v1`;
 
 const POLL_INTERVAL = 5000;
 const ALLOWED_EMAILS = [
