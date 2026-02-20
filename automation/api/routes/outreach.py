@@ -6,21 +6,26 @@ Agent control endpoints (start, pause, status).
 File serving for screenshots and audit data.
 """
 
+import csv
+import io
 import logging
 import uuid
 from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy import func, select, case, text, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.database import get_db
+from api.config import settings
 from api.models.prospect import (
     GeoRing,
     OutreachEmail,
     OutreachSequence,
     Prospect,
+    ProspectActivity,
     WebsiteAudit,
 )
 from api.services.firebase_summarizer import (
@@ -62,14 +67,17 @@ async def get_agent_status():
 
 @outreach_router.post("/agent/start")
 async def start_agent():
-    """Start or resume the outreach agent."""
+    """Start or resume the outreach agent (enables crawler)."""
     if _agent_state["status"] == "running":
         return {"message": "Agent already running", "status": "running"}
     _agent_state["status"] = "running"
     _agent_state["started_at"] = datetime.now(timezone.utc).isoformat()
     _agent_state["paused_at"] = None
     _agent_state["error"] = None
-    logger.info("Outreach agent started")
+    # Enable the Maps API crawler in the pipeline worker
+    from api.services.pipeline_worker import set_crawl_enabled
+    set_crawl_enabled(True)
+    logger.info("Outreach agent started (crawler enabled)")
     # Push to Firebase so all connected dashboards update in real-time
     await push_agent_status("running", _agent_state.get("current_task", "") or "")
     await push_activity("system", "Agent started", "Outreach agent resumed scanning")
@@ -78,13 +86,16 @@ async def start_agent():
 
 @outreach_router.post("/agent/pause")
 async def pause_agent():
-    """Pause the outreach agent."""
+    """Pause the outreach agent (disables crawler, worker keeps running)."""
     _agent_state["status"] = "paused"
     _agent_state["paused_at"] = datetime.now(timezone.utc).isoformat()
-    logger.info("Outreach agent paused")
+    # Disable the Maps API crawler — worker (audit/recon/enqueue) keeps running
+    from api.services.pipeline_worker import set_crawl_enabled
+    set_crawl_enabled(False)
+    logger.info("Outreach agent paused (crawler disabled, worker still running)")
     await push_agent_status("paused")
-    await push_activity("system", "Agent paused", "Outreach agent paused by operator")
-    return {"message": "Agent paused", "status": "paused"}
+    await push_activity("system", "Agent paused", "Crawler paused — audit/recon/enqueue still active")
+    return {"message": "Agent paused (crawler disabled, worker still processing)", "status": "paused"}
 
 
 @outreach_router.post("/agent/kill")
@@ -95,7 +106,10 @@ async def kill_agent():
     _agent_state["started_at"] = None
     _agent_state["paused_at"] = None
     _agent_state["error"] = None
-    logger.info("Outreach agent killed")
+    # Disable the crawler
+    from api.services.pipeline_worker import set_crawl_enabled
+    set_crawl_enabled(False)
+    logger.info("Outreach agent killed (crawler disabled)")
     await push_agent_status("idle")
     await push_activity("system", "Agent killed", "Emergency stop triggered")
     return {"message": "Agent killed", "status": "idle"}
@@ -130,6 +144,7 @@ async def list_prospects(
     ring_id: Optional[str] = None,
     business_type: Optional[str] = None,
     has_website: Optional[str] = None,
+    qualified: Optional[str] = None,
     search: Optional[str] = None,
     sort: str = "priority_score",
     order: str = "desc",
@@ -151,6 +166,12 @@ async def list_prospects(
         query = query.where(Prospect.has_website == False)  # noqa: E712
     elif has_website == "true":
         query = query.where(Prospect.has_website == True)  # noqa: E712
+    # Qualified vs Scanned filter
+    _QUALIFIED_STATUSES = ["audited", "enriched", "queued", "contacted", "replied", "meeting_booked", "promoted"]
+    if qualified == "true":
+        query = query.where(Prospect.status.in_(_QUALIFIED_STATUSES))
+    elif qualified == "false":
+        query = query.where(Prospect.status == "discovered")
     if search:
         query = query.where(Prospect.business_name.ilike(f"%{search}%"))
 
@@ -178,6 +199,97 @@ async def list_prospects(
     }
 
 
+@outreach_router.get("/prospects/export")
+async def export_prospects_csv(
+    status: Optional[str] = None,
+    ring_id: Optional[str] = None,
+    business_type: Optional[str] = None,
+    has_website: Optional[str] = None,
+    qualified: Optional[str] = None,
+    search: Optional[str] = None,
+    sort: str = "priority_score",
+    order: str = "desc",
+    db: AsyncSession = Depends(get_db),
+):
+    """Export filtered prospects as CSV file with all fields."""
+    query = select(Prospect)
+
+    if status:
+        query = query.where(Prospect.status == status)
+    if ring_id:
+        query = query.where(Prospect.geo_ring_id == uuid.UUID(ring_id))
+    if business_type:
+        query = query.where(Prospect.business_type == business_type)
+    if has_website == "false":
+        query = query.where(Prospect.has_website == False)  # noqa: E712
+    elif has_website == "true":
+        query = query.where(Prospect.has_website == True)  # noqa: E712
+    _QUALIFIED_STATUSES = ["audited", "enriched", "queued", "contacted", "replied", "meeting_booked", "promoted"]
+    if qualified == "true":
+        query = query.where(Prospect.status.in_(_QUALIFIED_STATUSES))
+    elif qualified == "false":
+        query = query.where(Prospect.status == "discovered")
+    if search:
+        query = query.where(Prospect.business_name.ilike(f"%{search}%"))
+
+    sort_col = getattr(Prospect, sort, Prospect.priority_score)
+    if order == "desc":
+        query = query.order_by(sort_col.desc())
+    else:
+        query = query.order_by(sort_col.asc())
+
+    result = await db.execute(query)
+    prospects = result.scalars().all()
+
+    CSV_COLUMNS = [
+        ("Business Name", "business_name"),
+        ("Business Type", "business_type"),
+        ("Status", "status"),
+        ("Phone", "phone"),
+        ("Address", "address"),
+        ("City", "city"),
+        ("State", "state"),
+        ("Zip", "zip_code"),
+        ("Owner Name", "owner_name"),
+        ("Owner Email", "owner_email"),
+        ("Owner Phone", "owner_phone"),
+        ("Owner Title", "owner_title"),
+        ("Email Source", "email_source"),
+        ("Email Verified", "email_verified"),
+        ("Has Website", "has_website"),
+        ("Website URL", "website_url"),
+        ("Website Platform", "website_platform"),
+        ("Google Rating", "google_rating"),
+        ("Google Reviews", "google_reviews"),
+        ("Google Maps URL", "google_maps_url"),
+        ("Priority Score", "priority_score"),
+        ("Notes", "notes"),
+        ("Created", "created_at"),
+    ]
+
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow([col[0] for col in CSV_COLUMNS])
+
+    for p in prospects:
+        d = p.to_dict(brief=False)
+        row = []
+        for _, key in CSV_COLUMNS:
+            val = d.get(key, "")
+            if val is None:
+                val = ""
+            row.append(str(val))
+        writer.writerow(row)
+
+    buf.seek(0)
+    filename = f"prospects_{status or 'all'}_{datetime.now(timezone.utc).strftime('%Y%m%d')}.csv"
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
 @outreach_router.get("/prospects/{prospect_id}")
 async def get_prospect(prospect_id: str, db: AsyncSession = Depends(get_db)):
     """Get full prospect detail including audits, email history, and score breakdown."""
@@ -201,6 +313,7 @@ async def get_prospect(prospect_id: str, db: AsyncSession = Depends(get_db)):
         audits_list.append(ad)
     data["audits"] = audits_list
     data["emails"] = [e.to_dict() for e in prospect.emails]
+    data["activities"] = [a.to_dict() for a in prospect.activities]
 
     # Compute score breakdown so the UI can show exactly how the score was calculated
     from api.services.crawl_engine import INDUSTRY_VALUES
@@ -422,24 +535,56 @@ async def list_pending_emails(
     db: AsyncSession = Depends(get_db),
     limit: int = 25,
     offset: int = 0,
+    sort: str = "created_at",
+    order: str = "desc",
+    has_website: Optional[str] = None,
+    prospect_status: Optional[str] = None,
 ):
-    """List emails awaiting operator approval, with prospect context. Supports pagination."""
-    # Get total count first
-    count_result = await db.execute(
-        select(func.count(OutreachEmail.id))
-        .where(OutreachEmail.status == "pending_approval")
-    )
-    total = count_result.scalar() or 0
+    """List emails awaiting operator approval, with prospect context. Supports pagination, sorting, and filtering."""
+    # Base filter
+    base_filter = OutreachEmail.status == "pending_approval"
+    join_cond = Prospect.id == OutreachEmail.prospect_id
 
-    # Get paginated results
-    result = await db.execute(
-        select(OutreachEmail, Prospect)
-        .join(Prospect, Prospect.id == OutreachEmail.prospect_id)
-        .where(OutreachEmail.status == "pending_approval")
-        .order_by(OutreachEmail.created_at.desc())
-        .limit(limit)
-        .offset(offset)
-    )
+    # Website filter
+    website_filter = None
+    if has_website == "true":
+        website_filter = Prospect.has_website == True  # noqa: E712
+    elif has_website == "false":
+        website_filter = Prospect.has_website == False  # noqa: E712
+
+    # Prospect status filter
+    status_filter = None
+    if prospect_status:
+        status_filter = Prospect.status == prospect_status
+
+    # Count
+    count_q = select(func.count(OutreachEmail.id)).join(Prospect, join_cond).where(base_filter)
+    if website_filter is not None:
+        count_q = count_q.where(website_filter)
+    if status_filter is not None:
+        count_q = count_q.where(status_filter)
+    total = (await db.execute(count_q)).scalar() or 0
+
+    # Sorting
+    sort_map = {
+        "created_at": OutreachEmail.created_at,
+        "score": Prospect.priority_score,
+        "business_name": Prospect.business_name,
+    }
+    sort_col = sort_map.get(sort, OutreachEmail.created_at)
+    order_col = sort_col.desc() if order == "desc" else sort_col.asc()
+
+    # Query
+    q = (select(OutreachEmail, Prospect)
+         .join(Prospect, join_cond)
+         .where(base_filter))
+    if website_filter is not None:
+        q = q.where(website_filter)
+    if status_filter is not None:
+        q = q.where(status_filter)
+    q = q.order_by(order_col).limit(limit).offset(offset)
+
+    result = await db.execute(q)
     rows = result.all()
     out = []
     for email, prospect in rows:
@@ -884,6 +1029,67 @@ async def create_test_email(prospect_id: str, body: dict = {}, db: AsyncSession 
         "subject": email.subject,
         "status": "pending_approval",
     }
+
+
+# ── Prospect Activities (Call Logs, Notes) ──────────────
+@outreach_router.get("/prospects/{prospect_id}/activities")
+async def list_activities(prospect_id: str, db: AsyncSession = Depends(get_db)):
+    """List all activity logs for a prospect, newest first."""
+    result = await db.execute(
+        select(ProspectActivity)
+        .where(ProspectActivity.prospect_id == uuid.UUID(prospect_id))
+        .order_by(ProspectActivity.created_at.desc())
+    )
+    activities = result.scalars().all()
+    return {"activities": [a.to_dict() for a in activities]}
+
+
+@outreach_router.post("/prospects/{prospect_id}/activities")
+async def log_activity(prospect_id: str, body: dict, db: AsyncSession = Depends(get_db)):
+    """Log a phone call, meeting, or other interaction with a prospect.
+
+    Body: {
+        activity_type: "phone_call" | "meeting" | "voicemail" | "text_message" | "in_person" | "note",
+        outcome: "interested" | "not_interested" | "callback" | "no_answer" | "voicemail" | "other",
+        notes: "Free-form notes about the interaction",
+        duration_minutes: 5,
+        contact_name: "Who we spoke with"
+    }
+    """
+    prospect = await db.get(Prospect, uuid.UUID(prospect_id))
+    if not prospect:
+        raise HTTPException(status_code=404, detail="Prospect not found")
+
+    valid_types = {"phone_call", "meeting", "voicemail", "text_message", "in_person", "note"}
+    activity_type = body.get("activity_type", "phone_call")
+    if activity_type not in valid_types:
+        raise HTTPException(status_code=400, detail=f"Invalid activity_type. Must be one of: {', '.join(sorted(valid_types))}")
+
+    activity = ProspectActivity(
+        prospect_id=prospect.id,
+        activity_type=activity_type,
+        outcome=body.get("outcome"),
+        notes=body.get("notes"),
+        duration_minutes=body.get("duration_minutes"),
+        contact_name=body.get("contact_name"),
+    )
+    db.add(activity)
+    await db.commit()
+    await db.refresh(activity)
+
+    logger.info(f"Activity logged for {prospect.business_name}: {activity_type} — {body.get('outcome', 'n/a')}")
+    return activity.to_dict()
+
+
+@outreach_router.delete("/activities/{activity_id}")
+async def delete_activity(activity_id: str, db: AsyncSession = Depends(get_db)):
+    """Delete an activity log entry."""
+    activity = await db.get(ProspectActivity, uuid.UUID(activity_id))
+    if not activity:
+        raise HTTPException(status_code=404, detail="Activity not found")
+    await db.delete(activity)
+    await db.commit()
+    return {"message": "Activity deleted"}
 
 
 @outreach_router.post("/emails/{email_id}/send")

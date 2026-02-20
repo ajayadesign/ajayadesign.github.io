@@ -1,10 +1,10 @@
 """
-Email Tracker — Open Pixel & Click Redirect.
+Email Tracker — Open, Click & Unsubscribe tracking via Firebase RTDB.
 
-Provides open tracking (1x1 transparent PNG) and click tracking (URL redirect).
-Also handles unsubscribe link generation.
+Tracking pages are hosted on GitHub Pages (ajayadesign.github.io/track/).
+They write events to Firebase RTDB; a pipeline worker syncs them to PostgreSQL.
 
-Phase 6 of OUTREACH_AGENT_PLAN.md.
+Also keeps local API-based tracking routes as fallback for dev/testing.
 """
 
 import base64
@@ -17,37 +17,42 @@ from api.config import settings
 
 logger = logging.getLogger("outreach.tracker")
 
-# 1x1 transparent PNG (43 bytes)
+# 1x1 transparent PNG (43 bytes) — still used by local /track/open/ route
 TRACKING_PIXEL = base64.b64decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQAB"
     "Nl7BcQAAAABJRU5ErkJggg=="
 )
 
-# Base URL for tracking endpoints
-TRACKING_BASE = settings.tracking_base_url or "http://localhost:3001/api/v1"
+# GitHub Pages base — tracking pages are static HTML + Firebase JS SDK
+TRACKING_BASE = "https://ajayadesign.github.io"
+
+# Links that should NEVER be rewritten through the click tracker
+_SKIP_DOMAINS = [
+    "ajayadesign.github.io",   # our own portfolio site
+]
 
 
 def get_tracking_pixel_url(tracking_id: str) -> str:
-    """Build the tracking pixel URL for an email."""
-    return f"{TRACKING_BASE}/track/open/{tracking_id}.png"
+    """Build the tracking pixel URL — uses open.html page that writes to RTDB."""
+    return f"{TRACKING_BASE}/track/open.html?t={tracking_id}"
 
 
 def get_click_tracking_url(tracking_id: str, destination: str) -> str:
-    """Build a click-tracking redirect URL."""
-    return f"{TRACKING_BASE}/track/click/{tracking_id}?url={quote(destination)}"
+    """Build a click-tracking redirect URL via GitHub Pages."""
+    return f"{TRACKING_BASE}/track/click.html?t={tracking_id}&url={quote(destination)}"
 
 
 def get_unsubscribe_url(tracking_id: str) -> str:
-    """Build the unsubscribe URL."""
-    return f"{TRACKING_BASE}/track/unsubscribe/{tracking_id}"
+    """Build the unsubscribe URL via GitHub Pages."""
+    return f"{TRACKING_BASE}/track/unsubscribe.html?t={tracking_id}"
 
 
 def inject_tracking(body_html: str, tracking_id: str) -> str:
     """
-    Inject tracking pixel and rewrite links in an HTML email body.
-    - Adds 1x1 pixel before </body>
-    - Rewrites <a href="..."> to go through click tracker
+    Inject tracking into an HTML email body.
     - Replaces {{tracking_pixel_url}} and {{unsubscribe_url}} placeholders
+    - Rewrites <a href="..."> to go through click tracker
+    - Skips mailto:, tel:, our own domain, and tracking links
     """
     if not tracking_id:
         return body_html
@@ -61,16 +66,21 @@ def inject_tracking(body_html: str, tracking_id: str) -> str:
     result = result.replace("{{ unsubscribe_url }}", unsub_url)
     result = result.replace("{{unsubscribe_url}}", unsub_url)
 
-    # Rewrite links for click tracking (but not mailto:, tel:, unsubscribe, or pixel)
+    # Rewrite links for click tracking
     def rewrite_link(match):
         full_match = match.group(0)
         href = match.group(1)
 
-        # Skip certain links
-        if any(skip in href for skip in [
-            "mailto:", "tel:", "/track/", "unsubscribe",
-            tracking_id, ".png",
-        ]):
+        # Skip non-http links
+        if any(href.startswith(p) for p in ["mailto:", "tel:", "#"]):
+            return full_match
+
+        # Skip our own domain (portfolio link) and tracking links
+        if any(skip in href for skip in _SKIP_DOMAINS):
+            return full_match
+
+        # Skip links already going through tracker
+        if "/track/" in href or tracking_id in href:
             return full_match
 
         tracked_href = get_click_tracking_url(tracking_id, href)

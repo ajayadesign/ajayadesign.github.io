@@ -3,35 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Re: {{ business_name }}</title>
-<style>
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-  .footer { margin-top: 30px; color: #666; font-size: 14px; border-top: 1px solid #e5e7eb; padding-top: 15px; }
-  .footer a { color: #2563eb; text-decoration: none; }
-  .unsubscribe { margin-top: 10px; font-size: 12px; color: #9ca3af; }
-  .unsubscribe a { color: #9ca3af; }
-</style>
 </head>
-<body>
-<p>{{ owner_first_name }},</p>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 580px; margin: 0 auto; padding: 20px; font-size: 15px;">
 
-<p>Forgot to mention — Google's data shows that <strong>{{ industry_mobile_pct }}%</strong> of {{ business_type }} searches happen on mobile. With your mobile score at {{ mobile_score }}/100, you're likely invisible to over half your potential customers.</p>
-
-<p>One quick example: I redesigned a site for a local {{ business_type }} and their mobile traffic went from 12% to 61% of total visitors in 8 weeks.</p>
-
-{% if estimated_loss and estimated_loss != 'minimal' and estimated_loss != 'unknown' %}
-<p>Based on industry averages for {{ business_type }}s in {{ state }}, a slow website could mean roughly <strong>{{ estimated_loss }}</strong> in missed customers.</p>
+{% if owner_first_name == 'there' %}
+<p>Hey — </p>
+{% else %}
+<p>{{ owner_first_name }} — </p>
 {% endif %}
 
-<p>Your call — but the full audit report is sitting here if you want it.</p>
+<p>Just bumping this up in case it got buried. I know how crazy running a {{ business_type }} gets.</p>
 
-<div class="footer">
-  <p>— {{ sender_name }}</p>
-</div>
+{% if has_audit and not mobile_good %}
+<p>One thing I keep thinking about with your site — {{ industry_mobile_pct }}% of people searching for a {{ business_type }} near {{ city }} are on their phone. With a mobile score of {{ mobile_score }}/100, a lot of those people are probably bouncing before they even see what you offer. That's low-hanging fruit.</p>
+{% elif has_audit and not speed_good %}
+<p>The main thing that stood out when I looked at your site was the load time ({{ load_time }}). Google's pretty aggressive about pushing slow sites down in rankings now. Quick fix with big payoff.</p>
+{% else %}
+<p>I still have that site review sitting here if you want a look. No expiration date on it — just let me know.</p>
+{% endif %}
 
-<div class="unsubscribe">
-  <p>Not interested? <a href="{{ unsubscribe_url }}">Unsubscribe</a></p>
-</div>
+<p>Happy to chat whenever. Even if it's just a 5-minute call to go over what I found.</p>
+
+<p>– Ajaya</p>
+
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;">
+<a href="{{ unsubscribe_url }}" style="color: #bbb;">Unsubscribe</a>
+</p>
 
 <img src="{{ tracking_pixel_url }}" width="1" height="1" alt="" style="display:none;">
 </body>

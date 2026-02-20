@@ -3,31 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Closing your file, {{ owner_first_name }}</title>
-<style>
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-  .footer { margin-top: 30px; color: #666; font-size: 14px; border-top: 1px solid #e5e7eb; padding-top: 15px; }
-  .footer a { color: #2563eb; text-decoration: none; }
-  .unsubscribe { margin-top: 10px; font-size: 12px; color: #9ca3af; }
-  .unsubscribe a { color: #9ca3af; }
-</style>
 </head>
-<body>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 580px; margin: 0 auto; padding: 20px; font-size: 15px;">
+
+{% if owner_first_name == 'there' %}
+<p>Hey —</p>
+{% else %}
 <p>Hey {{ owner_first_name }},</p>
+{% endif %}
 
-<p>I haven't heard back, so I'll assume the timing isn't right. Totally get it.</p>
+<p>I've reached out a few times about {{ business_name }}'s website so I'll take the hint 😄</p>
 
-<p>I'll keep your audit on file — if you ever want to see it, just reply <strong>"send it"</strong> and I'll forward it over. No strings.</p>
+<p>No hard feelings at all. If you ever want a second pair of eyes on your site down the road, just reply to this thread and I'll pick it right back up. I'm not going anywhere — still right here in Manor.</p>
 
-<p>Keep crushing it with those {{ google_rating }} stars ⭐</p>
+<p>Keep doing your thing. {{ google_rating }} stars speaks for itself.</p>
 
-<div class="footer">
-  <p>— {{ sender_name }}</p>
-</div>
+<p>– Ajaya</p>
 
-<div class="unsubscribe">
-  <p>Not interested? <a href="{{ unsubscribe_url }}">Unsubscribe</a></p>
-</div>
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;">
+<a href="{{ unsubscribe_url }}" style="color: #bbb;">Unsubscribe</a>
+</p>
 
 <img src="{{ tracking_pixel_url }}" width="1" height="1" alt="" style="display:none;">
 </body>

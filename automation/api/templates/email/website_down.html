@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 580px; margin: 0 auto; padding: 20px; font-size: 15px;">
+
+{% if owner_first_name == 'there' %}
+<p>Hey there,</p>
+{% else %}
+<p>Hey {{ owner_first_name }},</p>
+{% endif %}
+
+<p>Heads up — I tried pulling up <strong>{{ business_name }}</strong>'s website at {{ website_url }} and it doesn't seem to be loading. Not sure if you're aware, but your Google Maps listing still links to it, so anyone who clicks gets an error page.</p>
+
+<p>With {{ google_rating }} stars and {{ google_reviews }} reviews, people are definitely looking you up. It'd be a shame to lose them at the last click.</p>
+
+<p>I'm Ajaya — I live here in Manor and I do websites for local businesses. If you need help getting your site back up, or want to start fresh with something simple that actually works, I'd be happy to chat. No big pitch — just one local business owner looking out for another.</p>
+
+<p>Either way, wanted to make sure you knew.</p>
+
+<p>– Ajaya</p>
+
+<p style="color: #888; font-size: 13px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 12px;">
+Ajaya Dahal<br>
+AjayaDesign · Manor, TX<br>
+<a href="https://ajayadesign.github.io" style="color: #888;">ajayadesign.github.io</a>
+</p>
+
+<p style="font-size: 11px; color: #bbb;">
+Not your thing? <a href="{{ unsubscribe_url }}" style="color: #bbb;">Click here</a> and I won't email again.
+</p>
+
+<img src="{{ tracking_pixel_url }}" width="1" height="1" alt="" style="display:none;">
+</body>
+</html>

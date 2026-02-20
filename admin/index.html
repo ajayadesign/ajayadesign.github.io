@@ -1851,20 +1851,28 @@
                 <option value="discovered">Discovered</option>
                 <option value="audited">Audited</option>
                 <option value="enriched">Enriched</option>
+                <option value="queued">Queued</option>
                 <option value="contacted">Contacted</option>
                 <option value="replied">Replied</option>
                 <option value="meeting_booked">Meeting</option>
                 <option value="promoted">Promoted</option>
+                <option value="dead">Dead</option>
               </select>
               <select id="outreach-filter-type" onchange="outreachSearchProspects()" class="px-2 py-1.5 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-400 focus:outline-none focus:border-electric/50">
                 <option value="">All Types</option>
               </select>
               <button id="outreach-filter-nosite" onclick="outreachToggleNoWebsite()" class="px-3 py-1.5 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-400 hover:border-red-500/50 hover:text-red-400 transition" title="Show businesses WITHOUT a website — your top prospects!">🚫🌐 No Website</button>
+              <select id="outreach-filter-qualified" onchange="outreachSearchProspects()" class="px-2 py-1.5 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-400 focus:outline-none focus:border-electric/50">
+                <option value="">All Prospects</option>
+                <option value="true">✓ Qualified Only</option>
+                <option value="false">○ Scanned Only</option>
+              </select>
               <select id="outreach-page-size" onchange="outreachSearchProspects()" class="px-2 py-1.5 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-400 focus:outline-none focus:border-electric/50">
                 <option value="25">25/page</option>
                 <option value="50">50/page</option>
                 <option value="100">100/page</option>
               </select>
+              <button onclick="outreachExportCSV()" class="px-3 py-1.5 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-400 hover:border-emerald-500/50 hover:text-emerald-400 transition" title="Export filtered prospects as CSV">📥 Export CSV</button>
             </div>
 
             <!-- Pipeline Worker Status -->
@@ -1959,6 +1967,22 @@
                 📧 Email Approval Queue <span id="outreach-pending-count" class="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[0.65rem] font-bold rounded-full ml-2">0</span>
               </h3>
               <div class="flex gap-2 items-center">
+                <select id="email-queue-sort" onchange="outreachEmailQueuePageChange(0)" class="bg-surface-2 border border-border rounded px-2 py-1 text-xs text-gray-300 font-mono cursor-pointer">
+                  <option value="created_at">Sort: Newest</option>
+                  <option value="score">Sort: Score ↑</option>
+                  <option value="business_name">Sort: Name</option>
+                </select>
+                <select id="email-queue-website-filter" onchange="outreachEmailQueuePageChange(0)" class="bg-surface-2 border border-border rounded px-2 py-1 text-xs text-gray-300 font-mono cursor-pointer">
+                  <option value="">All Prospects</option>
+                  <option value="true">✓ Has Website</option>
+                  <option value="false">✗ No Website</option>
+                </select>
+                <select id="email-queue-status-filter" onchange="outreachEmailQueuePageChange(0)" class="bg-surface-2 border border-border rounded px-2 py-1 text-xs text-gray-300 font-mono cursor-pointer">
+                  <option value="">All Status</option>
+                  <option value="queued">Queued</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="dead">Dead</option>
+                </select>
                 <select id="email-queue-page-size" onchange="outreachEmailQueuePageChange(0)" class="bg-surface-2 border border-border rounded px-2 py-1 text-xs text-gray-300 font-mono cursor-pointer">
                   <option value="10">10/page</option>
                   <option value="25" selected>25/page</option>

@@ -39,16 +39,21 @@ def _get_jinja_env() -> Environment:
 # ─── Sequence Step → Template Mapping ─────────────────────────────────
 
 SEQUENCE_TEMPLATES = {
-    1: {"template": "initial_audit.html", "subject": "{{business_name}} — Your site scores {{speed_score}}/100 (free audit inside)"},
-    2: {"template": "follow_up_value.html", "subject": "Re: {{business_name}} — quick thought on mobile traffic"},
-    3: {"template": "follow_up_social.html", "subject": "What {{nearby_client}} saw after redesigning"},
-    4: {"template": "breakup.html", "subject": "Closing your file, {{owner_first_name}}"},
-    5: {"template": "resurrection.html", "subject": "{{business_name}} website update — {{months_later}}"},
+    1: {"template": "initial_audit.html", "subject": "question about {{business_name}}'s website"},
+    2: {"template": "follow_up_value.html", "subject": "re: {{business_name}} website"},
+    3: {"template": "follow_up_social.html", "subject": "one more thing — {{business_name}}"},
+    4: {"template": "breakup.html", "subject": "closing the loop"},
+    5: {"template": "resurrection.html", "subject": "{{business_name}} — quick check-in"},
 }
 
 # Alternate subjects for businesses with NO website
 NO_WEBSITE_SUBJECTS = {
-    1: "{{business_name}} — {{google_reviews}} reviews but no website? Let's fix that",
+    1: "{{business_name}} — quick question",
+}
+
+# Subject for businesses whose website is DOWN
+WEBSITE_DOWN_SUBJECTS = {
+    1: "heads up about {{business_name}}'s website",
 }
 
 # Days between sequence steps
@@ -220,13 +225,19 @@ async def compose_email(
             return None
 
         # Build variable map from real data
-        competitor = get_top_competitor(prospect)
-        variables = _build_variables(prospect, audit, competitor)
+        variables = _build_variables(prospect, audit)
 
         # Render subject line — use no-website variant if applicable
         subject_template = step_config["subject"]
         template_name = step_config["template"]
-        if not prospect.has_website and sequence_step == 1:
+
+        # Website is DOWN (has URL but unreachable) → special template
+        if prospect.has_website and prospect.website_url and not audit and sequence_step == 1:
+            if prospect.notes and "unreachable" in prospect.notes.lower():
+                subject_template = WEBSITE_DOWN_SUBJECTS.get(sequence_step, subject_template)
+                template_name = "website_down.html"
+        # No website at all → different template
+        elif not prospect.has_website and sequence_step == 1:
             subject_template = NO_WEBSITE_SUBJECTS.get(sequence_step, subject_template)
             template_name = "no_website_intro.html"
         subject = simple_render(subject_template, variables)
@@ -255,42 +266,55 @@ async def compose_email(
         }
 
 
-# Words that indicate scraped garbage, not a real person name
-_BAD_NAME_WORDS = {
-    "page", "select", "click", "menu", "toggle", "learn", "more", "read",
-    "view", "look", "search", "find", "open", "close", "submit", "send",
-    "download", "upload", "share", "follow", "subscribe", "login", "sign",
-    "register", "home", "about", "contact", "blog", "news", "press",
-    "professional", "assistant", "manager", "operator", "department",
-    "stories", "studio", "dental", "financial", "legal", "property",
-    "restaurant", "hamburger", "navigation", "header", "footer",
-    "sidebar", "widget", "button", "link", "image", "logo", "icon",
-    "united", "states", "america", "rico", "pollo", "tam", "qui",
-    "how", "did", "what", "where", "when", "why", "who",
-}
+# ── Positive-match first names list ─────────────────────────────────────
+# Instead of blacklisting bad words (whack-a-mole), we only accept names
+# whose first word appears in a curated ~2 000-name set of common US first
+# names.  Unknown first words → "Hi there,".
+_COMMON_FIRST_NAMES: set[str] = set()
+
+def _load_first_names() -> set[str]:
+    """Load common_first_names.txt once at import time."""
+    names_path = Path(__file__).resolve().parent.parent / "data" / "common_first_names.txt"
+    names: set[str] = set()
+    try:
+        with open(names_path) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    names.add(line.lower())
+    except FileNotFoundError:
+        log.warning("common_first_names.txt not found at %s — all salutations will be generic", names_path)
+    return names
+
+_COMMON_FIRST_NAMES = _load_first_names()
 
 def _is_real_person_name(name: str) -> bool:
-    """Check if a name looks like an actual person's name, not scraped HTML garbage."""
+    """Check if a name looks like an actual person's name using positive matching.
+
+    Returns True only if the first word of the name is in our curated
+    common-first-names list.  This catches all garbage (business names,
+    scraped HTML, articles like 'The', etc.) without maintaining a blacklist.
+    """
     if not name or name.lower() == "there":
         return False
-    words = name.lower().split()
+    words = name.split()
     # Must be 2-4 words (first + last, maybe middle)
     if len(words) < 2 or len(words) > 4:
         return False
-    # No word should be a known bad word
-    if any(w in _BAD_NAME_WORDS for w in words):
+    first_word = words[0]
+    # Must start with uppercase letter
+    if not first_word[0].isupper():
+        return False
+    # The key check: first word must be a known first name
+    if first_word.lower() not in _COMMON_FIRST_NAMES:
         return False
     # Each word should be 2+ chars and start with a letter
     if not all(len(w) >= 2 and w[0].isalpha() for w in words):
         return False
-    # At least the first word should look capitalized in the original
-    first_word = name.split()[0]
-    if not first_word[0].isupper():
-        return False
     return True
 
 
-def _build_variables(prospect: Prospect, audit: Optional[WebsiteAudit], competitor: dict) -> dict:
+def _build_variables(prospect: Prospect, audit: Optional[WebsiteAudit]) -> dict:
     """Build the complete template variable map from real prospect + audit data."""
     raw_name = prospect.owner_name or ""
     # Only use the name if it looks like a real person's name
@@ -312,19 +336,8 @@ def _build_variables(prospect: Prospect, audit: Optional[WebsiteAudit], competit
         "google_rating": str(prospect.google_rating or "N/A"),
         "google_reviews": str(prospect.google_reviews or "0"),
 
-        # Competitor intel
-        "competitor_name": competitor.get("name", "a competitor nearby"),
-        "competitor_score": str(competitor.get("score", 75)),
-
-        # Social proof (static — can be updated with real data later)
-        "nearby_client": "Manor Hardware",
-        "nearby_result": "340% more organic traffic in 3 months",
-        "nearby_city": "Manor",
-        "traffic_increase": "340",
-        "mobile_increase": "180",
-        "old_speed": "7.2",
-        "new_speed": "1.8",
-        "distance_between": "3",
+        # Website (for website_down template)
+        "website_url": prospect.website_url or "",
 
         # Industry data
         "industry_mobile_pct": str(

@@ -3,51 +3,36 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Business Online — {{ business_name }}</title>
-<style>
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-  .highlight { background: #fefce8; border-left: 4px solid #ca8a04; padding: 12px 16px; margin: 16px 0; border-radius: 4px; }
-  .stat { padding: 4px 0; }
-  .red { color: #dc2626; }
-  .green { color: #16a34a; }
-  .footer { margin-top: 30px; color: #666; font-size: 14px; border-top: 1px solid #e5e7eb; padding-top: 15px; }
-  .footer a { color: #2563eb; text-decoration: none; }
-  .unsubscribe { margin-top: 10px; font-size: 12px; color: #9ca3af; }
-  .unsubscribe a { color: #9ca3af; }
-</style>
 </head>
-<body>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 580px; margin: 0 auto; padding: 20px; font-size: 15px;">
+
 {% if owner_first_name == 'there' %}
-<p>Hi there,</p>
+<p>Hey there,</p>
 {% else %}
-<p>Hi {{ owner_first_name }},</p>
+<p>Hey {{ owner_first_name }},</p>
 {% endif %}
 
-<p>I found <strong>{{ business_name }}</strong> while looking at {{ business_type }}s in {{ city }} — your {{ google_rating }}-star rating across {{ google_reviews }} reviews caught my eye. That kind of reputation is hard to build.</p>
+<p>Found <strong>{{ business_name }}</strong> on Google Maps — {{ google_rating }} stars across {{ google_reviews }} reviews. That's genuinely impressive. Your customers clearly love what you do.</p>
 
-<p>One thing I noticed: you don't appear to have a website yet. I'm a web designer here in Manor, and I see this a lot with great local businesses — you're doing well on Google Maps and word-of-mouth, but you're missing out on a big chunk of customers.</p>
+<p>I noticed you don't have a website listed though. I know a lot of businesses do fine without one, but here's the thing — when someone searches "{{ business_type }} near me" on Google (and {{ industry_mobile_pct }}% of those searches are on mobile), only businesses with websites show up in Google Search results. Without one, you're only showing up on Maps, and a lot of people scroll right past that.</p>
 
-<div class="highlight">
-  <div class="stat"><span class="red">🔴</span> <strong>{{ industry_mobile_pct }}% of {{ business_type }} searches</strong> happen on mobile — without a site, those searchers move to a competitor</div>
-  <div class="stat"><span class="red">🔴</span> <strong>No online menu, hours, or booking</strong> — customers have to call or visit Facebook to find basic info</div>
-  <div class="stat"><span class="green">🟢</span> <strong>{{ google_rating }}★ with {{ google_reviews }} reviews</strong> — this is a huge advantage; a website multiplies its impact</div>
-</div>
+<p>I'm Ajaya — I live here in Manor and I build websites for local businesses in the area. I'm not a big agency, just a one-person shop trying to help businesses around here get found online. I moved here from Nepal a while back and this community has been home since.</p>
 
-<p>For comparison, <strong>{{ competitor_name }}</strong> (another {{ business_type }} nearby) has a basic website and ranks above businesses with better reviews. A simple, fast website would change that for you.</p>
+<p>If you've ever thought about getting a site up, I'd be happy to chat about what that would look like for {{ business_name }}. No pressure at all — I know it's not for everyone. But with your reviews, a simple site that shows up on Google could bring in a lot of people who are currently finding your competitors instead.</p>
 
-<p>I helped {{ nearby_client }} go from no online presence to {{ nearby_result }}. A starter site doesn't have to be complicated — just fast, mobile-friendly, and showing up in search.</p>
+<p>Just reply if you're curious. Or feel free to ignore this — no hard feelings either way.</p>
 
-<p><strong>Would a 15-minute call to talk about what a simple site could do for {{ business_name }} be useful?</strong> No pressure, just an honest look at what you're leaving on the table.</p>
+<p>– Ajaya</p>
 
-<div class="footer">
-  <p>— {{ sender_name }}<br>
-  {{ sender_company }} · {{ sender_location }}<br>
-  <a href="https://{{ sender_url }}">{{ sender_url }}</a></p>
-</div>
+<p style="color: #888; font-size: 13px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 12px;">
+Ajaya Dahal<br>
+AjayaDesign · Manor, TX<br>
+<a href="https://ajayadesign.github.io" style="color: #888;">ajayadesign.github.io</a>
+</p>
 
-<div class="unsubscribe">
-  <p>Not interested? <a href="{{ unsubscribe_url }}">Click here</a> and I won't email again.</p>
-</div>
+<p style="font-size: 11px; color: #bbb;">
+Not your thing? <a href="{{ unsubscribe_url }}" style="color: #bbb;">Click here</a> and I won't email again.
+</p>
 
 <img src="{{ tracking_pixel_url }}" width="1" height="1" alt="" style="display:none;">
 </body>

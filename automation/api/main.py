@@ -1203,8 +1203,23 @@ async def lifespan(app: FastAPI):
             replace_existing=True,
         )
 
+        # RTDB tracking sync — every 2 minutes, picks up open/click/unsub from Firebase
+        async def _sync_tracking_events():
+            try:
+                from api.services.tracking_sync import sync_tracking_from_rtdb
+                await sync_tracking_from_rtdb()
+            except Exception as e:
+                logger.error("Tracking sync error: %s", e)
+
+        outreach_scheduler.add_job(
+            _sync_tracking_events,
+            IntervalTrigger(minutes=2),
+            id="outreach_tracking_sync",
+            replace_existing=True,
+        )
+
         outreach_scheduler.start()
-        logger.info("✅ Outreach scheduler started (5 jobs)")
+        logger.info("✅ Outreach scheduler started (6 jobs)")
 
     except ImportError:
         logger.info("ℹ️ APScheduler not installed — outreach scheduler disabled")

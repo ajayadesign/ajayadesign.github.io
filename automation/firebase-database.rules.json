@@ -52,6 +52,28 @@
       ".write": true,
       ".indexOn": ["timestamp"]
     },
+    "tracking": {
+      ".read": "auth != null",
+      ".write": true,
+      "clicks": {
+        ".indexOn": ["ts", "tracking_id"],
+        "$item": {
+          ".validate": "newData.hasChildren(['tracking_id', 'ts'])"
+        }
+      },
+      "opens": {
+        ".indexOn": ["ts", "tracking_id"],
+        "$item": {
+          ".validate": "newData.hasChildren(['tracking_id', 'ts'])"
+        }
+      },
+      "unsubscribes": {
+        ".indexOn": ["ts", "tracking_id"],
+        "$item": {
+          ".validate": "newData.hasChildren(['tracking_id', 'ts'])"
+        }
+      }
+    },
     "outreach": {
       ".read": "auth != null",
       ".write": "auth != null",
