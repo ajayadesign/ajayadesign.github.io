@@ -12,7 +12,11 @@
 const API_BASE = 'http://localhost:3001/api/v1';
 
 const POLL_INTERVAL = 5000;
-const ALLOWED_EMAIL = 'ajayadahal1000@gmail.com'; // Only this user can access admin
+const ALLOWED_EMAILS = [
+  'ajayadahal1000@gmail.com',
+  'ajayadesign@gmail.com',
+  'chaulagainsanskriti83@gmail.com',
+];
 
 // ── State ──────────────────────────────────────────────
 let selectedBuildId = null;
@@ -75,14 +79,14 @@ const $loginError    = document.getElementById('login-error');
 document.addEventListener('DOMContentLoaded', () => {
   // Auth state listener
   window.__auth.onAuthStateChanged((user) => {
-    if (user && user.email === ALLOWED_EMAIL) {
+    if (user && ALLOWED_EMAILS.includes(user.email)) {
       currentUser = user;
       $loginScreen.classList.add('hidden');
       initDashboard();
     } else if (user) {
       // Wrong account — sign out and show error
       window.__auth.signOut();
-      $loginError.textContent = `Access denied for ${user.email}. Only ${ALLOWED_EMAIL} can access this dashboard.`;
+      $loginError.textContent = `Access denied for ${user.email}. Contact admin for access.`;
       $loginError.classList.remove('hidden');
       $loginScreen.classList.remove('hidden');
     } else {
@@ -95,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $loginBtn.addEventListener('click', async () => {
     try {
       const provider = new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({ login_hint: ALLOWED_EMAIL });
+      provider.setCustomParameters({ prompt: 'select_account' });
       await window.__auth.signInWithPopup(provider);
     } catch (err) {
       console.error('[Admin] Login failed:', err);

@@ -67,6 +67,42 @@ def _count_events(payload: dict) -> int:
 
 
 # ─────────────────────────────────────────────────────────────────────
+# startup catch-up
+# ─────────────────────────────────────────────────────────────────────
+
+async def catch_up_if_needed() -> dict | None:
+    """
+    Called once at server startup.  Checks whether last month's
+    analytics have already been archived.  If not, runs the archiver
+    immediately so a missed cron window doesn't lose a whole month.
+    """
+    prefix = _previous_month_prefix()
+    try:
+        from api.database import async_session_factory
+        from api.models.site_analytics import SiteAnalyticsArchive
+        from sqlalchemy import select, func
+
+        async with async_session_factory() as session:
+            count = (
+                await session.execute(
+                    select(func.count()).select_from(SiteAnalyticsArchive).where(
+                        SiteAnalyticsArchive.date_key.like(f"{prefix}%")
+                    )
+                )
+            ).scalar_one()
+
+        if count > 0:
+            logger.info("✅ Archive for %s already present (%d rows) — no catch-up needed", prefix, count)
+            return None
+
+        logger.info("⚠️  No archive rows for %s — running catch-up now", prefix)
+        return await archive_site_analytics(prefix)
+    except Exception as e:
+        logger.error("Catch-up check failed: %s", e)
+        return None
+
+
+# ─────────────────────────────────────────────────────────────────────
 # core
 # ─────────────────────────────────────────────────────────────────────
 

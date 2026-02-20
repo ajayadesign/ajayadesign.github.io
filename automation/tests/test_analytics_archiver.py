@@ -22,6 +22,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from api.models.site_analytics import SiteAnalyticsArchive
 from api.services.analytics_archiver import (
     archive_site_analytics,
+    catch_up_if_needed,
     _previous_month_prefix,
     _date_keys_for_month,
     _count_events,
@@ -279,3 +280,64 @@ class TestArchiveSiteAnalytics:
             result = await mod.archive_site_analytics(month_prefix="2026-01")
 
         assert result == {"archived": 0, "pruned": 0}
+
+
+# ── catch-up tests ──────────────────────────────────────
+
+class TestCatchUpIfNeeded:
+    """Verify the startup catch-up logic."""
+
+    @pytest.mark.asyncio
+    async def test_catch_up_runs_when_no_archive_rows(self, db_session_factory):
+        """If last month has zero rows, catch_up_if_needed triggers an archive."""
+        mock_admin, mock_db, deleted = _build_mock_firebase({
+            "site_analytics/pageViews/2026-01-15": FAKE_PAGEVIEWS,
+        })
+        with (
+            patch.dict("sys.modules", {"firebase_admin": mock_admin, "firebase_admin.db": mock_db}),
+            patch("api.database.async_session_factory", db_session_factory),
+            patch("api.services.firebase.is_initialized", return_value=True),
+            patch("api.services.analytics_archiver._previous_month_prefix", return_value="2026-01"),
+            patch("api.services.analytics_archiver.asyncio.sleep", new_callable=AsyncMock),
+        ):
+            import importlib, api.services.analytics_archiver as mod
+            importlib.reload(mod)
+
+            result = await mod.catch_up_if_needed()
+
+        assert result is not None
+        assert result["archived"] >= 1
+
+    @pytest.mark.asyncio
+    async def test_catch_up_skips_when_rows_exist(self, db_session_factory):
+        """If last month already has rows, catch_up returns None (no-op)."""
+        # Pre-populate a row for 2026-01
+        async with db_session_factory() as session:
+            session.add(SiteAnalyticsArchive(
+                category="pageViews",
+                date_key="2026-01-15",
+                event_count=5,
+                payload={"test": True},
+                size_bytes=42,
+            ))
+            await session.commit()
+
+        with (
+            patch("api.database.async_session_factory", db_session_factory),
+            patch("api.services.analytics_archiver._previous_month_prefix", return_value="2026-01"),
+        ):
+            result = await catch_up_if_needed()
+
+        assert result is None
+
+    @pytest.mark.asyncio
+    async def test_catch_up_handles_db_error_gracefully(self):
+        """If the DB is unreachable, catch_up returns None without crashing."""
+        broken_factory = MagicMock(side_effect=Exception("DB down"))
+        with (
+            patch("api.database.async_session_factory", broken_factory),
+            patch("api.services.analytics_archiver._previous_month_prefix", return_value="2026-01"),
+        ):
+            result = await catch_up_if_needed()
+
+        assert result is None

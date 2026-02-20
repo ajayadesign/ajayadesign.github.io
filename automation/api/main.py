@@ -1231,10 +1231,18 @@ async def lifespan(app: FastAPI):
             CronTrigger(day=1, hour=2, minute=0),
             id="monthly_analytics_archive",
             replace_existing=True,
+            misfire_grace_time=259200,  # 3 days — run missed job on restart
         )
 
         outreach_scheduler.start()
         logger.info("✅ Outreach scheduler started (7 jobs)")
+
+        # Run analytics catch-up in case the cron window was missed
+        try:
+            from api.services.analytics_archiver import catch_up_if_needed
+            asyncio.create_task(catch_up_if_needed())
+        except Exception as e:
+            logger.warning("Analytics catch-up check failed: %s", e)
 
     except ImportError:
         logger.info("ℹ️ APScheduler not installed — outreach scheduler disabled")
