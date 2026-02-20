@@ -18,6 +18,27 @@ from api.main import app
 from api.models.build import Build
 
 
+# ── SQLite compatibility for PostgreSQL-specific column types ────────
+# Register compilation rules so that Base.metadata.create_all works in
+# in-memory SQLite (used by all unit tests). Production uses PostgreSQL.
+from sqlalchemy.dialects.postgresql import JSONB, ARRAY, UUID
+from sqlalchemy import JSON, String, event
+
+@event.listens_for(Base.metadata, "before_create")
+def _patch_pg_types_for_sqlite(target, connection, **kw):
+    """Swap PG-only types to SQLite-friendly equivalents at DDL time."""
+    if connection.dialect.name != "sqlite":
+        return
+    for table in target.tables.values():
+        for col in table.columns:
+            if isinstance(col.type, JSONB):
+                col.type = JSON()
+            elif isinstance(col.type, ARRAY):
+                col.type = JSON()
+            elif isinstance(col.type, UUID):
+                col.type = String(36)
+
+
 # ── Async Event Loop ────────────────────────────────────
 
 @pytest.fixture(scope="session")
