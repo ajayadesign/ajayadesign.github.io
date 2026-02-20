@@ -1218,8 +1218,23 @@ async def lifespan(app: FastAPI):
             replace_existing=True,
         )
 
+        # Monthly site-analytics archiver — 1st of each month at 2 AM CT
+        async def _archive_site_analytics():
+            try:
+                from api.services.analytics_archiver import archive_site_analytics
+                await archive_site_analytics()
+            except Exception as e:
+                logger.error("Analytics archiver error: %s", e)
+
+        outreach_scheduler.add_job(
+            _archive_site_analytics,
+            CronTrigger(day=1, hour=2, minute=0),
+            id="monthly_analytics_archive",
+            replace_existing=True,
+        )
+
         outreach_scheduler.start()
-        logger.info("✅ Outreach scheduler started (6 jobs)")
+        logger.info("✅ Outreach scheduler started (7 jobs)")
 
     except ImportError:
         logger.info("ℹ️ APScheduler not installed — outreach scheduler disabled")
