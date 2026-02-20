@@ -226,60 +226,65 @@ async def _compute_aggregate_stats(db: AsyncSession) -> dict:
     }
 
 
-async def compute_daily_stats(db: AsyncSession) -> dict:
-    """Compute today's outreach stats."""
-    today_start = datetime.now(timezone.utc).replace(
-        hour=0, minute=0, second=0, microsecond=0
+async def compute_daily_stats(db: AsyncSession, for_date: date | None = None) -> dict:
+    """Compute outreach stats for a single day (defaults to today)."""
+    target = for_date or date.today()
+    today_start = datetime(
+        target.year, target.month, target.day, tzinfo=timezone.utc
     )
+    today_end = today_start + timedelta(days=1)
     result = {}
 
-    # Discovered today
+    # Discovered that day
     q = select(func.count()).select_from(Prospect).where(
-        Prospect.created_at >= today_start
+        and_(Prospect.created_at >= today_start, Prospect.created_at < today_end)
     )
     result["discovered"] = (await db.execute(q)).scalar() or 0
 
-    # Emails sent today
+    # Emails sent that day
     q = select(func.count()).select_from(OutreachEmail).where(
         and_(
             OutreachEmail.sent_at >= today_start,
+            OutreachEmail.sent_at < today_end,
             OutreachEmail.status.in_(["sent", "delivered", "opened", "clicked", "replied"]),
         )
     )
     result["sent"] = (await db.execute(q)).scalar() or 0
 
-    # Opened today
+    # Opened that day
     q = select(func.count()).select_from(OutreachEmail).where(
         and_(
             OutreachEmail.opened_at >= today_start,
-            OutreachEmail.opened_at.isnot(None),
+            OutreachEmail.opened_at < today_end,
         )
     )
     result["opened"] = (await db.execute(q)).scalar() or 0
 
-    # Replied today
+    # Replied that day
     q = select(func.count()).select_from(OutreachEmail).where(
         and_(
             OutreachEmail.replied_at >= today_start,
-            OutreachEmail.replied_at.isnot(None),
+            OutreachEmail.replied_at < today_end,
         )
     )
     result["replied"] = (await db.execute(q)).scalar() or 0
 
-    # Bounced today
+    # Bounced that day
     q = select(func.count()).select_from(OutreachEmail).where(
         and_(
             OutreachEmail.sent_at >= today_start,
+            OutreachEmail.sent_at < today_end,
             OutreachEmail.status == "bounced",
         )
     )
     result["bounced"] = (await db.execute(q)).scalar() or 0
 
-    # Meetings booked today
+    # Meetings booked that day
     q = select(func.count()).select_from(Prospect).where(
         and_(
             Prospect.status.in_(["meeting_booked", "promoted"]),
             Prospect.updated_at >= today_start,
+            Prospect.updated_at < today_end,
         )
     )
     result["meetings"] = (await db.execute(q)).scalar() or 0
@@ -821,9 +826,9 @@ async def _do_rebuild(db: AsyncSession):
         # 1. Rebuild daily snapshots (last 90 days)
         for day_offset in range(90):
             day = date.today() - timedelta(days=day_offset)
-            stats = await compute_daily_stats(db)
-            if stats.get("sent", 0) > 0 or stats.get("discovered", 0) > 0:
-                await _safe_set(f"outreach/snapshots/{day.isoformat()}", stats)
+            stats = await compute_daily_stats(db, for_date=day)
+            # Always write — zeros still build a valid sparkline baseline
+            await _safe_set(f"outreach/snapshots/{day.isoformat()}", stats)
 
         # 2. Rebuild weekly scorecards (last 12 weeks)
         for week_offset in range(12):

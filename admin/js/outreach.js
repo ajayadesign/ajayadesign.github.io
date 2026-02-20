@@ -95,6 +95,31 @@
       _renderAgentStatus(data);
     });
 
+    // ── One-shot loads (.once) — always load these regardless of mode ──
+
+    // 90-day sparklines
+    db.ref('outreach/snapshots').orderByKey().limitToLast(90)
+      .once('value', snap => {
+        _renderSparklines(snap.val() || {});
+      });
+
+    // Weekly scorecard
+    db.ref('outreach/scorecard').orderByKey().limitToLast(12)
+      .once('value', snap => {
+        _renderWeeklyScorecard(snap.val() || {});
+      });
+
+    // Send-time heatmap
+    db.ref('outreach/heatmap').once('value', snap => {
+      _renderSendTimeHeatmap(snap.val() || {});
+    });
+
+    // Agent health timeline (72h)
+    db.ref('outreach/health').orderByChild('ts').limitToLast(72)
+      .once('value', snap => {
+        _renderHealthTimeline(snap.val() || {});
+      });
+
     // In FULL mode (local API available), skip all Firebase data rendering
     // to prevent stale Firebase data from overriding live localhost data.
     if (_apiAvailable) return;
@@ -168,31 +193,6 @@
       const data = snap.val();
       if (data) _renderTrackingFromFirebase(data);
     });
-
-    // ── One-shot loads (.once) — infrequently updated nodes ──
-
-    // 11. 90-day sparklines
-    db.ref('outreach/snapshots').orderByKey().limitToLast(90)
-      .once('value', snap => {
-        _renderSparklines(snap.val() || {});
-      });
-
-    // 12. Weekly scorecard
-    db.ref('outreach/scorecard').orderByKey().limitToLast(12)
-      .once('value', snap => {
-        _renderWeeklyScorecard(snap.val() || {});
-      });
-
-    // 13. Send-time heatmap
-    db.ref('outreach/heatmap').once('value', snap => {
-      _renderSendTimeHeatmap(snap.val() || {});
-    });
-
-    // 14. Agent health timeline (72h)
-    db.ref('outreach/health').orderByChild('ts').limitToLast(72)
-      .once('value', snap => {
-        _renderHealthTimeline(snap.val() || {});
-      });
   }
 
   function _detachListeners() {
@@ -2061,10 +2061,10 @@
       const deltaStr = delta >= 0 ? `↑ ${delta}%` : `↓ ${Math.abs(delta)}%`;
       const deltaColor = delta >= 0 ? 'text-emerald-400' : 'text-red-400';
       return `
-        <div class="flex items-center gap-3 py-1">
-          <span class="text-xs text-gray-400 w-20">${labels[m]}</span>
-          <span class="text-sm font-mono text-gray-300 flex-1 tracking-widest">${spark}</span>
-          <span class="text-xs ${deltaColor}">${deltaStr}</span>
+        <div class="flex items-center gap-2 py-1 min-w-0">
+          <span class="text-xs text-gray-400 w-20 shrink-0">${labels[m]}</span>
+          <span class="text-sm font-mono text-gray-300 flex-1 tracking-wider overflow-hidden truncate">${spark}</span>
+          <span class="text-xs ${deltaColor} shrink-0">${deltaStr}</span>
         </div>`;
     }).join('');
   }
@@ -2181,20 +2181,20 @@
 
     $el.innerHTML = `
       <div class="space-y-1 text-xs font-mono">
-        <div class="flex items-center gap-2">
-          <span class="text-gray-500 w-8">CPU</span>
-          <span class="text-gray-400 flex-1 tracking-widest">${_sparkline(cpuVals)}</span>
-          <span class="text-gray-500">avg ${avgCpu}%</span>
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-gray-500 w-8 shrink-0">CPU</span>
+          <span class="text-gray-400 flex-1 tracking-wider overflow-hidden truncate">${_sparkline(cpuVals)}</span>
+          <span class="text-gray-500 shrink-0">avg ${avgCpu}%</span>
         </div>
-        <div class="flex items-center gap-2">
-          <span class="text-gray-500 w-8">Mem</span>
-          <span class="text-gray-400 flex-1 tracking-widest">${_sparkline(memVals)}</span>
-          <span class="text-gray-500">${lastMem} MB</span>
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-gray-500 w-8 shrink-0">Mem</span>
+          <span class="text-gray-400 flex-1 tracking-wider overflow-hidden truncate">${_sparkline(memVals)}</span>
+          <span class="text-gray-500 shrink-0">${lastMem} MB</span>
         </div>
-        <div class="flex items-center gap-2">
-          <span class="text-gray-500 w-8">Err</span>
-          <span class="text-gray-400 flex-1 tracking-widest">${_sparkline(errVals)}</span>
-          <span class="text-gray-500">${errVals.reduce((a, b) => a + b, 0)} total</span>
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-gray-500 w-8 shrink-0">Err</span>
+          <span class="text-gray-400 flex-1 tracking-wider overflow-hidden truncate">${_sparkline(errVals)}</span>
+          <span class="text-gray-500 shrink-0">${errVals.reduce((a, b) => a + b, 0)} total</span>
         </div>
       </div>`;
   }
