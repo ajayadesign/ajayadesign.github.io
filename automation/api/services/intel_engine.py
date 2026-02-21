@@ -351,6 +351,138 @@ def extract_security_signals(html: str, headers: dict, url: str) -> dict:
     }
 
 
+# ─── Page Signal Scanner ──────────────────────────────────────────────
+
+# Regex patterns grouped by category.  Each signal maps to a list of
+# patterns; ANY match → True.  `None` means a separate check is needed.
+
+_SIGNAL_PATTERNS: dict[str, list[str] | None] = {
+    # ── Contact & Conversion ──
+    "has_contact_form":     [r'<form[^>]*>', r'type=["\']email["\']', r'wpcf7', r'contact-form-7',
+                             r'wpforms', r'formidable', r'gravity-form'],
+    "has_cta_above_fold":   [r'book\s*now', r'get\s*a?\s*quote', r'schedule',
+                             r'free\s*consultation', r'call\s*us', r'request\s*appointment',
+                             r'start\s*now', r'get\s*started'],
+    "has_click_to_call":    [r'href=["\']tel:'],
+    "has_maps_embed":       [r'maps\.googleapis\.com', r'google\.com/maps/embed'],
+    "has_testimonials":     [r'testimonial', r'customer\s*review', r'what\s*our\s*customers\s*say',
+                             r'client\s*feedback'],
+    "has_video":            [r'youtube\.com/embed', r'vimeo\.com', r'<video[\s>]', r'wistia\.com'],
+    "has_menu_or_pricelist": [r'/menu', r'menu\.pdf', r'our\s*menu', r'price\s*list',
+                              r'pricing', r'view\s*menu'],
+    "has_portfolio":        [r'portfolio', r'our\s*work', r'gallery', r'projects',
+                             r'before.*after', r'case\s*stud'],
+
+    # ── Booking / Ordering / POS ──
+    "has_booking":          [r'calendly\.com', r'acuityscheduling', r'vagaro\.com', r'mindbody',
+                             r'fresha\.com', r'booksy\.com', r'opentable\.com', r'resy\.com',
+                             r'jane\.app', r'square\.site/book', r'setmore\.com', r'zocdoc\.com',
+                             r'book\s*(?:an?\s*)?appointment', r'book\s*online'],
+    "has_online_ordering":  [r'order\.online', r'chownow\.com', r'toast\.restaurants',
+                             r'doordash\.com/store', r'grubhub', r'ubereats',
+                             r'order\s*now', r'online\s*ordering', r'order\s*online'],
+    "has_pos":              [r'squareup\.com', r'square\.com', r'toasttab\.com', r'clover\.com',
+                             r'lightspeedhq', r'shopify\.com/pos'],
+
+    # ── Analytics / Marketing ──
+    "has_ga4":              [r'gtag\s*\(\s*["\']config["\'].*G-', r'googletagmanager\.com.*gtag',
+                             r'google-analytics\.com/g/'],
+    "has_gtm":              [r'googletagmanager\.com/gtm\.js', r'GTM-[A-Z0-9]'],
+    "has_fb_pixel":         [r'connect\.facebook\.net.*fbevents', r'fbq\s*\(', r'facebook\.com/tr\?'],
+    "has_hotjar":           [r'hotjar\.com', r'static\.hotjar\.com'],
+    "has_email_capture":    [r'mailchimp\.com', r'list-manage\.com', r'constantcontact\.com',
+                             r'klaviyo\.com', r'convertkit\.com', r'sendinblue', r'brevo\.com',
+                             r'newsletter', r'subscribe.*email'],
+    "has_crm":              [r'hubspot\.com', r'salesforce\.com', r'zoho\.com', r'pipedrive'],
+
+    # ── Chat / Support ──
+    "has_live_chat":        [r'tidio\.co', r'drift\.com', r'intercom\.io', r'livechat\.com',
+                             r'zendesk\.com', r'tawk\.to', r'crisp\.chat', r'olark\.com'],
+
+    # ── Compliance ──
+    "has_privacy_policy":   [r'/privacy', r'privacy.policy', r'privacy-policy'],
+    "has_terms":            [r'/terms', r'terms.of.service', r'terms-of-service',
+                             r'terms.and.conditions'],
+    "has_cookie_consent":   [r'cookie.consent', r'cookie.banner', r'cookiebot', r'onetrust',
+                             r'consent.manager'],
+    "has_ada_widget":       [r'accessibe\.com', r'userway\.org', r'equalweb\.com',
+                             r'accessibility.widget', r'audioeye\.com'],
+
+    # ── Payments ──
+    "has_stripe":           [r'stripe\.com', r'js\.stripe\.com'],
+    "has_square_pay":       [r'squareup\.com.*checkout', r'square.*payment'],
+    "has_paypal":           [r'paypal\.com', r'paypalobjects\.com'],
+
+    # ── Content ──
+    "has_blog":             [r'/blog', r'/news', r'/articles', r'wp-content/uploads'],
+    "has_careers_page":     [r'/careers', r'/jobs', r'/hiring', r'we.*hiring',
+                             r'join\s*our\s*team', r'open\s*position'],
+}
+
+
+def scan_page_signals(html: str, headers: dict, url: str) -> dict:
+    """
+    Scan fetched HTML for 30+ boolean signals about a business's website
+    capabilities.  Returns a flat dict of signal_name → bool.
+    
+    This runs on the HTML we already fetched during audit — zero extra
+    HTTP requests.
+    """
+    html_lower = html.lower()
+    signals: dict = {}
+
+    for signal_name, patterns in _SIGNAL_PATTERNS.items():
+        if patterns is None:
+            signals[signal_name] = False
+            continue
+        signals[signal_name] = any(
+            re.search(p, html_lower) for p in patterns
+        )
+
+    # ── Composite: has_analytics ──
+    signals["has_analytics"] = signals.get("has_ga4", False) or signals.get("has_gtm", False)
+
+    # ── Blog freshness ──
+    if signals.get("has_blog"):
+        # Look for date patterns near blog content
+        date_matches = re.findall(
+            r'(?:20[12]\d[-/](?:0[1-9]|1[0-2])[-/](?:0[1-9]|[12]\d|3[01]))',
+            html,
+        )
+        if date_matches:
+            signals["blog_last_post"] = sorted(date_matches)[-1]
+        else:
+            # Try <time> tags
+            time_match = re.findall(r'<time[^>]*datetime=["\']([^"\']+)', html_lower)
+            if time_match:
+                signals["blog_last_post"] = sorted(time_match)[-1][:10]
+
+    # ── Social links extracted from their own HTML ──
+    social_links = {}
+    social_patterns = {
+        "facebook": r'(?:facebook\.com|fb\.com)/[^"\'\s>]+',
+        "instagram": r'instagram\.com/[^"\'\s>]+',
+        "twitter": r'(?:twitter\.com|x\.com)/[^"\'\s>]+',
+        "youtube": r'youtube\.com/(?:@|channel/|c/)[^"\'\s>]+',
+        "tiktok": r'tiktok\.com/@[^"\'\s>]+',
+        "linkedin": r'linkedin\.com/(?:company|in)/[^"\'\s>]+',
+        "yelp": r'yelp\.com/biz/[^"\'\s>]+',
+    }
+    for platform, pattern in social_patterns.items():
+        match = re.search(pattern, html_lower)
+        if match:
+            social_links[platform] = match.group(0)
+    signals["social_links_on_site"] = social_links
+    signals["social_link_count"] = len(social_links)
+
+    # ── Count of total signals detected (for quick scoring) ──
+    bool_signals = {k: v for k, v in signals.items() if isinstance(v, bool)}
+    signals["total_signals_detected"] = sum(1 for v in bool_signals.values() if v)
+    signals["total_signals_checked"] = len(bool_signals)
+
+    return signals
+
+
 def compute_composite_score(lighthouse: dict, design: dict, seo: dict, security: dict) -> dict:
     """
     Calculate composite 0-100 score and sub-scores (§5.2).
@@ -648,7 +780,10 @@ async def audit_prospect(prospect_id: str, db: Optional[AsyncSession] = None) ->
         # 7. Heuristic design judge
         design = judge_design_era(html, tech_stack, url)
 
-        # 8. Composite score
+        # 8. Page signal scanner (30+ boolean detections)
+        page_signals = scan_page_signals(html, headers, url)
+
+        # 9. Composite score
         scores = compute_composite_score(lighthouse, design, seo_signals, security)
 
         # Create audit record
@@ -692,6 +827,8 @@ async def audit_prospect(prospect_id: str, db: Optional[AsyncSession] = None) ->
             mobile_screenshot=screenshots.get("mobile_screenshot"),
             # Raw data
             lighthouse_json_path=lighthouse.get("lighthouse_json_path"),
+            # Page signals
+            page_signals=page_signals,
         )
         db.add(audit)
 
@@ -708,6 +845,16 @@ async def audit_prospect(prospect_id: str, db: Optional[AsyncSession] = None) ->
         prospect.audit_date = datetime.now(timezone.utc)
         prospect.screenshot_desktop = screenshots.get("desktop_screenshot")
         prospect.screenshot_mobile = screenshots.get("mobile_screenshot")
+
+        # Promote page signals to prospect columns for fast querying
+        prospect.has_booking = page_signals.get("has_booking", False)
+        prospect.has_online_ordering = page_signals.get("has_online_ordering", False)
+        prospect.has_contact_form = page_signals.get("has_contact_form", False)
+        prospect.has_analytics = page_signals.get("has_analytics", False)
+        prospect.has_email_capture = page_signals.get("has_email_capture", False)
+        prospect.has_live_chat = page_signals.get("has_live_chat", False)
+        prospect.has_privacy_policy = page_signals.get("has_privacy_policy", False)
+        prospect.has_ada_widget = page_signals.get("has_ada_widget", False)
 
         # Recalculate priority
         prospect.priority_score = calculate_priority_score(
@@ -746,6 +893,7 @@ async def audit_prospect(prospect_id: str, db: Optional[AsyncSession] = None) ->
             "tech_stack": tech_stack,
             "cms": cms,
             "screenshots": screenshots,
+            "page_signals": page_signals,
         }
 
         logger.info("Audit complete: %s → %d/100", prospect.business_name, scores["composite"])

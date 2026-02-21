@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; font-size: 15px;">
+{% if owner_first_name == 'there' %}
+<p>Hi there,</p>
+{% else %}
+<p>Hi {{ owner_first_name }},</p>
+{% endif %}
+
+<p>I've been researching {{ business_type_plural }} in {{ city }} for a project and noticed something interesting. A few of your competitors have invested in their online presence recently — {{ competitor_example }} being one of them.</p>
+
+<p>I ran your site through Google's tools to compare, and here's the gap:</p>
+
+<table style="border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 14px;">
+<tr style="background: #f8f8f8;">
+  <td style="padding: 8px 12px; border: 1px solid #eee;"></td>
+  <td style="padding: 8px 12px; border: 1px solid #eee; font-weight: 600;">{{ business_name_short }}</td>
+  <td style="padding: 8px 12px; border: 1px solid #eee; font-weight: 600;">Competitors (avg)</td>
+</tr>
+{% if speed_score %}
+<tr>
+  <td style="padding: 8px 12px; border: 1px solid #eee;">Speed</td>
+  <td style="padding: 8px 12px; border: 1px solid #eee; {% if speed_score|int < 50 %}color: #e74c3c;{% endif %}">{{ speed_score }}/100</td>
+  <td style="padding: 8px 12px; border: 1px solid #eee; color: #27ae60;">{{ competitor_speed_avg }}/100</td>
+</tr>
+{% endif %}
+{% if mobile_score %}
+<tr>
+  <td style="padding: 8px 12px; border: 1px solid #eee;">Mobile</td>
+  <td style="padding: 8px 12px; border: 1px solid #eee; {% if mobile_score|int < 50 %}color: #e74c3c;{% endif %}">{{ mobile_score }}/100</td>
+  <td style="padding: 8px 12px; border: 1px solid #eee; color: #27ae60;">{{ competitor_mobile_avg }}/100</td>
+</tr>
+{% endif %}
+<tr>
+  <td style="padding: 8px 12px; border: 1px solid #eee;">Online Booking</td>
+  <td style="padding: 8px 12px; border: 1px solid #eee;">{% if has_booking %}✅ Yes{% else %}❌ No{% endif %}</td>
+  <td style="padding: 8px 12px; border: 1px solid #eee;">{{ competitor_booking_pct }}% have it</td>
+</tr>
+<tr>
+  <td style="padding: 8px 12px; border: 1px solid #eee;">SSL Secure</td>
+  <td style="padding: 8px 12px; border: 1px solid #eee;">{% if ssl_valid %}✅ Yes{% else %}❌ No{% endif %}</td>
+  <td style="padding: 8px 12px; border: 1px solid #eee;">{{ competitor_ssl_pct }}% have it</td>
+</tr>
+</table>
+
+<p>When someone Googles "{{ search_term }}" in {{ city }}, Google factors all of this in. {% if speed_score and speed_score|int < 50 %}A {{ speed_score }}/100 speed score means you're probably showing up below competitors who invested in their web presence.{% endif %}</p>
+
+<p>I'm a web developer in Manor. I help {{ city }} businesses close the gap with a modern, fast site — usually in a couple of weeks.</p>
+
+<p>Worth a 15-minute call to see what's possible? I can put together a quick plan specific to {{ business_name }}.</p>
+
+<p style="margin-top: 28px;">— {{ sender_name }}</p>
+<p style="color: #888; font-size: 13px; margin-top: 4px;">Web developer in Manor, TX · <a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
+
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a> if you'd rather not hear from me.</p>
+<img src="__TRACKING_PIXEL_URL__" width="1" height="1" alt="" style="display:none;">
+</body>
+</html>

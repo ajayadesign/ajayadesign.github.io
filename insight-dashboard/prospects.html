@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insight Dashboard — Business Explorer</title>
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { mono: ['JetBrains Mono','monospace'], sans: ['Inter','sans-serif'] },
+          colors: {
+            'surface':'#06060A','surface-1':'#0C0C12','surface-2':'#12121A','surface-3':'#1A1A24',
+            'border':'#2A2A3A','electric':'#00D4FF','neon-green':'#00FF88','neon-orange':'#FF8A00',
+            'neon-purple':'#A855F7','neon-red':'#ef4444','neon-yellow':'#FFD600',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/dashboard.css">
+  <style>
+    .prospect-row { cursor: pointer; transition: background 0.15s; }
+    .prospect-row:hover { background: rgba(0,212,255,0.04) !important; }
+    .prospect-row.expanded { background: rgba(0,212,255,0.06) !important; }
+    .detail-row { display: none; }
+    .detail-row.open { display: table-row; }
+    .svc-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+    .svc-critical { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+    .svc-high { background: rgba(255,138,0,0.15); color: #FF8A00; border: 1px solid rgba(255,138,0,0.3); }
+    .svc-medium { background: rgba(0,212,255,0.15); color: #00D4FF; border: 1px solid rgba(0,212,255,0.3); }
+    .svc-low { background: rgba(128,128,152,0.15); color: #808098; border: 1px solid rgba(128,128,152,0.3); }
+    .sort-btn { cursor: pointer; user-select: none; }
+    .sort-btn:hover { color: #00D4FF; }
+    .sort-btn .arrow { opacity: 0.3; }
+    .sort-btn.active .arrow { opacity: 1; color: #00D4FF; }
+    .filter-chip { padding: 4px 10px; border-radius: 9999px; font-size: 11px; cursor: pointer; border: 1px solid #2A2A3A; transition: all 0.15s; }
+    .filter-chip:hover { border-color: #00D4FF; color: #00D4FF; }
+    .filter-chip.active { background: rgba(0,212,255,0.15); border-color: #00D4FF; color: #00D4FF; }
+    .metric-bar { height: 6px; border-radius: 3px; background: #1A1A24; overflow: hidden; }
+    .metric-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+    #searchInput:focus { border-color: #00D4FF; box-shadow: 0 0 0 1px rgba(0,212,255,0.2); }
+    .export-btn { transition: all 0.15s; }
+    .export-btn:hover { background: rgba(0,212,255,0.1); border-color: #00D4FF; color: #00D4FF; }
+    /* Pipeline tracker */
+    .pipe-step { padding: 2px 6px; border-radius: 4px; font-size: 9px; font-family: 'JetBrains Mono',monospace; border: 1px solid #2A2A3A; color: #555; background: transparent; white-space: nowrap; }
+    .pipe-step.done { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.35); color: #00D4FF; }
+    .pipe-step.active { background: rgba(0,212,255,0.2); border-color: rgba(0,212,255,0.5); color: #00D4FF; box-shadow: 0 0 6px rgba(0,212,255,0.2); }
+    .pipe-arrow { font-size: 8px; color: #333; }
+    /* Email history cards */
+    .email-card { background: rgba(12,12,18,0.6); border: 1px solid #2A2A3A; border-radius: 8px; padding: 8px 10px; }
+    .email-status { padding: 2px 8px; border-radius: 9999px; font-size: 9px; font-family: 'JetBrains Mono',monospace; }
+    .email-status.sent { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .email-status.opened { background: rgba(16,185,129,0.15); color: #34d399; }
+    .email-status.clicked { background: rgba(234,179,8,0.15); color: #fbbf24; }
+    .email-status.replied { background: rgba(0,255,136,0.2); color: #00FF88; }
+    .email-status.bounced, .email-status.failed { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .email-status.draft { background: rgba(128,128,152,0.15); color: #808098; }
+    .email-status.scheduled { background: rgba(168,85,247,0.15); color: #a855f7; }
+    /* Activity card */
+    .activity-card { background: rgba(12,12,18,0.6); border: 1px solid #2A2A3A; border-radius: 8px; padding: 8px 10px; }
+    /* Outreach badge in table */
+    .outreach-badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-family: 'JetBrains Mono',monospace; }
+    .outreach-badge.ob-none { color: #555; }
+    .outreach-badge.ob-contacted { background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.3); color: #00D4FF; }
+    .outreach-badge.ob-replied { background: rgba(0,255,136,0.15); border: 1px solid rgba(0,255,136,0.3); color: #00FF88; }
+    .outreach-badge.ob-sent { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3); color: #60a5fa; }
+    .outreach-badge.ob-dead { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #ef4444; }
+    .detail-loading { display: flex; align-items: center; gap: 8px; padding: 16px; color: #555; font-size: 12px; }
+    .detail-loading .spinner { width: 14px; height: 14px; border: 2px solid #2A2A3A; border-top-color: #00D4FF; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-surface text-gray-300 min-h-screen">
+
+  <!-- Nav -->
+  <nav class="fixed top-0 left-0 right-0 z-50 border-b border-border bg-surface/90 backdrop-blur-lg">
+    <div class="max-w-[1600px] mx-auto px-6 flex items-center justify-between h-14">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-electric to-neon-purple flex items-center justify-center text-white font-bold text-sm">AD</div>
+        <span class="font-semibold text-white text-sm tracking-wide">Insight Dashboard</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <a href="index.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          Overview
+        </a>
+        <a href="intelligence.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          Intelligence
+        </a>
+        <a href="opportunities.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+          Opportunities
+        </a>
+        <a href="market.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Market
+        </a>
+        <a href="prospects.html" class="nav-link active">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Prospects
+        </a>
+      </div>
+      <button onclick="refreshData()" class="text-xs px-3 py-1.5 rounded-lg border border-border hover:border-electric text-gray-400 hover:text-electric transition-all">↻ Refresh</button>
+    </div>
+  </nav>
+
+  <main class="pt-20 pb-12 px-6 max-w-[1600px] mx-auto">
+    <!-- Loading -->
+    <div id="loadingState" class="flex items-center justify-center min-h-[60vh]">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full border-2 border-electric border-t-transparent animate-spin mx-auto mb-4"></div>
+        <p class="text-gray-500 text-sm">Loading business intelligence...</p>
+      </div>
+    </div>
+
+    <div id="content" class="hidden space-y-5">
+
+      <!-- Header -->
+      <div class="flex items-start justify-between flex-wrap gap-4">
+        <div>
+          <h1 class="text-lg font-semibold text-white">Business Explorer &amp; Service Planner</h1>
+          <p class="text-sm text-gray-500">Every prospect's full profile, service needs, and outreach readiness — all in one place.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="exportCSV()" class="export-btn text-xs px-3 py-1.5 rounded-lg border border-border text-gray-400 flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Export CSV
+          </button>
+          <span id="resultCount" class="text-xs text-gray-500 font-mono"></span>
+        </div>
+      </div>
+
+      <!-- ═══ Service Opportunity Summary ═══ -->
+      <div class="chart-card">
+        <h3>Service Opportunity Summary
+          <span class="info-icon" data-tip="Aggregated service needs across all prospects. Each card shows how many businesses need that service based on real data signals — not guesses. Click a card to filter the table below by that service need.">?</span>
+        </h3>
+        <div id="serviceCards" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mt-3"></div>
+      </div>
+
+      <!-- ═══ Search + Filter Bar ═══ -->
+      <div class="bg-surface-2/80 border border-border rounded-xl p-4 space-y-3">
+        <!-- Search -->
+        <div class="flex items-center gap-3 flex-wrap">
+          <div class="relative flex-1 min-w-[250px]">
+            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input id="searchInput" type="text" placeholder="Search by name, type, city, platform, or service need..."
+              class="w-full bg-surface-1 border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-gray-200 placeholder:text-gray-600 outline-none">
+          </div>
+          <select id="filterCity" class="bg-surface-1 border border-border rounded-lg px-3 py-2 text-xs text-gray-300">
+            <option value="">All Cities</option>
+          </select>
+          <select id="filterType" class="bg-surface-1 border border-border rounded-lg px-3 py-2 text-xs text-gray-300">
+            <option value="">All Types</option>
+          </select>
+          <select id="filterTier" class="bg-surface-1 border border-border rounded-lg px-3 py-2 text-xs text-gray-300">
+            <option value="">All Tiers</option>
+            <option value="hot">🔥 Hot</option>
+            <option value="warm">🟠 Warm</option>
+            <option value="cool">🔵 Cool</option>
+            <option value="cold">🥶 Cold</option>
+            <option value="unscored">⚪ Unscored</option>
+          </select>
+          <select id="filterStatus" class="bg-surface-1 border border-border rounded-lg px-3 py-2 text-xs text-gray-300">
+            <option value="">All Status</option>
+            <option value="discovered">⚪ Discovered</option>
+            <option value="audited">🔵 Audited</option>
+            <option value="enriched">🟣 Enriched</option>
+            <option value="queued">📨 Queued</option>
+            <option value="contacted">📞 Contacted</option>
+            <option value="replied">✅ Replied</option>
+            <option value="meeting_booked">📅 Meeting</option>
+            <option value="promoted">💰 Promoted</option>
+            <option value="dead">💀 Dead</option>
+            <option value="do_not_contact">🚫 DNC</option>
+          </select>
+        </div>
+        <!-- Quick-Filter Chips (Service Needs) -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-[10px] uppercase tracking-wider text-gray-600 mr-1">Service Need:</span>
+          <button class="filter-chip" data-svc="website_build" onclick="toggleSvcFilter(this)">🌐 Needs Website</button>
+          <button class="filter-chip" data-svc="website_redesign" onclick="toggleSvcFilter(this)">🎨 Redesign</button>
+          <button class="filter-chip" data-svc="seo" onclick="toggleSvcFilter(this)">🔍 SEO</button>
+          <button class="filter-chip" data-svc="ssl_security" onclick="toggleSvcFilter(this)">🔒 SSL/Security</button>
+          <button class="filter-chip" data-svc="gbp_optimization" onclick="toggleSvcFilter(this)">📍 GBP</button>
+          <button class="filter-chip" data-svc="social_media" onclick="toggleSvcFilter(this)">📱 Social</button>
+          <button class="filter-chip" data-svc="email_pro" onclick="toggleSvcFilter(this)">📧 Email Setup</button>
+          <button class="filter-chip" data-svc="reputation" onclick="toggleSvcFilter(this)">⭐ Reputation</button>
+          <button class="filter-chip" data-svc="advertising" onclick="toggleSvcFilter(this)">📣 Ads</button>
+          <button class="filter-chip" data-svc="performance" onclick="toggleSvcFilter(this)">⚡ Performance</button>
+          <button onclick="clearAllFilters()" class="text-[10px] text-gray-500 hover:text-electric ml-2 underline">Clear All</button>
+        </div>
+      </div>
+
+      <!-- ═══ Prospect Table ═══ -->
+      <div class="bg-surface-1 border border-border rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="data-table w-full">
+            <thead>
+              <tr>
+                <th class="w-8">#</th>
+                <th class="sort-btn" onclick="sortTable('business_name')"><span>Business</span> <span class="arrow">▾</span></th>
+                <th class="sort-btn" onclick="sortTable('business_type')"><span>Type</span> <span class="arrow">▾</span></th>
+                <th class="sort-btn" onclick="sortTable('city')"><span>City</span> <span class="arrow">▾</span></th>
+                <th class="sort-btn" onclick="sortTable('wp_score')"><span>WP Score</span> <span class="arrow">▾</span></th>
+                <th class="sort-btn" onclick="sortTable('_tier')"><span>Tier</span> <span class="arrow">▾</span></th>
+                <th class="sort-btn text-center" onclick="sortTable('_svc_count')"><span>Services</span> <span class="arrow">▾</span></th>
+                <th class="sort-btn" onclick="sortTable('google_rating')"><span>Rating</span> <span class="arrow">▾</span></th>
+                <th class="sort-btn" onclick="sortTable('google_reviews')"><span>Reviews</span> <span class="arrow">▾</span></th>
+                <th class="text-center">Website</th>
+                <th class="text-center">Social</th>
+                <th class="text-center">Phone</th>
+                <th class="sort-btn text-center" onclick="sortTable('emails_sent')"><span>Outreach</span> <span class="arrow">▾</span></th>
+              </tr>
+            </thead>
+            <tbody id="prospectBody"></tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <div class="flex items-center justify-between px-4 py-3 border-t border-border">
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-500">Show</span>
+            <select id="pageSize" onchange="goPage(1)" class="bg-surface-2 border border-border rounded px-2 py-1 text-xs text-gray-300">
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="250">250</option>
+            </select>
+            <span class="text-xs text-gray-500">per page</span>
+          </div>
+          <div id="pagination" class="flex items-center gap-1"></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script>
+  /* ═══════════════════════════════════════════════════════
+     Business Explorer & Service Planner
+     ═══════════════════════════════════════════════════════ */
+  (function() {
+  'use strict';
+
+  // ── State ─────────────────────────────────────────────
+  let ALL = [];           // all prospects (raw from API)
+  let FILTERED = [];      // after filters applied
+  let SORT_COL = 'wp_score';
+  let SORT_DIR = 'desc';
+  let PAGE = 1;
+  let ACTIVE_SVC = null;  // active service-need filter
+
+  // ══════════════════════════════════════════════════════
+  // SERVICE RECOMMENDATION ENGINE
+  // For each prospect, determine which services they need
+  // based on actual data signals from the database.
+  // ══════════════════════════════════════════════════════
+
+  const SERVICE_DEFS = [
+    {
+      id: 'website_build',
+      name: 'Website Build',
+      icon: '🌐',
+      color: '#ef4444',
+      priority: 'critical',
+      revenue: '$2,500–$8,000',
+      test: p => !p.has_website,
+      reason: p => 'No website found — business relies entirely on GBP and word of mouth.',
+      columns: 'prospects.has_website = false',
+    },
+    {
+      id: 'website_redesign',
+      name: 'Website Redesign',
+      icon: '🎨',
+      color: '#FF8A00',
+      priority: 'high',
+      revenue: '$1,500–$5,000',
+      test: p => p.has_website && (isOutdatedDesign(p.design_era) || (p.score_design != null && p.score_design < 40)),
+      reason: p => {
+        const parts = [];
+        if (isOutdatedDesign(p.design_era)) parts.push(`design era: ${p.design_era || 'ancient'}`);
+        if (p.score_design != null && p.score_design < 40) parts.push(`design score: ${p.score_design}/100`);
+        if (p.design_sins?.length) parts.push(`issues: ${p.design_sins.slice(0,3).join(', ')}`);
+        return parts.join(' · ') || 'Outdated website design detected';
+      },
+      columns: 'website_audits.design_era, prospects.score_design, website_audits.design_sins',
+    },
+    {
+      id: 'seo',
+      name: 'SEO Optimization',
+      icon: '🔍',
+      color: '#A855F7',
+      priority: 'high',
+      revenue: '$500–$2,000/mo',
+      test: p => p.has_website && (p.has_meta_desc === false || p.has_schema === false || p.has_sitemap === false || p.has_og_tags === false || p.has_h1 === false),
+      reason: p => {
+        const missing = [];
+        if (p.has_meta_desc === false) missing.push('meta description');
+        if (p.has_h1 === false) missing.push('H1 heading');
+        if (p.has_schema === false) missing.push('schema markup');
+        if (p.has_sitemap === false) missing.push('sitemap');
+        if (p.has_og_tags === false) missing.push('OG tags');
+        return `Missing: ${missing.join(', ')}`;
+      },
+      columns: 'website_audits.has_meta_desc, .has_h1, .has_schema, .has_sitemap, .has_og_tags',
+    },
+    {
+      id: 'ssl_security',
+      name: 'SSL & Security',
+      icon: '🔒',
+      color: '#ef4444',
+      priority: 'high',
+      revenue: '$200–$800',
+      test: p => p.has_website && (p.ssl_grade === 'F' || p.ssl_grade === 'C' || p.ssl_valid === false),
+      reason: p => `SSL grade: ${p.ssl_grade || 'unknown'}${p.ssl_valid === false ? ' (invalid/expired)' : ''}`,
+      columns: 'website_audits.ssl_grade, website_audits.ssl_valid, website_audits.security_headers',
+    },
+    {
+      id: 'gbp_optimization',
+      name: 'GBP Optimization',
+      icon: '📍',
+      color: '#00D4FF',
+      priority: 'medium',
+      revenue: '$300–$1,000/mo',
+      test: p => (p.google_rating > 0) && (p.gbp_hours_complete === false || p.gbp_photos_count < 5 || p.review_response_rate === 0),
+      reason: p => {
+        const issues = [];
+        if (p.gbp_hours_complete === false) issues.push('hours incomplete');
+        if (p.gbp_photos_count < 5) issues.push(`only ${p.gbp_photos_count || 0} photos`);
+        if (p.review_response_rate === 0) issues.push('never responds to reviews');
+        return issues.join(' · ') || 'GBP profile needs optimization';
+      },
+      columns: 'enrichment→gbp_hours_complete, prospects.gbp_photos_count, prospects.review_response_rate',
+    },
+    {
+      id: 'social_media',
+      name: 'Social Media',
+      icon: '📱',
+      color: '#00FF88',
+      priority: 'medium',
+      revenue: '$400–$1,500/mo',
+      test: p => !p.has_social || (!p.social_facebook && !p.social_instagram),
+      reason: p => {
+        if (!p.has_social) return 'No social media presence found on any platform.';
+        const missing = [];
+        if (!p.social_facebook) missing.push('Facebook');
+        if (!p.social_instagram) missing.push('Instagram');
+        return `Missing: ${missing.join(', ')}`;
+      },
+      columns: 'prospects.has_social, enrichment→social_facebook, enrichment→social_instagram, enrichment→social_yelp',
+    },
+    {
+      id: 'email_pro',
+      name: 'Email Setup',
+      icon: '📧',
+      color: '#FFD600',
+      priority: 'medium',
+      revenue: '$200–$600',
+      test: p => p.has_website && (p.has_professional_email === false || p.has_dkim === false),
+      reason: p => {
+        const issues = [];
+        if (p.has_professional_email === false) issues.push('using free email (Gmail/Yahoo)');
+        if (p.has_dkim === false) issues.push('no DKIM authentication');
+        return issues.join(' · ') || 'Email infrastructure needs setup';
+      },
+      columns: 'enrichment→dns.has_professional_email, enrichment→dns.has_dkim, prospects.has_spf, prospects.has_dmarc',
+    },
+    {
+      id: 'reputation',
+      name: 'Reputation Mgmt',
+      icon: '⭐',
+      color: '#FF8A00',
+      priority: 'high',
+      revenue: '$500–$2,000/mo',
+      test: p => (p.google_rating > 0 && p.google_rating < 4.0) || (p.google_reviews > 10 && p.review_response_rate === 0) || (p.review_velocity != null && p.review_velocity < 2 && p.google_reviews > 20),
+      reason: p => {
+        const issues = [];
+        if (p.google_rating > 0 && p.google_rating < 4.0) issues.push(`low rating: ${p.google_rating}★`);
+        if (p.google_reviews > 10 && p.review_response_rate === 0) issues.push('never responds to reviews');
+        if (p.review_velocity != null && p.review_velocity < 2 && p.google_reviews > 20) issues.push(`slow growth: ${p.review_velocity?.toFixed(1)}/mo`);
+        return issues.join(' · ') || 'Reputation needs attention';
+      },
+      columns: 'prospects.google_rating, .google_reviews, .review_velocity, .review_response_rate',
+    },
+    {
+      id: 'advertising',
+      name: 'Digital Ads',
+      icon: '📣',
+      color: '#A855F7',
+      priority: 'medium',
+      revenue: '$800–$3,000/mo + ad spend',
+      test: p => !p.runs_ads && p.google_reviews >= 50 && p.google_rating >= 4.0,
+      reason: p => `${p.google_reviews} reviews, ${p.google_rating}★ rating but no ads detected — strong business not leveraging paid traffic.`,
+      columns: 'prospects.runs_ads, prospects.google_reviews, prospects.google_rating',
+    },
+    {
+      id: 'performance',
+      name: 'Speed & Performance',
+      icon: '⚡',
+      color: '#00D4FF',
+      priority: 'low',
+      revenue: '$300–$1,200',
+      test: p => p.has_website && (p.lcp_ms > 2500 || p.page_size_kb > 3000),
+      reason: p => {
+        const issues = [];
+        if (p.lcp_ms > 2500) issues.push(`LCP: ${(p.lcp_ms/1000).toFixed(1)}s (should be <2.5s)`);
+        if (p.page_size_kb > 3000) issues.push(`page size: ${(p.page_size_kb/1024).toFixed(1)}MB`);
+        return issues.join(' · ') || 'Site performance below standards';
+      },
+      columns: 'website_audits.lcp_ms, website_audits.page_size_kb',
+    },
+  ];
+
+  // Calculate services for one prospect
+  function calcServices(p) {
+    return SERVICE_DEFS.filter(s => s.test(p)).map(s => ({
+      ...s,
+      _reason: s.reason(p),
+    }));
+  }
+
+  // Estimated total opportunity for a prospect
+  function estOpportunity(services) {
+    // Parse low-end of revenue range for each service
+    let total = 0;
+    services.forEach(s => {
+      const m = s.revenue.match(/\$([\d,]+)/);
+      if (m) total += parseInt(m[1].replace(/,/g,''));
+    });
+    return total;
+  }
+
+  // ── Init ──────────────────────────────────────────────
+  async function init() {
+    try {
+      const data = await fetchAnalytics();
+      ALL = data.prospects || [];
+
+      // Pre-compute service needs + tier for each prospect
+      ALL.forEach(p => {
+        p._services = calcServices(p);
+        p._svc_count = p._services.length;
+        p._tier = getTier(p.wp_score);
+        p._opportunity = estOpportunity(p._services);
+        // build searchable text
+        p._searchText = [
+          p.business_name, p.business_type, p.city, p.website_platform,
+          p._tier, p._services.map(s => s.name).join(' '),
+          p.gbp_primary_type, p.mx_provider, p.entity_type,
+          p.hosting_provider, p.email_source, p.phone, p.owner_email,
+          p.owner_name, p.address, p.status,
+        ].filter(Boolean).join(' ').toLowerCase();
+      });
+
+      populateDropdowns();
+      renderServiceSummary();
+      applyFilters();
+
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('content').classList.remove('hidden');
+
+      // Wire up search with debounce
+      let timer;
+      document.getElementById('searchInput').addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { PAGE = 1; applyFilters(); }, 200);
+      });
+      ['filterCity','filterType','filterTier','filterStatus'].forEach(id => {
+        document.getElementById(id).addEventListener('change', () => { PAGE = 1; applyFilters(); });
+      });
+    } catch(e) {
+      console.error(e);
+      document.querySelector('#loadingState p').textContent = `Error: ${e.message}`;
+    }
+  }
+
+  // ── Dropdowns ─────────────────────────────────────────
+  function populateDropdowns() {
+    const cities = [...new Set(ALL.map(p => p.city).filter(Boolean))].sort();
+    const types = [...new Set(ALL.map(p => p.business_type).filter(Boolean))].sort();
+
+    const cityEl = document.getElementById('filterCity');
+    cities.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; cityEl.appendChild(o); });
+
+    const typeEl = document.getElementById('filterType');
+    types.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = fmtType(t); typeEl.appendChild(o); });
+  }
+
+  // ── Service Summary Cards ─────────────────────────────
+  function renderServiceSummary() {
+    const container = document.getElementById('serviceCards');
+    container.innerHTML = SERVICE_DEFS.map(svc => {
+      const count = ALL.filter(p => svc.test(p)).length;
+      const pctVal = ALL.length ? ((count / ALL.length) * 100).toFixed(0) : 0;
+      return `
+        <div class="p-3 rounded-lg border border-border bg-surface-2/50 cursor-pointer hover:border-gray-500 transition-all
+             ${ACTIVE_SVC === svc.id ? 'border-[color:var(--sc)] ring-1 ring-[color:var(--sc)]' : ''}"
+             style="--sc:${svc.color}"
+             onclick="toggleSvcFilterById('${svc.id}')">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-lg">${svc.icon}</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded" style="background:${svc.color}20;color:${svc.color}">${svc.priority}</span>
+          </div>
+          <div class="text-base font-bold font-mono text-white">${count}</div>
+          <div class="text-[10px] text-gray-500">${svc.name}</div>
+          <div class="metric-bar mt-1.5">
+            <div class="metric-bar-fill" style="width:${pctVal}%;background:${svc.color}"></div>
+          </div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="text-[9px] text-gray-600">${pctVal}% of market</span>
+            <span class="text-[9px] font-mono" style="color:${svc.color}">${svc.revenue}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Filtering ─────────────────────────────────────────
+  function applyFilters() {
+    const search = document.getElementById('searchInput').value.toLowerCase().trim();
+    const city = document.getElementById('filterCity').value;
+    const type = document.getElementById('filterType').value;
+    const tier = document.getElementById('filterTier').value;
+    const status = document.getElementById('filterStatus').value;
+
+    FILTERED = ALL.filter(p => {
+      if (search && !p._searchText.includes(search)) return false;
+      if (city && p.city !== city) return false;
+      if (type && p.business_type !== type) return false;
+      if (tier && p._tier !== tier) return false;
+      if (status && p.status !== status) return false;
+      if (ACTIVE_SVC) {
+        const svc = SERVICE_DEFS.find(s => s.id === ACTIVE_SVC);
+        if (svc && !svc.test(p)) return false;
+      }
+      return true;
+    });
+
+    // Sort
+    FILTERED.sort((a, b) => {
+      let av = a[SORT_COL] ?? '', bv = b[SORT_COL] ?? '';
+      if (typeof av === 'string') av = av.toLowerCase();
+      if (typeof bv === 'string') bv = bv.toLowerCase();
+      if (typeof av === 'number' && typeof bv === 'number') {
+        return SORT_DIR === 'asc' ? av - bv : bv - av;
+      }
+      return SORT_DIR === 'asc' ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+    });
+
+    renderTable();
+    document.getElementById('resultCount').textContent = `${FILTERED.length} of ${ALL.length} prospects`;
+  }
+
+  // ── Table Rendering ───────────────────────────────────
+  function renderTable() {
+    const size = parseInt(document.getElementById('pageSize').value);
+    const start = (PAGE - 1) * size;
+    const page = FILTERED.slice(start, start + size);
+    const body = document.getElementById('prospectBody');
+
+    body.innerHTML = page.map((p, i) => {
+      const rank = start + i + 1;
+      const tier = p._tier;
+      const tc = tierColor(tier);
+      const svcCount = p._svc_count;
+      const svcColor = svcCount >= 5 ? '#ef4444' : svcCount >= 3 ? '#FF8A00' : svcCount >= 1 ? '#00D4FF' : '#00FF88';
+      const obClass = outreachBadgeClass(p);
+      const obLabel = outreachBadgeLabel(p);
+
+      return `
+        <tr class="prospect-row" onclick="toggleDetail('d${rank}', this, '${p.id}')" data-id="${p.id}">
+          <td class="text-gray-600 text-xs">${rank}</td>
+          <td class="font-mono text-xs text-white font-medium max-w-[200px] truncate">${esc(p.business_name)}</td>
+          <td class="text-xs text-gray-400">${fmtType(p.business_type || '—')}</td>
+          <td class="text-xs">${p.city || '—'}</td>
+          <td class="text-center">
+            <span class="font-mono text-sm font-bold" style="color:${tc}">${p.wp_score ?? '—'}</span>
+          </td>
+          <td><span class="tier-badge tier-${tier}" style="font-size:10px">${tier.toUpperCase()}</span></td>
+          <td class="text-center">
+            <span class="font-mono text-xs font-bold" style="color:${svcColor}">${svcCount}</span>
+          </td>
+          <td class="text-xs">${p.google_rating ? `⭐ ${p.google_rating}` : '<span class="text-gray-600">—</span>'}</td>
+          <td class="text-xs font-mono">${p.google_reviews ? fmt(p.google_reviews) : '<span class="text-gray-600">0</span>'}</td>
+          <td class="text-center text-xs">${p.has_website ? `<span class="text-neon-green">✓</span>` : `<span class="text-neon-red font-bold">✗</span>`}</td>
+          <td class="text-center text-xs">${p.has_social ? `<span class="text-neon-green">✓</span>` : `<span class="text-gray-600">—</span>`}</td>
+          <td class="text-center text-xs">${p.phone ? `<span class="text-neon-green" title="${esc(p.phone)}">✓</span>` : `<span class="text-gray-600">—</span>`}</td>
+          <td class="text-center"><span class="outreach-badge ${obClass}">${obLabel}</span></td>
+        </tr>
+        <tr class="detail-row" id="d${rank}">
+          <td colspan="14" class="p-0">
+            <div id="dp-${p.id}">${renderDetailPanel(p)}</div>
+          </td>
+        </tr>`;
+    }).join('');
+
+    renderPagination();
+  }
+
+  // ── Outreach badge helpers ─────────────────────────────
+  function outreachBadgeClass(p) {
+    if (p.replied_at) return 'ob-replied';
+    if (p.status === 'do_not_contact' || p.status === 'dead') return 'ob-dead';
+    if (p.emails_sent > 0) return 'ob-sent';
+    if (['contacted','follow_up_1','follow_up_2','follow_up_3'].includes(p.status)) return 'ob-contacted';
+    return 'ob-none';
+  }
+  function outreachBadgeLabel(p) {
+    if (p.replied_at) return `✉ Replied`;
+    if (p.status === 'do_not_contact') return '🚫 DNC';
+    if (p.status === 'dead') return '💀 Dead';
+    if (p.emails_sent > 0) return `📧 ${p.emails_sent} sent`;
+    if (['contacted','follow_up_1','follow_up_2','follow_up_3'].includes(p.status)) return '📞 Contacted';
+    return '—';
+  }
+
+  // ── Time ago helper ───────────────────────────────────
+  function timeAgo(ts) {
+    if (!ts) return '';
+    const diff = Date.now() - new Date(ts).getTime();
+    const secs = Math.floor(diff / 1000);
+    if (secs < 60) return 'just now';
+    if (secs < 3600) return `${Math.floor(secs / 60)}m ago`;
+    if (secs < 86400) return `${Math.floor(secs / 3600)}h ago`;
+    const days = Math.floor(secs / 86400);
+    if (days < 30) return `${days}d ago`;
+    return `${Math.floor(days / 30)}mo ago`;
+  }
+
+  function fmtDate(ts) {
+    if (!ts) return '—';
+    const d = new Date(ts);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  // ── Detail Panel (expanded row) ───────────────────────
+  function renderDetailPanel(p) {
+    const svcs = p._services;
+    const hasAudit = p.has_website && (p.has_title != null || p.ssl_grade);
+
+    // ─ Build Google Maps URL ─
+    const mapsUrl = p.google_maps_url || (p.lat && p.lng ? `https://www.google.com/maps?q=${p.lat},${p.lng}` : (p.business_name ? `https://www.google.com/maps/search/${encodeURIComponent(p.business_name + ' ' + (p.city || ''))}` : null));
+
+    // ─ Business Profile Section ─
+    let profileHTML = `
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+        <div class="space-y-1">
+          <div class="text-[10px] uppercase text-gray-600 tracking-wider">Location</div>
+          <div class="text-xs text-white">
+            ${p.address ? `${esc(p.address)}<br>` : ''}${[p.city, p.state].filter(Boolean).join(', ')} ${p.zip || ''}
+            ${mapsUrl ? `<a href="${mapsUrl}" target="_blank" class="inline-flex items-center gap-1 text-[10px] text-blue-400 hover:text-blue-300 mt-0.5">📍 View on Maps →</a>` : ''}
+          </div>
+        </div>
+        <div class="space-y-1">
+          <div class="text-[10px] uppercase text-gray-600 tracking-wider">Phone</div>
+          <div class="text-xs">${p.phone ? `<a href="tel:${p.phone}" class="text-electric hover:underline">${esc(p.phone)}</a>` : '<span class="text-gray-600">Not found</span>'}</div>
+          ${p.owner_phone && p.owner_phone !== p.phone ? `<div class="text-[10px] text-gray-500 mt-0.5">Owner: <a href="tel:${p.owner_phone}" class="text-electric hover:underline">${esc(p.owner_phone)}</a></div>` : ''}
+        </div>
+        <div class="space-y-1">
+          <div class="text-[10px] uppercase text-gray-600 tracking-wider">Entity Type</div>
+          <div class="text-xs text-white">${fmtType(p.entity_type || 'Unknown')}</div>
+        </div>
+        <div class="space-y-1">
+          <div class="text-[10px] uppercase text-gray-600 tracking-wider">GBP Category</div>
+          <div class="text-xs text-white">${fmtType(p.gbp_primary_type || '—')}</div>
+        </div>
+        <div class="space-y-1">
+          <div class="text-[10px] uppercase text-gray-600 tracking-wider">Pipeline Status</div>
+          <div class="text-xs text-white">${fmtType(p.status || 'discovered')}</div>
+        </div>
+      </div>`;
+
+    // ─ Digital Presence Grid ─
+    let digitalHTML = `
+      <div class="grid grid-cols-2 md:grid-cols-6 gap-2 mb-4">
+        ${miniCard('Website', p.has_website ? (p.website_platform || 'Yes') : 'None', p.has_website ? '#00FF88' : '#ef4444')}
+        ${miniCard('SSL', p.ssl_grade || (p.ssl_valid ? 'Valid' : 'None'), p.ssl_grade === 'A' ? '#00FF88' : p.ssl_grade === 'B' ? '#00D4FF' : '#ef4444')}
+        ${miniCard('Design', fmtType(normalizeEra(p.design_era)), isOutdatedDesign(p.design_era) ? '#ef4444' : '#00FF88')}
+        ${miniCard('MX Email', p.mx_provider ? fmtType(p.mx_provider) : '—', p.has_professional_email ? '#00FF88' : '#FF8A00')}
+        ${miniCard('Social', [p.social_facebook && 'FB', p.social_instagram && 'IG', p.social_yelp && 'Yelp'].filter(Boolean).join('+') || 'None', p.has_social ? '#00FF88' : '#ef4444')}
+        ${miniCard('Reviews', p.google_reviews ? `${fmt(p.google_reviews)} (${p.google_rating}★)` : 'None', p.google_rating >= 4.5 ? '#00FF88' : p.google_rating >= 4.0 ? '#FFD600' : '#ef4444')}
+      </div>`;
+
+    // ─ Score Breakdown ─
+    let scoreHTML = '';
+    if (p.wp_score_json) {
+      const ws = p.wp_score_json;
+      scoreHTML = `
+        <div class="mb-4">
+          <div class="text-[10px] uppercase text-gray-600 tracking-wider mb-2">WP Score Breakdown</div>
+          <div class="grid grid-cols-3 gap-3">
+            ${scoreBar('NEED', ws.need, 40, '#ef4444', ws.need_signals)}
+            ${scoreBar('ABILITY', ws.ability, 30, '#00FF88', ws.ability_signals)}
+            ${scoreBar('TIMING', ws.timing, 30, '#00D4FF', ws.timing_signals)}
+          </div>
+        </div>`;
+    }
+
+    // ─ SEO Audit ─
+    let auditHTML = '';
+    if (hasAudit) {
+      const checks = [
+        { label: 'Title Tag', val: p.has_title },
+        { label: 'Meta Desc', val: p.has_meta_desc },
+        { label: 'H1', val: p.has_h1 },
+        { label: 'OG Tags', val: p.has_og_tags },
+        { label: 'Schema', val: p.has_schema },
+        { label: 'Sitemap', val: p.has_sitemap },
+      ];
+      auditHTML = `
+        <div class="mb-4">
+          <div class="text-[10px] uppercase text-gray-600 tracking-wider mb-2">SEO Audit Results <span class="text-gray-700">(from website_audits table)</span></div>
+          <div class="flex flex-wrap gap-2">
+            ${checks.map(c => `<span class="text-[10px] px-2 py-0.5 rounded-full border ${c.val === true ? 'border-green-500/30 bg-green-500/10 text-green-400' : c.val === false ? 'border-red-500/30 bg-red-500/10 text-red-400' : 'border-gray-700 bg-gray-800 text-gray-500'}">${c.val === true ? '✓' : c.val === false ? '✗' : '?'} ${c.label}</span>`).join('')}
+          </div>
+          ${p.tech_stack?.length ? `<div class="mt-2 text-[10px] text-gray-500">Tech: ${p.tech_stack.slice(0,8).join(', ')}</div>` : ''}
+        </div>`;
+    }
+
+    // ─ Contact Intelligence ─
+    let contactHTML = `
+      <div class="mb-4">
+        <div class="text-[10px] uppercase text-gray-600 tracking-wider mb-2">Contact Intelligence</div>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
+          ${miniCard('Owner', p.owner_name || (p.has_owner_name ? 'Known' : 'Unknown'), p.has_owner_name ? '#00FF88' : '#FF8A00')}
+          ${p.owner_title ? miniCard('Title', fmtType(p.owner_title), '#808098') : miniCard('Title', '—', '#333')}
+          ${miniCard('Email', p.owner_email || 'None', p.owner_email ? '#00FF88' : '#ef4444')}
+          ${miniCard('Source', fmtType(p.email_source || '—'), '#808098')}
+          ${miniCard('Verified', p.email_verified ? '✓ Yes' : p.owner_email ? '✗ No' : '—', p.email_verified ? '#00FF88' : p.owner_email ? '#ef4444' : '#333')}
+        </div>
+      </div>`;
+
+    // ─ Pipeline Status Tracker ─
+    const PIPELINE_STAGES = ['discovered','audited','enriched','queued','contacted','follow_up_1','follow_up_2','follow_up_3','replied','meeting_booked','promoted'];
+    const currentIdx = PIPELINE_STAGES.indexOf(p.status);
+    // Show condensed stages
+    const showStages = ['discovered','audited','enriched','queued','contacted','replied','meeting_booked','promoted'];
+    let pipelineHTML = `
+      <div class="mb-4">
+        <div class="text-[10px] uppercase text-gray-600 tracking-wider mb-2">Pipeline & Outreach Status</div>
+        <div class="flex items-center gap-1 flex-wrap mb-3">
+          ${showStages.map((s, i) => {
+            const stageIdx = PIPELINE_STAGES.indexOf(s);
+            const isDone = currentIdx >= stageIdx;
+            const isActive = p.status === s || (s === 'contacted' && ['contacted','follow_up_1','follow_up_2','follow_up_3'].includes(p.status));
+            const cls = isActive ? 'active' : isDone ? 'done' : '';
+            const label = s === 'meeting_booked' ? 'meeting' : s.replace(/_/g,' ');
+            return `<div class="pipe-step ${cls}">${label}</div>${i < showStages.length - 1 ? '<span class="pipe-arrow">→</span>' : ''}`;
+          }).join('')}
+          ${p.status === 'do_not_contact' ? '<div class="pipe-step" style="background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.3);color:#ef4444">🚫 DNC</div>' : ''}
+          ${p.status === 'dead' ? '<div class="pipe-step" style="background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.3);color:#ef4444">💀 Dead</div>' : ''}
+        </div>
+        <!-- Outreach Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-2">
+          ${miniCard('Emails Sent', p.emails_sent || '0', p.emails_sent > 0 ? '#60a5fa' : '#333')}
+          ${miniCard('Opened', p.emails_opened || '0', p.emails_opened > 0 ? '#34d399' : '#333')}
+          ${miniCard('Clicked', p.emails_clicked || '0', p.emails_clicked > 0 ? '#fbbf24' : '#333')}
+          ${miniCard('Last Email', p.last_email_at ? timeAgo(p.last_email_at) : '—', p.last_email_at ? '#60a5fa' : '#333')}
+          ${miniCard('Replied', p.replied_at ? timeAgo(p.replied_at) : '—', p.replied_at ? '#00FF88' : '#333')}
+          ${miniCard('Sentiment', p.reply_sentiment ? fmtType(p.reply_sentiment) : '—', p.reply_sentiment === 'positive' ? '#00FF88' : p.reply_sentiment === 'negative' ? '#ef4444' : '#808098')}
+        </div>
+      </div>`;
+
+    // ─ Email & Activity History (lazy-loaded) ─
+    let historyHTML = `
+      <div class="mb-4" id="history-${p.id}">
+        <div class="text-[10px] uppercase text-gray-600 tracking-wider mb-2">📧 Email History & 📞 Activity Log</div>
+        <div class="detail-loading"><div class="spinner"></div>Loading outreach history...</div>
+      </div>`;
+
+    // ─ Service Recommendations (THE KEY SECTION) ─
+    let svcHTML = '';
+    if (svcs.length) {
+      svcHTML = `
+        <div class="mb-2">
+          <div class="flex items-center justify-between mb-2">
+            <div class="text-[10px] uppercase text-gray-600 tracking-wider">Recommended Services (${svcs.length})</div>
+            <div class="text-[10px] font-mono text-neon-green">Est. opportunity: $${fmt(p._opportunity)}</div>
+          </div>
+          <div class="space-y-2">
+            ${svcs.map(s => `
+              <div class="flex items-start gap-3 p-2 rounded-lg bg-surface/50 border border-border/60">
+                <span class="text-lg mt-0.5">${s.icon}</span>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-xs font-semibold text-white">${s.name}</span>
+                    <span class="svc-chip svc-${s.priority}">${s.priority}</span>
+                    <span class="text-[9px] font-mono text-gray-500">${s.revenue}</span>
+                  </div>
+                  <div class="text-[11px] text-gray-400 mt-0.5">${s._reason}</div>
+                  <div class="text-[9px] text-gray-600 mt-0.5 italic">Data: ${s.columns}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    } else {
+      svcHTML = `
+        <div class="text-center py-3 text-gray-600 text-xs">
+          ✅ This business has strong digital presence — consider upsell services or partnership.
+        </div>`;
+    }
+
+    return `
+      <div class="p-4 bg-surface-2/60 border-t border-border/50">
+        ${profileHTML}
+        ${digitalHTML}
+        ${scoreHTML}
+        ${auditHTML}
+        ${contactHTML}
+        ${pipelineHTML}
+        ${historyHTML}
+        <div class="border-t border-border/50 pt-3 mt-3">
+          <h4 class="text-xs font-semibold text-white mb-3 flex items-center gap-2">
+            📋 Service Plan for ${esc(p.business_name)}
+            <span class="text-[10px] font-normal text-gray-500">(based on ${svcs.length} detected gaps)</span>
+          </h4>
+          ${svcHTML}
+        </div>
+      </div>`;
+  }
+
+  // ── Helpers ───────────────────────────────────────────
+  function miniCard(label, value, color) {
+    return `<div class="p-2 rounded bg-surface/50 border border-border/50">
+      <div class="text-[9px] uppercase text-gray-600">${label}</div>
+      <div class="text-xs font-mono font-medium truncate" style="color:${color}">${value}</div>
+    </div>`;
+  }
+
+  function scoreBar(label, value, max, color, signals) {
+    const pctVal = max ? ((value / max) * 100).toFixed(0) : 0;
+    const sigHTML = signals?.length ? `<div class="flex flex-wrap gap-1 mt-1">${signals.map(s => `<span class="signal-pill text-[9px]">${s}</span>`).join('')}</div>` : '';
+    return `<div>
+      <div class="flex justify-between text-[10px] mb-0.5"><span class="text-gray-500">${label}</span><span class="font-mono" style="color:${color}">${value}/${max}</span></div>
+      <div class="metric-bar"><div class="metric-bar-fill" style="width:${pctVal}%;background:${color}"></div></div>
+      ${sigHTML}
+    </div>`;
+  }
+
+  function esc(s) { return (s || '').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // ── Fetch full prospect detail (email history + activities) ──
+  const _detailCache = {};
+  async function fetchProspectDetail(prospectId) {
+    if (_detailCache[prospectId]) return _detailCache[prospectId];
+    try {
+      const BASE = window.location.hostname === 'localhost' ? `http://localhost:3001` : '';
+      const resp = await fetch(`${BASE}/api/v1/outreach/prospects/${prospectId}`);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+      _detailCache[prospectId] = data;
+      return data;
+    } catch(e) {
+      console.warn('Failed to load prospect detail:', e);
+      return null;
+    }
+  }
+
+  function renderEmailHistory(emails) {
+    if (!emails || !emails.length) return `<div class="text-xs text-gray-600 font-mono py-2">No emails sent yet.</div>`;
+    return `<div class="space-y-2 max-h-52 overflow-y-auto">
+      ${emails.map(e => {
+        const stCls = e.status || 'draft';
+        return `<div class="email-card">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex-1 min-w-0">
+              <div class="text-xs text-gray-300 truncate">${esc(e.subject || '(no subject)')}</div>
+              <div class="text-[10px] text-gray-600 mt-0.5">
+                Step ${e.sequence_step || 1}
+                ${e.sent_at ? ` · Sent ${fmtDate(e.sent_at)}` : e.scheduled_for ? ` · Scheduled ${fmtDate(e.scheduled_for)}` : ''}
+                ${e.opened_at ? ` · Opened ${timeAgo(e.opened_at)}` : ''}
+                ${e.clicked_at ? ` · Clicked ${timeAgo(e.clicked_at)}` : ''}
+                ${e.replied_at ? ` · <span style="color:#00FF88">Replied ${timeAgo(e.replied_at)}</span>` : ''}
+              </div>
+              ${e.reply_sentiment ? `<div class="text-[10px] mt-0.5"><span style="color:${e.reply_sentiment === 'positive' ? '#00FF88' : e.reply_sentiment === 'negative' ? '#ef4444' : '#808098'}">Sentiment: ${e.reply_sentiment}</span></div>` : ''}
+            </div>
+            <span class="email-status ${stCls}">${stCls}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  function renderActivityLog(activities) {
+    if (!activities || !activities.length) return `<div class="text-xs text-gray-600 font-mono py-2">No interactions logged yet.</div>`;
+    const icons = { phone_call: '📞', voicemail: '📱', text_message: '💬', meeting: '🤝', in_person: '🏪', note: '📝' };
+    return `<div class="space-y-2 max-h-52 overflow-y-auto">
+      ${activities.map(a => {
+        const icon = icons[a.activity_type] || '📋';
+        return `<div class="activity-card">
+          <div class="flex items-start gap-2">
+            <span class="text-sm">${icon}</span>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-gray-300 font-mono">${(a.activity_type || '').replace(/_/g, ' ')}</span>
+                ${a.outcome ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded-full" style="background:rgba(128,128,152,0.15);color:${a.outcome === 'interested' ? '#00FF88' : a.outcome === 'not_interested' ? '#ef4444' : '#808098'}">${a.outcome.replace(/_/g,' ')}</span>` : ''}
+                ${a.duration_minutes ? `<span class="text-[9px] text-gray-600 font-mono">${a.duration_minutes} min</span>` : ''}
+                <span class="text-[9px] text-gray-600 font-mono ml-auto">${timeAgo(a.created_at)}</span>
+              </div>
+              ${a.contact_name ? `<div class="text-[10px] text-gray-500 mt-0.5">Spoke with: ${esc(a.contact_name)}</div>` : ''}
+              ${a.notes ? `<div class="text-xs text-gray-400 mt-1">${esc(a.notes)}</div>` : ''}
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  // ── Toggle Detail Row ─────────────────────────────────
+  function toggleDetail(id, rowEl, prospectId) {
+    const detail = document.getElementById(id);
+    if (!detail) return;
+    const isOpen = detail.classList.contains('open');
+    // Close any other open rows
+    document.querySelectorAll('.detail-row.open').forEach(el => { el.classList.remove('open'); });
+    document.querySelectorAll('.prospect-row.expanded').forEach(el => { el.classList.remove('expanded'); });
+    if (!isOpen) {
+      detail.classList.add('open');
+      rowEl.classList.add('expanded');
+      // Lazy-load email & activity history
+      if (prospectId) loadOutreachHistory(prospectId);
+    }
+  }
+
+  async function loadOutreachHistory(prospectId) {
+    const container = document.getElementById(`history-${prospectId}`);
+    if (!container) return;
+    // Already loaded?
+    if (container.dataset.loaded === 'true') return;
+    container.dataset.loaded = 'true';
+
+    const detail = await fetchProspectDetail(prospectId);
+    if (!detail) {
+      container.innerHTML = `<div class="text-[10px] uppercase text-gray-600 tracking-wider mb-2">📧 Email History & 📞 Activity Log</div>
+        <div class="text-xs text-gray-600 font-mono">Could not load outreach history.</div>`;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <div class="text-[10px] uppercase text-gray-600 tracking-wider mb-2">📧 Email History${detail.emails?.length ? ` (${detail.emails.length})` : ''}</div>
+          ${renderEmailHistory(detail.emails)}
+        </div>
+        <div>
+          <div class="text-[10px] uppercase text-gray-600 tracking-wider mb-2">📞 Activity Log${detail.activities?.length ? ` (${detail.activities.length})` : ''}</div>
+          ${renderActivityLog(detail.activities)}
+        </div>
+      </div>`;
+  }
+
+  // ── Sort ──────────────────────────────────────────────
+  function sortTable(col) {
+    if (SORT_COL === col) {
+      SORT_DIR = SORT_DIR === 'asc' ? 'desc' : 'asc';
+    } else {
+      SORT_COL = col;
+      SORT_DIR = (col === 'business_name' || col === 'business_type' || col === 'city') ? 'asc' : 'desc';
+    }
+    // Update header indicators
+    document.querySelectorAll('.sort-btn').forEach(el => {
+      const isActive = el.getAttribute('onclick')?.includes(`'${col}'`);
+      el.classList.toggle('active', isActive);
+      const arrow = el.querySelector('.arrow');
+      if (arrow && isActive) arrow.textContent = SORT_DIR === 'asc' ? '▴' : '▾';
+    });
+    applyFilters();
+  }
+
+  // ── Service Filter Chips ──────────────────────────────
+  function toggleSvcFilter(btn) {
+    const svc = btn.dataset.svc;
+    if (ACTIVE_SVC === svc) {
+      ACTIVE_SVC = null;
+      btn.classList.remove('active');
+    } else {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      ACTIVE_SVC = svc;
+      btn.classList.add('active');
+    }
+    PAGE = 1;
+    applyFilters();
+    renderServiceSummary();
+  }
+
+  function toggleSvcFilterById(svc) {
+    if (ACTIVE_SVC === svc) {
+      ACTIVE_SVC = null;
+    } else {
+      ACTIVE_SVC = svc;
+    }
+    // Sync chips
+    document.querySelectorAll('.filter-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.svc === ACTIVE_SVC);
+    });
+    PAGE = 1;
+    applyFilters();
+    renderServiceSummary();
+  }
+
+  function clearAllFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('filterCity').value = '';
+    document.getElementById('filterType').value = '';
+    document.getElementById('filterTier').value = '';
+    document.getElementById('filterStatus').value = '';
+    ACTIVE_SVC = null;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    PAGE = 1;
+    applyFilters();
+    renderServiceSummary();
+  }
+
+  // ── Pagination ────────────────────────────────────────
+  function goPage(n) { PAGE = n; renderTable(); }
+
+  function renderPagination() {
+    const size = parseInt(document.getElementById('pageSize').value);
+    const total = Math.ceil(FILTERED.length / size);
+    const container = document.getElementById('pagination');
+    if (total <= 1) { container.innerHTML = ''; return; }
+
+    let html = '';
+    const btn = (label, pg, active) =>
+      `<button onclick="goPage(${pg})" class="px-2.5 py-1 rounded text-xs ${active ? 'bg-electric/20 text-electric border border-electric/30' : 'text-gray-500 hover:text-gray-300 border border-transparent'}">${label}</button>`;
+
+    if (PAGE > 1) html += btn('←', PAGE - 1, false);
+    for (let i = 1; i <= total; i++) {
+      if (i === 1 || i === total || (i >= PAGE - 2 && i <= PAGE + 2)) {
+        html += btn(i, i, i === PAGE);
+      } else if (i === PAGE - 3 || i === PAGE + 3) {
+        html += `<span class="text-gray-600 text-xs px-1">…</span>`;
+      }
+    }
+    if (PAGE < total) html += btn('→', PAGE + 1, false);
+    container.innerHTML = html;
+  }
+
+  // ── Export CSV ────────────────────────────────────────
+  function exportCSV() {
+    const headers = ['Business Name','Type','City','Phone','Email','WP Score','Tier','Status','Services Needed','Service Count','Rating','Reviews','Has Website','Has Social','Emails Sent','Emails Opened','Replied','Opportunity Est'];
+    const rows = FILTERED.map(p => [
+      p.business_name,
+      p.business_type,
+      p.city,
+      p.phone || '',
+      p.owner_email || '',
+      p.wp_score ?? '',
+      p._tier,
+      p.status || '',
+      p._services.map(s => s.name).join('; '),
+      p._svc_count,
+      p.google_rating || '',
+      p.google_reviews || 0,
+      p.has_website ? 'Yes' : 'No',
+      p.has_social ? 'Yes' : 'No',
+      p.emails_sent || 0,
+      p.emails_opened || 0,
+      p.replied_at ? 'Yes' : 'No',
+      p._opportunity,
+    ]);
+
+    let csv = headers.join(',') + '\n';
+    rows.forEach(r => {
+      csv += r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',') + '\n';
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `prospects_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast(`Exported ${FILTERED.length} prospects to CSV`);
+  }
+
+  // ── Refresh ───────────────────────────────────────────
+  async function refreshData() {
+    document.getElementById('content').classList.add('hidden');
+    document.getElementById('loadingState').classList.remove('hidden');
+    await init();
+    showToast('Data refreshed');
+  }
+
+  // ── Boot ──────────────────────────────────────────────
+  // Expose functions needed by HTML onclick handlers
+  window.sortTable = sortTable;
+  window.toggleSvcFilter = toggleSvcFilter;
+  window.toggleSvcFilterById = toggleSvcFilterById;
+  window.clearAllFilters = clearAllFilters;
+  window.toggleDetail = toggleDetail;
+  window.goPage = goPage;
+  window.exportCSV = exportCSV;
+  window.refreshData = refreshData;
+  window.loadOutreachHistory = loadOutreachHistory;
+
+  init();
+  })(); // end IIFE
+  </script>
+
+</body>
+</html>

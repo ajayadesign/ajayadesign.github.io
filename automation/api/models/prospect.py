@@ -156,6 +156,55 @@ class Prospect(Base):
     competitors = Column(JSONB)  # [{name, url, score}]
     competitor_avg = Column(Integer)
 
+    # ── Website Purchase Likelihood Score ──
+    wp_score = Column(Integer)                    # 0-100 composite
+    wp_score_json = Column(JSONB)                 # breakdown {need, ability, timing, signals}
+    score_digital = Column(Integer)               # 0-100 website quality sub-score
+    score_visibility = Column(Integer)            # 0-100 SEO + GBP + social
+    score_reputation = Column(Integer)            # 0-100 reviews + sentiment
+    score_operations = Column(Integer)            # 0-100 booking/ordering/POS/analytics
+    score_growth = Column(Integer)                # 0-100 review velocity + hiring + revenue
+    score_compliance = Column(Integer)            # 0-100 ADA + privacy + licenses
+
+    # ── Deep Enrichment ──
+    enrichment = Column(JSONB, default=dict)      # all 80+ signals from deep enrichment
+    enriched_at = Column(DateTime(timezone=True))
+
+    # ── Page Signals (promoted from enrichment JSONB for fast queries) ──
+    has_booking = Column(Boolean)
+    has_online_ordering = Column(Boolean)
+    has_contact_form = Column(Boolean)
+    has_analytics = Column(Boolean)               # GA4 or GTM detected
+    has_email_capture = Column(Boolean)            # Mailchimp/Klaviyo etc.
+    has_live_chat = Column(Boolean)
+    has_privacy_policy = Column(Boolean)
+    has_ada_widget = Column(Boolean)
+
+    # ── Social & Reputation (promoted) ──
+    has_social = Column(Boolean)                  # any social presence
+    social_score = Column(Integer)                # 0-100
+    review_response_rate = Column(Numeric(5, 2))  # 0.00 - 100.00
+    review_velocity = Column(Numeric(6, 2))       # reviews per month
+    gbp_photos_count = Column(Integer)
+    gbp_posts_count = Column(Integer)
+
+    # ── DNS & Email Intel (promoted) ──
+    mx_provider = Column(String)                  # google, microsoft, none, other
+    has_spf = Column(Boolean)
+    has_dmarc = Column(Boolean)
+
+    # ── Business Records (promoted) ──
+    entity_type = Column(String)                  # llc, corp, sole_prop, dba
+    formation_date = Column(DateTime(timezone=True))
+    ppp_loan_amount = Column(Integer)
+
+    # ── Growth & Ads (promoted) ──
+    is_hiring = Column(Boolean)
+    hiring_roles = Column(JSONB)                  # ["marketing", "receptionist"]
+    runs_ads = Column(Boolean)
+    ad_platforms = Column(JSONB)                   # ["meta", "google"]
+    competitor_count = Column(Integer)             # same-type within 1 mile
+
     # ── Meta ──
     source = Column(String)  # "google_maps", "yelp", "manual", "referral"
     notes = Column(Text)
@@ -180,6 +229,7 @@ class Prospect(Base):
             "state": self.state,
             "status": self.status,
             "score_overall": self.score_overall,
+            "wp_score": self.wp_score,
             "priority_score": self.priority_score,
             "has_website": self.has_website,
             "google_rating": float(self.google_rating) if self.google_rating else None,
@@ -234,6 +284,30 @@ class Prospect(Base):
             "notes": self.notes,
             "tags": self.tags or [],
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            # Deep enrichment
+            "wp_score": self.wp_score,
+            "wp_score_json": self.wp_score_json,
+            "score_digital": self.score_digital,
+            "score_visibility": self.score_visibility,
+            "score_reputation": self.score_reputation,
+            "score_operations": self.score_operations,
+            "score_growth": self.score_growth,
+            "score_compliance": self.score_compliance,
+            "enrichment": self.enrichment,
+            "enriched_at": self.enriched_at.isoformat() if self.enriched_at else None,
+            "has_booking": self.has_booking,
+            "has_online_ordering": self.has_online_ordering,
+            "has_contact_form": self.has_contact_form,
+            "has_analytics": self.has_analytics,
+            "has_social": self.has_social,
+            "social_score": self.social_score,
+            "review_response_rate": float(self.review_response_rate) if self.review_response_rate else None,
+            "review_velocity": float(self.review_velocity) if self.review_velocity else None,
+            "mx_provider": self.mx_provider,
+            "entity_type": self.entity_type,
+            "is_hiring": self.is_hiring,
+            "runs_ads": self.runs_ads,
+            "competitor_count": self.competitor_count,
         })
         return d
 
@@ -308,6 +382,9 @@ class WebsiteAudit(Base):
     # Raw data (filesystem paths)
     lighthouse_json_path = Column(Text)
     raw_html_hash = Column(String)
+
+    # Page signals (30+ boolean detections from HTML scan)
+    page_signals = Column(JSONB)  # {has_booking, has_contact_form, has_ga4, ...}
 
     audited_at = Column(DateTime(timezone=True), default=_utcnow)
 

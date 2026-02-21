@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insight Dashboard — Overview</title>
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            'surface':     '#06060A',
+            'surface-1':   '#0C0C12',
+            'surface-2':   '#12121A',
+            'surface-3':   '#1A1A24',
+            'border':      '#2A2A3A',
+            'electric':    '#00D4FF',
+            'neon-green':  '#00FF88',
+            'neon-orange': '#FF8A00',
+            'neon-purple': '#A855F7',
+            'neon-red':    '#ef4444',
+            'neon-yellow': '#FFD600',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="bg-surface text-gray-300 min-h-screen">
+
+  <!-- ═══ Navigation ═══ -->
+  <nav class="fixed top-0 left-0 right-0 z-50 border-b border-border bg-surface/90 backdrop-blur-lg">
+    <div class="max-w-[1600px] mx-auto px-6 flex items-center justify-between h-14">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-electric to-neon-purple flex items-center justify-center text-white font-bold text-sm">AD</div>
+        <span class="font-semibold text-white text-sm tracking-wide">Insight Dashboard</span>
+        <span class="text-xs text-gray-500 font-mono ml-2">localhost only</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <a href="index.html" class="nav-link active">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          Overview
+        </a>
+        <a href="intelligence.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          Intelligence
+        </a>
+        <a href="opportunities.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+          Opportunities
+        </a>
+        <a href="market.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Market
+        </a>
+        <a href="prospects.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Prospects
+        </a>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="refreshData()" id="refreshBtn" class="text-xs px-3 py-1.5 rounded-lg border border-border hover:border-electric text-gray-400 hover:text-electric transition-all">
+          ↻ Refresh
+        </button>
+        <span id="lastUpdated" class="text-xs text-gray-600 font-mono"></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ Main Content ═══ -->
+  <main class="pt-20 pb-12 px-6 max-w-[1600px] mx-auto">
+
+    <!-- Loading State -->
+    <div id="loadingState" class="flex items-center justify-center min-h-[60vh]">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full border-2 border-electric border-t-transparent animate-spin mx-auto mb-4"></div>
+        <p class="text-gray-500 text-sm">Loading analytics data...</p>
+      </div>
+    </div>
+
+    <!-- Dashboard Content (hidden until loaded) -->
+    <div id="dashboardContent" class="hidden space-y-6">
+
+      <!-- ── KPI Row ── -->
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        <div class="kpi-card" style="--accent:#00D4FF">
+          <div class="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Prospects</div>
+          <div id="kpiTotal" class="text-2xl font-bold text-white font-mono">—</div>
+        </div>
+        <div class="kpi-card" style="--accent:#A855F7">
+          <div class="text-xs text-gray-500 uppercase tracking-wider mb-1"><span class="tip" data-tip="Website Prospect Score — composite 0-100 rating. Combines NEED (0-40), ABILITY (0-30), and TIMING (0-30) signals.">Avg WP Score</span></div>
+          <div id="kpiAvgScore" class="text-2xl font-bold text-neon-purple font-mono">—</div>
+        </div>
+        <div class="kpi-card" style="--accent:#ef4444">
+          <div class="text-xs text-gray-500 uppercase tracking-wider mb-1"><span class="tip tip-below" data-tip="Hot tier — WP Score 80+. Highest priority prospects with strong need, ability, and timing signals.">🔥 Hot</span></div>
+          <div id="kpiHot" class="text-2xl font-bold text-neon-red font-mono">—</div>
+        </div>
+        <div class="kpi-card" style="--accent:#FF8A00">
+          <div class="text-xs text-gray-500 uppercase tracking-wider mb-1"><span class="tip tip-below" data-tip="Warm tier — WP Score 60-79. Good prospects worth pursuing for outreach.">🟠 Warm</span></div>
+          <div id="kpiWarm" class="text-2xl font-bold text-neon-orange font-mono">—</div>
+        </div>
+        <div class="kpi-card" style="--accent:#00D4FF">
+          <div class="text-xs text-gray-500 uppercase tracking-wider mb-1"><span class="tip tip-below" data-tip="Cool tier — WP Score 40-59. May be worth nurturing but not high priority.">🔵 Cool</span></div>
+          <div id="kpiCool" class="text-2xl font-bold text-electric font-mono">—</div>
+        </div>
+        <div class="kpi-card" style="--accent:#808098">
+          <div class="text-xs text-gray-500 uppercase tracking-wider mb-1"><span class="tip tip-below" data-tip="Cold tier — WP Score below 40. Low signals — unlikely to convert without major changes.">🥶 Cold</span></div>
+          <div id="kpiCold" class="text-2xl font-bold text-gray-500 font-mono">—</div>
+        </div>
+        <div class="kpi-card" style="--accent:#00FF88">
+          <div class="text-xs text-gray-500 uppercase tracking-wider mb-1"><span class="tip tip-below" data-tip="Deep enrichment completed — all available data (website audit, social media, DNS, hiring, ads, scoring) collected.">Enriched</span></div>
+          <div id="kpiEnriched" class="text-2xl font-bold text-neon-green font-mono">—</div>
+        </div>
+      </div>
+
+      <!-- ── Enrichment Progress Bar ── -->
+      <div id="enrichmentProgress" class="hidden rounded-xl border border-border bg-surface-2/80 px-5 py-4">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span id="enrichDot" class="w-2 h-2 rounded-full bg-gray-600"></span>
+            <span class="text-xs font-semibold text-gray-300"><span class="tip tip-below" data-tip="Deep enrichment collects website audit, DNS records, social media, hiring status, ad platforms, entity type, and calculates the WP Score for each prospect.">Deep Enrichment</span></span>
+            <span id="enrichStatus" class="text-[0.65rem] font-mono text-gray-500">—</span>
+          </div>
+          <div class="flex items-center gap-3 text-[0.65rem] font-mono">
+            <span class="text-gray-500"><span id="enrichDone" class="text-neon-green font-semibold">0</span> / <span id="enrichTotal">0</span> prospects</span>
+            <span id="enrichPct" class="text-electric font-semibold">0%</span>
+            <span id="enrichETA" class="text-gray-600"></span>
+          </div>
+        </div>
+        <div class="w-full h-2 bg-surface-3 rounded-full overflow-hidden">
+          <div id="enrichBar" class="h-full rounded-full transition-all duration-1000 ease-out" style="width:0%;background:linear-gradient(90deg,#00D4FF,#A855F7)"></div>
+        </div>
+        <div class="flex items-center justify-between mt-1.5">
+          <div class="flex items-center gap-4 text-[0.6rem] font-mono text-gray-600">
+            <span>🔵 <span id="enrichQueued">0</span> queued</span>
+            <span>✅ <span id="enrichEnriched">0</span> enriched</span>
+            <span>💀 <span id="enrichDead">0</span> dead</span>
+            <span>⏱ <span id="enrichRate">0</span>/min</span>
+          </div>
+          <span id="enrichSession" class="text-[0.6rem] font-mono text-gray-600">Session: 0 backfilled, 0 scored</span>
+        </div>
+      </div>
+
+      <!-- ── Top Insights Banner ── -->
+      <div id="insightsBanner" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+      <!-- ── Charts Row 1: Score Distribution + Tier Breakdown ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="chart-card lg:col-span-2">
+          <h3><span class="tip" data-tip="WP Score = Website Prospect Score. A composite 0-100 rating combining NEED (0-40), ABILITY (0-30), and TIMING (0-30).">WP Score</span> Distribution</h3>
+          <div class="h-[280px]"><canvas id="chartScoreDist"></canvas></div>
+        </div>
+        <div class="chart-card relative">
+          <h3>Tier Breakdown<span class="info-icon" data-tip="Tier derived from wp_score: Hot (80+), Warm (60-79), Cool (40-59), Cold (<40). Source: prospects.wp_score">?</span></h3>
+          <div class="h-[280px]"><canvas id="chartTierDonut"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Charts Row 2: NEED/ABILITY/TIMING + Pipeline Funnel ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Score Components — <span class="tip" data-tip="NEED (0-40): How badly this business needs a website. Signals: no website, bad mobile, stale content, no SSL.">Need</span> vs <span class="tip" data-tip="ABILITY (0-30): Signs the business can afford web services. Signals: high rating, many reviews, hiring, running ads, entity type.">Ability</span> vs <span class="tip" data-tip="TIMING (0-30): Signals the business is ready to buy NOW. Signals: under construction site, hiring, recently formed, low review velocity.">Timing</span></h3>
+          <div class="h-[300px]"><canvas id="chartComponents"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Pipeline Funnel<span class="info-icon" data-tip="Pipeline stages from prospects.status: discovered → audited → enriched → queued → contacted → replied → meeting_booked.">?</span></h3>
+          <div class="h-[300px]"><canvas id="chartFunnel"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Charts Row 3: Business Types + Website Status ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Top Business Categories<span class="info-icon" data-tip="Source: prospects.business_type — Google Business Profile primary category scraped during discovery.">?</span></h3>
+          <div class="h-[340px]"><canvas id="chartBizTypes"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Website Status Breakdown<span class="info-icon" data-tip="Source: prospects.has_website and prospects.website_platform — detected during enrichment website audit.">?</span></h3>
+          <div class="h-[340px]"><canvas id="chartWebStatus"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Charts Row 4: Score vs Reviews Scatter + City Breakdown ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3><span class="tip" data-tip="WP Score = Website Prospect Score (0-100). Higher score = more likely to need and buy web services.">WP Score</span> vs Google Reviews</h3>
+          <div class="h-[300px]"><canvas id="chartScoreReviews"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Prospects by City<span class="info-icon" data-tip="Source: prospects.city — from Google Business Profile address during discovery.">?</span></h3>
+          <div class="h-[300px]"><canvas id="chartCities"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Key Signals Summary ── -->
+      <div class="chart-card">
+        <h3>Most Common Need Signals (across all scored prospects)<span class="info-icon" data-tip="Source: prospects.wp_score_json — need_signals, ability_signals, timing_signals arrays generated by the scoring engine.">?</span></h3>
+        <div class="h-[320px]"><canvas id="chartSignals"></canvas></div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script>
+    let DATA = null;
+
+    async function refreshData() {
+      const btn = document.getElementById('refreshBtn');
+      btn.textContent = '⟳ Loading...';
+      btn.disabled = true;
+      try {
+        DATA = await fetchAnalytics(true);
+        renderAll();
+        document.getElementById('lastUpdated').textContent =
+          new Date().toLocaleTimeString();
+        showToast(`Loaded ${DATA.total} prospects`);
+      } catch (e) {
+        showToast('Error loading data: ' + e.message);
+        console.error(e);
+      } finally {
+        btn.textContent = '↻ Refresh';
+        btn.disabled = false;
+      }
+    }
+
+    async function init() {
+      try {
+        DATA = await fetchAnalytics();
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('dashboardContent').classList.remove('hidden');
+        renderAll();
+        document.getElementById('lastUpdated').textContent =
+          new Date().toLocaleTimeString();
+      } catch (e) {
+        document.getElementById('loadingState').innerHTML =
+          `<div class="text-center"><p class="text-neon-red text-lg mb-2">Failed to connect</p>
+           <p class="text-gray-500 text-sm">Make sure the API is running at localhost:3001</p>
+           <p class="text-gray-600 text-xs mt-2 font-mono">${e.message}</p></div>`;
+      }
+    }
+
+    function renderAll() {
+      const P = DATA.prospects;
+      const scored = P.filter(p => p.wp_score != null);
+      const enriched = P.filter(p => p.enriched_at);
+
+      renderKPIs(P, scored, enriched);
+      renderInsightsBanner(P, scored);
+      renderScoreDistribution(scored);
+      renderTierDonut(scored);
+      renderComponents(scored);
+      renderFunnel(P);
+      renderBizTypes(P);
+      renderWebStatus(P);
+      renderScoreReviews(scored);
+      renderCities(P);
+      renderSignals(scored);
+    }
+
+    // ── KPIs ──────────────────────────────────────────────────────────
+    function renderKPIs(P, scored, enriched) {
+      const tiers = { hot: 0, warm: 0, cool: 0, cold: 0 };
+      scored.forEach(p => { tiers[getTier(p.wp_score)]++; });
+      const avgScore = scored.length ? (scored.reduce((s,p) => s + p.wp_score, 0) / scored.length) : 0;
+
+      document.getElementById('kpiTotal').textContent = fmt(P.length);
+      document.getElementById('kpiAvgScore').textContent = avgScore.toFixed(1);
+      document.getElementById('kpiHot').textContent = fmt(tiers.hot);
+      document.getElementById('kpiWarm').textContent = fmt(tiers.warm);
+      document.getElementById('kpiCool').textContent = fmt(tiers.cool);
+      document.getElementById('kpiCold').textContent = fmt(tiers.cold);
+      document.getElementById('kpiEnriched').textContent = fmt(enriched.length);
+    }
+
+    // ── Top Insights ──────────────────────────────────────────────────
+    function renderInsightsBanner(P, scored) {
+      const noWeb = P.filter(p => !p.has_website).length;
+      const noWebPct = (noWeb / P.length * 100).toFixed(0);
+
+      const noEmail = P.filter(p => !p.has_email).length;
+      const noEmailPct = (noEmail / P.length * 100).toFixed(0);
+
+      const avgNeed = scored.length ? (scored.reduce((s,p) => s + (p.wp_score_json?.need || 0), 0) / scored.length) : 0;
+      const avgAbility = scored.length ? (scored.reduce((s,p) => s + (p.wp_score_json?.ability || 0), 0) / scored.length) : 0;
+      const avgTiming = scored.length ? (scored.reduce((s,p) => s + (p.wp_score_json?.timing || 0), 0) / scored.length) : 0;
+
+      const weakest = avgAbility <= avgTiming ? 'ABILITY' : 'TIMING';
+      const weakestVal = Math.min(avgAbility, avgTiming);
+
+      const hiring = P.filter(p => p.is_hiring).length;
+
+      document.getElementById('insightsBanner').innerHTML = `
+        <div class="insight-card">
+          <div class="flex items-start gap-3">
+            <div class="insight-icon bg-neon-red/20 text-neon-red">🚫</div>
+            <div>
+              <div class="text-sm font-semibold text-white">${noWebPct}% Have No Website</div>
+              <div class="text-xs text-gray-400 mt-0.5">${fmt(noWeb)} of ${fmt(P.length)} businesses have zero web presence — highest-need segment</div>
+            </div>
+          </div>
+        </div>
+        <div class="insight-card">
+          <div class="flex items-start gap-3">
+            <div class="insight-icon bg-neon-purple/20 text-neon-purple">📊</div>
+            <div>
+              <div class="text-sm font-semibold text-white">Avg NEED: ${avgNeed.toFixed(1)}/40 — ${weakest} is weakest at ${weakestVal.toFixed(1)}</div>
+              <div class="text-xs text-gray-400 mt-0.5">Most businesses clearly need a website, but ${weakest.toLowerCase()} signals are scarce — focus on uncovering ability/timing</div>
+            </div>
+          </div>
+        </div>
+        <div class="insight-card">
+          <div class="flex items-start gap-3">
+            <div class="insight-icon bg-neon-green/20 text-neon-green">📧</div>
+            <div>
+              <div class="text-sm font-semibold text-white">${noEmailPct}% Missing Owner Email</div>
+              <div class="text-xs text-gray-400 mt-0.5">${fmt(noEmail)} prospects need email recon before outreach. ${fmt(hiring)} are actively hiring — growth signal.</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ── Score Distribution Histogram ──────────────────────────────────
+    function renderScoreDistribution(scored) {
+      const buckets = Array(10).fill(0);
+      scored.forEach(p => {
+        const idx = Math.min(9, Math.floor(p.wp_score / 10));
+        buckets[idx]++;
+      });
+      const labels = ['0-9','10-19','20-29','30-39','40-49','50-59','60-69','70-79','80-89','90-100'];
+      const colors = labels.map((_,i) => {
+        if (i >= 8) return '#ef4444';
+        if (i >= 6) return '#FF8A00';
+        if (i >= 4) return '#00D4FF';
+        return '#808098';
+      });
+
+      createBarChart('chartScoreDist', labels, [{
+        data: buckets,
+        backgroundColor: colors,
+        borderRadius: 4,
+        label: 'Prospects',
+      }], {
+        plugins: { legend: { display: false } },
+      });
+    }
+
+    // ── Tier Donut ────────────────────────────────────────────────────
+    function renderTierDonut(scored) {
+      const tiers = { hot: 0, warm: 0, cool: 0, cold: 0 };
+      scored.forEach(p => tiers[getTier(p.wp_score)]++);
+
+      createDoughnut('chartTierDonut',
+        ['Hot (80+)', 'Warm (60-79)', 'Cool (40-59)', 'Cold (<40)'],
+        [tiers.hot, tiers.warm, tiers.cool, tiers.cold],
+        ['#ef4444', '#FF8A00', '#00D4FF', '#808098'],
+      );
+    }
+
+    // ── NEED / ABILITY / TIMING Comparison ──────────────────────────
+    function renderComponents(scored) {
+      const needBuckets = {};
+      const abilityBuckets = {};
+      const timingBuckets = {};
+
+      const ranges = ['0-10','11-20','21-30','31-40'];
+      ranges.forEach(r => { needBuckets[r] = 0; abilityBuckets[r] = 0; timingBuckets[r] = 0; });
+
+      scored.forEach(p => {
+        const ws = p.wp_score_json || {};
+        const n = ws.need || 0, a = ws.ability || 0, t = ws.timing || 0;
+        const nIdx = Math.min(3, Math.floor(n / 10));
+        const aIdx = Math.min(2, Math.floor(a / 10));
+        const tIdx = Math.min(2, Math.floor(t / 10));
+        needBuckets[ranges[nIdx]]++;
+        abilityBuckets[ranges[Math.min(aIdx, 3)]]++;
+        timingBuckets[ranges[Math.min(tIdx, 3)]]++;
+      });
+
+      // Use grouped bar chart for all three
+      const avgN = avg(scored, p => p.wp_score_json?.need);
+      const avgA = avg(scored, p => p.wp_score_json?.ability);
+      const avgT = avg(scored, p => p.wp_score_json?.timing);
+
+      createBarChart('chartComponents',
+        ['Need (max 40)', 'Ability (max 30)', 'Timing (max 30)'],
+        [
+          {
+            label: 'Average Score',
+            data: [avgN, avgA, avgT],
+            backgroundColor: ['rgba(239,68,68,0.7)', 'rgba(168,85,247,0.7)', 'rgba(0,212,255,0.7)'],
+            borderRadius: 6,
+            barThickness: 50,
+          },
+          {
+            label: 'Max Possible',
+            data: [40, 30, 30],
+            backgroundColor: ['rgba(239,68,68,0.15)', 'rgba(168,85,247,0.15)', 'rgba(0,212,255,0.15)'],
+            borderRadius: 6,
+            barThickness: 50,
+          },
+        ],
+        {
+          plugins: {
+            legend: { display: true },
+            tooltip: {
+              callbacks: {
+                afterLabel: (ctx) => {
+                  if (ctx.datasetIndex === 0) {
+                    const maxes = [40, 30, 30];
+                    return `${(ctx.raw / maxes[ctx.dataIndex] * 100).toFixed(0)}% of max`;
+                  }
+                }
+              }
+            }
+          }
+        }
+      );
+    }
+
+    // ── Pipeline Funnel ───────────────────────────────────────────────
+    function renderFunnel(P) {
+      const statusOrder = ['discovered', 'audited', 'enriched', 'queued', 'contacted', 'replied', 'meeting_booked'];
+      const statusLabels = ['Discovered', 'Audited', 'Enriched', 'Queued', 'Contacted', 'Replied', 'Meeting'];
+      const counts = statusOrder.map(s => P.filter(p => p.status === s).length);
+
+      // Also count dead and do_not_contact
+      const dead = P.filter(p => p.status === 'dead').length;
+
+      createHBarChart('chartFunnel', statusLabels, counts,
+        ['#808098', '#6366f1', '#A855F7', '#00D4FF', '#FF8A00', '#00FF88', '#ef4444'],
+      );
+    }
+
+    // ── Business Types ────────────────────────────────────────────────
+    function renderBizTypes(P) {
+      const typeCounts = countBy(P, p => p.business_type);
+      const sorted = sortEntries(typeCounts).slice(0, 15);
+      const labels = sorted.map(([k]) => fmtType(k));
+      const data = sorted.map(([,v]) => v);
+
+      createHBarChart('chartBizTypes', labels, data,
+        PALETTE.slice(0, data.length),
+      );
+    }
+
+    // ── Website Status Breakdown ──────────────────────────────────────
+    function renderWebStatus(P) {
+      const noSite = P.filter(p => !p.has_website).length;
+      const withSite = P.filter(p => p.has_website).length;
+
+      // Platform breakdown for those with sites
+      const platforms = countBy(P.filter(p => p.has_website), p => p.website_platform || 'unknown');
+      const sorted = sortEntries(platforms).slice(0, 8);
+
+      const labels = ['No Website', ...sorted.map(([k]) => fmtType(k))];
+      const data = [noSite, ...sorted.map(([,v]) => v)];
+      const colors = ['#ef4444', ...PALETTE.slice(0, sorted.length)];
+
+      createDoughnut('chartWebStatus', labels, data, colors, { cutout: '55%' });
+    }
+
+    // ── Score vs Reviews Scatter ──────────────────────────────────────
+    function renderScoreReviews(scored) {
+      const tierData = { hot: [], warm: [], cool: [], cold: [] };
+
+      scored.forEach(p => {
+        if (p.google_reviews == null) return;
+        const tier = getTier(p.wp_score);
+        tierData[tier].push({
+          x: p.google_reviews,
+          y: p.wp_score,
+          label: p.business_name,
+        });
+      });
+
+      createScatter('chartScoreReviews', [
+        { label: 'Hot', data: tierData.hot, backgroundColor: '#ef4444', pointRadius: 5 },
+        { label: 'Warm', data: tierData.warm, backgroundColor: '#FF8A00', pointRadius: 4 },
+        { label: 'Cool', data: tierData.cool, backgroundColor: 'rgba(0,212,255,0.5)', pointRadius: 3 },
+        { label: 'Cold', data: tierData.cold, backgroundColor: 'rgba(128,128,152,0.4)', pointRadius: 3 },
+      ], {
+        x: { title: { display: true, text: 'Google Reviews' } },
+        y: { title: { display: true, text: 'WP Score' }, min: 0, max: 100 },
+      });
+    }
+
+    // ── Cities ────────────────────────────────────────────────────────
+    function renderCities(P) {
+      const cityCounts = countBy(P, p => p.city);
+      const sorted = sortEntries(cityCounts).slice(0, 10);
+
+      createBarChart('chartCities',
+        sorted.map(([k]) => k),
+        [{
+          data: sorted.map(([,v]) => v),
+          backgroundColor: PALETTE.slice(0, sorted.length),
+          borderRadius: 4,
+          label: 'Prospects',
+        }],
+        { plugins: { legend: { display: false } } }
+      );
+    }
+
+    // ── Need Signals ──────────────────────────────────────────────────
+    function renderSignals(scored) {
+      const signalCounts = {};
+      scored.forEach(p => {
+        const ws = p.wp_score_json || {};
+        [...(ws.need_signals || []), ...(ws.ability_signals || []), ...(ws.timing_signals || [])].forEach(sig => {
+          const name = sig.split(':')[0];
+          signalCounts[name] = (signalCounts[name] || 0) + 1;
+        });
+      });
+
+      const sorted = sortEntries(signalCounts).slice(0, 20);
+      const labels = sorted.map(([k]) => k.replace(/_/g, ' '));
+      const data = sorted.map(([,v]) => v);
+
+      // Color by signal type
+      const needKeywords = ['no_website','score_','bad_mobile','ancient','stale','no_contact','no_cta','no_click','broken','under_construction','design_sins','no_ssl'];
+      const colors = sorted.map(([k]) => {
+        if (needKeywords.some(nk => k.startsWith(nk))) return '#ef4444';
+        if (k.includes('review') || k.includes('rating') || k.includes('entity') || k.includes('mx_') || k.includes('paid_platform')) return '#A855F7';
+        return '#00D4FF';
+      });
+
+      createHBarChart('chartSignals', labels, data, colors);
+    }
+
+    // ── Enrichment Progress ───────────────────────────────────────────
+    let _enrichHistory = [];  // {ts, done} for rate calculation
+
+    async function pollEnrichment() {
+      try {
+        const ps = await fetchPipelineStatus();
+        const db = ps.db_status_counts || {};
+        const total = Object.values(db).reduce((a,b) => a+b, 0);
+        const enriched = db.enriched || 0;
+        const queued = db.queued || 0;
+        const dead = db.dead || 0;
+        const done = enriched + dead + (db.do_not_contact || 0);
+        const pctVal = total > 0 ? (done / total * 100) : 0;
+        const isRunning = ps.running && queued > 0;
+        const isComplete = queued === 0 && total > 0;
+
+        // Track rate
+        const now = Date.now();
+        _enrichHistory.push({ ts: now, done });
+        _enrichHistory = _enrichHistory.filter(h => now - h.ts < 120_000); // keep 2 min
+        let ratePerMin = 0;
+        if (_enrichHistory.length >= 2) {
+          const oldest = _enrichHistory[0];
+          const elapsed = (now - oldest.ts) / 60_000;
+          if (elapsed > 0.3) ratePerMin = Math.round((done - oldest.done) / elapsed);
+        }
+
+        // ETA
+        let eta = '';
+        if (isRunning && ratePerMin > 0) {
+          const minsLeft = Math.ceil(queued / ratePerMin);
+          eta = minsLeft > 60 ? `~${Math.round(minsLeft/60)}h left` : `~${minsLeft}m left`;
+        }
+
+        const $box = document.getElementById('enrichmentProgress');
+        $box.classList.remove('hidden');
+        document.getElementById('enrichDot').className = `w-2 h-2 rounded-full ${isRunning ? 'bg-neon-green animate-pulse' : isComplete ? 'bg-neon-green' : 'bg-gray-600'}`;
+        document.getElementById('enrichStatus').textContent = isComplete ? 'Complete ✓' : isRunning ? `Running · Cycle #${ps.cycle_count || 0} · ${ps.agent_count || 1} agents` : 'Idle';
+        document.getElementById('enrichStatus').className = `text-[0.65rem] font-mono ${isComplete ? 'text-neon-green' : isRunning ? 'text-neon-green' : 'text-gray-500'}`;
+        document.getElementById('enrichDone').textContent = fmt(done);
+        document.getElementById('enrichTotal').textContent = fmt(total);
+        document.getElementById('enrichPct').textContent = pctVal.toFixed(1) + '%';
+        document.getElementById('enrichETA').textContent = eta;
+        document.getElementById('enrichBar').style.width = pctVal + '%';
+        if (isComplete) document.getElementById('enrichBar').style.background = 'linear-gradient(90deg,#00FF88,#00D4FF)';
+        document.getElementById('enrichQueued').textContent = fmt(queued);
+        document.getElementById('enrichEnriched').textContent = fmt(enriched);
+        document.getElementById('enrichDead').textContent = fmt(dead);
+        document.getElementById('enrichRate').textContent = ratePerMin;
+        document.getElementById('enrichSession').textContent = `Session: ${fmt(ps.backfill_completed || 0)} backfilled, ${fmt(ps.scores_completed || 0)} scored`;
+      } catch (e) { /* silent */ }
+    }
+
+    // Poll enrichment every 15s
+    setInterval(pollEnrichment, 15_000);
+
+    // ── Init ──────────────────────────────────────────────────────────
+    init().then(() => pollEnrichment());
+  </script>
+</body>
+</html>

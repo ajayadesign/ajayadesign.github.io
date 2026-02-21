@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; font-size: 15px;">
+{% if owner_first_name == 'there' %}
+<p>Hi there,</p>
+{% else %}
+<p>Hi {{ owner_first_name }},</p>
+{% endif %}
+
+<p>I noticed {{ business_name }} is running {{ ad_platform_display }} ads — smart move, especially in a competitive market like {{ city }}.</p>
+
+<p>But here's the thing: your website scores <b>{{ speed_score }}/100</b> on Google's own speed test.{% if load_time != 'unknown' %} It takes <b>{{ load_time }}</b> to load.{% endif %}</p>
+
+<p style="padding-left: 12px; border-left: 3px solid #e74c3c; margin: 16px 0;">
+{% if not speed_good %}⚠️ <b>Speed:</b> {{ load_time }} load time — Google data says {{ bounce_rate_est }} of visitors leave before it loads<br>{% endif %}
+{% if not mobile_good %}⚠️ <b>Mobile:</b> {{ mobile_score }}/100 — that's where {{ industry_mobile_pct }}% of {{ business_type }} searches happen<br>{% endif %}
+{% if ssl_expired %}⚠️ <b>Security:</b> SSL {{ ssl_status }} — Chrome shows a "Not Secure" warning before your page even loads<br>{% endif %}
+{% if has_broken_things %}⚠️ <b>Issue:</b> {{ worst_broken_thing }}<br>{% endif %}
+</p>
+
+<p>You're paying to send people to a site that {% if not speed_good %}takes too long to load{% elif not mobile_good %}doesn't work well on phones{% elif ssl_expired %}triggers a security warning{% else %}has room for improvement{% endif %}. Fix the landing page and your ad ROI improves immediately.</p>
+
+<p>I'm a web developer in Manor. I help {{ city }} businesses get more out of their ad spend by making sure the website actually converts the traffic they're paying for.</p>
+
+<p>Would a 15-minute call be worth it? I can walk you through exactly what's happening and what it would take to fix.</p>
+
+<p style="margin-top: 28px;">— {{ sender_name }}</p>
+<p style="color: #888; font-size: 13px; margin-top: 4px;">Web developer in Manor, TX · <a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
+
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a> if you'd rather not hear from me.</p>
+<img src="__TRACKING_PIXEL_URL__" width="1" height="1" alt="" style="display:none;">
+</body>
+</html>

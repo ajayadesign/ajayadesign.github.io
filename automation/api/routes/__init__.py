@@ -42,11 +42,19 @@ _event_queues: dict[str, asyncio.Queue] = {}
 # ── Health ──────────────────────────────────────────────
 
 @router.get("/health", response_model=HealthResponse, tags=["system"])
-async def health():
+async def health(session: AsyncSession = Depends(get_db)):
+    db_status = "connected"
+    try:
+        from sqlalchemy import text
+        await session.execute(text("SELECT 1"))
+    except Exception:
+        db_status = "unreachable"
+    status = "ok" if db_status == "connected" else "degraded"
     return HealthResponse(
-        status="ok",
+        status=status,
         timestamp=datetime.now(timezone.utc).isoformat(),
         version="2.0.0-python",
+        database=db_status,
     )
 
 

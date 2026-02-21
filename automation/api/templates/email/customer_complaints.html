@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; font-size: 15px;">
+{% if owner_first_name == 'there' %}
+<p>Hi there,</p>
+{% else %}
+<p>Hi {{ owner_first_name }},</p>
+{% endif %}
+
+<p>I was looking at reviews for {{ business_name }} and honest take — the service reviews are strong. But I noticed a few customers mention frustrations that tie back to the website:</p>
+
+<p style="padding-left: 12px; border-left: 3px solid #e67e22; margin: 16px 0; font-style: italic;">
+{% if review_complaint_booking %}"{{ review_complaint_booking }}"<br>{% endif %}
+{% if review_complaint_info %}"{{ review_complaint_info }}"<br>{% endif %}
+{% if review_complaint_general %}"{{ review_complaint_general }}"<br>{% endif %}
+{% if not review_complaint_booking and not review_complaint_info and not review_complaint_general %}
+Customers mentioning difficulty finding information, booking issues, or outdated details online.
+{% endif %}
+</p>
+
+<p>These aren't really about your service — they're about the website experience. Things like:</p>
+
+<ul style="margin: 8px 0; padding-left: 20px;">
+{% if not has_booking %}
+<li>No way to book online ({{ online_booking_pct }}% of customers expect this in {{ year }})</li>
+{% endif %}
+{% if not has_contact_form %}
+<li>No contact form — visitors have to leave the site to reach you</li>
+{% endif %}
+{% if not mobile_good %}
+<li>Site scores {{ mobile_score }}/100 on mobile — where most people search</li>
+{% endif %}
+{% if not speed_good %}
+<li>{{ load_time }} load time — many visitors give up after 3 seconds</li>
+{% endif %}
+</ul>
+
+<p>A better website wouldn't just stop these complaints — it'd bring in more 5-star reviews because the whole experience, from first Google search to walking in the door, would be smooth.</p>
+
+<p>I'm a web developer in Manor. I help {{ city }} {{ business_type_plural }} turn their website from a weak link into an asset.</p>
+
+<p>Got 15 minutes? I'll show you exactly how to fix this.</p>
+
+<p style="margin-top: 28px;">— {{ sender_name }}</p>
+<p style="color: #888; font-size: 13px; margin-top: 4px;">Web developer in Manor, TX · <a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
+
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a> if you'd rather not hear from me.</p>
+<img src="__TRACKING_PIXEL_URL__" width="1" height="1" alt="" style="display:none;">
+</body>
+</html>

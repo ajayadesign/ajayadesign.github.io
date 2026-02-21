@@ -11,7 +11,16 @@ engine = create_async_engine(
     settings.database_url,
     echo=False,
     # pool settings only for postgres
-    **({} if "sqlite" in settings.database_url else {"pool_size": 5, "max_overflow": 10}),
+    **(
+        {}
+        if "sqlite" in settings.database_url
+        else {
+            "pool_size": 5,
+            "max_overflow": 10,
+            "pool_pre_ping": True,       # test connections before use (survives sleep/wake)
+            "pool_recycle": 300,          # recycle connections every 5 min to avoid stale FDs
+        }
+    ),
 )
 
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

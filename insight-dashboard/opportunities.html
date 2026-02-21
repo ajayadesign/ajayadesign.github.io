@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insight Dashboard — Opportunities</title>
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { mono: ['JetBrains Mono','monospace'], sans: ['Inter','sans-serif'] },
+          colors: {
+            'surface':'#06060A','surface-1':'#0C0C12','surface-2':'#12121A','surface-3':'#1A1A24',
+            'border':'#2A2A3A','electric':'#00D4FF','neon-green':'#00FF88','neon-orange':'#FF8A00',
+            'neon-purple':'#A855F7','neon-red':'#ef4444','neon-yellow':'#FFD600',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/dashboard.css">
+  <style>
+    .prospect-row { cursor: pointer; }
+    .prospect-row:hover { background: rgba(0,212,255,0.04) !important; }
+    .expandable { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .expandable.open { max-height: 500px; }
+    .cluster-indicator {
+      width: 4px; border-radius: 2px; position: absolute; left: 0; top: 0; bottom: 0;
+    }
+  </style>
+</head>
+<body class="bg-surface text-gray-300 min-h-screen">
+
+  <!-- Nav -->
+  <nav class="fixed top-0 left-0 right-0 z-50 border-b border-border bg-surface/90 backdrop-blur-lg">
+    <div class="max-w-[1600px] mx-auto px-6 flex items-center justify-between h-14">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-electric to-neon-purple flex items-center justify-center text-white font-bold text-sm">AD</div>
+        <span class="font-semibold text-white text-sm tracking-wide">Insight Dashboard</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <a href="index.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          Overview
+        </a>
+        <a href="intelligence.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          Intelligence
+        </a>
+        <a href="opportunities.html" class="nav-link active">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+          Opportunities
+        </a>
+        <a href="market.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Market
+        </a>
+        <a href="prospects.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Prospects
+        </a>
+      </div>
+      <button onclick="refreshData()" class="text-xs px-3 py-1.5 rounded-lg border border-border hover:border-electric text-gray-400 hover:text-electric transition-all">↻ Refresh</button>
+    </div>
+  </nav>
+
+  <main class="pt-20 pb-12 px-6 max-w-[1600px] mx-auto">
+    <div id="loadingState" class="flex items-center justify-center min-h-[60vh]">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full border-2 border-electric border-t-transparent animate-spin mx-auto mb-4"></div>
+        <p class="text-gray-500 text-sm">Analyzing opportunities...</p>
+      </div>
+    </div>
+
+    <div id="content" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-lg font-semibold text-white">Opportunity Analysis</h1>
+          <p class="text-sm text-gray-500">Ranked prospects, pain-point clusters, and actionable next steps.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <select id="filterTier" onchange="renderAll()" class="bg-surface-2 border border-border rounded-lg px-3 py-1.5 text-xs text-gray-300">
+            <option value="all">All Tiers</option>
+            <option value="hot">🔥 Hot Only</option>
+            <option value="warm">🟠 Warm Only</option>
+            <option value="cool">🔵 Cool Only</option>
+            <option value="cold">🥶 Cold Only</option>
+          </select>
+          <select id="filterType" onchange="renderAll()" class="bg-surface-2 border border-border rounded-lg px-3 py-1.5 text-xs text-gray-300">
+            <option value="all">All Types</option>
+          </select>
+          <input id="searchBox" type="text" placeholder="Search business..." oninput="renderAll()"
+            class="bg-surface-2 border border-border rounded-lg px-3 py-1.5 text-xs text-gray-300 w-48">
+        </div>
+      </div>
+
+      <!-- ── Opportunity Clusters ── -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="clusterGrid"></div>
+
+      <!-- ── Pain Point Treemap ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Top Opportunities by Pain Point Cluster<span class="info-icon" data-tip="Clusters derived from: has_website, score_overall, is_hiring, runs_ads, google_reviews, design_era columns in prospects table.">?</span></h3>
+          <div class="h-[300px]"><canvas id="chartClusters"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Readiness Matrix — <span class="tip" data-tip="NEED (0-40): How much the business needs web services.">Need</span> vs <span class="tip" data-tip="ABILITY (0-30): Signs the business can afford to pay for services.">Ability</span></h3>
+          <div class="h-[300px]"><canvas id="chartMatrix"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Top Prospects Table ── -->
+      <div class="chart-card">
+        <div class="flex items-center justify-between mb-4">
+          <h3>Top Prospects Ranked by <span class="tip" data-tip="WP Score = Website Prospect Score (0-100). Higher = more likely to need and buy web services.">WP Score</span></h3>
+          <span id="tableCount" class="text-xs text-gray-500 font-mono"></span>
+        </div>
+        <div class="overflow-auto max-h-[600px] rounded-lg border border-border">
+          <table class="data-table" id="prospectTable">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Business</th>
+                <th>Type</th>
+                <th>City</th>
+                <th><span class="tip" data-tip="Website Prospect Score (0-100). Combines NEED + ABILITY + TIMING signals.">WP Score</span></th>
+                <th><span class="tip" data-tip="NEED (0-40): How badly this business needs a website. No website, bad mobile, ancient design, no SSL, etc.">NEED</span></th>
+                <th><span class="tip" data-tip="ABILITY (0-30): Signs the business can afford web services. Reviews, rating, entity type, email provider, hiring.">ABILITY</span></th>
+                <th><span class="tip" data-tip="TIMING (0-30): Signals the business is ready now. Under construction site, newly formed, active hiring, running ads.">TIMING</span></th>
+                <th><span class="tip" data-tip="Hot (80+), Warm (60-79), Cool (40-59), Cold (&lt;40). Based on total WP Score.">Tier</span></th>
+                <th>Website</th>
+                <th>Reviews</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="prospectBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Actionable Recommendations ── -->
+      <div id="recommendations" class="chart-card">
+        <h3>Actionable Recommendations<span class="info-icon" data-tip="Generated from: prospects.wp_score, has_website, has_email, wp_score_json.ability. Thresholds: warm/hot ≥ 60, email recon ≥ 50.">?</span></h3>
+        <div id="recsContent" class="space-y-3"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script>
+    let DATA = null;
+
+    async function refreshData() {
+      DATA = await fetchAnalytics(true);
+      populateFilters();
+      renderAll();
+    }
+
+    async function init() {
+      try {
+        DATA = await fetchAnalytics();
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('content').classList.remove('hidden');
+        populateFilters();
+        renderAll();
+      } catch(e) {
+        document.getElementById('loadingState').innerHTML =
+          `<div class="text-center text-neon-red">Failed: ${e.message}</div>`;
+      }
+    }
+
+    function populateFilters() {
+      const types = [...new Set(DATA.prospects.map(p => p.business_type).filter(Boolean))].sort();
+      const sel = document.getElementById('filterType');
+      sel.innerHTML = '<option value="all">All Types</option>' +
+        types.map(t => `<option value="${t}">${fmtType(t)}</option>`).join('');
+    }
+
+    function getFiltered() {
+      let P = DATA.prospects.filter(p => p.wp_score != null);
+      const tier = document.getElementById('filterTier').value;
+      const type = document.getElementById('filterType').value;
+      const search = document.getElementById('searchBox').value.toLowerCase();
+
+      if (tier !== 'all') P = P.filter(p => getTier(p.wp_score) === tier);
+      if (type !== 'all') P = P.filter(p => p.business_type === type);
+      if (search) P = P.filter(p => p.business_name.toLowerCase().includes(search));
+
+      return P.sort((a,b) => (b.wp_score || 0) - (a.wp_score || 0));
+    }
+
+    function renderAll() {
+      const scored = DATA.prospects.filter(p => p.wp_score != null);
+      const filtered = getFiltered();
+
+      renderClusters(scored);
+      renderClusterChart(scored);
+      renderMatrix(scored);
+      renderTable(filtered);
+      renderRecommendations(scored);
+    }
+
+    // ── Opportunity Clusters ──────────────────────────────────────────
+    function renderClusters(scored) {
+      const clusters = [
+        {
+          name: 'No Website',
+          icon: '🚫',
+          color: '#ef4444',
+          filter: p => !p.has_website,
+          pitch: 'Complete web presence from scratch — highest conversion potential',
+        },
+        {
+          name: 'Bad Website',
+          icon: '💀',
+          color: '#FF8A00',
+          filter: p => p.has_website && p.score_overall != null && p.score_overall < 40,
+          pitch: 'Website redesign — they know they need it, site actively hurts them',
+        },
+        {
+          name: 'Growing Business',
+          icon: '🚀',
+          color: '#00FF88',
+          filter: p => p.is_hiring || p.runs_ads || (p.google_reviews && p.google_reviews > 50),
+          pitch: 'Thriving businesses that can afford & need a better digital presence',
+        },
+        {
+          name: 'Outdated Design',
+          icon: '🕰️',
+          color: '#A855F7',
+          filter: p => isOutdatedDesign(p.design_era),
+          pitch: 'Modernization play — their competitors look better online',
+        },
+      ];
+
+      document.getElementById('clusterGrid').innerHTML = clusters.map(c => {
+        const members = scored.filter(c.filter);
+        const avgScore = members.length ? avg(members, p => p.wp_score) : 0;
+        return `
+          <div class="cluster-card relative pl-6">
+            <div class="cluster-indicator" style="background:${c.color}"></div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-lg">${c.icon}</span>
+              <span class="text-sm font-semibold text-white">${c.name}</span>
+            </div>
+            <div class="text-2xl font-bold font-mono text-white">${fmt(members.length)}</div>
+            <div class="text-xs text-gray-500 mt-1">Avg WP Score: <span class="font-mono" style="color:${c.color}">${avgScore.toFixed(0)}</span></div>
+            <div class="text-xs text-gray-600 mt-2 leading-relaxed">${c.pitch}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ── Cluster Bar Chart ─────────────────────────────────────────────
+    function renderClusterChart(scored) {
+      const noWeb = scored.filter(p => !p.has_website).length;
+      const badWeb = scored.filter(p => p.has_website && p.score_overall != null && p.score_overall < 40).length;
+      const growing = scored.filter(p => p.is_hiring || p.runs_ads).length;
+      const outdated = scored.filter(p => isOutdatedDesign(p.design_era)).length;
+      const noSSL = scored.filter(p => p.ssl_valid === false).length;
+      const noSocial = scored.filter(p => !p.has_social).length;
+      const lowMobile = scored.filter(p => p.score_mobile != null && p.score_mobile < 50).length;
+
+      createHBarChart('chartClusters',
+        ['No Website', 'Bad Website (<40)', 'Growing (Hiring/Ads)', 'Outdated Design', 'No SSL', 'No Social', 'Poor Mobile'],
+        [noWeb, badWeb, growing, outdated, noSSL, noSocial, lowMobile],
+        ['#ef4444', '#FF8A00', '#00FF88', '#A855F7', '#FFD600', '#00D4FF', '#ec4899'],
+      );
+    }
+
+    // ── Need vs Ability Matrix ────────────────────────────────────────
+    function renderMatrix(scored) {
+      const datasets = {};
+      const tierNames = { hot: 'Hot', warm: 'Warm', cool: 'Cool', cold: 'Cold' };
+      const tierColors = { hot: '#ef4444', warm: '#FF8A00', cool: 'rgba(0,212,255,0.6)', cold: 'rgba(128,128,152,0.4)' };
+
+      for (const tier of ['hot', 'warm', 'cool', 'cold']) {
+        datasets[tier] = {
+          label: tierNames[tier],
+          data: [],
+          backgroundColor: tierColors[tier],
+          pointRadius: tier === 'hot' ? 6 : tier === 'warm' ? 5 : 3,
+        };
+      }
+
+      scored.forEach(p => {
+        const ws = p.wp_score_json || {};
+        const tier = getTier(p.wp_score);
+        if (datasets[tier]) {
+          datasets[tier].data.push({
+            x: ws.need || 0,
+            y: ws.ability || 0,
+            label: p.business_name,
+          });
+        }
+      });
+
+      createScatter('chartMatrix', Object.values(datasets), {
+        x: { title: { display: true, text: 'NEED Score (0-40)' }, min: 0, max: 42 },
+        y: { title: { display: true, text: 'ABILITY Score (0-30)' }, min: 0, max: 32 },
+      });
+    }
+
+    // ── Prospect Table ────────────────────────────────────────────────
+    function renderTable(filtered) {
+      document.getElementById('tableCount').textContent = `${filtered.length} prospects`;
+
+      const tbody = document.getElementById('prospectBody');
+      tbody.innerHTML = filtered.slice(0, 100).map((p, i) => {
+        const ws = p.wp_score_json || {};
+        const tier = getTier(p.wp_score);
+        const tierClass = `tier-${tier}`;
+
+        const needSignals = (ws.need_signals || []).map(s => {
+          const [name, pts] = s.split(':');
+          return `<span class="signal-pill">${name.replace(/_/g,' ')} ${pts}</span>`;
+        }).join('');
+        const abilitySignals = (ws.ability_signals || []).map(s => {
+          const [name, pts] = s.split(':');
+          return `<span class="signal-pill" style="background:rgba(0,212,255,0.12);color:#67e8f9;border-color:rgba(0,212,255,0.2)">${name.replace(/_/g,' ')} ${pts}</span>`;
+        }).join('');
+        const timingSignals = (ws.timing_signals || []).map(s => {
+          const [name, pts] = s.split(':');
+          return `<span class="signal-pill" style="background:rgba(0,255,136,0.12);color:#4ade80;border-color:rgba(0,255,136,0.2)">${name.replace(/_/g,' ')} ${pts}</span>`;
+        }).join('');
+
+        return `
+          <tr class="prospect-row" onclick="this.nextElementSibling.classList.toggle('hidden')">
+            <td class="font-mono text-gray-500">#${i+1}</td>
+            <td class="text-white font-medium">${p.business_name}</td>
+            <td>${fmtType(p.business_type)}</td>
+            <td>${p.city || '—'}</td>
+            <td><span class="font-mono font-bold" style="color:${tierColor(tier)}">${p.wp_score}</span></td>
+            <td class="font-mono">${ws.need || '—'}<span class="text-gray-600">/40</span></td>
+            <td class="font-mono">${ws.ability || '—'}<span class="text-gray-600">/30</span></td>
+            <td class="font-mono">${ws.timing || '—'}<span class="text-gray-600">/30</span></td>
+            <td><span class="tier-badge ${tierClass}">${tier}</span></td>
+            <td>${p.has_website ? '✅' : '❌'}</td>
+            <td class="font-mono">${p.google_reviews || '—'}</td>
+            <td><span class="text-xs px-2 py-0.5 rounded bg-surface-3 text-gray-400">${p.status}</span></td>
+          </tr>
+          <tr class="hidden">
+            <td colspan="12" class="!p-4 bg-surface-2/50">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                <div>
+                  <div class="text-gray-500 font-semibold mb-1 uppercase text-[10px]">Need Signals</div>
+                  <div>${needSignals || '<span class="text-gray-600">No signals</span>'}</div>
+                </div>
+                <div>
+                  <div class="text-gray-500 font-semibold mb-1 uppercase text-[10px]">Ability Signals</div>
+                  <div>${abilitySignals || '<span class="text-gray-600">No signals</span>'}</div>
+                </div>
+                <div>
+                  <div class="text-gray-500 font-semibold mb-1 uppercase text-[10px]">Timing Signals</div>
+                  <div>${timingSignals || '<span class="text-gray-600">No signals</span>'}</div>
+                </div>
+              </div>
+              <div class="mt-3 grid grid-cols-2 md:grid-cols-6 gap-3 text-xs">
+                <div><span class="text-gray-500">Platform:</span> <span class="text-gray-300">${p.website_platform || '—'}</span></div>
+                <div><span class="text-gray-500">Rating:</span> <span class="text-gray-300">${p.google_rating || '—'}⭐</span></div>
+                <div><span class="text-gray-500">Social:</span> <span class="text-gray-300">${p.has_social ? `Score ${p.social_score}` : 'None'}</span></div>
+                <div><span class="text-gray-500">Entity:</span> <span class="text-gray-300">${p.entity_type || '—'}</span></div>
+                <div><span class="text-gray-500">Hiring:</span> <span class="text-gray-300">${p.is_hiring ? '✅ Yes' : 'No'}</span></div>
+                <div><span class="text-gray-500">Ads:</span> <span class="text-gray-300">${p.runs_ads ? '✅ Yes' : 'No'}</span></div>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // ── Recommendations ───────────────────────────────────────────────
+    function renderRecommendations(scored) {
+      const noWeb = scored.filter(p => !p.has_website);
+      const warmHot = scored.filter(p => p.wp_score >= 60);
+      const hasEmail = scored.filter(p => p.has_email);
+      const noEmailHighScore = scored.filter(p => !p.has_email && p.wp_score >= 50);
+
+      const recs = [
+        {
+          priority: 'HIGH',
+          color: '#ef4444',
+          title: `${warmHot.length} Warm/Hot prospects ready for outreach`,
+          desc: `These businesses score 60+ and have strong need + ability signals. ${warmHot.filter(p => p.has_email).length} already have contact emails.`,
+          action: 'Review and approve email drafts for these top-tier prospects first.',
+        },
+        {
+          priority: 'HIGH',
+          color: '#FF8A00',
+          title: `${noWeb.length} businesses with ZERO web presence`,
+          desc: `${pct(noWeb.length, scored.length)} of all prospects have no website at all. Average ability score: ${avg(noWeb, p => p.wp_score_json?.ability).toFixed(1)}/30.`,
+          action: 'Lead with "Your competitors are online, you\'re invisible" angle.',
+        },
+        {
+          priority: 'MEDIUM',
+          color: '#A855F7',
+          title: `${noEmailHighScore.length} high-scoring prospects missing contact email`,
+          desc: 'These score 50+ but have no email found yet. Worth manual outreach via phone or social.',
+          action: 'Run targeted email recon or use phone/social DM for these.',
+        },
+        {
+          priority: 'INFO',
+          color: '#00D4FF',
+          title: `${hasEmail.length} prospects have contact emails (${pct(hasEmail.length, scored.length)})`,
+          desc: 'Email outreach coverage. The rest need phone, social, or in-person contact.',
+          action: 'Focus pipeline on getting emails for cool+ tier prospects.',
+        },
+      ];
+
+      document.getElementById('recsContent').innerHTML = recs.map(r => `
+        <div class="flex items-start gap-3 p-3 rounded-lg border border-border/50 bg-surface-2/30">
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded" style="background:${r.color}20;color:${r.color};border:1px solid ${r.color}40">${r.priority}</span>
+          <div>
+            <div class="text-sm font-semibold text-white">${r.title}</div>
+            <div class="text-xs text-gray-400 mt-0.5">${r.desc}</div>
+            <div class="text-xs text-gray-500 mt-1">→ <span class="text-gray-300">${r.action}</span></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    init();
+  </script>
+</body>
+</html>
