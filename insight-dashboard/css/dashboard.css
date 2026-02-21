@@ -1,0 +1,332 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Insight Dashboard — Custom Styles
+   Dark theme analytics dashboard for AjayaDesign prospect intelligence
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Scrollbar ───────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0C0C12; }
+::-webkit-scrollbar-thumb { background: #2A2A3A; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3A3A5A; }
+
+/* ── Base ────────────────────────────────────────────────────────── */
+body { font-family: 'Inter', system-ui, sans-serif; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ── KPI Cards ───────────────────────────────────────────────────── */
+.kpi-card {
+  background: linear-gradient(135deg, #0C0C12 0%, #12121A 100%);
+  border: 1px solid #2A2A3A;
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent, #00D4FF);
+  opacity: 0.6;
+}
+.kpi-card:hover {
+  border-color: #3A3A5A;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+/* ── Chart Containers ────────────────────────────────────────────── */
+.chart-card {
+  background: #0C0C12;
+  border: 1px solid #2A2A3A;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: border-color 0.3s;
+}
+.chart-card:hover { border-color: #3A3A5A; }
+.chart-card h3 {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Nav ─────────────────────────────────────────────────────────── */
+.nav-link {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  color: #808098;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.nav-link:hover { color: #e0e0e0; background: rgba(255,255,255,0.04); }
+.nav-link.active {
+  color: #00D4FF;
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.2);
+}
+
+/* ── Data Table ──────────────────────────────────────────────────── */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.82rem;
+}
+.data-table thead th {
+  background: #06060A;
+  color: #808098;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.72rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #2A2A3A;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.data-table tbody tr {
+  transition: background 0.15s;
+  border-bottom: 1px solid rgba(42,42,58,0.3);
+}
+.data-table tbody tr:hover { background: rgba(0,212,255,0.03); }
+.data-table td {
+  padding: 0.6rem 1rem;
+  color: #c0c0d0;
+  white-space: nowrap;
+}
+.data-table td:first-child { color: #e0e0e0; font-weight: 500; }
+
+/* ── Tier Badges ─────────────────────────────────────────────────── */
+.tier-hot {
+  background: rgba(239,68,68,0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239,68,68,0.3);
+}
+.tier-warm {
+  background: rgba(255,138,0,0.15);
+  color: #FF8A00;
+  border: 1px solid rgba(255,138,0,0.3);
+}
+.tier-cool {
+  background: rgba(0,212,255,0.12);
+  color: #00D4FF;
+  border: 1px solid rgba(0,212,255,0.25);
+}
+.tier-cold {
+  background: rgba(100,100,140,0.15);
+  color: #808098;
+  border: 1px solid rgba(100,100,140,0.3);
+}
+.tier-badge {
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Signal Pills ────────────────────────────────────────────────── */
+.signal-pill {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  margin: 0.15rem;
+  background: rgba(168,85,247,0.12);
+  color: #c084fc;
+  border: 1px solid rgba(168,85,247,0.2);
+}
+
+/* ── Score Bar ───────────────────────────────────────────────────── */
+.score-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: #1A1A24;
+  overflow: hidden;
+  position: relative;
+}
+.score-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Loading ─────────────────────────────────────────────────────── */
+.loading-pulse {
+  animation: loadPulse 1.5s ease-in-out infinite;
+}
+@keyframes loadPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+/* ── Insight Card ────────────────────────────────────────────────── */
+.insight-card {
+  background: linear-gradient(135deg, rgba(0,212,255,0.05) 0%, rgba(168,85,247,0.05) 100%);
+  border: 1px solid rgba(0,212,255,0.15);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+.insight-card .insight-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+/* ── Toast ───────────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: #12121A;
+  border: 1px solid #00D4FF;
+  color: #e0e0e0;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  z-index: 99;
+  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 4px 20px rgba(0,212,255,0.15);
+}
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Donut label ─────────────────────────────────────────────────── */
+.donut-center-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+/* ── Cluster Card ────────────────────────────────────────────────── */
+.cluster-card {
+  background: #0C0C12;
+  border: 1px solid #2A2A3A;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: all 0.25s;
+}
+.cluster-card:hover {
+  border-color: #3A3A5A;
+  transform: translateY(-1px);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .kpi-card { padding: 1rem; }
+  .chart-card { padding: 1rem; }
+}
+
+/* ── Tooltips ────────────────────────────────────────────────────── */
+.tip {
+  position: relative;
+  cursor: help;
+  border-bottom: 1px dotted rgba(0,212,255,0.4);
+}
+.tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #12121A;
+  color: #c0c0d0;
+  border: 1px solid #2A2A3A;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 400;
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: normal;
+  width: max-content;
+  max-width: 280px;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+}
+.tip:hover::after {
+  opacity: 1;
+}
+/* Variant: tooltip below */
+.tip-below::after {
+  bottom: auto;
+  top: calc(100% + 8px);
+}
+/* Variant: tooltip left-aligned */
+.tip-left::after {
+  left: 0;
+  transform: none;
+}
+/* ── Info icon helper ────────────────────────────────────────────── */
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(0,212,255,0.12);
+  color: #00D4FF;
+  font-size: 0.6rem;
+  font-weight: 700;
+  margin-left: 4px;
+  vertical-align: middle;
+  cursor: help;
+  position: relative;
+  flex-shrink: 0;
+}
+.info-icon::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #12121A;
+  color: #c0c0d0;
+  border: 1px solid #2A2A3A;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 400;
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: normal;
+  width: max-content;
+  max-width: 280px;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+}
+.info-icon:hover::after { opacity: 1; }

@@ -18,7 +18,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy import func, select, case, text, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.database import get_db
+from api.database import get_db, async_session_factory
 from api.config import settings
 from api.models.prospect import (
     GeoRing,
@@ -146,6 +146,8 @@ async def list_prospects(
     has_website: Optional[str] = None,
     qualified: Optional[str] = None,
     search: Optional[str] = None,
+    wp_tier: Optional[str] = None,
+    min_wp_score: Optional[int] = None,
     sort: str = "priority_score",
     order: str = "desc",
     limit: int = Query(50, le=500),
@@ -174,6 +176,14 @@ async def list_prospects(
         query = query.where(Prospect.status == "discovered")
     if search:
         query = query.where(Prospect.business_name.ilike(f"%{search}%"))
+    # WP Score filters
+    if wp_tier:
+        _TIER_RANGES = {"hot": (80, 100), "warm": (60, 79), "cool": (40, 59), "cold": (0, 39)}
+        tier_range = _TIER_RANGES.get(wp_tier.lower())
+        if tier_range:
+            query = query.where(Prospect.wp_score >= tier_range[0], Prospect.wp_score <= tier_range[1])
+    if min_wp_score is not None:
+        query = query.where(Prospect.wp_score >= min_wp_score)
 
     # Sorting
     sort_col = getattr(Prospect, sort, Prospect.priority_score)
@@ -263,6 +273,8 @@ async def export_prospects_csv(
         ("Google Reviews", "google_reviews"),
         ("Google Maps URL", "google_maps_url"),
         ("Priority Score", "priority_score"),
+        ("WP Score", "wp_score"),
+        ("WP Tier", "wp_tier"),
         ("Notes", "notes"),
         ("Created", "created_at"),
     ]
@@ -341,6 +353,32 @@ async def get_prospect(prospect_id: str, db: AsyncSession = Depends(get_db)):
         "reachability": {"value": reach, "max": 10, "label": "Reachability", "detail": f"{'Email ✓' if prospect.owner_email else 'No email'} · {'Verified ✓' if prospect.email_verified else ''} · {'Named ✓' if prospect.owner_name else ''}".strip(' ·')},
         "total": {"value": int(site_badness + review_score + proximity_score + industry_mult + reach), "max": 100},
     }
+
+    # WP Score breakdown (NEED/ABILITY/TIMING) from enrichment pipeline
+    if prospect.wp_score_json:
+        wp_json = prospect.wp_score_json
+        data["wp_score_breakdown"] = {
+            "wp_score": prospect.wp_score,
+            "tier": wp_json.get("tier", "unknown"),
+            "need": {
+                "value": wp_json.get("need", 0),
+                "max": 40,
+                "label": "Need for Website",
+                "signals": wp_json.get("need_signals", []),
+            },
+            "ability": {
+                "value": wp_json.get("ability", 0),
+                "max": 30,
+                "label": "Ability to Pay",
+                "signals": wp_json.get("ability_signals", []),
+            },
+            "timing": {
+                "value": wp_json.get("timing", 0),
+                "max": 30,
+                "label": "Timing Signals",
+                "signals": wp_json.get("timing_signals", []),
+            },
+        }
 
     return data
 
@@ -1464,10 +1502,12 @@ async def bulk_advance(body: dict):
     from api.services.intel_engine import audit_prospect
     from api.services.recon_engine import recon_prospect
     from api.services.cadence_engine import enqueue_prospect
+    from api.services.deep_enrichment import deep_enrich_prospect
+    from api.services.scoring_engine import score_prospect
     import asyncio
 
     async def _run():
-        stats = {"audit": 0, "recon": 0, "enqueue": 0, "skip": 0, "error": 0}
+        stats = {"audit": 0, "enrich": 0, "recon": 0, "score": 0, "enqueue": 0, "skip": 0, "error": 0}
         async with async_session_factory() as db:
             for pid in ids:
                 try:
@@ -1483,15 +1523,21 @@ async def bulk_advance(body: dict):
                         await audit_prospect(str(pid))
                         stats["audit"] += 1
                     elif p.status == "discovered" and (not p.has_website or not p.website_url):
-                        # Fast-track no-website to audited, then recon
+                        # Fast-track no-website to audited, then enrich
                         p.status = "audited"
                         p.updated_at = datetime.now(timezone.utc)
                         await db.commit()
-                        await recon_prospect(str(pid))
-                        stats["recon"] += 1
+                        await deep_enrich_prospect(str(pid))
+                        stats["enrich"] += 1
                     elif p.status == "audited":
+                        await deep_enrich_prospect(str(pid))
+                        stats["enrich"] += 1
+                    elif p.status == "enriched" and not p.owner_email:
                         await recon_prospect(str(pid))
                         stats["recon"] += 1
+                    elif p.status == "enriched" and p.owner_email and not p.wp_score:
+                        await score_prospect(str(pid))
+                        stats["score"] += 1
                     elif p.status == "enriched" and p.owner_email:
                         await enqueue_prospect(str(pid))
                         stats["enqueue"] += 1
@@ -1507,6 +1553,485 @@ async def bulk_advance(body: dict):
 
     asyncio.create_task(_run())
     return {"message": f"Advancing {len(ids)} prospects through pipeline"}
+
+
+# ── Deep Enrichment & Scoring Endpoints ──────────────────────────────
+
+@outreach_router.post("/prospects/{prospect_id}/enrich")
+async def trigger_enrich(prospect_id: str):
+    """Trigger deep enrichment for a single prospect."""
+    from api.services.deep_enrichment import deep_enrich_prospect
+    try:
+        result = await deep_enrich_prospect(prospect_id)
+        return {"message": "Enrichment complete", "enriched": bool(result)}
+    except Exception as e:
+        logger.error("Enrichment failed for %s: %s", prospect_id, e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@outreach_router.post("/prospects/{prospect_id}/score")
+async def trigger_score(prospect_id: str):
+    """Calculate/recalculate wp_score for a single prospect."""
+    from api.services.scoring_engine import score_prospect
+    try:
+        result = await score_prospect(prospect_id)
+        return {"message": "Scoring complete", "wp_score": result.get("wp_score"), "tier": result.get("tier")}
+    except Exception as e:
+        logger.error("Scoring failed for %s: %s", prospect_id, e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@outreach_router.post("/bulk/enrich")
+async def bulk_enrich(body: dict):
+    """Trigger deep enrichment for a list of prospect IDs."""
+    ids = body.get("prospect_ids", [])
+    if not ids:
+        raise HTTPException(status_code=400, detail="No prospect_ids provided")
+    from api.services.deep_enrichment import deep_enrich_prospect
+    import asyncio
+
+    async def _run():
+        count = 0
+        for pid in ids:
+            try:
+                result = await deep_enrich_prospect(str(pid))
+                if result:
+                    count += 1
+            except Exception as e:
+                logger.error("Bulk enrich failed for %s: %s", pid, e)
+            await asyncio.sleep(3)
+        logger.info("Bulk enrich complete: %d/%d succeeded", count, len(ids))
+
+    asyncio.create_task(_run())
+    return {"message": f"Bulk enrichment started for {len(ids)} prospects"}
+
+
+@outreach_router.post("/bulk/score")
+async def bulk_score(body: dict):
+    """Calculate wp_score for a list of prospect IDs."""
+    ids = body.get("prospect_ids", [])
+    if not ids:
+        raise HTTPException(status_code=400, detail="No prospect_ids provided")
+    from api.services.scoring_engine import score_prospect
+
+    results = {"scored": 0, "errors": []}
+    for pid in ids:
+        try:
+            result = await score_prospect(str(pid))
+            if result:
+                results["scored"] += 1
+        except Exception as e:
+            results["errors"].append({"id": pid, "error": str(e)})
+    return {"message": f"Scored {results['scored']}/{len(ids)} prospects", **results}
+
+
+@outreach_router.post("/batch/enrich")
+async def trigger_batch_enrich(limit: int = Query(10, le=50)):
+    """Batch-enrich audited prospects that haven't been enriched yet."""
+    from api.services.deep_enrichment import deep_enrich_prospect
+    import asyncio
+
+    async def _run():
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect)
+                .where(Prospect.status == "audited")
+                .where(Prospect.enriched_at.is_(None))
+                .order_by(Prospect.priority_score.desc().nullslast())
+                .limit(limit)
+            )
+            prospects = result.scalars().all()
+            count = 0
+            for p in prospects:
+                try:
+                    await deep_enrich_prospect(str(p.id))
+                    count += 1
+                except Exception as e:
+                    logger.error("Batch enrich failed for %s: %s", p.id, e)
+                await asyncio.sleep(3)
+            logger.info("Batch enrich: %d/%d done", count, len(prospects))
+
+    asyncio.create_task(_run())
+    return {"message": f"Batch enrichment started (limit={limit})"}
+
+
+@outreach_router.post("/batch/score")
+async def trigger_batch_score(limit: int = Query(50, le=200)):
+    """Batch-score prospects that have been enriched but not scored."""
+    from api.services.scoring_engine import batch_score_prospects
+    count = await batch_score_prospects(limit)
+    return {"message": f"Scored {count} prospects"}
+
+
+@outreach_router.post("/backfill/enrich-and-score")
+async def backfill_enrich_and_score(
+    limit: int = Query(10, le=100),
+    statuses: str = Query(
+        "enriched,queued,contacted,replied,meeting_booked,promoted",
+        description="Comma-separated statuses to backfill",
+    ),
+):
+    """
+    Backfill deep enrichment + wp_score on existing prospects that have
+    already progressed past the audit stage.  Their current pipeline status
+    is PRESERVED — they stay queued/contacted/etc.
+
+    This is the safe pathway for running the new enrichment pipeline on
+    prospects that already went through crawl → audit → recon → enqueue.
+    """
+    from api.services.deep_enrichment import backfill_enrich_prospect
+    from api.services.scoring_engine import score_prospect
+    import asyncio
+
+    status_list = [s.strip() for s in statuses.split(",") if s.strip()]
+
+    async def _run():
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id, Prospect.business_name, Prospect.status)
+                .where(
+                    Prospect.status.in_(status_list),
+                    Prospect.enriched_at.is_(None),
+                )
+                .order_by(Prospect.priority_score.desc().nullslast())
+                .limit(limit)
+            )
+            rows = result.fetchall()
+
+        stats = {"enriched": 0, "scored": 0, "failed": 0, "total": len(rows)}
+        logger.info(
+            "Backfill started: %d prospects in statuses %s",
+            len(rows), status_list,
+        )
+
+        for pid, name, status in rows:
+            pid_str = str(pid)
+            try:
+                # Enrich (status-preserving)
+                enrichment = await backfill_enrich_prospect(pid_str)
+                if enrichment:
+                    stats["enriched"] += 1
+
+                    # Score immediately after enrichment
+                    score_result = await score_prospect(pid_str)
+                    if score_result:
+                        stats["scored"] += 1
+                        logger.info(
+                            "Backfill: %s → enriched + scored %d (%s) [status=%s kept]",
+                            name, score_result.get("wp_score", 0),
+                            score_result.get("tier", "?"), status,
+                        )
+                else:
+                    stats["failed"] += 1
+            except Exception as e:
+                logger.error("Backfill failed for %s (%s): %s", name, pid_str, e)
+                stats["failed"] += 1
+
+            await asyncio.sleep(3)  # respectful rate limiting
+
+        logger.info("Backfill complete: %s", stats)
+
+    asyncio.create_task(_run())
+
+    # Check how many are eligible
+    async with async_session_factory() as db:
+        result = await db.execute(
+            select(func.count(Prospect.id)).where(
+                Prospect.status.in_(status_list),
+                Prospect.enriched_at.is_(None),
+            )
+        )
+        eligible = result.scalar()
+
+    return {
+        "message": f"Backfill started for up to {min(limit, eligible)} prospects (of {eligible} eligible)",
+        "eligible": eligible,
+        "limit": limit,
+        "statuses": status_list,
+    }
+
+
+@outreach_router.get("/wp-score-stats")
+async def get_wp_score_stats(db: AsyncSession = Depends(get_db)):
+    """Get aggregate wp_score statistics for the dashboard."""
+    from sqlalchemy import case
+
+    result = await db.execute(
+        select(
+            func.count(Prospect.id).filter(Prospect.wp_score.isnot(None)).label("scored"),
+            func.count(Prospect.id).filter(Prospect.wp_score.is_(None)).label("unscored"),
+            func.avg(Prospect.wp_score).label("avg_score"),
+            func.count(Prospect.id).filter(Prospect.wp_score >= 80).label("hot"),
+            func.count(Prospect.id).filter(Prospect.wp_score.between(60, 79)).label("warm"),
+            func.count(Prospect.id).filter(Prospect.wp_score.between(40, 59)).label("cool"),
+            func.count(Prospect.id).filter(Prospect.wp_score < 40).label("cold"),
+            func.count(Prospect.id).filter(Prospect.enriched_at.isnot(None)).label("enriched"),
+        )
+    )
+    row = result.one()
+    return {
+        "scored": row.scored,
+        "unscored": row.unscored,
+        "avg_score": round(float(row.avg_score), 1) if row.avg_score else None,
+        "tiers": {
+            "hot": row.hot,
+            "warm": row.warm,
+            "cool": row.cool,
+            "cold": row.cold,
+        },
+        "enriched": row.enriched,
+    }
+
+
+# ── Insight Dashboard Analytics Endpoint ───────────────────────────
+
+@outreach_router.get("/insights/analytics")
+async def get_insights_analytics(db: AsyncSession = Depends(get_db)):
+    """
+    Return ALL prospects with analytics-relevant fields in a single call.
+    Designed for the Insight Dashboard — excludes heavy blobs (enrichment JSON,
+    audit_json, notes) to keep the payload fast (~300-400KB for 700 prospects).
+    """
+    from api.models.prospect import WebsiteAudit
+
+    # Subquery: latest audit per prospect — pull rich audit fields for dashboard
+    from sqlalchemy import func as sa_func
+    latest_audit = (
+        select(
+            WebsiteAudit.prospect_id,
+            WebsiteAudit.design_era,
+            WebsiteAudit.design_sins,
+            WebsiteAudit.ssl_valid.label("wa_ssl_valid"),
+            WebsiteAudit.ssl_grade,
+            WebsiteAudit.has_title,
+            WebsiteAudit.has_meta_desc,
+            WebsiteAudit.has_h1,
+            WebsiteAudit.has_og_tags,
+            WebsiteAudit.has_schema,
+            WebsiteAudit.has_sitemap,
+            WebsiteAudit.cms_platform.label("wa_cms_platform"),
+            WebsiteAudit.tech_stack,
+            WebsiteAudit.lcp_ms,
+            WebsiteAudit.page_size_kb,
+            WebsiteAudit.security_headers,
+            WebsiteAudit.responsive,
+            WebsiteAudit.cdn_detected,
+        )
+        .distinct(WebsiteAudit.prospect_id)
+        .order_by(WebsiteAudit.prospect_id, WebsiteAudit.audited_at.desc())
+        .subquery("latest_audit")
+    )
+
+    result = await db.execute(
+        select(
+            Prospect.id,
+            Prospect.business_name,
+            Prospect.business_type,
+            Prospect.city,
+            Prospect.state,
+            Prospect.zip,
+            Prospect.status,
+            Prospect.has_website,
+            Prospect.website_url,
+            Prospect.website_platform,
+            Prospect.ssl_valid,
+            Prospect.score_overall,
+            Prospect.score_mobile,
+            Prospect.score_speed,
+            Prospect.score_seo,
+            Prospect.score_a11y,
+            Prospect.score_design,
+            Prospect.score_security,
+            Prospect.wp_score,
+            Prospect.wp_score_json,
+            Prospect.priority_score,
+            Prospect.google_rating,
+            Prospect.google_reviews,
+            Prospect.has_social,
+            Prospect.social_score,
+            Prospect.mx_provider,
+            Prospect.has_spf,
+            Prospect.has_dmarc,
+            Prospect.entity_type,
+            Prospect.formation_date,
+            Prospect.is_hiring,
+            Prospect.hiring_roles,
+            Prospect.runs_ads,
+            Prospect.ad_platforms,
+            Prospect.ppp_loan_amount,
+            Prospect.review_velocity,
+            Prospect.review_response_rate,
+            Prospect.gbp_photos_count,
+            latest_audit.c.design_era,
+            latest_audit.c.design_sins,
+            latest_audit.c.wa_ssl_valid,
+            latest_audit.c.ssl_grade,
+            latest_audit.c.has_title,
+            latest_audit.c.has_meta_desc,
+            latest_audit.c.has_h1,
+            latest_audit.c.has_og_tags,
+            latest_audit.c.has_schema,
+            latest_audit.c.has_sitemap,
+            latest_audit.c.wa_cms_platform,
+            latest_audit.c.tech_stack,
+            latest_audit.c.lcp_ms,
+            latest_audit.c.page_size_kb,
+            latest_audit.c.security_headers,
+            latest_audit.c.responsive,
+            latest_audit.c.cdn_detected,
+            Prospect.competitors,
+            Prospect.competitor_avg,
+            Prospect.lat,
+            Prospect.lng,
+            Prospect.distance_miles,
+            Prospect.owner_email,
+            Prospect.email_verified,
+            Prospect.phone,
+            Prospect.emails_sent,
+            Prospect.emails_opened,
+            Prospect.emails_clicked,
+            Prospect.enriched_at,
+            Prospect.created_at,
+            Prospect.updated_at,
+            Prospect.source,
+            Prospect.industry_tag,
+            Prospect.enrichment,
+            Prospect.email_source,
+            Prospect.owner_name,
+            Prospect.address,
+            Prospect.google_maps_url,
+            Prospect.google_place_id,
+            Prospect.last_email_at,
+            Prospect.last_opened_at,
+            Prospect.last_clicked_at,
+            Prospect.replied_at,
+            Prospect.reply_sentiment,
+            Prospect.owner_phone,
+            Prospect.owner_title,
+        )
+        .outerjoin(latest_audit, Prospect.id == latest_audit.c.prospect_id)
+        .order_by(Prospect.wp_score.desc().nullslast(), Prospect.priority_score.desc())
+    )
+    rows = result.fetchall()
+
+    prospects = []
+    for r in rows:
+        # Extract enrichment JSONB fields (lightweight — no full blob in response)
+        enrich = r.enrichment or {}
+        dns = enrich.get("dns", {}) or {}
+        social = enrich.get("social", {}) or {}
+        gbp = enrich.get("gbp", {}) or {}
+
+        prospects.append({
+            "id": str(r.id),
+            "business_name": r.business_name,
+            "business_type": r.business_type,
+            "city": r.city,
+            "state": r.state,
+            "zip": r.zip,
+            "status": r.status,
+            "has_website": r.has_website,
+            "website_url": r.website_url,
+            "website_platform": r.website_platform,
+            # SSL: prefer website_audit data (source of truth), fall back to prospect
+            "ssl_valid": r.wa_ssl_valid if r.wa_ssl_valid is not None else r.ssl_valid,
+            "ssl_grade": r.ssl_grade,
+            "score_overall": r.score_overall,
+            "score_mobile": r.score_mobile,
+            "score_speed": r.score_speed,
+            "score_seo": r.score_seo,
+            "score_a11y": r.score_a11y,
+            "score_design": r.score_design,
+            "score_security": r.score_security,
+            "wp_score": r.wp_score,
+            "wp_score_json": r.wp_score_json,
+            "priority_score": r.priority_score,
+            "google_rating": float(r.google_rating) if r.google_rating else None,
+            "google_reviews": r.google_reviews,
+            "has_social": r.has_social,
+            "social_score": r.social_score,
+            "mx_provider": r.mx_provider,
+            "has_spf": r.has_spf,
+            "has_dmarc": r.has_dmarc,
+            "entity_type": r.entity_type,
+            "formation_date": r.formation_date.isoformat() if r.formation_date else None,
+            "is_hiring": r.is_hiring,
+            "hiring_roles": r.hiring_roles,
+            "runs_ads": r.runs_ads,
+            "ad_platforms": r.ad_platforms,
+            "ppp_loan_amount": float(r.ppp_loan_amount) if r.ppp_loan_amount else None,
+            "review_velocity": float(r.review_velocity) if r.review_velocity else None,
+            "review_response_rate": float(r.review_response_rate) if r.review_response_rate else None,
+            "gbp_photos_count": r.gbp_photos_count,
+            "design_era": r.design_era,
+            "design_sins": r.design_sins,
+            # Website audit SEO/tech fields
+            "has_title": r.has_title,
+            "has_meta_desc": r.has_meta_desc,
+            "has_h1": r.has_h1,
+            "has_og_tags": r.has_og_tags,
+            "has_schema": r.has_schema,
+            "has_sitemap": r.has_sitemap,
+            "audit_cms": r.wa_cms_platform,
+            "tech_stack": r.tech_stack,
+            "lcp_ms": r.lcp_ms,
+            "page_size_kb": r.page_size_kb,
+            "security_headers": r.security_headers,
+            "responsive": r.responsive,
+            "cdn_detected": r.cdn_detected,
+            # Enrichment: DNS
+            "has_professional_email": dns.get("has_professional_email"),
+            "has_dkim": dns.get("has_dkim"),
+            "hosting_provider": dns.get("hosting_provider"),
+            "dns_provider": dns.get("dns_provider"),
+            # Enrichment: Social (per-platform)
+            "social_facebook": (social.get("social_facebook") or {}).get("exists"),
+            "social_instagram": (social.get("social_instagram") or {}).get("exists"),
+            "social_yelp": (social.get("social_yelp") or {}).get("exists"),
+            # Enrichment: GBP
+            "gbp_primary_type": gbp.get("gbp_primary_type"),
+            "gbp_hours_complete": gbp.get("gbp_hours_complete"),
+            "gbp_price_level": gbp.get("gbp_price_level"),
+            # Contact intel
+            "email_source": r.email_source,
+            "has_owner_name": bool(r.owner_name),
+            "owner_name": r.owner_name,
+            "owner_email": r.owner_email,
+            "owner_phone": r.owner_phone,
+            "owner_title": r.owner_title,
+            "phone": r.phone,
+            "address": r.address,
+            "google_maps_url": r.google_maps_url,
+            "google_place_id": r.google_place_id,
+            # Competitive
+            "competitors": r.competitors,
+            "competitor_avg": float(r.competitor_avg) if r.competitor_avg else None,
+            "lat": float(r.lat) if r.lat else None,
+            "lng": float(r.lng) if r.lng else None,
+            "distance_miles": float(r.distance_miles) if r.distance_miles else None,
+            "has_email": bool(r.owner_email),
+            "email_verified": r.email_verified,
+            "has_phone": bool(r.phone),
+            "emails_sent": r.emails_sent or 0,
+            "emails_opened": r.emails_opened or 0,
+            "emails_clicked": r.emails_clicked or 0,
+            "last_email_at": r.last_email_at.isoformat() if r.last_email_at else None,
+            "last_opened_at": r.last_opened_at.isoformat() if r.last_opened_at else None,
+            "last_clicked_at": r.last_clicked_at.isoformat() if r.last_clicked_at else None,
+            "replied_at": r.replied_at.isoformat() if r.replied_at else None,
+            "reply_sentiment": r.reply_sentiment,
+            "enriched_at": r.enriched_at.isoformat() if r.enriched_at else None,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+            "updated_at": r.updated_at.isoformat() if r.updated_at else None,
+            "source": r.source,
+            "industry_tag": r.industry_tag,
+        })
+
+    return {
+        "total": len(prospects),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "prospects": prospects,
+    }
 
 
 # ── Pipeline Worker Control Endpoints ──────────────────────────────

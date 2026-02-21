@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insight Dashboard — Intelligence</title>
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { mono: ['JetBrains Mono','monospace'], sans: ['Inter','sans-serif'] },
+          colors: {
+            'surface':'#06060A','surface-1':'#0C0C12','surface-2':'#12121A','surface-3':'#1A1A24',
+            'border':'#2A2A3A','electric':'#00D4FF','neon-green':'#00FF88','neon-orange':'#FF8A00',
+            'neon-purple':'#A855F7','neon-red':'#ef4444','neon-yellow':'#FFD600',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="bg-surface text-gray-300 min-h-screen">
+
+  <!-- Nav -->
+  <nav class="fixed top-0 left-0 right-0 z-50 border-b border-border bg-surface/90 backdrop-blur-lg">
+    <div class="max-w-[1600px] mx-auto px-6 flex items-center justify-between h-14">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-electric to-neon-purple flex items-center justify-center text-white font-bold text-sm">AD</div>
+        <span class="font-semibold text-white text-sm tracking-wide">Insight Dashboard</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <a href="index.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          Overview
+        </a>
+        <a href="intelligence.html" class="nav-link active">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          Intelligence
+        </a>
+        <a href="opportunities.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+          Opportunities
+        </a>
+        <a href="market.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Market
+        </a>
+        <a href="prospects.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Prospects
+        </a>
+      </div>
+      <button onclick="refreshData()" class="text-xs px-3 py-1.5 rounded-lg border border-border hover:border-electric text-gray-400 hover:text-electric transition-all">↻ Refresh</button>
+    </div>
+  </nav>
+
+  <main class="pt-20 pb-12 px-6 max-w-[1600px] mx-auto">
+    <div id="loadingState" class="flex items-center justify-center min-h-[60vh]">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full border-2 border-electric border-t-transparent animate-spin mx-auto mb-4"></div>
+        <p class="text-gray-500 text-sm">Loading intelligence data...</p>
+      </div>
+    </div>
+
+    <div id="content" class="hidden space-y-6">
+      <h1 class="text-lg font-semibold text-white">Business Intelligence Analysis</h1>
+      <p class="text-sm text-gray-500 -mt-4">Deep-dive into the technology landscape, digital maturity, and infrastructure of <span id="totalCount" class="text-electric font-mono">—</span> local businesses.</p>
+
+      <!-- ── Digital Maturity Score Cards ── -->
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" id="maturityCards"></div>
+
+      <!-- ── Row 1: Technology + Design Era ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Website Platform Distribution<span class="info-icon" data-tip="Source: prospects.website_platform — CMS/platform detected during website audit (e.g. WordPress, Wix, Squarespace).">?</span></h3>
+          <div class="h-[340px]"><canvas id="chartPlatforms"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Website <span class="tip" data-tip="Design era is estimated from the site’s technology stack, CSS patterns, and layout techniques. Modern = post-2020, Dated = 2015-2019, Ancient = pre-2015.">Design Era</span></h3>
+          <div class="h-[340px]"><canvas id="chartDesignEra"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Row 2: SSL + MX Provider ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3><span class="tip" data-tip="SSL (Secure Sockets Layer) — encrypts data between browser and server. Grades from website audit: A=excellent, B=good, C=needs work, F=invalid/expired.">SSL</span> Certificate Grade</h3>
+          <div class="h-[280px]"><canvas id="chartSSL"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Email Infrastructure (<span class="tip" data-tip="MX (Mail Exchange) — DNS record that specifies the email server handling mail for a domain. Common providers: Google Workspace, Microsoft 365, GoDaddy.">MX Provider</span>)</h3>
+          <div class="h-[280px]"><canvas id="chartMX"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Row 2b: SEO Compliance + Social Platforms ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>SEO Compliance Checklist<span class="info-icon" data-tip="Source: website_audits.has_title, .has_meta_desc, .has_h1, .has_og_tags, .has_schema, .has_sitemap — boolean flags from automated website crawl.">?</span></h3>
+          <div class="h-[300px]"><canvas id="chartSEO"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Social Media by Platform<span class="info-icon" data-tip="Source: enrichment→social_facebook, social_instagram, social_yelp — boolean flags per platform detected during enrichment scrape.">?</span></h3>
+          <div class="h-[300px]"><canvas id="chartSocialPlatforms"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Row 3: Social Media + Entity Types ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Social Media Presence<span class="info-icon" data-tip="Source: prospects.social_score (0-100) and prospects.has_social — calculated from social media profiles found during enrichment.">?</span></h3>
+          <div class="h-[300px]"><canvas id="chartSocial"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Business <span class="tip" data-tip="Entity type from state filings (e.g. LLC, Corp, Sole Prop). Indicates business maturity and legal structure.">Entity Types</span></h3>
+          <div class="h-[300px]"><canvas id="chartEntity"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Row 3b: GBP Profile Quality + Email Professionalism ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Google Business Profile Quality<span class="info-icon" data-tip="Source: enrichment→gbp_hours_complete, prospects.gbp_photos_count, prospects.google_rating, prospects.google_reviews. Enriched businesses only.">?</span></h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2" id="gbpQualityGrid"></div>
+        </div>
+        <div class="chart-card">
+          <h3>Email & DNS Professionalism<span class="info-icon" data-tip="Source: enrichment→dns.has_professional_email, enrichment→dns.has_dkim, prospects.has_spf, prospects.has_dmarc — from DNS record lookups during enrichment.">?</span></h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2" id="emailProfGrid"></div>
+        </div>
+      </div>
+
+      <!-- ── Row 4: Audit Score Breakdown Radar + Score Distribution by Category ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Average Audit Scores (businesses with websites)<span class="info-icon" data-tip="Source: website_audits table — score_overall, score_mobile, score_speed, score_seo, score_a11y, score_design, score_security (each 0-100).">?</span></h3>
+          <div class="h-[340px]"><canvas id="chartAuditRadar"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3><span class="tip" data-tip="WP Score = Website Prospect Score. Composite 0-100 rating: NEED (0-40) + ABILITY (0-30) + TIMING (0-30).">WP Score</span> by Business Category (Top 12)</h3>
+          <div class="h-[340px]"><canvas id="chartScoreByType"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Row 5: Email/DNS Security Matrix ── -->
+      <div class="chart-card">
+          <h3>Email Security Adoption (<span class="tip" data-tip="SPF (Sender Policy Framework) — DNS record that specifies which mail servers are authorized to send email for a domain. Prevents spoofing.">SPF</span> + <span class="tip" data-tip="DMARC (Domain-based Message Authentication, Reporting & Conformance) — email authentication protocol that protects against spoofing. Builds on SPF and DKIM.">DMARC</span>)</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4" id="emailSecurityGrid"></div>
+      </div>
+
+      <!-- ── Row 5b: Contact Intelligence ── -->
+      <div class="chart-card">
+        <h3>Contact Intelligence — Outreach Readiness<span class="info-icon" data-tip="Source: prospects.owner_email, enrichment→contact.has_owner_name, prospects.phone, prospects.email_verified. 'Outreach Ready' = has email + wp_score > 0.">?</span></h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-2" id="contactIntelGrid"></div>
+      </div>
+
+      <!-- ── Row 5c: Email Source Breakdown ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Email Source Breakdown<span class="info-icon" data-tip="Source: prospects.email_source — values: website_scrape, pattern_guess, hunter_io, whois. Shows how owner emails were discovered during enrichment.">?</span></h3>
+          <div class="h-[280px]"><canvas id="chartEmailSource"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Tech Stack Landscape<span class="info-icon" data-tip="Source: website_audits.tech_stack — JSONB array of detected technologies (CMS, frameworks, analytics, server software) from automated website crawl.">?</span></h3>
+          <div class="h-[280px]"><canvas id="chartTechStack"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Row 6: Digital Gap Analysis ── -->
+      <div class="chart-card">
+          <h3>Digital Gap Analysis — What Businesses Are Missing<span class="info-icon" data-tip="Each bar shows how many prospects are missing a key digital capability. Larger gaps = bigger market opportunities.">?</span></h3>
+        <div class="h-[380px]"><canvas id="chartGaps"></canvas></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script>
+    let DATA = null;
+
+    async function refreshData() {
+      DATA = await fetchAnalytics(true);
+      renderAll();
+    }
+
+    async function init() {
+      try {
+        DATA = await fetchAnalytics();
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('content').classList.remove('hidden');
+        renderAll();
+      } catch(e) {
+        document.getElementById('loadingState').innerHTML =
+          `<div class="text-center text-neon-red">Failed to connect: ${e.message}</div>`;
+      }
+    }
+
+    function renderAll() {
+      const P = DATA.prospects;
+      const withSite = P.filter(p => p.has_website);
+      const scored = P.filter(p => p.wp_score != null);
+      const audited = withSite.filter(p => p.ssl_grade != null);
+
+      document.getElementById('totalCount').textContent = fmt(P.length);
+
+      renderMaturityCards(P, withSite, audited);
+      renderPlatforms(withSite);
+      renderDesignEra(withSite);
+      renderSSL(withSite, audited);
+      renderMX(P);
+      renderSEO(audited);
+      renderSocialPlatforms(P);
+      renderSocial(P);
+      renderEntity(P);
+      renderGBPQuality(P);
+      renderEmailProf(P);
+      renderAuditRadar(withSite);
+      renderScoreByType(scored);
+      renderEmailSecurity(P);
+      renderContactIntel(P);
+      renderEmailSource(P);
+      renderTechStack(audited);
+      renderGaps(P, audited);
+    }
+
+    // ── Maturity Cards ────────────────────────────────────────────────
+    function renderMaturityCards(P, withSite, audited) {
+      const noWeb = P.filter(p => !p.has_website).length;
+      const noSSL = audited.filter(p => p.ssl_valid === false).length;
+      const noSocial = P.filter(p => !p.has_social).length;
+      const noEmail = P.filter(p => !p.has_email).length;
+      const hiring = P.filter(p => p.is_hiring).length;
+      const ads = P.filter(p => p.runs_ads).length;
+
+      const cards = [
+        { label: 'No Website', value: noWeb, pct: pct(noWeb, P.length), color: '#ef4444', icon: '🚫' },
+        { label: 'No SSL', value: noSSL, pct: pct(noSSL, withSite.length), color: '#FF8A00', icon: '🔓' },
+        { label: 'No Social', value: noSocial, pct: pct(noSocial, P.length), color: '#A855F7', icon: '📱' },
+        { label: 'No Email Found', value: noEmail, pct: pct(noEmail, P.length), color: '#00D4FF', icon: '📧' },
+        { label: 'Actively Hiring', value: hiring, pct: pct(hiring, P.length), color: '#00FF88', icon: '💼' },
+        { label: 'Running Ads', value: ads, pct: pct(ads, P.length), color: '#FFD600', icon: '📢' },
+      ];
+
+      document.getElementById('maturityCards').innerHTML = cards.map(c => `
+        <div class="kpi-card" style="--accent:${c.color}">
+          <div class="text-lg mb-1">${c.icon}</div>
+          <div class="text-xl font-bold text-white font-mono">${fmt(c.value)}</div>
+          <div class="text-xs text-gray-500">${c.label} <span class="text-gray-600">(${c.pct})</span></div>
+        </div>
+      `).join('');
+    }
+
+    // ── Platforms ──────────────────────────────────────────────────────
+    function renderPlatforms(withSite) {
+      const platforms = countBy(withSite, p => p.website_platform || 'unknown');
+      const sorted = sortEntries(platforms);
+      createDoughnut('chartPlatforms',
+        sorted.map(([k]) => fmtType(k)),
+        sorted.map(([,v]) => v),
+        PALETTE.slice(0, sorted.length),
+        { cutout: '50%' }
+      );
+    }
+
+    // ── Design Era ────────────────────────────────────────────────────
+    function renderDesignEra(withSite) {
+      const eras = countBy(withSite, p => normalizeEra(p.design_era));
+      const order = ['modern', 'dated', 'ancient', 'unknown'];
+      const colors = { modern: '#00FF88', dated: '#FF8A00', ancient: '#ef4444', unknown: '#808098' };
+      const labels = order.filter(e => eras[e]);
+      createBarChart('chartDesignEra', labels.map(fmtType), [{
+        data: labels.map(l => eras[l] || 0),
+        backgroundColor: labels.map(l => colors[l] || '#808098'),
+        borderRadius: 6,
+        label: 'Businesses',
+      }], { plugins: { legend: { display: false } } });
+    }
+
+    // ── SSL Grade Distribution (from website_audits) ────────────────
+    function renderSSL(withSite, audited) {
+      const grades = { A: 0, B: 0, C: 0, F: 0, 'Not Audited': 0 };
+      audited.forEach(p => {
+        const g = (p.ssl_grade || '').toUpperCase();
+        if (grades.hasOwnProperty(g)) grades[g]++;
+        else grades['Not Audited']++;
+      });
+      // Add sites without audit data
+      grades['Not Audited'] += withSite.length - audited.length;
+
+      createDoughnut('chartSSL',
+        ['Grade A (Excellent)', 'Grade B (Good)', 'Grade C (Needs Work)', 'Grade F (Invalid)', 'Not Audited'],
+        [grades.A, grades.B, grades.C, grades.F, grades['Not Audited']],
+        ['#00FF88', '#00D4FF', '#FFD600', '#ef4444', '#808098'],
+      );
+    }
+
+    // ── MX Provider ───────────────────────────────────────────────────
+    function renderMX(P) {
+      const mx = countBy(P.filter(p => p.mx_provider), p => p.mx_provider);
+      const sorted = sortEntries(mx).slice(0, 10);
+      createHBarChart('chartMX',
+        sorted.map(([k]) => k),
+        sorted.map(([,v]) => v),
+        PALETTE.slice(0, sorted.length),
+      );
+    }
+
+    // ── Social Media ──────────────────────────────────────────────────
+    function renderSocial(P) {
+      const hasSocial = P.filter(p => p.has_social).length;
+      const noSocial = P.length - hasSocial;
+
+      // Social score distribution
+      const scored = P.filter(p => p.social_score != null);
+      const buckets = { '0': 0, '1-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 };
+      scored.forEach(p => {
+        const s = p.social_score;
+        if (s === 0) buckets['0']++;
+        else if (s <= 20) buckets['1-20']++;
+        else if (s <= 40) buckets['21-40']++;
+        else if (s <= 60) buckets['41-60']++;
+        else if (s <= 80) buckets['61-80']++;
+        else buckets['81-100']++;
+      });
+
+      createBarChart('chartSocial', Object.keys(buckets), [{
+        data: Object.values(buckets),
+        backgroundColor: ['#ef4444', '#FF8A00', '#FFD600', '#00D4FF', '#A855F7', '#00FF88'],
+        borderRadius: 4,
+        label: 'Businesses',
+      }], {
+        plugins: { legend: { display: false } },
+        x: { title: { display: true, text: 'Social Score Range' } },
+      });
+    }
+
+    // ── Entity Types ──────────────────────────────────────────────────
+    function renderEntity(P) {
+      const entities = countBy(P.filter(p => p.entity_type), p => p.entity_type);
+      const sorted = sortEntries(entities);
+      createDoughnut('chartEntity',
+        sorted.map(([k]) => fmtType(k)),
+        sorted.map(([,v]) => v),
+        PALETTE.slice(0, sorted.length),
+      );
+    }
+
+    // ── Audit Radar ───────────────────────────────────────────────────
+    function renderAuditRadar(withSite) {
+      const audited = withSite.filter(p => p.score_overall != null);
+      if (!audited.length) return;
+
+      const metrics = ['score_overall','score_mobile','score_speed','score_seo','score_a11y','score_design','score_security'];
+      const labels = ['Overall','Mobile','Speed','SEO','Accessibility','Design','Security'];
+      const avgVals = metrics.map(m => avg(audited, p => p[m]));
+
+      createRadar('chartAuditRadar', labels, [{
+        label: `Average (${audited.length} audited)`,
+        data: avgVals,
+        backgroundColor: 'rgba(0,212,255,0.15)',
+        borderColor: '#00D4FF',
+        borderWidth: 2,
+        pointBackgroundColor: '#00D4FF',
+      }], {
+        r: { suggestedMax: 100 },
+      });
+    }
+
+    // ── WP Score by Business Type ─────────────────────────────────────
+    function renderScoreByType(scored) {
+      const typeGroups = groupBy(scored, p => p.business_type);
+      const typeAvgs = Object.entries(typeGroups)
+        .filter(([,arr]) => arr.length >= 3)  // min 3 to be meaningful
+        .map(([type, arr]) => ({
+          type,
+          avg: avg(arr, p => p.wp_score),
+          count: arr.length,
+        }))
+        .sort((a,b) => b.avg - a.avg)
+        .slice(0, 12);
+
+      createBarChart('chartScoreByType',
+        typeAvgs.map(t => fmtType(t.type)),
+        [{
+          data: typeAvgs.map(t => t.avg.toFixed(1)),
+          backgroundColor: typeAvgs.map(t => {
+            if (t.avg >= 60) return '#FF8A00';
+            if (t.avg >= 45) return '#00D4FF';
+            return '#808098';
+          }),
+          borderRadius: 4,
+          label: 'Avg WP Score',
+        }],
+        {
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                afterLabel: (ctx) => `${typeAvgs[ctx.dataIndex].count} businesses`
+              }
+            }
+          },
+          y: { max: 70 },
+        }
+      );
+    }
+
+    // ── Email Security Grid ───────────────────────────────────────────
+    function renderEmailSecurity(P) {
+      const withDNS = P.filter(p => p.mx_provider);
+      const hasSPF = withDNS.filter(p => p.has_spf).length;
+      const hasDMARC = withDNS.filter(p => p.has_dmarc).length;
+      const hasBoth = withDNS.filter(p => p.has_spf && p.has_dmarc).length;
+      const hasNeither = withDNS.filter(p => !p.has_spf && !p.has_dmarc).length;
+
+      const grid = [
+        { label: 'Has SPF', value: hasSPF, total: withDNS.length, color: '#00FF88' },
+        { label: 'Has DMARC', value: hasDMARC, total: withDNS.length, color: '#00D4FF' },
+        { label: 'Both SPF+DMARC', value: hasBoth, total: withDNS.length, color: '#A855F7' },
+        { label: 'Neither (vulnerable)', value: hasNeither, total: withDNS.length, color: '#ef4444' },
+      ];
+
+      document.getElementById('emailSecurityGrid').innerHTML = grid.map(g => `
+        <div class="kpi-card" style="--accent:${g.color}">
+          <div class="text-xl font-bold text-white font-mono">${fmt(g.value)}</div>
+          <div class="text-xs text-gray-500">${g.label}</div>
+          <div class="text-xs font-mono mt-1" style="color:${g.color}">${pct(g.value, g.total)} of ${fmt(g.total)} with DNS</div>
+        </div>
+      `).join('');
+    }
+
+    // ── Digital Gap Analysis ──────────────────────────────────────────
+    function renderGaps(P, audited) {
+      const total = P.length;
+      const gaps = [
+        { label: 'No Website', count: P.filter(p => !p.has_website).length },
+        { label: 'No Social Media', count: P.filter(p => !p.has_social).length },
+        { label: 'No Contact Email Found', count: P.filter(p => !p.has_email).length },
+        { label: 'Bad Mobile Score (<50)', count: P.filter(p => p.score_mobile != null && p.score_mobile < 50).length },
+        { label: 'No SSL / Invalid SSL', count: audited.filter(p => p.ssl_valid === false).length },
+        { label: 'SSL Grade C or F', count: audited.filter(p => p.ssl_grade === 'C' || p.ssl_grade === 'F').length },
+        { label: 'Ancient Design', count: P.filter(p => normalizeEra(p.design_era) === 'ancient').length },
+        { label: 'No SPF Record', count: P.filter(p => p.has_spf === false).length },
+        { label: 'No DMARC', count: P.filter(p => p.has_dmarc === false).length },
+        { label: 'Low Google Rating (<4.0)', count: P.filter(p => p.google_rating != null && p.google_rating < 4).length },
+        { label: 'Zero Reviews', count: P.filter(p => p.google_reviews === 0 || p.google_reviews == null).length },
+        { label: 'No Meta Description', count: audited.filter(p => p.has_meta_desc === false).length },
+        { label: 'No Sitemap', count: audited.filter(p => p.has_sitemap === false || p.has_sitemap == null).length },
+        { label: 'No Schema Markup', count: audited.filter(p => p.has_schema === false).length },
+        { label: 'No DKIM', count: P.filter(p => p.has_dkim === false).length },
+        { label: 'Free Email (Not Professional)', count: P.filter(p => p.has_professional_email === false).length },
+      ].sort((a,b) => b.count - a.count);
+
+      createHBarChart('chartGaps',
+        gaps.map(g => g.label),
+        gaps.map(g => g.count),
+        gaps.map(g => {
+          const p = g.count / total;
+          if (p > 0.5) return '#ef4444';
+          if (p > 0.25) return '#FF8A00';
+          return '#00D4FF';
+        }),
+      );
+    }
+
+    // ── SEO Compliance Checklist ──────────────────────────────────────
+    function renderSEO(audited) {
+      if (!audited.length) {
+        document.getElementById('chartSEO').parentElement.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">No audit data yet</p>';
+        return;
+      }
+      const checks = [
+        { label: 'Has Title Tag', count: audited.filter(p => p.has_title === true).length },
+        { label: 'Has H1 Heading', count: audited.filter(p => p.has_h1 === true).length },
+        { label: 'Has OG Tags', count: audited.filter(p => p.has_og_tags === true).length },
+        { label: 'Has Schema', count: audited.filter(p => p.has_schema === true).length },
+        { label: 'Has Meta Description', count: audited.filter(p => p.has_meta_desc === true).length },
+        { label: 'Has Sitemap', count: audited.filter(p => p.has_sitemap === true).length },
+      ].sort((a,b) => b.count - a.count);
+
+      createHBarChart('chartSEO',
+        checks.map(c => `${c.label} (${pct(c.count, audited.length)})`),
+        checks.map(c => c.count),
+        checks.map(c => {
+          const rate = c.count / audited.length;
+          if (rate > 0.8) return '#00FF88';
+          if (rate > 0.5) return '#00D4FF';
+          if (rate > 0.2) return '#FFD600';
+          return '#ef4444';
+        }),
+      );
+    }
+
+    // ── Social Platform Breakdown ─────────────────────────────────────
+    function renderSocialPlatforms(P) {
+      const enriched = P.filter(p => p.enriched_at);
+      if (!enriched.length) {
+        document.getElementById('chartSocialPlatforms').parentElement.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Awaiting enrichment</p>';
+        return;
+      }
+      const platforms = [
+        { label: 'Instagram', count: P.filter(p => p.social_instagram).length, color: '#E1306C' },
+        { label: 'Facebook', count: P.filter(p => p.social_facebook).length, color: '#4267B2' },
+        { label: 'Yelp', count: P.filter(p => p.social_yelp).length, color: '#D32323' },
+        { label: 'Any Social', count: P.filter(p => p.has_social).length, color: '#00D4FF' },
+        { label: 'No Social', count: P.filter(p => !p.has_social).length, color: '#808098' },
+      ];
+
+      createBarChart('chartSocialPlatforms',
+        platforms.map(p => p.label),
+        [{
+          data: platforms.map(p => p.count),
+          backgroundColor: platforms.map(p => p.color),
+          borderRadius: 6,
+          label: 'Businesses',
+        }],
+        { plugins: { legend: { display: false } } },
+      );
+    }
+
+    // ── GBP Profile Quality Grid ──────────────────────────────────────
+    function renderGBPQuality(P) {
+      const enriched = P.filter(p => p.enriched_at);
+      const withGBP = P.filter(p => p.gbp_primary_type);
+      const hoursComplete = P.filter(p => p.gbp_hours_complete === true).length;
+      const hoursIncomplete = P.filter(p => p.gbp_hours_complete === false).length;
+      const hasPhotos = P.filter(p => p.gbp_photos_count > 0).length;
+      const avgPhotos = enriched.length ? (enriched.reduce((s,p) => s + (p.gbp_photos_count || 0), 0) / enriched.length).toFixed(1) : '0';
+
+      const cards = [
+        { label: 'GBP Profiles Found', value: withGBP.length, sub: `of ${enriched.length} enriched`, color: '#00D4FF' },
+        { label: 'Hours Listed', value: hoursComplete, sub: `${hoursIncomplete} incomplete`, color: '#00FF88' },
+        { label: 'Has Photos', value: hasPhotos, sub: `avg ${avgPhotos}/business`, color: '#A855F7' },
+        { label: 'Avg Rating', value: (P.filter(p=>p.google_rating).length ? avg(P.filter(p=>p.google_rating), p=>p.google_rating).toFixed(1) + '★' : '—'), sub: `${P.filter(p=>p.google_reviews>=50).length} with 50+ reviews`, color: '#FFD600' },
+      ];
+
+      document.getElementById('gbpQualityGrid').innerHTML = cards.map(c => `
+        <div class="kpi-card" style="--accent:${c.color}">
+          <div class="text-xl font-bold text-white font-mono">${c.value}</div>
+          <div class="text-xs text-gray-500">${c.label}</div>
+          <div class="text-[10px] font-mono mt-1" style="color:${c.color}">${c.sub}</div>
+        </div>
+      `).join('');
+    }
+
+    // ── Email/DNS Professionalism Grid ────────────────────────────────
+    function renderEmailProf(P) {
+      const enriched = P.filter(p => p.enriched_at);
+      const profEmail = P.filter(p => p.has_professional_email === true).length;
+      const freeEmail = P.filter(p => p.has_professional_email === false).length;
+      const hasDkim = P.filter(p => p.has_dkim === true).length;
+      const noDkim = P.filter(p => p.has_dkim === false).length;
+
+      const cards = [
+        { label: 'Professional Email', value: profEmail, sub: `vs ${freeEmail} free/none`, color: '#00FF88' },
+        { label: 'DKIM Verified', value: hasDkim, sub: `${noDkim} missing`, color: '#00D4FF' },
+        { label: 'Has SPF', value: P.filter(p => p.has_spf).length, sub: `of ${P.filter(p => p.mx_provider).length} with DNS`, color: '#A855F7' },
+        { label: 'Has DMARC', value: P.filter(p => p.has_dmarc).length, sub: 'email auth', color: '#FFD600' },
+      ];
+
+      document.getElementById('emailProfGrid').innerHTML = cards.map(c => `
+        <div class="kpi-card" style="--accent:${c.color}">
+          <div class="text-xl font-bold text-white font-mono">${c.value}</div>
+          <div class="text-xs text-gray-500">${c.label}</div>
+          <div class="text-[10px] font-mono mt-1" style="color:${c.color}">${c.sub}</div>
+        </div>
+      `).join('');
+    }
+
+    // ── Contact Intelligence Grid ─────────────────────────────────────
+    function renderContactIntel(P) {
+      const hasEmail = P.filter(p => p.has_email).length;
+      const hasName = P.filter(p => p.has_owner_name).length;
+      const hasPhone = P.filter(p => p.has_phone).length;
+      const verified = P.filter(p => p.email_verified).length;
+      const scraped = P.filter(p => p.email_source === 'website_scrape').length;
+      const reachable = P.filter(p => p.has_email && p.wp_score != null).length;
+
+      const cards = [
+        { label: 'Has Email', value: hasEmail, sub: pct(hasEmail, P.length), color: '#00FF88', icon: '📧' },
+        { label: 'Owner Name Known', value: hasName, sub: pct(hasName, P.length), color: '#00D4FF', icon: '👤' },
+        { label: 'Has Phone', value: hasPhone, sub: pct(hasPhone, P.length), color: '#A855F7', icon: '📞' },
+        { label: 'Email Verified', value: verified, sub: pct(verified, hasEmail), color: '#FFD600', icon: '✅' },
+        { label: 'From Website', value: scraped, sub: 'highest confidence', color: '#FF8A00', icon: '🌐' },
+        { label: 'Outreach Ready', value: reachable, sub: 'email + scored', color: '#ef4444', icon: '🚀' },
+      ];
+
+      document.getElementById('contactIntelGrid').innerHTML = cards.map(c => `
+        <div class="p-4 rounded-lg border border-border bg-surface-2/50 text-center">
+          <div class="text-2xl mb-1">${c.icon}</div>
+          <div class="text-xl font-bold font-mono text-white">${c.value}</div>
+          <div class="text-xs text-gray-500 mt-1">${c.label}</div>
+          <div class="text-[10px] font-mono mt-1" style="color:${c.color}">${c.sub}</div>
+        </div>
+      `).join('');
+    }
+
+    // ── Email Source Breakdown ─────────────────────────────────────────
+    function renderEmailSource(P) {
+      const withEmail = P.filter(p => p.email_source);
+      if (!withEmail.length) {
+        document.getElementById('chartEmailSource').parentElement.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">No email source data yet</p>';
+        return;
+      }
+      const sources = countBy(withEmail, p => p.email_source);
+      const sorted = sortEntries(sources);
+      const colors = sorted.map(([k]) => {
+        if (k === 'website_scrape') return '#00FF88';
+        if (k === 'hunter.io') return '#00D4FF';
+        if (k === 'pattern_guess') return '#FFD600';
+        if (k === 'whois') return '#A855F7';
+        return '#FF8A00';
+      });
+
+      createDoughnut('chartEmailSource',
+        sorted.map(([k]) => fmtType(k)),
+        sorted.map(([,v]) => v),
+        colors,
+        { cutout: '50%' },
+      );
+    }
+
+    // ── Tech Stack Landscape ──────────────────────────────────────────
+    function renderTechStack(audited) {
+      const techCounts = {};
+      audited.forEach(p => {
+        const stack = p.tech_stack || [];
+        stack.forEach(tech => {
+          // Normalize: strip version numbers, lowercase
+          const name = tech.replace(/\s+[\d.]+$/, '').replace(/^Server:\s*/, '').trim();
+          if (name) techCounts[name] = (techCounts[name] || 0) + 1;
+        });
+      });
+      const sorted = sortEntries(techCounts).slice(0, 12);
+      if (!sorted.length) {
+        document.getElementById('chartTechStack').parentElement.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">No tech stack data</p>';
+        return;
+      }
+
+      createHBarChart('chartTechStack',
+        sorted.map(([k]) => k),
+        sorted.map(([,v]) => v),
+        PALETTE.slice(0, sorted.length),
+      );
+    }
+
+    init();
+  </script>
+</body>
+</html>

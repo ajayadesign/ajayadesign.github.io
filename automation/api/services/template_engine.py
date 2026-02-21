@@ -6,11 +6,13 @@ hand-crafted templates. No AI API calls — every email is unique because
 the DATA is unique, not the phrasing.
 
 Phase 5 of OUTREACH_AGENT_PLAN.md (§7).
+Updated for wp_score-driven template selection (WEBSITE_SALES_AGENT.md).
 """
 
 import logging
 import os
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -44,6 +46,37 @@ SEQUENCE_TEMPLATES = {
     3: {"template": "follow_up_social.html", "subject": "one more thing — {{business_name}}"},
     4: {"template": "breakup.html", "subject": "closing the loop"},
     5: {"template": "resurrection.html", "subject": "{{business_name}} — quick check-in"},
+}
+
+# ─── WP-Score-Driven Templates (step 1 overrides) ────────────────────
+# Higher priority = checked first. Each entry has a condition checker,
+# template file, and subject line.
+WP_SCORE_TEMPLATES = {
+    "burning_money": {
+        "template": "burning_money.html",
+        "subject": "your ads + your website — quick thought",
+        "priority": 10,
+    },
+    "hiring_web": {
+        "template": "hiring_web.html",
+        "subject": "saw {{business_name}} is hiring — quick thought",
+        "priority": 9,
+    },
+    "customer_complaints": {
+        "template": "customer_complaints.html",
+        "subject": "something I noticed in {{business_name}}'s reviews",
+        "priority": 8,
+    },
+    "competitor_beating_you": {
+        "template": "competitor_beating_you.html",
+        "subject": "how {{business_name}} stacks up online",
+        "priority": 7,
+    },
+    "new_business": {
+        "template": "new_business.html",
+        "subject": "congrats on launching {{business_name}}!",
+        "priority": 6,
+    },
 }
 
 # Alternate subjects for businesses with NO website
@@ -165,6 +198,66 @@ def get_top_competitor(prospect: Prospect) -> dict:
     return sorted_c[0]
 
 
+def _select_wp_template(prospect: Prospect, audit: Optional[WebsiteAudit]) -> Optional[dict]:
+    """
+    Select the best wp_score-driven template for step-1 emails.
+
+    Examines the prospect's enrichment data and wp_score_json signals to pick
+    the most compelling angle. Returns None if no special template applies
+    (falls back to initial_audit.html).
+    """
+    wp_json = prospect.wp_score_json or {}
+    timing_signals = wp_json.get("timing_signals", [])
+    need_signals = wp_json.get("need_signals", [])
+    enrichment = prospect.enrichment or {}
+
+    score = prospect.score_overall or (audit.perf_score if audit else None) or 100
+    candidates = []
+
+    # burning_money: Running ads + mediocre/bad website
+    if prospect.runs_ads and score < 60:
+        candidates.append(("burning_money", 10))
+
+    # hiring_web: Hiring marketing/web roles
+    if prospect.is_hiring:
+        roles = (prospect.hiring_roles or "").lower()
+        if any(kw in roles for kw in ["market", "web", "digital", "social", "seo", "content"]):
+            candidates.append(("hiring_web", 9))
+        else:
+            candidates.append(("hiring_web", 5))  # lower priority for non-marketing hires
+
+    # customer_complaints: Reviews mentioning website issues
+    if "review_complaints" in timing_signals:
+        candidates.append(("customer_complaints", 8))
+
+    # competitor_beating_you: Competitor gap detected
+    if "competitor_gap" in timing_signals and prospect.competitor_count and prospect.competitor_count > 0:
+        candidates.append(("competitor_beating_you", 7))
+
+    # new_business: Formed < 12 months ago
+    if prospect.formation_date:
+        try:
+            formed = prospect.formation_date
+            if isinstance(formed, str):
+                formed = datetime.fromisoformat(formed)
+            months_old = (datetime.now(timezone.utc) - formed.replace(tzinfo=timezone.utc)).days / 30
+            if months_old < 12:
+                candidates.append(("new_business", 6))
+        except (ValueError, AttributeError):
+            if "new_business" in timing_signals:
+                candidates.append(("new_business", 6))
+    elif "new_business" in timing_signals:
+        candidates.append(("new_business", 6))
+
+    if not candidates:
+        return None
+
+    # Pick highest priority
+    candidates.sort(key=lambda x: x[1], reverse=True)
+    template_key = candidates[0][0]
+    return WP_SCORE_TEMPLATES[template_key]
+
+
 def simple_render(template_str: str, variables: dict) -> str:
     """
     Simple {{variable}} replacement with {{#if var}}...{{/if}} conditionals.
@@ -240,6 +333,16 @@ async def compose_email(
         elif not prospect.has_website and sequence_step == 1:
             subject_template = NO_WEBSITE_SUBJECTS.get(sequence_step, subject_template)
             template_name = "no_website_intro.html"
+        # ── WP-Score-driven template selection (step 1 only) ──
+        elif sequence_step == 1 and prospect.wp_score is not None:
+            wp_override = _select_wp_template(prospect, audit)
+            if wp_override:
+                template_name = wp_override["template"]
+                subject_template = wp_override["subject"]
+                logger.info(
+                    "wp_score template override: %s → %s (wp=%d)",
+                    prospect.business_name, template_name, prospect.wp_score,
+                )
         subject = simple_render(subject_template, variables)
 
         # Render HTML body using Jinja2
@@ -431,8 +534,115 @@ def _build_variables(prospect: Prospect, audit: Optional[WebsiteAudit]) -> dict:
     if not prospect.has_website:
         variables["no_website"] = True
         variables["platform"] = "none"
+        variables["has_website"] = False
     else:
         variables["no_website"] = False
+        variables["has_website"] = True
+
+    # ── Enrichment-powered variables for wp_score templates ──────────
+
+    # General enrichment fields
+    enrichment = prospect.enrichment or {}
+    wp_json = prospect.wp_score_json or {}
+
+    variables["wp_score"] = prospect.wp_score
+    variables["wp_tier"] = wp_json.get("tier", "unknown")
+
+    # Ad-running fields (burning_money template)
+    variables["runs_ads"] = bool(prospect.runs_ads)
+    ad_platforms = prospect.ad_platforms or ""
+    if ad_platforms:
+        platforms = [p.strip().title() for p in ad_platforms.split(",") if p.strip()]
+        variables["ad_platform_display"] = " and ".join(platforms) if len(platforms) <= 2 else ", ".join(platforms)
+    else:
+        variables["ad_platform_display"] = "online"
+    variables["bounce_rate_est"] = variables.get("bounce_rate_est", "unknown")
+
+    # Hiring fields (hiring_web template)
+    variables["is_hiring"] = bool(prospect.is_hiring)
+    hiring_roles = prospect.hiring_roles or ""
+    if hiring_roles:
+        roles = [r.strip() for r in hiring_roles.split(",") if r.strip()]
+        variables["hiring_role_display"] = roles[0] if roles else "marketing"
+    else:
+        variables["hiring_role_display"] = "marketing"
+
+    # Page signal fields (shared across templates)
+    variables["has_booking"] = bool(prospect.has_booking)
+    variables["has_online_ordering"] = bool(prospect.has_online_ordering)
+    variables["has_contact_form"] = bool(prospect.has_contact_form)
+    variables["has_analytics"] = bool(prospect.has_analytics)
+    variables["has_email_capture"] = bool(prospect.has_email_capture)
+    variables["has_live_chat"] = bool(prospect.has_live_chat)
+    variables["has_privacy_policy"] = bool(prospect.has_privacy_policy)
+    variables["has_ada_widget"] = bool(prospect.has_ada_widget)
+
+    # Social fields
+    variables["has_social"] = bool(prospect.has_social)
+    variables["social_score"] = prospect.social_score or 0
+
+    # Review-complaint fields (customer_complaints template)
+    gbp = enrichment.get("gbp", {})
+    review_complaints = gbp.get("negative_themes", [])
+    variables["review_complaint_booking"] = ""
+    variables["review_complaint_info"] = ""
+    variables["review_complaint_general"] = ""
+    for complaint in review_complaints[:3]:
+        text = complaint if isinstance(complaint, str) else str(complaint)
+        if any(kw in text.lower() for kw in ["book", "reserv", "appoint", "schedul"]):
+            variables["review_complaint_booking"] = text[:120]
+        elif any(kw in text.lower() for kw in ["website", "online", "page", "find", "hours", "menu"]):
+            variables["review_complaint_info"] = text[:120]
+        elif not variables["review_complaint_general"]:
+            variables["review_complaint_general"] = text[:120]
+
+    variables["online_booking_pct"] = "67"  # industry stat
+    variables["year"] = str(datetime.now().year)
+
+    # Competitor fields (competitor_beating_you template)
+    variables["competitor_count"] = prospect.competitor_count or 0
+    top_comp = get_top_competitor(prospect)
+    variables["competitor_example"] = top_comp.get("name", "a competitor nearby")
+    variables["competitor_speed_avg"] = str(top_comp.get("score", 75))
+    variables["competitor_mobile_avg"] = str(min(int(top_comp.get("score", 70)) + 5, 100))
+    variables["competitor_booking_pct"] = "60"  # industry baseline
+    variables["competitor_ssl_pct"] = "92"  # industry baseline
+    variables["business_name_short"] = prospect.business_name.split(" - ")[0].split(" | ")[0][:25]
+    search_type = (prospect.business_type or "business").replace("_", " ")
+    variables["search_term"] = f"{search_type} in {prospect.city or 'the area'}"
+    variables["ssl_valid"] = variables.get("ssl_good", True)
+
+    # New business fields (new_business template)
+    variables["local_search_pct"] = "76"  # Google stat
+    gbp_photos = prospect.gbp_photos_count or 0
+    variables["gbp_stat"] = f"businesses with a website get {35 if gbp_photos < 5 else 20}% more clicks"
+    if audit:
+        speed_val = audit.perf_score or 0
+        mobile_val = prospect.score_mobile or audit.a11y_score or 0
+        variables["speed_comment"] = (
+            "solid" if speed_val >= 80 else
+            "could be faster" if speed_val >= 50 else
+            "painfully slow for customers"
+        )
+        variables["mobile_comment"] = (
+            "looks good" if mobile_val >= 80 else
+            "needs work" if mobile_val >= 50 else
+            "hard to use on a phone"
+        )
+        variables["booking_stat"] = f"{67}% of customers prefer to book online"
+
+    # Business type plural (customer_complaints template)
+    bt = (prospect.business_type or "business").replace("_", " ")
+    if bt.endswith("y"):
+        variables["business_type_plural"] = bt[:-1] + "ies"
+    elif bt.endswith("s") or bt.endswith("sh") or bt.endswith("ch"):
+        variables["business_type_plural"] = bt + "es"
+    else:
+        variables["business_type_plural"] = bt + "s"
+
+    # Speed flag for conditional display
+    variables["speed_good"] = variables.get("speed_good", True)
+    variables["mobile_good"] = variables.get("mobile_good", True)
 
     return variables
 

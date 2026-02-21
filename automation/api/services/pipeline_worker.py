@@ -41,6 +41,9 @@ PIPELINE_INTERVAL_SEC = 120          # Run every 2 minutes
 AUDIT_BATCH_SIZE = 5                 # Max audits per cycle per agent
 RECON_BATCH_SIZE = 5                 # Max recons per cycle per agent
 ENQUEUE_BATCH_SIZE = 10              # Max enqueue per cycle per agent
+ENRICH_BATCH_SIZE = 3                # Max deep enrichments per cycle per agent
+SCORE_BATCH_SIZE = 20                # Max scores per cycle per agent
+BACKFILL_BATCH_SIZE = 5              # Max backfill enrichments per cycle per agent
 STUCK_THRESHOLD_MIN = 15             # Minutes before a task is considered stuck
 MAX_RETRIES = 3                      # Max retries for any single prospect
 MAX_AGENTS = 5                       # Maximum number of concurrent agents
@@ -67,6 +70,7 @@ def is_crawl_enabled() -> bool:
 AUDIT_DELAY_SEC = 3                  # Seconds between audits
 RECON_DELAY_SEC = 2                  # Seconds between recons
 ENQUEUE_DELAY_SEC = 0.5              # Seconds between enqueues
+ENRICH_DELAY_SEC = 3                 # Seconds between deep enrichments
 
 
 # ─── Pipeline Log Ring Buffer ──────────────────────────────────────────
@@ -117,6 +121,9 @@ class PipelineWorker:
             "recons_completed": 0,
             "enqueues_completed": 0,
             "crawls_completed": 0,
+            "enrichments_completed": 0,
+            "backfill_completed": 0,
+            "scores_completed": 0,
             "recoveries": 0,
             "errors": 0,
             "last_cycle": None,
@@ -192,20 +199,29 @@ class PipelineWorker:
         # Phase 1: Audit discovered prospects that have websites
         audited = await self._process_audits()
         
-        # Phase 2: Recon — find owner info for audited prospects AND no-website discovered prospects
+        # Phase 2: Deep Enrichment — GBP, DNS, social, records, ads/hiring
+        enriched = await self._process_deep_enrichments()
+
+        # Phase 2b: Backfill — enrich existing prospects that skipped deep enrichment
+        backfilled = await self._process_backfill_enrichments()
+
+        # Phase 3: Recon — find owner info for audited prospects AND no-website discovered prospects
         reconned = await self._process_recons()
         
-        # Phase 3: Enqueue — generate email drafts for enriched prospects with emails
+        # Phase 4: Score — calculate Website Purchase Likelihood Score
+        scored = await self._process_scoring()
+
+        # Phase 5: Enqueue — generate email drafts for enriched prospects with emails
         enqueued = await self._process_enqueues()
         
         elapsed = round(time.time() - cycle_start, 1)
         
-        pipeline_log("SYS", f"Cycle #{self._cycle_count} done in {elapsed}s — crawled={crawled} audited={audited} reconned={reconned} enqueued={enqueued}")
+        pipeline_log("SYS", f"Cycle #{self._cycle_count} done in {elapsed}s — crawled={crawled} audited={audited} enriched={enriched} backfilled={backfilled} reconned={reconned} scored={scored} enqueued={enqueued}")
 
-        if recovered or crawled or audited or reconned or enqueued:
+        if recovered or crawled or audited or enriched or backfilled or reconned or scored or enqueued:
             logger.info(
-                "Agent #%d cycle #%d done in %.1fs: recovered=%d, crawled=%d, audited=%d, reconned=%d, enqueued=%d",
-                self._agent_id, self._cycle_count, elapsed, recovered, crawled, audited, reconned, enqueued,
+                "Agent #%d cycle #%d done in %.1fs: recovered=%d, crawled=%d, audited=%d, enriched=%d, backfilled=%d, reconned=%d, scored=%d, enqueued=%d",
+                self._agent_id, self._cycle_count, elapsed, recovered, crawled, audited, enriched, backfilled, reconned, scored, enqueued,
             )
             # Push stats to Firebase
             await self._push_stats()
@@ -239,6 +255,20 @@ class PipelineWorker:
             )
             # These are just sitting as discovered — they'll be re-picked by audit.
             # No reset needed, just ensure they're eligible.
+
+            # --- Recover stuck enrichments ---
+            result = await db.execute(
+                select(Prospect).where(
+                    Prospect.status == "enriching",
+                    Prospect.updated_at < cutoff,
+                )
+            )
+            stuck_enriching = result.scalars().all()
+            for p in stuck_enriching:
+                p.status = "audited"  # Reset to audited so enrichment retries
+                p.updated_at = datetime.now(timezone.utc)
+                recovered += 1
+                pipeline_log("RECOVER", f"Stuck enrichment → reset to audited: {p.business_name}", biz=p.business_name)
 
             # --- Recover stuck emails ---
             result = await db.execute(
@@ -416,7 +446,160 @@ class PipelineWorker:
 
         return count
 
-    # ── Phase 2: Recon ─────────────────────────────────────────────────
+    # ── Phase 2: Deep Enrichment ───────────────────────────────────────
+
+    async def _process_deep_enrichments(self) -> int:
+        """
+        Run deep enrichment (GBP, DNS, social, records, ads/hiring) on
+        audited prospects that haven't been enriched yet.
+        """
+        from api.services.deep_enrichment import deep_enrich_prospect
+
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id).where(
+                    Prospect.status == "audited",
+                    Prospect.enriched_at.is_(None),
+                    Prospect.has_website == True,
+                ).order_by(
+                    Prospect.priority_score.desc()
+                ).limit(ENRICH_BATCH_SIZE)
+            )
+            prospect_ids = [str(r[0]) for r in result.fetchall()]
+
+        if not prospect_ids:
+            return 0
+
+        # Load names for logging
+        name_map = {}
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id, Prospect.business_name)
+                .where(Prospect.id.in_([__import__('uuid').UUID(i) for i in prospect_ids]))
+            )
+            for row in result.fetchall():
+                name_map[str(row[0])] = row[1] or 'Unknown'
+
+        count = 0
+        for pid in prospect_ids:
+            biz_name = name_map.get(pid, 'Unknown')
+            pipeline_log("ENRICH", f"Deep enrichment started → {biz_name}", biz=biz_name)
+            try:
+                enrichment = await deep_enrich_prospect(pid)
+                if enrichment:
+                    count += 1
+                    self._stats["enrichments_completed"] += 1
+                    signals = len([k for k, v in enrichment.items() if v])
+                    pipeline_log("ENRICH", f"Enrichment complete → {biz_name}: {signals} data sources", biz=biz_name)
+            except Exception as e:
+                logger.error("Deep enrichment failed for %s: %s", pid, e)
+                pipeline_log("ENRICH", f"Enrichment FAILED → {biz_name}: {str(e)[:60]}", biz=biz_name)
+                self._stats["errors"] += 1
+            await asyncio.sleep(ENRICH_DELAY_SEC)
+
+        return count
+
+    # ── Phase 2b: Backfill Enrichment ──────────────────────────────────
+
+    async def _process_backfill_enrichments(self) -> int:
+        """
+        Backfill deep enrichment for existing prospects that were
+        already past the audited stage before deep enrichment was added.
+        Preserves their current pipeline status.
+
+        Targets prospects in enriched/queued/contacted/replied/meeting_booked
+        that have no enrichment data yet.  Once all are backfilled this
+        phase becomes a no-op automatically.
+        """
+        from api.services.deep_enrichment import backfill_enrich_prospect
+        from api.services.scoring_engine import score_prospect
+
+        backfill_statuses = [
+            "enriched", "queued", "contacted", "replied",
+            "meeting_booked", "promoted",
+        ]
+
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id).where(
+                    Prospect.status.in_(backfill_statuses),
+                    or_(
+                        Prospect.enrichment.is_(None),
+                        Prospect.enrichment == {},
+                    ),
+                ).order_by(
+                    Prospect.wp_score.desc().nullslast(),
+                    Prospect.priority_score.desc(),
+                ).limit(BACKFILL_BATCH_SIZE)
+            )
+            prospect_ids = [str(r[0]) for r in result.fetchall()]
+
+        if not prospect_ids:
+            return 0
+
+        # Load names for logging
+        name_map = {}
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id, Prospect.business_name, Prospect.status)
+                .where(Prospect.id.in_([__import__('uuid').UUID(i) for i in prospect_ids]))
+            )
+            for row in result.fetchall():
+                name_map[str(row[0])] = (row[1] or 'Unknown', row[2])
+
+        remaining = await self._count_backfill_remaining()
+        pipeline_log(
+            "BACKFILL",
+            f"Starting backfill batch: {len(prospect_ids)} prospects ({remaining} total remaining)",
+        )
+
+        count = 0
+        for pid in prospect_ids:
+            biz_name, status = name_map.get(pid, ('Unknown', 'unknown'))
+            pipeline_log("BACKFILL", f"Enriching → {biz_name} (status={status})", biz=biz_name)
+            try:
+                enrichment = await backfill_enrich_prospect(pid)
+                if enrichment:
+                    count += 1
+                    self._stats["backfill_completed"] += 1
+                    signals = len([k for k, v in enrichment.items() if v])
+                    pipeline_log("BACKFILL", f"Enriched → {biz_name}: {signals} data sources", biz=biz_name)
+
+                    # Score immediately after backfill enrichment
+                    try:
+                        score_result = await score_prospect(pid)
+                        if score_result:
+                            self._stats["scores_completed"] += 1
+                            pipeline_log(
+                                "BACKFILL",
+                                f"Scored → {biz_name}: wp_score={score_result['wp_score']} ({score_result['tier']})",
+                                biz=biz_name,
+                            )
+                    except Exception as se:
+                        logger.error("Backfill scoring failed for %s: %s", pid, se)
+            except Exception as e:
+                logger.error("Backfill enrichment failed for %s: %s", pid, e)
+                pipeline_log("BACKFILL", f"FAILED → {biz_name}: {str(e)[:60]}", biz=biz_name)
+                self._stats["errors"] += 1
+            await asyncio.sleep(ENRICH_DELAY_SEC)
+
+        return count
+
+    async def _count_backfill_remaining(self) -> int:
+        """Count how many prospects still need backfill enrichment."""
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(func.count()).select_from(Prospect).where(
+                    Prospect.status.in_(["enriched", "queued", "contacted", "replied", "meeting_booked", "promoted"]),
+                    or_(
+                        Prospect.enrichment.is_(None),
+                        Prospect.enrichment == {},
+                    ),
+                )
+            )
+            return result.scalar() or 0
+
+    # ── Phase 3: Recon ─────────────────────────────────────────────────
 
     async def _process_recons(self) -> int:
         """
@@ -544,13 +727,66 @@ class PipelineWorker:
 
         return count
 
-    # ── Phase 3: Enqueue ───────────────────────────────────────────────
+    # ── Phase 4: Scoring ───────────────────────────────────────────────
+
+    async def _process_scoring(self) -> int:
+        """
+        Calculate wp_score for enriched prospects that haven't been scored yet.
+        Also scores queued/contacted prospects that gained new enrichment data.
+        """
+        from api.services.scoring_engine import score_prospect
+
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id).where(
+                    Prospect.wp_score.is_(None),
+                    Prospect.status.in_(["enriched", "queued", "contacted"]),
+                ).order_by(
+                    Prospect.created_at.asc()
+                ).limit(SCORE_BATCH_SIZE)
+            )
+            prospect_ids = [str(r[0]) for r in result.fetchall()]
+
+        if not prospect_ids:
+            return 0
+
+        # Load names for logging
+        name_map = {}
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id, Prospect.business_name)
+                .where(Prospect.id.in_([__import__('uuid').UUID(i) for i in prospect_ids]))
+            )
+            for row in result.fetchall():
+                name_map[str(row[0])] = row[1] or 'Unknown'
+
+        count = 0
+        for pid in prospect_ids:
+            biz_name = name_map.get(pid, 'Unknown')
+            try:
+                result = await score_prospect(pid)
+                if result:
+                    count += 1
+                    self._stats["scores_completed"] += 1
+                    pipeline_log(
+                        "SCORE",
+                        f"wp_score={result['wp_score']} ({result['tier'].upper()}) → {biz_name}",
+                        biz=biz_name,
+                    )
+            except Exception as e:
+                logger.error("Scoring failed for %s: %s", pid, e)
+                self._stats["errors"] += 1
+
+        return count
+
+    # ── Phase 5: Enqueue ───────────────────────────────────────────────
 
     async def _process_enqueues(self) -> int:
         """
         Generate email drafts (pending_approval) for enriched prospects.
         
-        Creates the email but does NOT send — user must approve first.
+        Uses wp_score to filter (only score >= 40) and to select the best
+        email template based on the prospect's strongest signal cluster.
         """
         from api.services.cadence_engine import enqueue_prospect
 
@@ -559,8 +795,14 @@ class PipelineWorker:
                 select(Prospect.id).where(
                     Prospect.status == "enriched",
                     Prospect.owner_email.isnot(None),
+                    # Only email prospects with meaningful wp_score
+                    or_(
+                        Prospect.wp_score >= 40,
+                        Prospect.wp_score.is_(None),  # backward compat: unscored prospects
+                    ),
                 ).order_by(
-                    Prospect.priority_score.desc()
+                    Prospect.wp_score.desc().nullslast(),
+                    Prospect.priority_score.desc(),
                 ).limit(ENQUEUE_BATCH_SIZE)
             )
             prospect_ids = [str(r[0]) for r in result.fetchall()]
@@ -581,7 +823,7 @@ class PipelineWorker:
         count = 0
         for pid in prospect_ids:
             biz_name, email = name_map.get(pid, ('Unknown', ''))
-            pipeline_log("EMAIL", f'Template "initial_audit" selected for {biz_name}', biz=biz_name)
+            pipeline_log("EMAIL", f'Composing email for {biz_name} (wp_score-driven template)', biz=biz_name)
             try:
                 email_id = await enqueue_prospect(pid)
                 if email_id:
@@ -644,6 +886,9 @@ class PipelineAgentManager:
             "recons_completed": 0,
             "enqueues_completed": 0,
             "crawls_completed": 0,
+            "enrichments_completed": 0,
+            "backfill_completed": 0,
+            "scores_completed": 0,
             "recoveries": 0,
             "errors": 0,
             "last_cycle": None,
@@ -659,6 +904,9 @@ class PipelineAgentManager:
             agg["recons_completed"] += s.get("recons_completed", 0)
             agg["enqueues_completed"] += s.get("enqueues_completed", 0)
             agg["crawls_completed"] += s.get("crawls_completed", 0)
+            agg["enrichments_completed"] += s.get("enrichments_completed", 0)
+            agg["backfill_completed"] += s.get("backfill_completed", 0)
+            agg["scores_completed"] += s.get("scores_completed", 0)
             agg["recoveries"] += s.get("recoveries", 0)
             agg["errors"] += s.get("errors", 0)
             agg["cycle_count"] += s.get("cycle_count", 0)

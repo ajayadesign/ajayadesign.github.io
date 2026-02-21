@@ -570,6 +570,7 @@
 
   // ── Pipeline Worker Control ─────────────────────────
   let _pipelineRunning = false;
+  let _enrichHistory = [];  // {ts, done} for rate calc
 
   async function _loadPipelineStatus() {
     const data = await _api('GET', '/outreach/pipeline/status');
@@ -623,6 +624,64 @@
         if (opt.value === cur) { $agentSel.value = cur; break; }
       }
     }
+
+    // ── Enrichment Progress Bar ──
+    _updateEnrichProgress(data, dbCounts, totalDB);
+  }
+
+  function _updateEnrichProgress(data, dbCounts, totalDB) {
+    const $box = document.getElementById('outreach-enrich-progress');
+    if (!$box) return;
+
+    const enriched = dbCounts.enriched || 0;
+    const queued = dbCounts.queued || 0;
+    const dead = dbCounts.dead || 0;
+    const dnc = dbCounts.do_not_contact || 0;
+    const done = enriched + dead + dnc;
+    const pctVal = totalDB > 0 ? (done / totalDB * 100) : 0;
+    const isRunning = data.running && queued > 0;
+    const isComplete = queued === 0 && totalDB > 0;
+
+    // Rate tracking
+    const now = Date.now();
+    _enrichHistory.push({ ts: now, done });
+    _enrichHistory = _enrichHistory.filter(h => now - h.ts < 120000);
+    let ratePerMin = 0;
+    if (_enrichHistory.length >= 2) {
+      const oldest = _enrichHistory[0];
+      const elapsed = (now - oldest.ts) / 60000;
+      if (elapsed > 0.3) ratePerMin = Math.round((done - oldest.done) / elapsed);
+    }
+
+    let eta = '';
+    if (isRunning && ratePerMin > 0) {
+      const minsLeft = Math.ceil(queued / ratePerMin);
+      eta = minsLeft > 60 ? `~${Math.round(minsLeft/60)}h left` : `~${minsLeft}m left`;
+    }
+
+    $box.classList.remove('hidden');
+    const $dot = document.getElementById('outreach-enrich-dot');
+    if ($dot) $dot.className = `w-2 h-2 rounded-full ${isRunning ? 'bg-emerald-400 animate-pulse' : isComplete ? 'bg-emerald-400' : 'bg-gray-600'}`;
+    const $status = document.getElementById('outreach-enrich-status');
+    if ($status) {
+      $status.textContent = isComplete ? 'Complete ✓' : isRunning ? `Running · Cycle #${data.cycle_count || 0} · ${data.agent_count || 1} agents` : 'Idle';
+      $status.className = `text-[0.65rem] font-mono ${isComplete || isRunning ? 'text-emerald-400' : 'text-gray-500'}`;
+    }
+    const el = (id) => document.getElementById(id);
+    if (el('outreach-enrich-done')) el('outreach-enrich-done').textContent = done.toLocaleString();
+    if (el('outreach-enrich-total')) el('outreach-enrich-total').textContent = totalDB.toLocaleString();
+    if (el('outreach-enrich-pct')) el('outreach-enrich-pct').textContent = pctVal.toFixed(1) + '%';
+    if (el('outreach-enrich-eta')) el('outreach-enrich-eta').textContent = eta;
+    const $bar = el('outreach-enrich-bar');
+    if ($bar) {
+      $bar.style.width = pctVal + '%';
+      if (isComplete) $bar.style.background = 'linear-gradient(90deg,#10b981,#00D4FF)';
+    }
+    if (el('outreach-enrich-queued')) el('outreach-enrich-queued').textContent = queued.toLocaleString();
+    if (el('outreach-enrich-enriched')) el('outreach-enrich-enriched').textContent = enriched.toLocaleString();
+    if (el('outreach-enrich-dead')) el('outreach-enrich-dead').textContent = dead.toLocaleString();
+    if (el('outreach-enrich-rate')) el('outreach-enrich-rate').textContent = ratePerMin;
+    if (el('outreach-enrich-session')) el('outreach-enrich-session').textContent = `Session: ${(data.backfill_completed||0).toLocaleString()} backfilled, ${(data.scores_completed||0).toLocaleString()} scored`;
   }
 
   window.outreachTogglePipeline = async function () {

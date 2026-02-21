@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; font-size: 15px;">
+{% if owner_first_name == 'there' %}
+<p>Hi there,</p>
+{% else %}
+<p>Hi {{ owner_first_name }},</p>
+{% endif %}
+
+<p>I saw {{ business_name }} has a {{ hiring_role_display }} job posted — congrats on the growth.</p>
+
+<p>While you're building out the team, I wanted to flag something: your current website{% if speed_score %} scores <b>{{ speed_score }}/100</b> on Google PageSpeed{% endif %}{% if not mobile_good %} and doesn't display well on mobile{% endif %}. That affects every dollar your new hire spends on marketing.</p>
+
+<p style="padding-left: 12px; border-left: 3px solid #f39c12; margin: 16px 0;">
+{% if not speed_good %}⚠️ <b>Speed:</b> {{ load_time }} load — potential customers leave before it finishes<br>{% endif %}
+{% if not mobile_good %}⚠️ <b>Mobile:</b> {{ mobile_score }}/100 on mobile<br>{% endif %}
+{% if ssl_expired %}⚠️ <b>Security:</b> SSL {{ ssl_status }}<br>{% endif %}
+{% if not has_analytics %}⚠️ <b>No Analytics:</b> No Google Analytics detected — you can't measure what you can't track<br>{% endif %}
+{% if not has_contact_form %}⚠️ <b>No Contact Form:</b> No way for visitors to reach out without leaving the site<br>{% endif %}
+</p>
+
+<p>A new marketing person can only do so much if the website isn't converting. It's like hiring a salesperson but giving them broken business cards.</p>
+
+<p>I'm a web developer in Manor. I work with {{ city }} businesses on websites that actually support growth — fast, mobile-friendly, and built to convert.</p>
+
+<p>Would it make sense to chat before the new hire starts? I could have a modern site ready by the time they're onboarded. 15 minutes — I'll show you what's possible.</p>
+
+<p style="margin-top: 28px;">— {{ sender_name }}</p>
+<p style="color: #888; font-size: 13px; margin-top: 4px;">Web developer in Manor, TX · <a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
+
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a> if you'd rather not hear from me.</p>
+<img src="__TRACKING_PIXEL_URL__" width="1" height="1" alt="" style="display:none;">
+</body>
+</html>

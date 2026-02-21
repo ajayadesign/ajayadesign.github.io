@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insight Dashboard — Market Analysis</title>
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { mono: ['JetBrains Mono','monospace'], sans: ['Inter','sans-serif'] },
+          colors: {
+            'surface':'#06060A','surface-1':'#0C0C12','surface-2':'#12121A','surface-3':'#1A1A24',
+            'border':'#2A2A3A','electric':'#00D4FF','neon-green':'#00FF88','neon-orange':'#FF8A00',
+            'neon-purple':'#A855F7','neon-red':'#ef4444','neon-yellow':'#FFD600',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="bg-surface text-gray-300 min-h-screen">
+
+  <!-- Nav -->
+  <nav class="fixed top-0 left-0 right-0 z-50 border-b border-border bg-surface/90 backdrop-blur-lg">
+    <div class="max-w-[1600px] mx-auto px-6 flex items-center justify-between h-14">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-electric to-neon-purple flex items-center justify-center text-white font-bold text-sm">AD</div>
+        <span class="font-semibold text-white text-sm tracking-wide">Insight Dashboard</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <a href="index.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          Overview
+        </a>
+        <a href="intelligence.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          Intelligence
+        </a>
+        <a href="opportunities.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+          Opportunities
+        </a>
+        <a href="market.html" class="nav-link active">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Market
+        </a>
+        <a href="prospects.html" class="nav-link">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Prospects
+        </a>
+      </div>
+      <button onclick="refreshData()" class="text-xs px-3 py-1.5 rounded-lg border border-border hover:border-electric text-gray-400 hover:text-electric transition-all">↻ Refresh</button>
+    </div>
+  </nav>
+
+  <main class="pt-20 pb-12 px-6 max-w-[1600px] mx-auto">
+    <div id="loadingState" class="flex items-center justify-center min-h-[60vh]">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-full border-2 border-electric border-t-transparent animate-spin mx-auto mb-4"></div>
+        <p class="text-gray-500 text-sm">Analyzing market data...</p>
+      </div>
+    </div>
+
+    <div id="content" class="hidden space-y-6">
+      <div>
+        <h1 class="text-lg font-semibold text-white">Market Analysis</h1>
+        <p class="text-sm text-gray-500">Geographic distribution, competitive landscape, industry opportunities & growth signals.</p>
+      </div>
+
+      <!-- ── Market Size KPIs ── -->
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" id="marketKpis"></div>
+
+      <!-- ── Geographic ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Prospects by City<span class="info-icon" data-tip="Source: prospects.city — from Google Business Profile address during discovery.">?</span></h3>
+          <div class="h-[300px]"><canvas id="chartCities"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Average <span class="tip" data-tip="WP Score = Website Prospect Score (0-100). Higher = stronger need + ability + timing to buy web services.">WP Score</span> by City</h3>
+          <div class="h-[300px]"><canvas id="chartCityScores"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Industry Opportunity Matrix ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Industry Opportunity Score<span class="info-icon" data-tip="Source: prospects.business_type × AVG(prospects.wp_score). Opportunity = Average WP Score × Count. Larger bubbles = more business potential.">?</span></h3>
+          <p class="text-xs text-gray-500 mb-2">Opportunity = Avg WP Score × Count (higher = more business potential)</p>
+          <div class="h-[350px]"><canvas id="chartIndustry"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Industry —  Count vs Avg Score<span class="info-icon" data-tip="Scatter plot of prospects.business_type grouped by count vs average prospects.wp_score. Min 3 businesses per industry.">?</span></h3>
+          <div class="h-[350px]"><canvas id="chartIndustryScatter"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Competitive Landscape ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Google Rating Distribution<span class="info-icon" data-tip="Source: prospects.google_rating (1.0-5.0) — from Google Business Profile scraped during discovery.">?</span></h3>
+          <div class="h-[300px]"><canvas id="chartRatings"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Review Count Distribution<span class="info-icon" data-tip="Source: prospects.google_reviews — total review count from Google Business Profile.">?</span></h3>
+          <div class="h-[300px]"><canvas id="chartReviews"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Growth Signals ── -->
+      <div class="chart-card">
+        <h3>Growth Signals Across Market<span class="info-icon" data-tip="Source: prospects.is_hiring, prospects.runs_ads, prospects.ppp_loan_amount, prospects.google_reviews (50+), prospects.review_velocity (>2/mo), prospects.has_social.">?</span></h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-2" id="growthGrid"></div>
+      </div>
+
+      <!-- ── Competitive Intel ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Industry vs Market Average<span class="info-icon" data-tip="Source: AVG(prospects.wp_score) grouped by prospects.business_type vs overall AVG(wp_score). Green bars = above market avg, Red = below (more opportunity).">?</span></h3>
+          <div class="h-[320px]"><canvas id="chartCompetitive"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Platform Market Share Among Businesses<span class="info-icon" data-tip="Source: prospects.website_platform — CMS/builder detected during website audit for businesses that have websites.">?</span></h3>
+          <div class="h-[280px]"><canvas id="chartPlatformShare"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Business Maturity Indicators ── -->
+      <div class="chart-card">
+        <h3>Business Maturity Indicators<span class="info-icon" data-tip="Source: prospects.entity_type, enrichment→dns.has_professional_email, enrichment→gbp_hours_complete, prospects.gbp_photos_count, prospects.google_reviews (≥50), prospects.ssl_valid.">?</span></h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-2" id="maturityGrid"></div>
+      </div>
+
+      <!-- ── GBP Category Analysis + Review Velocity ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="chart-card">
+          <h3>Top GBP Categories<span class="info-icon" data-tip="Source: enrichment→gbp_primary_type — Google Business Profile primary category. How Google classifies these businesses. Shows competitive landscape by category.">?</span></h3>
+          <div class="h-[300px]"><canvas id="chartGBPCategories"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Review Velocity Distribution<span class="info-icon" data-tip="Source: prospects.review_velocity (reviews per month). Calculated from total reviews ÷ age of GBP listing. Higher velocity = more active customer base.">?</span></h3>
+          <div class="h-[300px]"><canvas id="chartReviewVelocity"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ── Market Summary ── -->
+      <div class="chart-card" id="marketSummary">
+        <h3>Market Summary<span class="info-icon" data-tip="Aggregated from all prospect data: prospects.city, business_type, has_website, wp_score. Revenue estimate uses conservative $500-$2,000/client pricing.">?</span></h3>
+        <div id="summaryContent" class="prose prose-invert text-sm text-gray-400 space-y-2 max-w-none"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script>
+    let DATA = null;
+
+    async function refreshData() {
+      DATA = await fetchAnalytics(true);
+      renderAll();
+    }
+
+    async function init() {
+      try {
+        DATA = await fetchAnalytics();
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('content').classList.remove('hidden');
+        renderAll();
+      } catch(e) {
+        document.getElementById('loadingState').innerHTML =
+          `<div class="text-center text-neon-red">Failed: ${e.message}</div>`;
+      }
+    }
+
+    function renderAll() {
+      const all = DATA.prospects;
+      const scored = all.filter(p => p.wp_score != null);
+
+      renderKPIs(all, scored);
+      renderCities(all, scored);
+      renderIndustry(scored);
+      renderRatings(all);
+      renderGrowth(all);
+      renderCompetitive(scored);
+      renderMaturity(all);
+      renderGBPCategories(all);
+      renderReviewVelocity(all);
+      renderSummary(all, scored);
+    }
+
+    // ── Market KPIs ──────────────────────────────────────────────────
+    function renderKPIs(all, scored) {
+      const cities = [...new Set(all.map(p => p.city).filter(Boolean))].length;
+      const types = [...new Set(all.map(p => p.business_type).filter(Boolean))].length;
+      const withRating = all.filter(p => p.google_rating != null);
+      const avgRating = withRating.length ? avg(withRating, p => p.google_rating) : 0;
+      const totalReviews = all.reduce((s,p) => s + (p.google_reviews || 0), 0);
+      const hiring = all.filter(p => p.is_hiring).length;
+      const runningAds = all.filter(p => p.runs_ads).length;
+
+      const kpis = [
+        { label: 'Cities', value: cities, color: '#00D4FF' },
+        { label: 'Biz Types', value: types, color: '#A855F7' },
+        { label: 'Avg Rating', value: avgRating.toFixed(1) + '★', color: '#FFD600' },
+        { label: 'Total Reviews', value: fmt(totalReviews), color: '#00FF88' },
+        { label: 'Hiring', value: hiring, color: '#FF8A00' },
+        { label: 'Running Ads', value: runningAds, color: '#ef4444' },
+      ];
+
+      document.getElementById('marketKpis').innerHTML = kpis.map(k => `
+        <div class="kpi-card" style="--accent:${k.color}">
+          <div class="text-xs text-gray-500 uppercase tracking-wider mb-1">${k.label}</div>
+          <div class="text-2xl font-bold text-white font-mono">${k.value}</div>
+        </div>
+      `).join('');
+    }
+
+    // ── Cities ────────────────────────────────────────────────────────
+    function renderCities(all, scored) {
+      const cityC = countBy(all, p => p.city || 'Unknown');
+      const sorted = sortEntries(cityC);
+
+      createBarChart('chartCities',
+        sorted.map(([c]) => c),
+        [{
+          data: sorted.map(([,v]) => v),
+          backgroundColor: '#00D4FF',
+          borderRadius: 4,
+          label: 'Prospects',
+        }],
+        { plugins: { legend: { display: false } } },
+      );
+
+      // avg score per city
+      const cityGroups = groupBy(scored, p => p.city || 'Unknown');
+      const entries = Object.entries(cityGroups)
+        .map(([c, arr]) => [c, avg(arr, p => p.wp_score)])
+        .sort((a,b) => b[1] - a[1]);
+
+      createBarChart('chartCityScores',
+        entries.map(([c]) => c),
+        [{
+          data: entries.map(([,v]) => Number(v.toFixed(1))),
+          backgroundColor: entries.map(([,v]) => v >= 60 ? '#FF8A00' : v >= 45 ? '#00D4FF' : '#808098'),
+          borderRadius: 4,
+          label: 'Avg WP Score',
+        }],
+        { plugins: { legend: { display: false } } },
+      );
+    }
+
+    // ── Industry Analysis ─────────────────────────────────────────────
+    function renderIndustry(scored) {
+      const groups = groupBy(scored, p => p.business_type || 'unknown');
+      const opp = Object.entries(groups).map(([type, arr]) => {
+        const a = avg(arr, p => p.wp_score);
+        return { type, count: arr.length, avgScore: a, opportunity: a * arr.length };
+      }).sort((a,b) => b.opportunity - a.opportunity).slice(0, 15);
+
+      createHBarChart('chartIndustry',
+        opp.map(o => fmtType(o.type)),
+        opp.map(o => Math.round(o.opportunity)),
+        opp.map(o => o.avgScore >= 55 ? '#FF8A00' : o.avgScore >= 40 ? '#00D4FF' : '#808098'),
+      );
+
+      // scatter: count vs avg score
+      createScatter('chartIndustryScatter', [{
+        label: 'Industries',
+        data: opp.map(o => ({ x: o.count, y: o.avgScore, label: fmtType(o.type) })),
+        backgroundColor: '#00D4FF',
+        pointRadius: 6,
+      }], {
+        x: { title: { display: true, text: 'Prospect Count' } },
+        y: { title: { display: true, text: 'Avg WP Score' }, min: 0 },
+      });
+    }
+
+    // ── Google Ratings ────────────────────────────────────────────────
+    function renderRatings(all) {
+      const withR = all.filter(p => p.google_rating != null);
+      const buckets = { '5.0': 0, '4.5-4.9': 0, '4.0-4.4': 0, '3.5-3.9': 0, '3.0-3.4': 0, '<3.0': 0, 'No Rating': 0 };
+      all.forEach(p => {
+        if (p.google_rating == null) { buckets['No Rating']++; return; }
+        const r = p.google_rating;
+        if (r >= 5.0) buckets['5.0']++;
+        else if (r >= 4.5) buckets['4.5-4.9']++;
+        else if (r >= 4.0) buckets['4.0-4.4']++;
+        else if (r >= 3.5) buckets['3.5-3.9']++;
+        else if (r >= 3.0) buckets['3.0-3.4']++;
+        else buckets['<3.0']++;
+      });
+
+      createBarChart('chartRatings',
+        Object.keys(buckets),
+        [{
+          data: Object.values(buckets),
+          backgroundColor: ['#00FF88','#00D4FF','#A855F7','#FFD600','#FF8A00','#ef4444','#808098'],
+          borderRadius: 4,
+          label: 'Businesses',
+        }],
+        { plugins: { legend: { display: false } } },
+      );
+
+      // reviews histogram
+      const revBuckets = { '0': 0, '1-10': 0, '11-50': 0, '51-100': 0, '101-500': 0, '500+': 0 };
+      all.forEach(p => {
+        const r = p.google_reviews || 0;
+        if (r === 0) revBuckets['0']++;
+        else if (r <= 10) revBuckets['1-10']++;
+        else if (r <= 50) revBuckets['11-50']++;
+        else if (r <= 100) revBuckets['51-100']++;
+        else if (r <= 500) revBuckets['101-500']++;
+        else revBuckets['500+']++;
+      });
+
+      createBarChart('chartReviews',
+        Object.keys(revBuckets),
+        [{
+          data: Object.values(revBuckets),
+          backgroundColor: ['#808098','#A855F7','#00D4FF','#00FF88','#FFD600','#FF8A00'],
+          borderRadius: 4,
+          label: 'Businesses',
+        }],
+        { plugins: { legend: { display: false } } },
+      );
+    }
+
+    // ── Growth Signals ────────────────────────────────────────────────
+    function renderGrowth(all) {
+      const signals = [
+        { label: 'Hiring', icon: '💼', count: all.filter(p => p.is_hiring).length, color: '#FF8A00' },
+        { label: 'Running Ads', icon: '📣', count: all.filter(p => p.runs_ads).length, color: '#A855F7' },
+        { label: 'PPP Loan', icon: '💰', count: all.filter(p => p.ppp_loan_amount > 0).length, color: '#00FF88',
+          tip: 'PPP (Paycheck Protection Program) — indicates the business accessed federal funding during COVID, suggesting established operations and payroll.' },
+        { label: 'High Reviews (50+)', icon: '⭐', count: all.filter(p => p.google_reviews >= 50).length, color: '#FFD600', tip: '' },
+        { label: 'Fast Review Growth', icon: '📈', count: all.filter(p => p.review_velocity > 2).length, color: '#00D4FF',
+          tip: 'Review velocity > 2 per month. Indicates an actively growing customer base.' },
+        { label: 'Has Social', icon: '📱', count: all.filter(p => p.has_social).length, color: '#ec4899', tip: '' },
+      ];
+
+      document.getElementById('growthGrid').innerHTML = signals.map(s => `
+        <div class="p-4 rounded-lg border border-border bg-surface-2/50 text-center">
+          <div class="text-2xl mb-1">${s.icon}</div>
+          <div class="text-xl font-bold font-mono text-white">${s.count}</div>
+          <div class="text-xs text-gray-500 mt-1">${s.tip ? `<span class="tip tip-below" data-tip="${s.tip}">${s.label}</span>` : s.label}</div>
+          <div class="text-[10px] font-mono mt-1" style="color:${s.color}">${pct(s.count, all.length)} of market</div>
+        </div>
+      `).join('');
+    }
+
+    // ── Industry vs Market Average (replaces broken Competitive chart) ─
+    function renderCompetitive(scored) {
+      if (!scored.length) return;
+      const marketAvg = avg(scored, p => p.wp_score);
+
+      // Group by industry, calculate divergence from market avg
+      const groups = groupBy(scored, p => p.business_type || 'unknown');
+      const industries = Object.entries(groups)
+        .filter(([,arr]) => arr.length >= 3)
+        .map(([type, arr]) => ({
+          type: fmtType(type),
+          avgScore: avg(arr, p => p.wp_score),
+          count: arr.length,
+          diff: avg(arr, p => p.wp_score) - marketAvg,
+        }))
+        .sort((a,b) => a.diff - b.diff)
+        .slice(0, 15);
+
+      createHBarChart('chartCompetitive',
+        industries.map(i => `${i.type} (${i.count})`),
+        industries.map(i => Number(i.diff.toFixed(1))),
+        industries.map(i => i.diff > 0 ? '#00FF88' : i.diff > -5 ? '#FFD600' : '#ef4444'),
+      );
+
+      // Platform market share
+      const withWeb = scored.filter(p => p.has_website && p.website_platform);
+      const platC = countBy(withWeb, p => p.website_platform);
+      const platSort = sortEntries(platC).slice(0, 10);
+
+      createDoughnut('chartPlatformShare',
+        platSort.map(([p]) => fmtType(p)),
+        platSort.map(([,v]) => v),
+      );
+    }
+
+    // ── Business Maturity Indicators (replaces Formation Timeline) ────
+    function renderMaturity(all) {
+      const enriched = all.filter(p => p.enriched_at);
+      const signals = [
+        { label: 'Entity Registered', icon: '🏢', count: all.filter(p => p.entity_type).length, color: '#00D4FF' },
+        { label: 'Professional Email', icon: '📧', count: all.filter(p => p.has_professional_email).length, color: '#00FF88' },
+        { label: 'GBP Hours Listed', icon: '🕐', count: all.filter(p => p.gbp_hours_complete === true).length, color: '#A855F7' },
+        { label: 'GBP with Photos', icon: '📸', count: all.filter(p => p.gbp_photos_count > 0).length, color: '#FFD600' },
+        { label: '50+ Reviews', icon: '⭐', count: all.filter(p => p.google_reviews >= 50).length, color: '#FF8A00' },
+        { label: 'Has Website + SSL', icon: '🔒', count: all.filter(p => p.has_website && p.ssl_valid).length, color: '#ef4444' },
+      ];
+
+      document.getElementById('maturityGrid').innerHTML = signals.map(s => `
+        <div class="p-4 rounded-lg border border-border bg-surface-2/50 text-center">
+          <div class="text-2xl mb-1">${s.icon}</div>
+          <div class="text-xl font-bold font-mono text-white">${s.count}</div>
+          <div class="text-xs text-gray-500 mt-1">${s.label}</div>
+          <div class="text-[10px] font-mono mt-1" style="color:${s.color}">${pct(s.count, all.length)} of market</div>
+        </div>
+      `).join('');
+    }
+
+    // ── GBP Category Analysis ─────────────────────────────────────────
+    function renderGBPCategories(all) {
+      const withType = all.filter(p => p.gbp_primary_type);
+      if (!withType.length) {
+        document.getElementById('chartGBPCategories').parentElement.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Awaiting GBP enrichment</p>';
+        return;
+      }
+      const cats = countBy(withType, p => p.gbp_primary_type);
+      const sorted = sortEntries(cats).slice(0, 15);
+
+      createHBarChart('chartGBPCategories',
+        sorted.map(([k]) => fmtType(k.replace(/_/g, ' '))),
+        sorted.map(([,v]) => v),
+        PALETTE.slice(0, sorted.length),
+      );
+    }
+
+    // ── Review Velocity Distribution ──────────────────────────────────
+    function renderReviewVelocity(all) {
+      const withVelocity = all.filter(p => p.review_velocity != null && p.review_velocity > 0);
+      if (!withVelocity.length) {
+        document.getElementById('chartReviewVelocity').parentElement.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">No review velocity data yet</p>';
+        return;
+      }
+
+      const buckets = { '0-1/mo': 0, '1-5/mo': 0, '5-20/mo': 0, '20-100/mo': 0, '100+/mo': 0 };
+      withVelocity.forEach(p => {
+        const v = p.review_velocity;
+        if (v <= 1) buckets['0-1/mo']++;
+        else if (v <= 5) buckets['1-5/mo']++;
+        else if (v <= 20) buckets['5-20/mo']++;
+        else if (v <= 100) buckets['20-100/mo']++;
+        else buckets['100+/mo']++;
+      });
+
+      createBarChart('chartReviewVelocity',
+        Object.keys(buckets),
+        [{
+          data: Object.values(buckets),
+          backgroundColor: ['#808098', '#00D4FF', '#A855F7', '#FF8A00', '#00FF88'],
+          borderRadius: 4,
+          label: 'Businesses',
+        }],
+        { plugins: { legend: { display: false } } },
+      );
+    }
+
+    // ── Market Summary ────────────────────────────────────────────────
+    function renderSummary(all, scored) {
+      const noWeb = all.filter(p => !p.has_website).length;
+      const cities = [...new Set(all.map(p => p.city).filter(Boolean))];
+      const topCity = cities.length ? sortEntries(countBy(all, p => p.city || 'Unknown'))[0] : null;
+      const topType = sortEntries(countBy(all, p => p.business_type || 'unknown'))[0];
+      const avgS = scored.length ? avg(scored, p => p.wp_score).toFixed(1) : 0;
+      const hotWarm = scored.filter(p => p.wp_score >= 60).length;
+
+      const items = [
+        `<strong>${all.length}</strong> total prospects across <strong>${cities.length}</strong> cities.`,
+        topCity ? `Largest market: <strong>${topCity[0]}</strong> with ${topCity[1]} businesses.` : '',
+        topType ? `Most common type: <strong>${fmtType(topType[0])}</strong> (${topType[1]} businesses).` : '',
+        `<strong>${noWeb}</strong> businesses (${pct(noWeb, all.length)}) have no website — prime targets.`,
+        `Average WP Score: <strong>${avgS}</strong> — market has significant room for web services.`,
+        `<strong>${hotWarm}</strong> warm/hot prospects ready for immediate outreach.`,
+        `Market opportunity: ~$${fmt(noWeb * 2500 + hotWarm * 1500)} estimated first-year revenue potential at conservative pricing.`,
+      ].filter(Boolean);
+
+      document.getElementById('summaryContent').innerHTML = items.map(i => `<p>• ${i}</p>`).join('');
+    }
+
+    init();
+  </script>
+</body>
+</html>

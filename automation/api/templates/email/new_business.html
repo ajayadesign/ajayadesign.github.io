@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; font-size: 15px;">
+{% if owner_first_name == 'there' %}
+<p>Hi there,</p>
+{% else %}
+<p>Hi {{ owner_first_name }},</p>
+{% endif %}
+
+<p>Congrats on launching {{ business_name }}! Starting a {{ business_type }} in {{ city }} takes guts — especially right now.</p>
+
+{% if has_website %}
+<p>I took a look at your current site and wanted to share a few quick observations:</p>
+
+<p style="padding-left: 12px; border-left: 3px solid #3498db; margin: 16px 0;">
+{% if speed_score %}📊 <b>Speed:</b> {{ speed_score }}/100 — {{ speed_comment }}<br>{% endif %}
+{% if mobile_score %}📱 <b>Mobile:</b> {{ mobile_score }}/100 — {{ mobile_comment }}<br>{% endif %}
+{% if not has_contact_form %}📋 <b>Contact Form:</b> Not detected — makes it harder for new customers to reach you<br>{% endif %}
+{% if not has_analytics %}📈 <b>Analytics:</b> Not set up — you're flying blind on what's working<br>{% endif %}
+{% if not has_booking %}🗓️ <b>Booking:</b> No online booking found — {{ booking_stat }}<br>{% endif %}
+</p>
+
+<p>Early on, every lead counts. A website that loads fast, works on phones, and makes it dead simple to book or contact you is one of the best investments you can make.</p>
+{% else %}
+<p>I noticed {{ business_name }} doesn't have a website yet. For a new {{ business_type }} in {{ city }}, that's actually an opportunity — you can start with something modern from day one instead of fixing a bad site later.</p>
+
+<p>Here's what a proper website does for a new business:</p>
+<ul style="margin: 8px 0; padding-left: 20px;">
+<li>Shows up in "{{ business_type }} near me" searches ({{ local_search_pct }}% of local searches lead to a visit within 24 hrs)</li>
+<li>Lets customers book/contact you 24/7</li>
+<li>Builds credibility before someone walks in the door</li>
+<li>Gives your Google Business Profile a website link ({{ gbp_stat }})</li>
+</ul>
+{% endif %}
+
+<p>I'm a web developer in Manor. I specialize in building websites for new {{ city }} businesses — fast turnaround, built to grow with you.</p>
+
+<p>Got 15 minutes this week? I'd love to learn about {{ business_name }} and show you what a strong online presence looks like for a {{ business_type }} at your stage.</p>
+
+<p style="margin-top: 28px;">— {{ sender_name }}</p>
+<p style="color: #888; font-size: 13px; margin-top: 4px;">Web developer in Manor, TX · <a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
+
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a> if you'd rather not hear from me.</p>
+<img src="__TRACKING_PIXEL_URL__" width="1" height="1" alt="" style="display:none;">
+</body>
+</html>

@@ -1045,6 +1045,11 @@ async def lifespan(app: FastAPI):
     await init_db()
     logger.info("✅ Database ready")
 
+    # Run column migrations (adds new columns to existing tables)
+    from api.migrations import run_migrations
+    await run_migrations()
+    logger.info("✅ Migrations complete")
+
     # Migrate: add 'protected' column if it doesn't exist, and protect existing builds
     await _migrate_protected_column()
 
@@ -1139,6 +1144,7 @@ async def lifespan(app: FastAPI):
             IntervalTrigger(minutes=15),
             id="outreach_send_queue",
             replace_existing=True,
+            misfire_grace_time=900,  # 15 min — run if missed during sleep
         )
 
         # Batch enqueue — once daily at 8 AM CT
@@ -1155,6 +1161,7 @@ async def lifespan(app: FastAPI):
             CronTrigger(hour=8, minute=0),
             id="outreach_batch_enqueue",
             replace_existing=True,
+            misfire_grace_time=14400,  # 4 hours — run if woke up late
         )
 
         # Firebase daily summary — every day at 8 PM CT
@@ -1171,6 +1178,7 @@ async def lifespan(app: FastAPI):
             CronTrigger(hour=20, minute=0),
             id="outreach_daily_summary",
             replace_existing=True,
+            misfire_grace_time=14400,  # 4 hours — run if woke up late
         )
 
         # Firebase janitor — nightly at 3 AM CT
@@ -1186,6 +1194,7 @@ async def lifespan(app: FastAPI):
             CronTrigger(hour=3, minute=0),
             id="outreach_nightly_janitor",
             replace_existing=True,
+            misfire_grace_time=14400,  # 4 hours — run if woke up late
         )
 
         # Health snapshot — every hour
@@ -1201,6 +1210,7 @@ async def lifespan(app: FastAPI):
             IntervalTrigger(hours=1),
             id="outreach_health_snapshot",
             replace_existing=True,
+            misfire_grace_time=3600,  # 1 hour — run if missed during sleep
         )
 
         # RTDB tracking sync — every 2 minutes, picks up open/click/unsub from Firebase
@@ -1216,6 +1226,7 @@ async def lifespan(app: FastAPI):
             IntervalTrigger(minutes=2),
             id="outreach_tracking_sync",
             replace_existing=True,
+            misfire_grace_time=120,  # 2 min — run if missed during sleep
         )
 
         # Monthly site-analytics archiver — 1st of each month at 2 AM CT
