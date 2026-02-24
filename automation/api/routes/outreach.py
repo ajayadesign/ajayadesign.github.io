@@ -812,6 +812,7 @@ async def list_pending_emails(
     out = []
     for email, prospect in rows:
         d = email.to_dict()
+        d["to_email"] = prospect.owner_email or ""
         d["prospect_name"] = prospect.business_name
         d["prospect_type"] = prospect.business_type
         d["prospect_city"] = prospect.city
@@ -819,17 +820,35 @@ async def list_pending_emails(
         d["prospect_score"] = prospect.priority_score
         out.append(d)
 
-    # Per-step counts for tab badges
+    # Per-step counts for tab badges (always unfiltered so tabs show global totals)
     step_counts_q = (
         select(OutreachEmail.sequence_step, func.count(OutreachEmail.id))
         .where(OutreachEmail.status == "pending_approval")
         .group_by(OutreachEmail.sequence_step)
     )
-    step_counts = {row[0]: row[1] for row in (await db.execute(step_counts_q)).all()}
+    step_counts = {str(row[0]): row[1] for row in (await db.execute(step_counts_q)).all()}
+
+    # Always return unfiltered total for the header badge
+    if step_filter is not None:
+        all_pending_q = select(func.count(OutreachEmail.id)).where(
+            OutreachEmail.status == "pending_approval"
+        )
+        all_pending_total = (await db.execute(all_pending_q)).scalar() or 0
+    else:
+        all_pending_total = total
+
+    # Bounced prospect count (cheap single query)
+    bounced_count_q = (
+        select(func.count(func.distinct(OutreachEmail.prospect_id)))
+        .where(OutreachEmail.status == "bounced")
+    )
+    bounced_count = (await db.execute(bounced_count_q)).scalar() or 0
 
     return {
         "emails": out,
         "total": total,
+        "all_pending_total": all_pending_total,
+        "bounced_count": bounced_count,
         "limit": limit,
         "offset": offset,
         "step_counts": step_counts,

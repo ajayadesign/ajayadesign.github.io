@@ -1303,24 +1303,31 @@
     const emails = data.emails || [];
     _emailQueueTotal = data.total || 0;
     _visibleEmailIds = emails.map(e => e.id);  // Track visible email IDs
-    if ($count) $count.textContent = _emailQueueTotal;
+
+    // Header badge always shows unfiltered total
+    const allPendingTotal = data.all_pending_total ?? data.total ?? 0;
+    if ($count) $count.textContent = allPendingTotal;
 
     // Update stage tab counts
     const sc = data.step_counts || {};
     const allCount = Object.values(sc).reduce((a, b) => a + b, 0);
     _setCountBadge('eq-stage-all-count', allCount);
-    _setCountBadge('eq-stage-initial-count', sc[1] || sc['1'] || 0);
-    _setCountBadge('eq-stage-followup-count', (sc[2] || sc['2'] || 0) + (sc[3] || sc['3'] || 0));
-    _setCountBadge('eq-stage-breakup-count', sc[4] || sc['4'] || 0);
-    _setCountBadge('eq-stage-resurrection-count', sc[5] || sc['5'] || 0);
+    _setCountBadge('eq-stage-initial-count', sc['1'] || 0);
+    _setCountBadge('eq-stage-followup-count', (sc['2'] || 0) + (sc['3'] || 0));
+    _setCountBadge('eq-stage-breakup-count', sc['4'] || 0);
+    _setCountBadge('eq-stage-resurrection-count', sc['5'] || 0);
 
-    // Also fetch bounced count in background (non-blocking)
-    _api('GET', '/outreach/prospects/bounced?limit=1&offset=0').then(bd => {
-      if (bd) _setCountBadge('eq-stage-bounced-count', bd.total || 0);
-    });
+    // Bounced count from same API response (no extra fetch needed)
+    _setCountBadge('eq-stage-bounced-count', data.bounced_count || 0);
 
     if (emails.length === 0) {
-      $el.innerHTML = '<div class="text-center text-gray-500 py-4 font-mono text-sm">No emails pending approval. 🎉</div>';
+      const tabLabel = {
+        '1': 'initial', '2,3': 'follow-up', '4': 'breakup', '5': 'resurrection',
+      }[_emailQueueStageFilter] || '';
+      const msg = tabLabel
+        ? `No ${tabLabel} emails pending approval.`
+        : 'No emails pending approval. 🎉';
+      $el.innerHTML = `<div class="text-center text-gray-500 py-4 font-mono text-sm">${msg}</div>`;
       if ($pag) $pag.classList.add('hidden');
       return;
     }
@@ -1342,7 +1349,7 @@
           </div>
           <div class="mb-2">
             <div class="text-xs text-gray-400 font-mono">Subject: <span class="text-gray-200">${_esc(e.subject || '—')}</span></div>
-            <div class="text-xs text-gray-500 font-mono mt-0.5">To: ${_esc(e.to_email || '—')} · Step ${e.sequence_step || 1}</div>
+            <div class="text-xs text-gray-500 font-mono mt-0.5">To: ${_esc(e.to_email || e.prospect_name || '—')} · Step ${e.sequence_step || 1}</div>
           </div>
         </div>
         <div class="flex gap-2">
