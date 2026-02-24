@@ -46,8 +46,9 @@ SEND_WINDOWS = {
 # Sequence step timing (days after previous step)
 STEP_DELAYS = {1: 0, 2: 3, 3: 7, 4: 14, 5: 90}
 
-# Max emails per day (anti-spam + warm-up)
-MAX_DAILY_SENDS = 20
+# Max emails per day — Gmail free ≈100-500/day, Workspace ≈2000/day
+# Start conservative; raise once warm-up complete
+MAX_DAILY_SENDS = 100
 
 
 # ─── Timing Helpers ────────────────────────────────────────────────────
@@ -329,7 +330,13 @@ async def send_email_record(email_id: str) -> bool:
 
             # ── Check SMTP result (email_service returns dict, never raises) ──
             if isinstance(result, dict) and not result.get("success"):
-                if result.get("bounce"):
+                if result.get("limit_exceeded"):
+                    # Gmail daily limit hit — DON'T mark email as failed,
+                    # leave it approved so it retries next cycle
+                    logger.error("🚫 Gmail limit exceeded sending to %s — halting queue",
+                                 prospect.business_name)
+                    return "limit_exceeded"
+                elif result.get("bounce"):
                     # Hard bounce — recipient doesn't exist
                     logger.warning("Bounce for %s (%s): %s",
                                    prospect.business_name, prospect.owner_email,
@@ -432,8 +439,13 @@ async def process_send_queue() -> dict:
 
     for email in emails:
         stats["attempted"] += 1
-        success = await send_email_record(str(email.id))
-        if success:
+        result = await send_email_record(str(email.id))
+        if result == "limit_exceeded":
+            # Gmail daily limit hit — stop sending immediately
+            stats["limit_exceeded"] = True
+            logger.error("🚫 Gmail daily limit reached — halting send queue")
+            break
+        elif result:
             stats["sent"] += 1
         else:
             stats["failed"] += 1
@@ -600,6 +612,17 @@ async def get_queue_status() -> dict:
         )
         bounced = bounced_r.scalar() or 0
 
+        # Check if Gmail limit was hit recently (failed email with limit message today)
+        limit_hit_r = await db.execute(
+            select(func.count(OutreachEmail.id))
+            .where(
+                OutreachEmail.status == "failed",
+                OutreachEmail.error_message.ilike("%limit%"),
+                OutreachEmail.sent_at >= today_start,
+            )
+        )
+        limit_exceeded = (limit_hit_r.scalar() or 0) > 0
+
     # Next send queue run time (runs every 15 min)
     # Calculate next 15-min boundary
     minutes_since_hour = now.minute
@@ -619,6 +642,7 @@ async def get_queue_status() -> dict:
         "bounced": bounced,
         "daily_limit": MAX_DAILY_SENDS,
         "remaining": max(0, MAX_DAILY_SENDS - sent_today),
+        "limit_exceeded": limit_exceeded,
         "next_run": next_run.isoformat(),
         "interval_minutes": 15,
     }
