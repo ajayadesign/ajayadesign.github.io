@@ -1,0 +1,335 @@
+"""
+AjayaDesign Automation — IMAP Bounce Checker.
+
+Connects to Gmail via IMAP, searches for bounce/undeliverable
+notifications (NDRs), parses out the failed recipient email,
+and updates the corresponding OutreachEmail record → "bounced".
+
+Runs on APScheduler every 5 minutes + on-demand via API.
+Uses the same SMTP_EMAIL / SMTP_APP_PASSWORD credentials (Gmail
+app passwords work for both SMTP and IMAP).
+"""
+
+import email
+import email.policy
+import imaplib
+import logging
+import re
+from datetime import datetime, timezone
+
+from sqlalchemy import select, and_
+
+from api.config import settings
+from api.database import async_session_factory
+from api.models.prospect import Prospect, OutreachEmail
+
+logger = logging.getLogger("outreach.bounce_checker")
+
+IMAP_HOST = "imap.gmail.com"
+IMAP_PORT = 993
+
+# Senders of bounce notifications
+BOUNCE_SENDERS = [
+    "mailer-daemon@googlemail.com",
+    "mailer-daemon@google.com",
+    "postmaster@",
+    "MAILER-DAEMON",
+]
+
+# Subject patterns indicating a bounce
+BOUNCE_SUBJECT_PATTERNS = [
+    r"delivery status notification",
+    r"undeliverable",
+    r"undelivered mail",
+    r"mail delivery failed",
+    r"returned mail",
+    r"failure notice",
+    r"delivery failure",
+    r"delivery has failed",
+    r"address not found",
+    r"message not delivered",
+    r"could not be delivered",
+]
+
+# Body patterns to extract the bounced email address
+EMAIL_PATTERN = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
+
+# Patterns in body confirming this is a bounce
+BOUNCE_BODY_KEYWORDS = [
+    "address not found",
+    "does not exist",
+    "user unknown",
+    "mailbox not found",
+    "mailbox unavailable",
+    "no such user",
+    "recipient rejected",
+    "550 ",
+    "551 ",
+    "552 ",
+    "553 ",
+    "554 ",
+    "wasn't found at",
+    "couldn't be delivered",
+    "could not be delivered",
+    "delivery has failed",
+    "permanent failure",
+    "message delivery to",
+]
+
+
+def _connect_imap():
+    """Connect and authenticate to Gmail IMAP."""
+    imap_user = settings.smtp_email
+    imap_pass = settings.smtp_app_password
+    if not imap_user or not imap_pass:
+        raise RuntimeError("SMTP_EMAIL / SMTP_APP_PASSWORD not configured")
+
+    conn = imaplib.IMAP4_SSL(IMAP_HOST, IMAP_PORT)
+    conn.login(imap_user, imap_pass)
+    return conn
+
+
+def _is_bounce_subject(subject: str) -> bool:
+    """Check if email subject matches bounce patterns."""
+    subj_lower = (subject or "").lower()
+    return any(re.search(p, subj_lower) for p in BOUNCE_SUBJECT_PATTERNS)
+
+
+def _extract_bounced_emails(msg) -> list[str]:
+    """
+    Extract the bounced recipient email addresses from a bounce notification.
+    Checks:
+    1. DSN (message/delivery-status) parts
+    2. Plain-text body for email addresses near bounce keywords
+    """
+    bounced = set()
+
+    # Walk all parts
+    full_text = ""
+    for part in msg.walk():
+        ctype = part.get_content_type()
+
+        # DSN delivery-status part — structured, reliable
+        if ctype == "message/delivery-status":
+            payload = part.get_payload()
+            if isinstance(payload, list):
+                for dsn_part in payload:
+                    dsn_text = str(dsn_part)
+                    # Look for "Final-Recipient: rfc822; user@example.com"
+                    for m in re.finditer(
+                        r"Final-Recipient:\s*rfc822;\s*([\w.+-]+@[\w-]+\.[\w.-]+)",
+                        dsn_text, re.IGNORECASE,
+                    ):
+                        bounced.add(m.group(1).lower())
+                    # Also "Original-Recipient"
+                    for m in re.finditer(
+                        r"Original-Recipient:\s*rfc822;\s*([\w.+-]+@[\w-]+\.[\w.-]+)",
+                        dsn_text, re.IGNORECASE,
+                    ):
+                        bounced.add(m.group(1).lower())
+
+        # Collect plain text for keyword search
+        if ctype in ("text/plain", "text/html"):
+            try:
+                payload = part.get_payload(decode=True)
+                if payload:
+                    full_text += payload.decode("utf-8", errors="replace") + "\n"
+            except Exception:
+                pass
+
+    # If DSN gave us results, use those
+    if bounced:
+        return list(bounced)
+
+    # Fallback: search plain text for email addresses near bounce keywords
+    text_lower = full_text.lower()
+    has_bounce_keyword = any(kw in text_lower for kw in BOUNCE_BODY_KEYWORDS)
+    if has_bounce_keyword:
+        # Find all email addresses in the body
+        all_emails = EMAIL_PATTERN.findall(full_text)
+        # Filter out our own address and common system addresses
+        our_addr = (settings.smtp_email or "").lower()
+        for addr in all_emails:
+            addr_lower = addr.lower()
+            if addr_lower == our_addr:
+                continue
+            if any(x in addr_lower for x in [
+                "mailer-daemon", "postmaster", "noreply", "no-reply",
+                "google.com", "googlemail.com", "gmail.com",
+            ]):
+                continue
+            bounced.add(addr_lower)
+
+    return list(bounced)
+
+
+async def check_bounces() -> dict:
+    """
+    Main entry point: scan Gmail inbox for bounce notifications,
+    update OutreachEmail records, and call handle_bounce() for each.
+
+    Returns summary dict: {checked, bounced, already_bounced, not_found, errors}
+    """
+    result = {
+        "checked": 0,
+        "bounced": 0,
+        "already_bounced": 0,
+        "not_found": 0,
+        "errors": [],
+        "details": [],
+    }
+
+    try:
+        conn = _connect_imap()
+    except Exception as e:
+        logger.error("IMAP connect failed: %s", e)
+        result["errors"].append(f"IMAP connect failed: {e}")
+        return result
+
+    try:
+        conn.select("INBOX")
+
+        # Search for bounce-like emails from the last 7 days
+        # Include both read and unread — we track which emails we've already
+        # processed by checking the DB status (already_bounced).
+        from datetime import timedelta as _td
+        since_date = (datetime.now() - _td(days=7)).strftime("%d-%b-%Y")
+        search_queries = [
+            f'(FROM "mailer-daemon" SINCE {since_date})',
+            f'(FROM "postmaster" SINCE {since_date})',
+            f'(SUBJECT "Delivery Status Notification" SINCE {since_date})',
+            f'(SUBJECT "undeliverable" SINCE {since_date})',
+            f'(SUBJECT "Mail delivery failed" SINCE {since_date})',
+            f'(SUBJECT "delivery failure" SINCE {since_date})',
+        ]
+
+        all_msg_ids = set()
+        for query in search_queries:
+            try:
+                status, data = conn.search(None, query)
+                if status == "OK" and data[0]:
+                    ids = data[0].split()
+                    all_msg_ids.update(ids)
+            except Exception as e:
+                logger.debug("IMAP search '%s' failed: %s", query, e)
+
+        if not all_msg_ids:
+            logger.info("Bounce check: no new bounce notifications found")
+            conn.close()
+            conn.logout()
+            return result
+
+        logger.info("Bounce check: found %d potential bounce messages", len(all_msg_ids))
+
+        from api.services.cadence_engine import handle_bounce
+
+        async with async_session_factory() as db:
+            for msg_id in all_msg_ids:
+                result["checked"] += 1
+                try:
+                    status, msg_data = conn.fetch(msg_id, "(RFC822)")
+                    if status != "OK" or not msg_data[0]:
+                        continue
+
+                    raw = msg_data[0][1]
+                    msg = email.message_from_bytes(raw, policy=email.policy.default)
+
+                    subject = msg.get("Subject", "")
+                    from_addr = msg.get("From", "")
+
+                    # Verify it's actually a bounce
+                    is_bounce = False
+                    from_lower = from_addr.lower()
+                    if any(s.lower() in from_lower for s in BOUNCE_SENDERS):
+                        is_bounce = True
+                    if _is_bounce_subject(subject):
+                        is_bounce = True
+
+                    if not is_bounce:
+                        continue
+
+                    # Extract bounced recipient addresses
+                    bounced_addrs = _extract_bounced_emails(msg)
+                    if not bounced_addrs:
+                        logger.debug(
+                            "Bounce msg %s: couldn't extract recipient from '%s'",
+                            msg_id, subject,
+                        )
+                        continue
+
+                    for addr in bounced_addrs:
+                        # Find matching sent email in DB
+                        email_row = (
+                            await db.execute(
+                                select(OutreachEmail)
+                                .join(Prospect)
+                                .where(
+                                    and_(
+                                        Prospect.owner_email == addr,
+                                        OutreachEmail.status == "sent",
+                                    )
+                                )
+                                .order_by(OutreachEmail.sent_at.desc())
+                                .limit(1)
+                            )
+                        ).scalar_one_or_none()
+
+                        if not email_row:
+                            logger.debug("Bounce for %s — no matching sent email found", addr)
+                            result["not_found"] += 1
+                            continue
+
+                        if email_row.status == "bounced":
+                            result["already_bounced"] += 1
+                            continue
+
+                        # Mark as bounced
+                        email_row.status = "bounced"
+                        email_row.error_message = (
+                            f"Async bounce detected via IMAP: {subject}"
+                        )[:500]
+                        await db.commit()
+
+                        # Call handle_bounce to cancel future emails + mark prospect dead
+                        try:
+                            await handle_bounce(str(email_row.id))
+                        except Exception as e:
+                            logger.error("handle_bounce failed for %s: %s", email_row.id, e)
+
+                        prospect = await db.get(Prospect, email_row.prospect_id)
+                        biz_name = prospect.business_name if prospect else "Unknown"
+                        result["bounced"] += 1
+                        result["details"].append({
+                            "email": addr,
+                            "business": biz_name,
+                            "email_id": str(email_row.id),
+                        })
+                        logger.info(
+                            "📬 Bounce detected: %s (%s) — marked bounced",
+                            addr, biz_name,
+                        )
+
+                    # Mark the bounce notification as read
+                    conn.store(msg_id, "+FLAGS", "\\Seen")
+
+                except Exception as e:
+                    logger.error("Error processing bounce msg %s: %s", msg_id, e)
+                    result["errors"].append(str(e))
+
+        conn.close()
+        conn.logout()
+
+    except Exception as e:
+        logger.error("Bounce check error: %s", e)
+        result["errors"].append(str(e))
+        try:
+            conn.logout()
+        except Exception:
+            pass
+
+    logger.info(
+        "Bounce check complete: checked=%d bounced=%d already=%d not_found=%d",
+        result["checked"], result["bounced"],
+        result["already_bounced"], result["not_found"],
+    )
+    return result

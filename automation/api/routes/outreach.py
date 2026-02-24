@@ -667,7 +667,9 @@ async def list_pending_emails(
 
 @outreach_router.post("/emails/batch-approve")
 async def batch_approve_emails(body: dict, db: AsyncSession = Depends(get_db)):
-    """Approve multiple emails at once. Body: {email_ids: [...]} or {all: true}."""
+    """Approve multiple emails at once. Body: {email_ids: [...]} or {all: true}.
+    Deduplicates: if multiple emails exist for the same prospect+step, only
+    the first is approved — the rest are auto-cancelled."""
     if body.get("all"):
         result = await db.execute(
             select(OutreachEmail).where(OutreachEmail.status == "pending_approval")
@@ -684,12 +686,45 @@ async def batch_approve_emails(body: dict, db: AsyncSession = Depends(get_db)):
         )
     emails = result.scalars().all()
     now = datetime.now(timezone.utc)
+
+    # ── Duplicate guard: check what's already approved/sent in DB ──
+    prospect_step_pairs = {(e.prospect_id, e.sequence_step) for e in emails}
+    already_sent = set()
+    if prospect_step_pairs:
+        for pid, step in prospect_step_pairs:
+            chk = await db.execute(
+                select(OutreachEmail.id).where(
+                    OutreachEmail.prospect_id == pid,
+                    OutreachEmail.sequence_step == step,
+                    OutreachEmail.status.in_(["approved", "sent"]),
+                ).limit(1)
+            )
+            if chk.first():
+                already_sent.add((pid, step))
+
+    approved_count = 0
+    cancelled_count = 0
+    seen = set()  # track (prospect_id, step) within this batch
     for e in emails:
-        e.status = "approved"
-        e.scheduled_for = now  # Send at next queue cycle
-        e.updated_at = now
+        key = (e.prospect_id, e.sequence_step)
+        if key in already_sent or key in seen:
+            # Duplicate — cancel it
+            e.status = "cancelled"
+            e.error_message = "Duplicate — another email for this prospect+step already approved/sent"
+            e.updated_at = now
+            cancelled_count += 1
+        else:
+            e.status = "approved"
+            e.scheduled_for = now
+            e.updated_at = now
+            seen.add(key)
+            approved_count += 1
     await db.commit()
-    return {"message": f"Approved {len(emails)} emails", "count": len(emails)}
+    return {
+        "message": f"Approved {approved_count} emails, cancelled {cancelled_count} duplicates",
+        "count": approved_count,
+        "duplicates_cancelled": cancelled_count,
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -1415,6 +1450,14 @@ async def trigger_batch_send():
     from api.services.cadence_engine import process_send_queue
     stats = await process_send_queue()
     return stats
+
+
+@outreach_router.post("/batch/check-bounces")
+async def trigger_bounce_check():
+    """Check Gmail inbox for bounce notifications and update email statuses."""
+    from api.services.bounce_checker import check_bounces
+    result = await check_bounces()
+    return result
 
 
 # ── Bulk Selection Endpoints (operate on a list of IDs) ──────────────
@@ -2172,6 +2215,23 @@ async def approve_email(email_id: str, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Email not found")
     if email.status not in ("pending_approval", "draft"):
         raise HTTPException(status_code=400, detail=f"Cannot approve email in '{email.status}' status")
+
+    # ── Duplicate guard: skip if another email for same prospect+step is already approved/sent ──
+    dup_check = await db.execute(
+        select(OutreachEmail.id).where(
+            OutreachEmail.prospect_id == email.prospect_id,
+            OutreachEmail.sequence_step == email.sequence_step,
+            OutreachEmail.id != email.id,
+            OutreachEmail.status.in_(["approved", "sent"]),
+        ).limit(1)
+    )
+    if dup_check.first():
+        # Auto-cancel the duplicate instead of approving
+        email.status = "cancelled"
+        email.error_message = "Duplicate — another email for this prospect+step already approved/sent"
+        await db.commit()
+        return {"message": "Duplicate detected — email cancelled", "email": email.to_dict(), "duplicate": True}
+
     email.status = "approved"
     # Reset scheduled_for to now so it sends at the next queue cycle
     email.scheduled_for = datetime.now(timezone.utc)

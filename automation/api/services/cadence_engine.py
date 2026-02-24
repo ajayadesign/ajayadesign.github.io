@@ -327,6 +327,28 @@ async def send_email_record(email_id: str) -> bool:
                 reply_to=settings.smtp_email,
             )
 
+            # ── Check SMTP result (email_service returns dict, never raises) ──
+            if isinstance(result, dict) and not result.get("success"):
+                if result.get("bounce"):
+                    # Hard bounce — recipient doesn't exist
+                    logger.warning("Bounce for %s (%s): %s",
+                                   prospect.business_name, prospect.owner_email,
+                                   result.get("message", ""))
+                    email.status = "bounced"
+                    email.error_message = result.get("message", "Bounced")[:500]
+                    await db.commit()
+                    # Use handle_bounce to cancel future emails & mark dead
+                    await handle_bounce(str(email.id))
+                    return False
+                else:
+                    # Generic send failure (auth, network, etc.)
+                    email.status = "failed"
+                    email.error_message = result.get("message", "SMTP error")[:500]
+                    await db.commit()
+                    logger.error("Send failed for %s: %s",
+                                 prospect.business_name, result.get("message"))
+                    return False
+
             email.status = "sent"
             email.sent_at = datetime.now(timezone.utc)
             email.message_id = result.get("message_id") if isinstance(result, dict) else None
@@ -424,6 +446,17 @@ async def process_send_queue() -> dict:
         "Send queue processed: %d attempted, %d sent, %d failed",
         stats["attempted"], stats["sent"], stats["failed"],
     )
+
+    # ── Push Firebase snapshots immediately so trends update in real-time ──
+    if stats["sent"] > 0 or stats["failed"] > 0:
+        try:
+            from api.services.firebase_summarizer import push_firebase_summaries
+            async with async_session_factory() as db:
+                await push_firebase_summaries(db)
+            logger.info("📊 Firebase snapshots pushed after send queue (sent=%d)", stats["sent"])
+        except Exception as e:
+            logger.warning("Firebase snapshot push after send failed: %s", e)
+
     return stats
 
 
@@ -499,12 +532,46 @@ async def get_queue_status() -> dict:
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
     async with async_session_factory() as db:
-        # Pending
+        # Pending (scheduled)
         pending_r = await db.execute(
             select(func.count(OutreachEmail.id))
             .where(OutreachEmail.status == "scheduled")
         )
         pending = pending_r.scalar() or 0
+
+        # Approved & ready to send
+        approved_r = await db.execute(
+            select(func.count(OutreachEmail.id))
+            .where(OutreachEmail.status == "approved")
+        )
+        approved = approved_r.scalar() or 0
+
+        # Approved emails detail (for queue panel)
+        approved_detail_r = await db.execute(
+            select(
+                OutreachEmail.id,
+                OutreachEmail.subject,
+                OutreachEmail.sequence_step,
+                OutreachEmail.scheduled_for,
+                Prospect.business_name,
+                Prospect.owner_email,
+            )
+            .join(Prospect, Prospect.id == OutreachEmail.prospect_id)
+            .where(OutreachEmail.status == "approved")
+            .order_by(OutreachEmail.scheduled_for)
+            .limit(20)
+        )
+        approved_emails = [
+            {
+                "id": str(r[0]),
+                "subject": r[1],
+                "step": r[2],
+                "scheduled_for": r[3].isoformat() if r[3] else None,
+                "business": r[4],
+                "to": r[5],
+            }
+            for r in approved_detail_r.fetchall()
+        ]
 
         # Sent today
         sent_r = await db.execute(
@@ -526,12 +593,34 @@ async def get_queue_status() -> dict:
         )
         failed_today = failed_r.scalar() or 0
 
+        # Bounced total
+        bounced_r = await db.execute(
+            select(func.count(OutreachEmail.id))
+            .where(OutreachEmail.status == "bounced")
+        )
+        bounced = bounced_r.scalar() or 0
+
+    # Next send queue run time (runs every 15 min)
+    # Calculate next 15-min boundary
+    minutes_since_hour = now.minute
+    next_15 = 15 - (minutes_since_hour % 15)
+    if next_15 == 15:
+        next_15 = 0
+    next_run = (now + timedelta(minutes=next_15)).replace(second=0, microsecond=0)
+    if next_15 == 0:
+        next_run = now.replace(second=0, microsecond=0)
+
     return {
         "pending": pending,
+        "approved": approved,
+        "approved_emails": approved_emails,
         "sent_today": sent_today,
         "failed_today": failed_today,
+        "bounced": bounced,
         "daily_limit": MAX_DAILY_SENDS,
         "remaining": max(0, MAX_DAILY_SENDS - sent_today),
+        "next_run": next_run.isoformat(),
+        "interval_minutes": 15,
     }
 
 

@@ -650,11 +650,10 @@ async def push_firebase_summaries(db: AsyncSession):
         industries = await compute_industry_stats(db, limit=10)
         await _safe_set("outreach/industries", {str(i): ind for i, ind in enumerate(industries)})
 
-        # 7. Weekly scorecard (if today is Sunday)
-        if date.today().weekday() == 6:
-            week_key = date.today().strftime("%G-W%V")
-            scorecard = await compute_weekly_scorecard(db)
-            await _safe_set(f"outreach/scorecard/{week_key}", scorecard)
+        # 7. Weekly scorecard (always update current week so trends are live)
+        week_key = date.today().strftime("%G-W%V")
+        scorecard = await compute_weekly_scorecard(db)
+        await _safe_set(f"outreach/scorecard/{week_key}", scorecard)
 
         # 8. Ring progress
         from api.models.prospect import GeoRing
