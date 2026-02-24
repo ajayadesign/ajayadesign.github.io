@@ -1263,8 +1263,26 @@ async def lifespan(app: FastAPI):
             misfire_grace_time=300,  # 5 min
         )
 
+        # IMAP reply detector — every 5 minutes
+        async def _check_replies():
+            try:
+                from api.services.bounce_checker import check_replies
+                result = await check_replies()
+                if result.get("replies_found", 0) > 0:
+                    logger.info("Reply check: %d replies detected", result["replies_found"])
+            except Exception as e:
+                logger.error("Reply checker error: %s", e)
+
+        outreach_scheduler.add_job(
+            _check_replies,
+            IntervalTrigger(minutes=5),
+            id="outreach_reply_checker",
+            replace_existing=True,
+            misfire_grace_time=300,  # 5 min
+        )
+
         outreach_scheduler.start()
-        logger.info("✅ Outreach scheduler started (8 jobs)")
+        logger.info("✅ Outreach scheduler started (9 jobs)")
 
         # Run analytics catch-up in case the cron window was missed
         try:

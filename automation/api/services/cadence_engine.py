@@ -44,7 +44,10 @@ SEND_WINDOWS = {
 }
 
 # Sequence step timing (days after previous step)
-STEP_DELAYS = {1: 0, 2: 3, 3: 7, 4: 14, 5: 90}
+STEP_DELAYS = {1: 0, 2: 2, 3: 5, 4: 14, 5: 90}
+
+# Minimum days between ANY two sequence sends to the same prospect
+MIN_STEP_GAP_DAYS = 2
 
 # Max emails per day — Gmail free ≈100-500/day, Workspace ≈2000/day
 # Start conservative; raise once warm-up complete
@@ -243,7 +246,7 @@ async def schedule_next_step(prospect_id: str, current_step: int) -> Optional[st
 
         # Check exit conditions (§8.3)
         if prospect.status in ("replied", "meeting_booked", "promoted",
-                                "dead", "do_not_contact"):
+                                "dead", "do_not_contact", "manual_handling"):
             logger.info("Not scheduling step %d for %s — status: %s",
                         next_step, prospect.business_name, prospect.status)
             return None
@@ -435,7 +438,55 @@ async def process_send_queue() -> dict:
             .order_by(OutreachEmail.scheduled_for)
             .limit(remaining)
         )
-        emails = result.scalars().all()
+        candidates = result.scalars().all()
+
+    # ── Step-spacing guard: don't send step N if step N-1 was sent < MIN_STEP_GAP_DAYS ago ──
+    emails = []
+    async with async_session_factory() as db:
+        for email in candidates:
+            if email.sequence_step > 1:
+                # Check when the previous step was sent
+                prev_r = await db.execute(
+                    select(OutreachEmail.sent_at)
+                    .where(
+                        OutreachEmail.prospect_id == email.prospect_id,
+                        OutreachEmail.sequence_step == email.sequence_step - 1,
+                        OutreachEmail.status == "sent",
+                    )
+                    .order_by(OutreachEmail.sent_at.desc())
+                    .limit(1)
+                )
+                prev_sent = prev_r.scalar()
+                if prev_sent:
+                    days_since = (now - prev_sent).total_seconds() / 86400
+                    if days_since < MIN_STEP_GAP_DAYS:
+                        logger.info(
+                            "⏳ Skipping step %d for prospect %s — only %.1f days since step %d (need %d)",
+                            email.sequence_step, email.prospect_id,
+                            days_since, email.sequence_step - 1, MIN_STEP_GAP_DAYS,
+                        )
+                        continue
+                else:
+                    # Previous step was never sent — skip this follow-up
+                    logger.info(
+                        "⏳ Skipping step %d for prospect %s — step %d not yet sent",
+                        email.sequence_step, email.prospect_id, email.sequence_step - 1,
+                    )
+                    continue
+
+            # Also check prospect hasn't been moved to manual_handling / replied
+            prospect = await db.get(Prospect, email.prospect_id)
+            if prospect and prospect.status in ("replied", "manual_handling", "do_not_contact", "dead"):
+                logger.info(
+                    "🛑 Skipping email for %s — prospect status: %s",
+                    prospect.business_name, prospect.status,
+                )
+                email.status = "cancelled"
+                email.error_message = f"Auto-cancelled: prospect is {prospect.status}"
+                await db.commit()
+                continue
+
+            emails.append(email)
 
     for email in emails:
         stats["attempted"] += 1

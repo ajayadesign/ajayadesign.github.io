@@ -333,3 +333,171 @@ async def check_bounces() -> dict:
         result["already_bounced"], result["not_found"],
     )
     return result
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Reply Detection — scan inbox for replies from prospects
+# ═══════════════════════════════════════════════════════════════════
+
+async def check_replies() -> dict:
+    """
+    Scan Gmail inbox for replies from prospects we've emailed.
+    When a reply is found, mark the prospect as 'manual_handling'
+    and cancel all pending automated emails.
+
+    Returns summary: {checked, replies_found, already_handled, details}
+    """
+    result = {
+        "checked": 0,
+        "replies_found": 0,
+        "already_handled": 0,
+        "details": [],
+        "errors": [],
+    }
+
+    try:
+        conn = _connect_imap()
+    except Exception as e:
+        logger.error("IMAP connect failed for reply check: %s", e)
+        result["errors"].append(f"IMAP connect failed: {e}")
+        return result
+
+    try:
+        conn.select("INBOX")
+
+        # Get all prospect emails we've sent to
+        from api.database import async_session_factory
+        async with async_session_factory() as db:
+            sent_r = await db.execute(
+                select(Prospect.owner_email, Prospect.id, Prospect.business_name, Prospect.status)
+                .join(OutreachEmail)
+                .where(OutreachEmail.status == "sent")
+                .distinct()
+            )
+            prospect_map = {}
+            for row in sent_r.fetchall():
+                addr = (row[0] or "").lower().strip()
+                if addr:
+                    prospect_map[addr] = {
+                        "id": str(row[1]),
+                        "name": row[2],
+                        "status": row[3],
+                    }
+
+        if not prospect_map:
+            conn.close()
+            conn.logout()
+            return result
+
+        # Search for recent replies from prospect email addresses
+        from datetime import timedelta as _td
+        since_date = (datetime.now() - _td(days=14)).strftime("%d-%b-%Y")
+
+        for addr, info in prospect_map.items():
+            # Skip if already in a terminal/manual state
+            if info["status"] in ("manual_handling", "replied", "meeting_booked",
+                                   "promoted", "dead", "do_not_contact"):
+                continue
+
+            try:
+                query = f'(FROM "{addr}" SINCE {since_date})'
+                status_code, data = conn.search(None, query)
+                if status_code != "OK" or not data[0]:
+                    continue
+
+                msg_ids = data[0].split()
+                if not msg_ids:
+                    continue
+
+                result["checked"] += 1
+
+                # Found a reply from this prospect!
+                async with async_session_factory() as db:
+                    prospect = await db.get(Prospect, info["id"])
+                    if not prospect:
+                        continue
+
+                    if prospect.status == "manual_handling":
+                        result["already_handled"] += 1
+                        continue
+
+                    # Mark as manual_handling
+                    old_status = prospect.status
+                    prospect.status = "manual_handling"
+                    prospect.notes = (prospect.notes or "") + (
+                        f"\n📩 Reply detected via IMAP — auto-set to manual_handling (was {old_status})"
+                    )
+
+                    # Update the latest sent email's replied_at
+                    latest_email_r = await db.execute(
+                        select(OutreachEmail)
+                        .where(
+                            OutreachEmail.prospect_id == prospect.id,
+                            OutreachEmail.status == "sent",
+                        )
+                        .order_by(OutreachEmail.sent_at.desc())
+                        .limit(1)
+                    )
+                    latest_email = latest_email_r.scalar_one_or_none()
+                    if latest_email:
+                        latest_email.replied_at = datetime.now(timezone.utc)
+
+                    # Cancel all pending automated emails
+                    pending_r = await db.execute(
+                        select(OutreachEmail).where(
+                            OutreachEmail.prospect_id == prospect.id,
+                            OutreachEmail.status.in_(["pending_approval", "approved", "scheduled", "draft"]),
+                        )
+                    )
+                    cancelled = 0
+                    for e in pending_r.scalars().all():
+                        e.status = "cancelled"
+                        e.error_message = "Reply detected — manual handling"
+                        cancelled += 1
+
+                    await db.commit()
+
+                    result["replies_found"] += 1
+                    result["details"].append({
+                        "email": addr,
+                        "business": info["name"],
+                        "prospect_id": info["id"],
+                        "emails_cancelled": cancelled,
+                    })
+
+                    logger.info(
+                        "📩 Reply from %s (%s) — set to manual_handling, %d emails cancelled",
+                        addr, info["name"], cancelled,
+                    )
+
+                    # Telegram notification
+                    try:
+                        from api.services.telegram_outreach import send_message
+                        await send_message(
+                            f"📩 *Reply detected:* {info['name']}\n"
+                            f"📧 From: {addr}\n"
+                            f"🤝 Auto-set to manual handling — {cancelled} emails cancelled"
+                        )
+                    except Exception:
+                        pass
+
+            except Exception as e:
+                logger.debug("Reply search for %s failed: %s", addr, e)
+
+        conn.close()
+        conn.logout()
+
+    except Exception as e:
+        logger.error("Reply check error: %s", e)
+        result["errors"].append(str(e))
+        try:
+            conn.logout()
+        except Exception:
+            pass
+
+    if result["replies_found"] > 0:
+        logger.info(
+            "Reply check: %d replies found, %d already handled",
+            result["replies_found"], result["already_handled"],
+        )
+    return result
