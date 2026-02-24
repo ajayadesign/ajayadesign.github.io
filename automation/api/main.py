@@ -1245,8 +1245,26 @@ async def lifespan(app: FastAPI):
             misfire_grace_time=259200,  # 3 days — run missed job on restart
         )
 
+        # IMAP bounce checker — every 5 minutes
+        async def _check_bounces():
+            try:
+                from api.services.bounce_checker import check_bounces
+                result = await check_bounces()
+                if result.get("bounced", 0) > 0:
+                    logger.info("Bounce check: %d new bounces detected", result["bounced"])
+            except Exception as e:
+                logger.error("Bounce checker error: %s", e)
+
+        outreach_scheduler.add_job(
+            _check_bounces,
+            IntervalTrigger(minutes=5),
+            id="outreach_bounce_checker",
+            replace_existing=True,
+            misfire_grace_time=300,  # 5 min
+        )
+
         outreach_scheduler.start()
-        logger.info("✅ Outreach scheduler started (7 jobs)")
+        logger.info("✅ Outreach scheduler started (8 jobs)")
 
         # Run analytics catch-up in case the cron window was missed
         try:

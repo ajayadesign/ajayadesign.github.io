@@ -227,6 +227,8 @@
     await _loadEmailTrackingStats();
     // Refresh ring progress from DB
     await _loadRingsFromAPI();
+    // Refresh send queue panel
+    await _loadSendQueue();
   }
 
   async function _loadRingsFromAPI() {
@@ -254,6 +256,9 @@
     // Tracking panel is always visible (works in both modes)
     const $tracking = document.getElementById('outreach-email-tracking');
     if ($tracking) $tracking.style.display = '';
+    // Show send queue panel in full mode
+    const $sq = document.getElementById('outreach-send-queue');
+    if ($sq) $sq.style.display = '';
     // Show API-only tracking tabs
     document.querySelectorAll('.tracking-api-only').forEach(el => { el.style.display = ''; el.disabled = false; });
     const $light = document.getElementById('outreach-light-panel');
@@ -274,6 +279,9 @@
     // Tracking panel stays visible — Firebase provides overview data
     const $tracking = document.getElementById('outreach-email-tracking');
     if ($tracking) $tracking.style.display = '';
+    // Hide send queue in light mode
+    const $sq2 = document.getElementById('outreach-send-queue');
+    if ($sq2) $sq2.style.display = 'none';
     // Disable API-only tracking tabs in light mode
     document.querySelectorAll('.tracking-api-only').forEach(el => { el.style.opacity = '0.4'; el.disabled = true; el.title = 'Requires local API'; });
     const $light = document.getElementById('outreach-light-panel');
@@ -2699,6 +2707,135 @@
     _initFirebaseListeners();
     _modeCheckTimer = setInterval(detectMode, MODE_CHECK_INTERVAL);
   };
+
+  // ── Send Queue panel ────────────────────────────────
+  async function _loadSendQueue() {
+    const data = await _api('GET', '/outreach/queue');
+    if (!data) return;
+    const approved = data.approved || 0;
+    const sent = data.sent_today || 0;
+    const failed = data.failed_today || 0;
+    const bounced = data.bounced || 0;
+    const limit = data.daily_limit || 20;
+    const remaining = data.remaining || 0;
+    const emails = data.approved_emails || [];
+
+    // badges & stats
+    const $badge = document.getElementById('sq-approved-badge');
+    if ($badge) { $badge.textContent = approved + ' ready'; $badge.className = 'text-[0.6rem] rounded-full px-2 py-0.5 font-mono border ' + (approved > 0 ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/30' : 'bg-surface-2 text-gray-500 border-border'); }
+
+    const el = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+    el('sq-stat-approved', approved);
+    el('sq-stat-sent', sent);
+    el('sq-stat-failed', failed);
+    el('sq-stat-bounced', bounced);
+    el('sq-stat-remaining', remaining);
+    el('sq-progress-label', sent + ' / ' + limit);
+
+    // progress bar
+    const pct = Math.min(100, Math.round(sent / Math.max(limit, 1) * 100));
+    const $bar = document.getElementById('sq-progress-bar');
+    if ($bar) $bar.style.width = pct + '%';
+
+    // "Send Now" button
+    const $btn = document.getElementById('sq-send-btn');
+    if ($btn) { $btn.disabled = approved === 0 || remaining === 0; }
+
+    // Next run time
+    const $next = document.getElementById('sq-next-run');
+    if ($next && data.next_run) {
+      const diff = Math.max(0, Math.round((new Date(data.next_run) - Date.now()) / 1000));
+      const mm = Math.floor(diff / 60);
+      const ss = diff % 60;
+      $next.textContent = 'Next send in ' + mm + ':' + String(ss).padStart(2, '0');
+    } else if ($next) {
+      $next.textContent = 'Interval: ' + (data.interval_minutes || 15) + 'min';
+    }
+
+    // Email list
+    const $list = document.getElementById('sq-email-list');
+    if (!$list) return;
+    if (emails.length === 0) {
+      $list.innerHTML = '<div class="text-xs text-gray-500 font-mono text-center py-3">No approved emails waiting to send.</div>';
+      return;
+    }
+    $list.innerHTML = emails.map(e => {
+      const biz = e.business || 'Unknown';
+      const subj = e.subject || '';
+      const step = e.step || '';
+      const toAddr = e.to || '';
+      return `<div class="flex items-center justify-between bg-surface-2 rounded-lg px-3 py-2 border border-border text-xs font-mono">
+        <div class="flex-1 min-w-0">
+          <div class="text-gray-200 truncate">${_esc(biz)}</div>
+          <div class="text-gray-500 truncate text-[0.65rem]">${_esc(subj)}</div>
+        </div>
+        <div class="flex items-center gap-2 ml-2 flex-shrink-0">
+          <span class="text-[0.55rem] px-1.5 py-0.5 rounded bg-cyan-600/20 text-cyan-400 border border-cyan-600/30">${_esc(step)}</span>
+          <span class="text-[0.55rem] text-gray-600">${_esc(toAddr)}</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function _esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+  window.outreachSendNow = async function () {
+    const $btn = document.getElementById('sq-send-btn');
+    if ($btn) { $btn.disabled = true; $btn.textContent = '⏳ Sending…'; }
+    try {
+      const res = await _api('POST', '/outreach/batch/send');
+      if (res) {
+        const msg = `Sent: ${res.sent || 0}, Failed: ${res.failed || 0}, Bounced: ${res.bounced || 0}`;
+        _toast(msg, res.failed > 0 ? 'error' : 'success');
+      } else {
+        _toast('Send request failed', 'error');
+      }
+    } catch {
+      _toast('Send request error', 'error');
+    }
+    if ($btn) { $btn.textContent = '⚡ Send Now'; }
+    await _loadSendQueue();
+    await _liveRefreshFromAPI();
+  };
+
+  window.outreachRefreshQueue = async function () {
+    await _loadSendQueue();
+  };
+
+  window.outreachCheckBounces = async function () {
+    const $btn = document.getElementById('sq-bounce-btn');
+    if ($btn) { $btn.disabled = true; $btn.textContent = '⏳ Checking…'; }
+    try {
+      const res = await _api('POST', '/outreach/batch/check-bounces');
+      if (res) {
+        const msg = `Checked: ${res.checked || 0}, Bounced: ${res.bounced || 0}, Already: ${res.already_bounced || 0}`;
+        _toast(msg, res.bounced > 0 ? 'error' : 'success');
+        if (res.details && res.details.length) {
+          res.details.forEach(d => console.log('Bounce:', d.email, d.business));
+        }
+      } else {
+        _toast('Bounce check failed', 'error');
+      }
+    } catch {
+      _toast('Bounce check error', 'error');
+    }
+    if ($btn) { $btn.textContent = '📬 Check Bounces'; $btn.disabled = false; }
+    await _loadSendQueue();
+    await _liveRefreshFromAPI();
+  };
+
+  // Simple toast helper
+  function _toast(msg, type) {
+    const existing = document.getElementById('sq-toast');
+    if (existing) existing.remove();
+    const colors = type === 'error' ? 'bg-red-600/90 text-white' : 'bg-emerald-600/90 text-white';
+    const el = document.createElement('div');
+    el.id = 'sq-toast';
+    el.className = `fixed bottom-6 right-6 z-[9999] px-4 py-2 rounded-lg text-sm font-mono shadow-lg ${colors} transition-opacity duration-500`;
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 600); }, 4000);
+  }
 
   window.destroyOutreachTab = function () {
     if (!_initialized) return;

@@ -2193,6 +2193,66 @@
           </div>
         </div>
 
+        <!-- ═══ Send Queue Panel ═══ -->
+        <div id="outreach-send-queue" class="mt-4" style="display: none;">
+          <div class="bg-surface-1 rounded-xl border border-border p-4 shadow-lg">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-mono font-semibold text-gray-200">📤 Send Queue</span>
+                <span id="sq-approved-badge" class="text-[0.6rem] bg-emerald-600/20 text-emerald-400 border border-emerald-600/30 rounded-full px-2 py-0.5 font-mono">0 ready</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span id="sq-next-run" class="text-[0.6rem] text-gray-500 font-mono"></span>
+                <button onclick="outreachSendNow()" id="sq-send-btn" class="px-3 py-1.5 bg-emerald-600/20 text-emerald-400 border border-emerald-600/30 rounded-lg text-xs font-mono font-semibold hover:bg-emerald-600/40 transition disabled:opacity-30 disabled:cursor-not-allowed" disabled>
+                  ⚡ Send Now
+                </button>
+                <button onclick="outreachCheckBounces()" id="sq-bounce-btn" class="px-3 py-1.5 bg-orange-600/20 text-orange-400 border border-orange-600/30 rounded-lg text-xs font-mono font-semibold hover:bg-orange-600/40 transition">📬 Check Bounces</button>
+                <button onclick="outreachRefreshQueue()" class="px-2 py-1.5 bg-surface-2 border border-border rounded-lg text-xs text-gray-400 font-mono hover:border-electric/30 transition">↻</button>
+              </div>
+            </div>
+
+            <!-- Stats row -->
+            <div class="grid grid-cols-5 gap-2 mb-3">
+              <div class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div id="sq-stat-approved" class="text-lg font-bold text-emerald-400 font-mono">0</div>
+                <div class="text-[0.55rem] text-gray-500 font-mono uppercase">Approved</div>
+              </div>
+              <div class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div id="sq-stat-sent" class="text-lg font-bold text-cyan-400 font-mono">0</div>
+                <div class="text-[0.55rem] text-gray-500 font-mono uppercase">Sent Today</div>
+              </div>
+              <div class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div id="sq-stat-failed" class="text-lg font-bold text-red-400 font-mono">0</div>
+                <div class="text-[0.55rem] text-gray-500 font-mono uppercase">Failed</div>
+              </div>
+              <div class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div id="sq-stat-bounced" class="text-lg font-bold text-orange-400 font-mono">0</div>
+                <div class="text-[0.55rem] text-gray-500 font-mono uppercase">Bounced</div>
+              </div>
+              <div class="bg-surface-2 rounded-lg p-2 text-center border border-border">
+                <div id="sq-stat-remaining" class="text-lg font-bold text-blue-400 font-mono">20</div>
+                <div class="text-[0.55rem] text-gray-500 font-mono uppercase">Remaining</div>
+              </div>
+            </div>
+
+            <!-- Progress bar: sent / daily limit -->
+            <div class="mb-3">
+              <div class="flex items-center justify-between text-[0.55rem] text-gray-500 font-mono mb-1">
+                <span>Daily Send Progress</span>
+                <span id="sq-progress-label">0 / 20</span>
+              </div>
+              <div class="w-full h-2 bg-surface-2 rounded-full overflow-hidden border border-border">
+                <div id="sq-progress-bar" class="h-full bg-emerald-500/60 rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Approved emails list -->
+            <div id="sq-email-list" class="space-y-1 max-h-52 overflow-y-auto no-scrollbar">
+              <div class="text-xs text-gray-500 font-mono text-center py-3">No approved emails waiting to send.</div>
+            </div>
+          </div>
+        </div>
+
         <!-- Full Mode: Email Editor Modal (WYSIWYG) -->
         <div id="outreach-email-editor" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
           <div class="bg-surface-1 rounded-xl border border-border w-full max-w-4xl max-h-[92vh] overflow-y-auto shadow-2xl">

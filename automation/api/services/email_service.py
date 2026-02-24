@@ -64,10 +64,25 @@ async def send_email(
         logger.info(f"✅ Email sent to {to}: {subject}")
         return {"success": True, "message": f"Email sent to {to}"}
 
+    except smtplib.SMTPRecipientsRefused as e:
+        # 550/551/552/553 = mailbox does not exist → hard bounce
+        codes = {code for _, (code, _) in e.recipients.items()}
+        logger.error(f"📬 Bounce ({codes}): {to} — {e}")
+        return {"success": False, "bounce": True, "message": f"Recipient refused ({codes}): {to}"}
     except smtplib.SMTPAuthenticationError as e:
         logger.error(f"SMTP auth failed: {e}")
         return {"success": False, "message": "SMTP authentication failed. Check your App Password."}
     except Exception as e:
+        msg_str = str(e).lower()
+        # Detect bounce-like errors from generic exceptions
+        is_bounce = any(kw in msg_str for kw in (
+            "does not exist", "user unknown", "no such user",
+            "mailbox not found", "invalid recipient", "550 ", "551 ",
+            "552 ", "553 ", "address rejected",
+        ))
+        if is_bounce:
+            logger.error(f"📬 Bounce (generic): {to} — {e}")
+            return {"success": False, "bounce": True, "message": f"Bounce: {str(e)}"}
         logger.error(f"Email send failed: {e}")
         return {"success": False, "message": f"Email failed: {str(e)}"}
 
