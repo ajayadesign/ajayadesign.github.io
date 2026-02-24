@@ -136,7 +136,7 @@ class Prospect(Base):
     status = Column(String, default="discovered", index=True)
     # discovered → audited → enriched → queued → contacted →
     # follow_up_1 → follow_up_2 → follow_up_3 →
-    # replied → meeting_booked → promoted → dead → do_not_contact
+    # replied → manual_handling → meeting_booked → promoted → dead → do_not_contact
 
     # ── Outreach Tracking ──
     emails_sent = Column(Integer, default=0)

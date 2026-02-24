@@ -704,6 +704,7 @@ async def batch_approve_emails(body: dict, db: AsyncSession = Depends(get_db)):
 
     approved_count = 0
     cancelled_count = 0
+    held_count = 0
     seen = set()  # track (prospect_id, step) within this batch
     for e in emails:
         key = (e.prospect_id, e.sequence_step)
@@ -715,14 +716,27 @@ async def batch_approve_emails(body: dict, db: AsyncSession = Depends(get_db)):
             cancelled_count += 1
         else:
             e.status = "approved"
-            e.scheduled_for = now
+            # Only set scheduled_for=now for step 1 (initial outreach).
+            # Follow-up steps keep their computed scheduled_for so they
+            # don't all fire at once - respects STEP_DELAYS spacing.
+            if e.sequence_step <= 1 or e.scheduled_for is None:
+                e.scheduled_for = now
+            # else: keep existing scheduled_for (already spaced by schedule_next_step)
             e.updated_at = now
             seen.add(key)
             approved_count += 1
+            if e.sequence_step > 1:
+                held_count += 1
     await db.commit()
+    msg = f"Approved {approved_count} emails"
+    if held_count:
+        msg += f" ({held_count} follow-ups kept on schedule)"
+    if cancelled_count:
+        msg += f", cancelled {cancelled_count} duplicates"
     return {
-        "message": f"Approved {approved_count} emails, cancelled {cancelled_count} duplicates",
+        "message": msg,
         "count": approved_count,
+        "held_on_schedule": held_count,
         "duplicates_cancelled": cancelled_count,
     }
 
@@ -1460,6 +1474,14 @@ async def trigger_bounce_check():
     return result
 
 
+@outreach_router.post("/batch/check-replies")
+async def trigger_reply_check():
+    """Scan Gmail inbox for replies from prospects and set them to manual_handling."""
+    from api.services.bounce_checker import check_replies
+    result = await check_replies()
+    return result
+
+
 # ── Bulk Selection Endpoints (operate on a list of IDs) ──────────────
 
 @outreach_router.post("/bulk/audit")
@@ -2186,6 +2208,58 @@ async def trigger_ring_expansion(ring_id: str):
 # MISSING ENDPOINTS (per plan audit)
 # ═══════════════════════════════════════════════════════════════════
 
+
+@outreach_router.post("/prospects/{prospect_id}/manual-handling")
+async def set_manual_handling(prospect_id: str, body: dict = None, db: AsyncSession = Depends(get_db)):
+    """
+    Mark a prospect as 'manual_handling' — you've replied or want to take over.
+    Cancels all pending/approved automated emails for this prospect.
+    The system will NOT send any more automated emails to them.
+    """
+    prospect = await db.get(Prospect, uuid.UUID(prospect_id))
+    if not prospect:
+        raise HTTPException(status_code=404, detail="Prospect not found")
+
+    old_status = prospect.status
+    prospect.status = "manual_handling"
+    note = (body or {}).get("note", "")
+    prospect.notes = (prospect.notes or "") + f"\n🤝 Manual handling activated (was {old_status})"
+    if note:
+        prospect.notes += f": {note}"
+
+    # Cancel all pending/approved automated emails
+    pending = await db.execute(
+        select(OutreachEmail).where(
+            OutreachEmail.prospect_id == prospect.id,
+            OutreachEmail.status.in_(["pending_approval", "approved", "scheduled", "draft"]),
+        )
+    )
+    cancelled = 0
+    for e in pending.scalars().all():
+        e.status = "cancelled"
+        e.error_message = "Manual handling — automated outreach paused"
+        cancelled += 1
+
+    await db.commit()
+
+    # Telegram notification
+    try:
+        from api.services.telegram_outreach import send_message
+        await send_message(
+            f"🤝 *Manual handling:* {prospect.business_name}\n"
+            f"📋 Status: {old_status} → manual_handling\n"
+            f"📧 {cancelled} pending emails cancelled"
+        )
+    except Exception:
+        pass
+
+    return {
+        "message": f"{prospect.business_name} set to manual handling — {cancelled} emails cancelled",
+        "prospect_id": prospect_id,
+        "emails_cancelled": cancelled,
+    }
+
+
 @outreach_router.get("/emails/{email_id}")
 async def get_email(email_id: str, db: AsyncSession = Depends(get_db)):
     """Get a single email by ID with prospect context."""
@@ -2233,11 +2307,16 @@ async def approve_email(email_id: str, db: AsyncSession = Depends(get_db)):
         return {"message": "Duplicate detected — email cancelled", "email": email.to_dict(), "duplicate": True}
 
     email.status = "approved"
-    # Reset scheduled_for to now so it sends at the next queue cycle
-    email.scheduled_for = datetime.now(timezone.utc)
+    # Only override scheduled_for for step 1. Follow-ups keep their
+    # computed scheduled_for so they respect the delay between steps.
+    if email.sequence_step <= 1 or email.scheduled_for is None:
+        email.scheduled_for = datetime.now(timezone.utc)
     await db.commit()
     await db.refresh(email)
-    return {"message": "Email approved — will send at next queue cycle", "email": email.to_dict()}
+    step_msg = ""
+    if email.sequence_step > 1:
+        step_msg = f" (step {email.sequence_step} scheduled for {email.scheduled_for.strftime('%b %d %H:%M UTC')})"
+    return {"message": f"Email approved{step_msg}", "email": email.to_dict()}
 
 
 @outreach_router.patch("/emails/{email_id}")
