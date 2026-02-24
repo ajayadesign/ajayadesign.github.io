@@ -2716,9 +2716,10 @@
     const sent = data.sent_today || 0;
     const failed = data.failed_today || 0;
     const bounced = data.bounced || 0;
-    const limit = data.daily_limit || 20;
+    const limit = data.daily_limit || 100;
     const remaining = data.remaining || 0;
     const emails = data.approved_emails || [];
+    const limitExceeded = data.limit_exceeded || false;
 
     // badges & stats
     const $badge = document.getElementById('sq-approved-badge');
@@ -2729,17 +2730,39 @@
     el('sq-stat-sent', sent);
     el('sq-stat-failed', failed);
     el('sq-stat-bounced', bounced);
-    el('sq-stat-remaining', remaining);
-    el('sq-progress-label', sent + ' / ' + limit);
+    el('sq-stat-remaining', limitExceeded ? '⛔' : remaining);
+    el('sq-progress-label', limitExceeded ? '⛔ LIMIT EXCEEDED' : sent + ' / ' + limit);
 
     // progress bar
-    const pct = Math.min(100, Math.round(sent / Math.max(limit, 1) * 100));
+    const pct = limitExceeded ? 100 : Math.min(100, Math.round(sent / Math.max(limit, 1) * 100));
     const $bar = document.getElementById('sq-progress-bar');
-    if ($bar) $bar.style.width = pct + '%';
+    if ($bar) {
+      $bar.style.width = pct + '%';
+      $bar.className = 'h-full rounded-full transition-all duration-500 ' + (limitExceeded ? 'bg-red-500/80' : 'bg-emerald-500/60');
+    }
 
-    // "Send Now" button
+    // Gmail limit exceeded banner
+    let $limitBanner = document.getElementById('sq-limit-banner');
+    if (limitExceeded) {
+      if (!$limitBanner) {
+        $limitBanner = document.createElement('div');
+        $limitBanner.id = 'sq-limit-banner';
+        $limitBanner.className = 'bg-red-600/20 border border-red-600/40 rounded-lg px-3 py-2 mb-3 flex items-center gap-2';
+        $limitBanner.innerHTML = '<span class="text-red-400 text-sm">🚫</span><div><div class="text-red-400 text-xs font-mono font-semibold">Gmail Daily Limit Exceeded</div><div class="text-red-400/70 text-[0.6rem] font-mono">Sending paused — limit resets at midnight PST. Approved emails will retry next cycle.</div></div>';
+        const $statsGrid = document.querySelector('#outreach-send-queue .grid');
+        if ($statsGrid) $statsGrid.parentNode.insertBefore($limitBanner, $statsGrid);
+      }
+    } else if ($limitBanner) {
+      $limitBanner.remove();
+    }
+
+    // "Send Now" button — disable if limit exceeded
     const $btn = document.getElementById('sq-send-btn');
-    if ($btn) { $btn.disabled = approved === 0 || remaining === 0; }
+    if ($btn) {
+      $btn.disabled = approved === 0 || remaining === 0 || limitExceeded;
+      if (limitExceeded) $btn.title = 'Gmail daily limit exceeded — resets at midnight PST';
+      else $btn.title = '';
+    }
 
     // Next run time
     const $next = document.getElementById('sq-next-run');
@@ -2785,8 +2808,12 @@
     try {
       const res = await _api('POST', '/outreach/batch/send');
       if (res) {
-        const msg = `Sent: ${res.sent || 0}, Failed: ${res.failed || 0}, Bounced: ${res.bounced || 0}`;
-        _toast(msg, res.failed > 0 ? 'error' : 'success');
+        if (res.limit_exceeded) {
+          _toast('🚫 Gmail daily limit exceeded — sending paused until midnight PST', 'error');
+        } else {
+          const msg = `Sent: ${res.sent || 0}, Failed: ${res.failed || 0}`;
+          _toast(msg, res.failed > 0 ? 'error' : 'success');
+        }
       } else {
         _toast('Send request failed', 'error');
       }

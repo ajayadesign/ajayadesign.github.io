@@ -72,8 +72,33 @@ async def send_email(
     except smtplib.SMTPAuthenticationError as e:
         logger.error(f"SMTP auth failed: {e}")
         return {"success": False, "message": "SMTP authentication failed. Check your App Password."}
+    except smtplib.SMTPSenderRefused as e:
+        # 421/450/550 from sender side — often daily limit exceeded
+        code = getattr(e, 'smtp_code', 0) or 0
+        msg_str = str(e).lower()
+        if code == 550 or '421' in str(code) or 'limit' in msg_str or 'quota' in msg_str or 'too many' in msg_str:
+            logger.error(f"🚫 Gmail daily limit exceeded: {e}")
+            return {"success": False, "limit_exceeded": True, "message": f"Gmail daily send limit exceeded (code {code})"}
+        logger.error(f"SMTP sender refused: {e}")
+        return {"success": False, "message": f"Sender refused: {str(e)}"}
+    except smtplib.SMTPDataError as e:
+        # 421 "4.7.0 Too many messages" or 550 rate limit
+        code = getattr(e, 'smtp_code', 0) or 0
+        msg_str = str(e).lower()
+        if code in (421, 450, 550) or 'limit' in msg_str or 'quota' in msg_str or 'too many' in msg_str:
+            logger.error(f"🚫 Gmail daily limit exceeded (SMTPDataError): {e}")
+            return {"success": False, "limit_exceeded": True, "message": f"Gmail daily send limit exceeded (code {code})"}
+        logger.error(f"SMTP data error: {e}")
+        return {"success": False, "message": f"SMTP data error: {str(e)}"}
     except Exception as e:
         msg_str = str(e).lower()
+        # Detect Gmail daily limit / rate limit from generic exceptions
+        if any(kw in msg_str for kw in (
+            "daily limit", "daily sending quota", "limit exceeded",
+            "too many", "rate limit", "403", "quota exceeded",
+        )):
+            logger.error(f"🚫 Gmail daily limit exceeded: {e}")
+            return {"success": False, "limit_exceeded": True, "message": f"Gmail daily limit exceeded: {str(e)[:200]}"}
         # Detect bounce-like errors from generic exceptions
         is_bounce = any(kw in msg_str for kw in (
             "does not exist", "user unknown", "no such user",
