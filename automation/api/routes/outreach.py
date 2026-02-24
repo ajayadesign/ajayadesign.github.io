@@ -302,6 +302,78 @@ async def export_prospects_csv(
     )
 
 
+@outreach_router.get("/prospects/bounced")
+async def list_bounced_prospects(
+    limit: int = Query(50, le=200),
+    offset: int = 0,
+    db: AsyncSession = Depends(get_db),
+):
+    """List prospects whose emails bounced — for recovery / phone outreach.
+    Returns prospect info + phone, website, bounce details, recovery status."""
+    # Subquery: prospects with at least one bounced email
+    bounced_prospect_ids = (
+        select(OutreachEmail.prospect_id)
+        .where(OutreachEmail.status == "bounced")
+        .distinct()
+        .subquery()
+    )
+
+    count_q = select(func.count()).select_from(
+        select(Prospect.id).where(Prospect.id.in_(select(bounced_prospect_ids.c.prospect_id))).subquery()
+    )
+    total = (await db.execute(count_q)).scalar() or 0
+
+    q = (
+        select(Prospect)
+        .where(Prospect.id.in_(select(bounced_prospect_ids.c.prospect_id)))
+        .order_by(Prospect.business_name.asc())
+        .offset(offset)
+        .limit(limit)
+    )
+    result = await db.execute(q)
+    prospects = result.scalars().all()
+
+    out = []
+    for p in prospects:
+        # Get bounce details for this prospect
+        bounce_r = await db.execute(
+            select(OutreachEmail)
+            .where(OutreachEmail.prospect_id == p.id, OutreachEmail.status == "bounced")
+            .order_by(OutreachEmail.sent_at.desc())
+        )
+        bounced_emails = bounce_r.scalars().all()
+
+        d = p.to_dict(brief=False)
+        d["bounced_emails"] = [
+            {
+                "id": str(e.id),
+                "to_email": p.owner_email or "",
+                "subject": e.subject,
+                "sequence_step": e.sequence_step,
+                "sent_at": e.sent_at.isoformat() if e.sent_at else None,
+                "error_message": e.error_message,
+            }
+            for e in bounced_emails
+        ]
+        d["bounce_count"] = len(bounced_emails)
+        d["has_phone"] = bool(p.phone)
+        d["has_alt_email"] = bool(p.owner_phone)  # might have owner_phone as alt contact
+        d["recovery_status"] = (
+            "recovered" if p.status in ("enriched", "queued", "contacted") else
+            "phone_outreach" if p.status == "phone_outreach" else
+            "dead" if p.status == "dead" else
+            p.status
+        )
+        out.append(d)
+
+    return {
+        "total": total,
+        "offset": offset,
+        "limit": limit,
+        "prospects": out,
+    }
+
+
 @outreach_router.get("/prospects/{prospect_id}")
 async def get_prospect(prospect_id: str, db: AsyncSession = Depends(get_db)):
     """Get full prospect detail including audits, email history, and score breakdown."""
@@ -566,6 +638,105 @@ async def list_emails(
     result = await db.execute(query)
     emails = result.scalars().all()
     return {"emails": [e.to_dict() for e in emails]}
+
+
+@outreach_router.post("/prospects/{prospect_id}/recover")
+async def recover_bounced_prospect(
+    prospect_id: str,
+    body: dict,
+    db: AsyncSession = Depends(get_db),
+):
+    """Recover a bounced prospect:
+    - new_email: update email & re-enqueue
+    - phone_outreach: switch to phone outreach channel
+    - crawl_recover: trigger crawl4ai to find a new email
+    """
+    prospect = await db.get(Prospect, prospect_id)
+    if not prospect:
+        raise HTTPException(status_code=404, detail="Prospect not found")
+
+    action = body.get("action", "")
+
+    if action == "new_email":
+        new_email = body.get("email", "").strip().lower()
+        if not new_email or "@" not in new_email:
+            raise HTTPException(status_code=400, detail="Invalid email address")
+        old_email = prospect.owner_email
+        prospect.owner_email = new_email
+        prospect.email_source = "manual_recovery"
+        prospect.email_verified = False
+        prospect.status = "enriched"
+        prospect.notes = (prospect.notes or "") + f"\n🔄 Email recovered: {old_email} → {new_email}"
+        await db.commit()
+        return {"status": "recovered", "old_email": old_email, "new_email": new_email}
+
+    elif action == "phone_outreach":
+        if not prospect.phone:
+            raise HTTPException(status_code=400, detail="Prospect has no phone number")
+        prospect.status = "phone_outreach"
+        prospect.notes = (prospect.notes or "") + "\n📞 Switched to phone outreach — email bounced"
+        await db.commit()
+        return {"status": "phone_outreach", "phone": prospect.phone}
+
+    elif action == "crawl_recover":
+        # Trigger crawl4ai recovery — async background task
+        try:
+            from api.services.bounce_recovery import recover_email_by_crawl
+            result = await recover_email_by_crawl(str(prospect.id))
+            return result
+        except ImportError:
+            raise HTTPException(status_code=501, detail="crawl4ai bounce recovery not available")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    else:
+        raise HTTPException(status_code=400, detail=f"Unknown action: {action}")
+
+
+@outreach_router.post("/batch/recover-bounced")
+async def batch_recover_bounced(db: AsyncSession = Depends(get_db)):
+    """Trigger crawl4ai recovery for ALL bounced-dead prospects with websites."""
+    bounced_q = (
+        select(Prospect)
+        .where(
+            Prospect.status == "dead",
+            Prospect.website_url.isnot(None),
+            Prospect.website_url != "",
+        )
+        .join(OutreachEmail, OutreachEmail.prospect_id == Prospect.id)
+        .where(OutreachEmail.status == "bounced")
+        .distinct()
+    )
+    result = await db.execute(bounced_q)
+    prospects = result.scalars().all()
+
+    if not prospects:
+        return {"message": "No bounced prospects to recover", "total": 0}
+
+    results = []
+    try:
+        from api.services.bounce_recovery import recover_email_by_crawl
+    except ImportError:
+        raise HTTPException(status_code=501, detail="crawl4ai bounce recovery not available")
+
+    for p in prospects:
+        try:
+            r = await recover_email_by_crawl(str(p.id))
+            results.append({"prospect_id": str(p.id), "business": p.business_name, **r})
+        except Exception as e:
+            results.append({"prospect_id": str(p.id), "business": p.business_name, "status": "error", "error": str(e)})
+
+    recovered = sum(1 for r in results if r.get("status") == "recovered")
+    phone = sum(1 for r in results if r.get("status") == "phone_outreach")
+    failed = sum(1 for r in results if r.get("status") in ("error", "no_email_found"))
+
+    return {
+        "total": len(results),
+        "recovered": recovered,
+        "phone_outreach": phone,
+        "failed": failed,
+        "details": results,
+    }
 
 
 @outreach_router.get("/emails/pending")

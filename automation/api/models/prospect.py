@@ -137,6 +137,7 @@ class Prospect(Base):
     # discovered → audited → enriched → queued → contacted →
     # follow_up_1 → follow_up_2 → follow_up_3 →
     # replied → manual_handling → meeting_booked → promoted → dead → do_not_contact
+    # phone_outreach  (bounced email → fallback to phone call)
 
     # ── Outreach Tracking ──
     emails_sent = Column(Integer, default=0)

@@ -1314,6 +1314,11 @@
     _setCountBadge('eq-stage-breakup-count', sc[4] || sc['4'] || 0);
     _setCountBadge('eq-stage-resurrection-count', sc[5] || sc['5'] || 0);
 
+    // Also fetch bounced count in background (non-blocking)
+    _api('GET', '/outreach/prospects/bounced?limit=1&offset=0').then(bd => {
+      if (bd) _setCountBadge('eq-stage-bounced-count', bd.total || 0);
+    });
+
     if (emails.length === 0) {
       $el.innerHTML = '<div class="text-center text-gray-500 py-4 font-mono text-sm">No emails pending approval. 🎉</div>';
       if ($pag) $pag.classList.add('hidden');
@@ -1395,6 +1400,7 @@
       '2,3': 'eq-stage-followup',
       '4': 'eq-stage-breakup',
       '5': 'eq-stage-resurrection',
+      'bounced': 'eq-stage-bounced',
     };
     for (const [filter, id] of Object.entries(tabs)) {
       const $tab = document.getElementById(id);
@@ -1407,7 +1413,156 @@
         $tab.classList.add('border-transparent', 'text-gray-500');
       }
     }
-    _loadPendingEmails(0);
+
+    // Toggle between pending emails and bounced panel
+    const $pending = document.getElementById('outreach-pending-emails');
+    const $bounced = document.getElementById('outreach-bounced-panel');
+    const $pag = document.getElementById('email-queue-pagination');
+    if (stepFilter === 'bounced') {
+      if ($pending) $pending.classList.add('hidden');
+      if ($pag) $pag.classList.add('hidden');
+      if ($bounced) $bounced.classList.remove('hidden');
+      _loadBouncedProspects();
+    } else {
+      if ($pending) $pending.classList.remove('hidden');
+      if ($bounced) $bounced.classList.add('hidden');
+      _loadPendingEmails(0);
+    }
+  };
+
+  // ── Bounced Prospects Panel ──────────────────────────
+  let _bouncedOffset = 0;
+  let _bouncedTotal = 0;
+
+  async function _loadBouncedProspects() {
+    const $panel = document.getElementById('outreach-bounced-panel');
+    if (!$panel) return;
+
+    $panel.innerHTML = '<div class="text-center text-gray-500 py-4 font-mono text-sm animate-pulse">Loading bounced prospects…</div>';
+
+    const data = await _api('GET', `/outreach/prospects/bounced?limit=50&offset=${_bouncedOffset}`);
+    if (!data || !data.prospects) {
+      $panel.innerHTML = '<div class="text-center text-gray-500 py-4 font-mono text-sm">Failed to load bounced prospects.</div>';
+      return;
+    }
+
+    _bouncedTotal = data.total || 0;
+    _setCountBadge('eq-stage-bounced-count', _bouncedTotal);
+
+    if (data.prospects.length === 0) {
+      $panel.innerHTML = '<div class="text-center text-gray-500 py-4 font-mono text-sm">No bounced prospects. 🎉</div>';
+      return;
+    }
+
+    const rows = data.prospects.map(p => {
+      const phone = p.phone ? _formatPhone(p.phone) : null;
+      const bounceInfo = (p.bounced_emails || []).map(e =>
+        `<span class="text-red-400">${_esc(e.to_email)}</span> (Step ${e.sequence_step})`
+      ).join(', ');
+      const recoveryBadge = {
+        recovered: 'bg-emerald-600/20 text-emerald-400',
+        phone_outreach: 'bg-amber-600/20 text-amber-400',
+        dead: 'bg-red-600/20 text-red-400',
+      }[p.recovery_status] || 'bg-gray-600/20 text-gray-400';
+
+      return `
+      <div class="bg-surface-2 rounded-lg border border-border p-3 hover:border-red-500/30 transition">
+        <div class="flex items-start justify-between mb-2">
+          <div class="cursor-pointer" onclick="outreachViewProspect('${p.id}')">
+            <div class="font-mono text-sm text-gray-200 hover:text-electric transition">${_esc(p.business_name)}</div>
+            <div class="text-[0.65rem] text-gray-500 font-mono">${_esc(p.business_type || '')} · ${_esc(p.city || '')} · Score: ${p.priority_score ?? '—'}</div>
+          </div>
+          <div class="flex gap-1.5">
+            <span class="px-2 py-0.5 bg-red-600/15 text-red-400 text-[0.6rem] font-mono rounded-full">⛔ ${p.bounce_count} bounce${p.bounce_count > 1 ? 's' : ''}</span>
+            <span class="px-2 py-0.5 ${recoveryBadge} text-[0.6rem] font-mono rounded-full">${_esc(p.recovery_status)}</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 mb-2 text-xs">
+          <div class="text-gray-400 font-mono">
+            <span class="text-gray-600">Bounced:</span> ${bounceInfo || '—'}
+          </div>
+          <div class="text-gray-400 font-mono">
+            <span class="text-gray-600">Website:</span>
+            ${p.website_url ? `<a href="${_esc(p.website_url)}" target="_blank" class="text-electric hover:underline">${_esc(new URL(p.website_url).hostname)}</a>` : '<span class="text-gray-600">None</span>'}
+          </div>
+          <div class="text-gray-400 font-mono">
+            <span class="text-gray-600">Phone:</span>
+            ${phone ? `<a href="tel:${_esc(p.phone)}" class="text-emerald-400 hover:underline">${phone}</a>` : '<span class="text-gray-600">None</span>'}
+          </div>
+          <div class="text-gray-400 font-mono">
+            <span class="text-gray-600">Email source:</span> ${_esc(p.email_source || 'unknown')}
+          </div>
+        </div>
+
+        <div class="flex gap-2 flex-wrap">
+          ${p.website_url ? `<button onclick="outreachRecoverBounce('${p.id}', 'crawl_recover')" class="px-2.5 py-1 bg-purple-600/20 text-purple-400 border border-purple-600/30 rounded text-[0.65rem] font-mono hover:bg-purple-600/30 transition">🔍 Crawl for Email</button>` : ''}
+          ${phone ? `<button onclick="outreachRecoverBounce('${p.id}', 'phone_outreach')" class="px-2.5 py-1 bg-amber-600/20 text-amber-400 border border-amber-600/30 rounded text-[0.65rem] font-mono hover:bg-amber-600/30 transition">📞 Phone Outreach</button>` : ''}
+          <button onclick="outreachRecoverBounceEmail('${p.id}')" class="px-2.5 py-1 bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded text-[0.65rem] font-mono hover:bg-blue-600/30 transition">✏️ Manual Email</button>
+          <button onclick="outreachViewProspect('${p.id}')" class="px-2.5 py-1 bg-gray-600/20 text-gray-400 border border-gray-600/30 rounded text-[0.65rem] font-mono hover:bg-gray-600/30 transition">👁️ Details</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    // Batch recovery button at the top
+    $panel.innerHTML = `
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-xs text-gray-400 font-mono">${_bouncedTotal} bounced prospect${_bouncedTotal !== 1 ? 's' : ''}</div>
+        <div class="flex gap-2">
+          <button onclick="outreachBatchRecoverBounced()" class="px-3 py-1.5 bg-purple-600/20 text-purple-400 border border-purple-600/30 rounded-lg text-xs font-mono hover:bg-purple-600/30 transition">🔍 Crawl All for Emails</button>
+          <button onclick="_loadBouncedProspects()" class="px-3 py-1.5 bg-gray-700/50 text-gray-400 rounded-lg text-xs font-mono hover:bg-gray-700 transition">↻ Refresh</button>
+        </div>
+      </div>
+      ${rows}
+    `;
+  }
+
+  window.outreachRecoverBounce = async function (prospectId, action, emailOverride) {
+    const body = { action };
+    if (emailOverride) body.email = emailOverride;
+
+    const $btn = event?.target;
+    if ($btn) {
+      $btn.disabled = true;
+      $btn.innerHTML = '<span class="animate-spin inline-block">⏳</span> Working…';
+    }
+
+    const result = await _api('POST', `/outreach/prospects/${prospectId}/recover`, body);
+    if (result) {
+      const msg = result.status === 'recovered'
+        ? `Email updated → ${result.new_email || ''}. Re-queued!`
+        : result.status === 'phone_outreach'
+          ? 'Marked for phone outreach 📞'
+          : result.message || JSON.stringify(result);
+      _toast(`✅ ${msg}`, 'success');
+      _loadBouncedProspects();
+    } else {
+      _toast('❌ Recovery failed', 'error');
+      if ($btn) { $btn.disabled = false; $btn.innerHTML = '❌ Retry'; }
+    }
+  };
+
+  window.outreachRecoverBounceEmail = function (prospectId) {
+    const email = prompt('Enter the correct email address for this prospect:');
+    if (!email || !email.includes('@')) return;
+    window.outreachRecoverBounce(prospectId, 'new_email', email);
+  };
+
+  window.outreachBatchRecoverBounced = async function () {
+    if (!confirm('Crawl all bounced prospects\' websites to find valid emails?\n\nThis may take a few minutes.')) return;
+    const $btn = event.target;
+    $btn.disabled = true;
+    $btn.innerHTML = '<span class="animate-spin inline-block">🔍</span> Crawling…';
+
+    const result = await _api('POST', '/outreach/batch/recover-bounced');
+    if (result) {
+      _toast(`✅ Batch recovery: ${result.recovered || 0} recovered, ${result.phone_outreach || 0} → phone, ${result.failed || 0} failed`, 'success');
+      _loadBouncedProspects();
+    } else {
+      _toast('❌ Batch recovery failed', 'error');
+    }
+    $btn.disabled = false;
+    $btn.innerHTML = '🔍 Crawl All for Emails';
   };
 
   // ── Email Tracking Stats ─────────────────────────────
@@ -2290,6 +2445,8 @@
       promoted: 'bg-electric/20 text-electric',
       dead: 'bg-red-600/20 text-red-400',
       do_not_contact: 'bg-red-800/20 text-red-500',
+      manual_handling: 'bg-yellow-600/20 text-yellow-400',
+      phone_outreach: 'bg-amber-600/20 text-amber-400',
       // Email statuses
       draft: 'bg-gray-600/20 text-gray-400',
       sent: 'bg-blue-600/20 text-blue-400',

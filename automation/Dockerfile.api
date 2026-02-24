@@ -19,7 +19,8 @@ WORKDIR /app
 
 # Python deps
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && \
+    crawl4ai-setup 2>/dev/null || true
 
 # Copy source
 COPY api/ api/
