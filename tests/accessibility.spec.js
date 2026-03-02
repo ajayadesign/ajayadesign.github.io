@@ -124,15 +124,15 @@ test('rebuild checkbox shows confirmation panel', async ({ page }) => {
   await expect(form.locator('#rebuild-confirm')).toBeAttached();
 });
 
-test('portfolio links point to local submodule paths', async ({ page }) => {
+test('portfolio links point to live GitHub Pages sites', async ({ page }) => {
   await page.goto('/');
   const links = page.locator('#works a[target="_blank"]');
   const count = await links.count();
   expect(count).toBeGreaterThanOrEqual(4);
   for (let i = 0; i < count; i++) {
     const href = await links.nth(i).getAttribute('href');
-    // Each portfolio card links to /<submodule-name>/
-    expect(href).toMatch(/^\/[a-z0-9-]+\//);
+    // Each portfolio card links to its own GitHub Pages domain
+    expect(href).toMatch(/^https:\/\/[a-z0-9-]+\.github\.io\//);
     await expect(links.nth(i)).toHaveAttribute('rel', /noopener/);
   }
 });
