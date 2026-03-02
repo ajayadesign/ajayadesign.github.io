@@ -13,6 +13,9 @@
 [submodule "test-biz"]
 	path = test-biz
 	url = https://github.com/ajayadesign/test-biz.git
-[submodule "e2e-test-sunrise-bakery"]
-	path = e2e-test-sunrise-bakery
-	url = https://github.com/ajayadesign/e2e-test-sunrise-bakery.git
+[submodule "aj-builds-drone"]
+	path = aj-builds-drone
+	url = https://github.com/aj-builds-drone/aj-builds-drone.github.io.git
+[submodule "wow-momo"]
+	path = wow-momo
+	url = https://github.com/wow-momo/wow-momo.github.io.git
