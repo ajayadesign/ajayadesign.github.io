@@ -256,7 +256,9 @@ async def send_quote(short_id: str, db: AsyncSession = Depends(get_db)):
         # Publish to Firebase for public viewing
         publish_quote_for_viewing(str(quote.view_token), {
             "short_id": quote.short_id,
+            "quote_id": quote.short_id,
             "client_name": quote.client_name,
+            "client_email": quote.client_email or "",
             "project_name": quote.project_name,
             "project_description": quote.project_description or "",
             "deliverables": quote.deliverables or [],
@@ -268,6 +270,7 @@ async def send_quote(short_id: str, db: AsyncSession = Depends(get_db)):
             "valid_days": quote.valid_days or 30,
             "custom_notes": quote.custom_notes or "",
             "revision": quote.revision or 1,
+            "created_at": quote.created_at.isoformat() if quote.created_at else None,
             "provider_name": quote.provider_name or "AjayaDesign",
             "provider_email": quote.provider_email or "ajayadesign@gmail.com",
         })

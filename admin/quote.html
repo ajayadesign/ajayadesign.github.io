@@ -500,7 +500,7 @@
         const tr = document.createElement('tr');
         tr.className = 'border-b border-border-dim';
         tr.innerHTML = `
-          <td class="px-8 py-4">${escH(d.name)}</td>
+          <td class="px-8 py-4">${escH(d.description || d.name || '')}</td>
           <td class="px-8 py-4 text-right font-mono text-gray-500">${d.hours}h</td>
           <td class="px-8 py-4 text-right font-mono">$${cost.toLocaleString()}</td>
         `;
