@@ -579,18 +579,20 @@ async function sendQuote() {
       const now = new Date().toISOString();
       const viewerData = {
         quote_id: currentQuote.quote_id,
+        short_id: currentQuote.quote_id,
         client_name: currentQuote.client_name,
         client_email: currentQuote.client_email,
         project_name: currentQuote.project_name,
         project_description: currentQuote.project_description || '',
         payment_schedule: currentQuote.payment_schedule || '',
         valid_days: currentQuote.valid_days || 30,
-        notes: currentQuote.notes || '',
+        custom_notes: currentQuote.notes || currentQuote.custom_notes || '',
         deliverables: currentQuote.deliverables || quoteDeliverables,
         total_hours: currentQuote.total_hours || 0,
         total_amount: currentQuote.total_amount || 0,
         revision: currentQuote.revision || 1,
         status: 'sent',
+        created_at: currentQuote.created_at || now,
         sent_at: now,
         expires_at: new Date(Date.now() + (currentQuote.valid_days || 30) * 86400000).toISOString(),
       };
