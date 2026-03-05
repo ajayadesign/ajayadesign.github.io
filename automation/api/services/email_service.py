@@ -112,6 +112,125 @@ async def send_email(
         return {"success": False, "message": f"Email failed: {str(e)}"}
 
 
+def build_quote_email(
+    client_name: str,
+    project_name: str,
+    deliverables: list[dict],
+    total_amount: float,
+    payment_schedule: str,
+    valid_days: int,
+    revision: int,
+    view_url: str,
+    provider_name: str = "AjayaDesign",
+) -> tuple[str, str]:
+    """Build a project quote email (no pricing — drives click-through). Returns (subject, html_body)."""
+    rev_label = f" (Revision {revision})" if revision > 1 else ""
+    subject = f"Project Quote for {project_name}{rev_label} — {provider_name}"
+
+    # Build deliverable checklist (names only, no pricing)
+    num_deliverables = len(deliverables)
+    total_hours = sum(d.get("hours", 0) for d in deliverables)
+    checklist_html = ""
+    for d in deliverables:
+        desc = d.get("description", d.get("name", ""))
+        checklist_html += f"""
+          <tr>
+            <td style="padding: 6px 0; color: #333; font-size: 14px; line-height: 1.5;">
+              <span style="color: #6366f1; font-weight: 600; margin-right: 8px;">&#10003;</span> {desc}
+            </td>
+          </tr>"""
+
+    html = f"""
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 640px; margin: 0 auto; padding: 0;">
+
+      <!-- Header -->
+      <div style="background: linear-gradient(135deg, #0A0A0F 0%, #16161F 100%); padding: 40px 30px; text-align: center; border-radius: 12px 12px 0 0;">
+        <div style="font-size: 28px; margin-bottom: 8px;">📋</div>
+        <h1 style="color: #ffffff; font-size: 22px; margin: 0; font-weight: 700;">Project Quote{rev_label}</h1>
+        <p style="color: #9ca3af; margin-top: 8px; font-size: 14px;">{project_name}</p>
+        <p style="color: #6b7280; font-size: 12px; margin-top: 4px;">from {provider_name}</p>
+      </div>
+
+      <!-- Body -->
+      <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none;">
+
+        <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
+          Hi <strong>{client_name}</strong>,
+        </p>
+        <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0 0 24px;">
+          Thank you for your interest! I've put together a detailed proposal for
+          <strong>{project_name}</strong> covering {num_deliverables} deliverables.
+        </p>
+
+        <!-- Deliverable Checklist (no pricing) -->
+        <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+          <p style="font-weight: 600; color: #111; font-size: 14px; margin: 0 0 12px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 12px; color: #6b7280;">Project Scope</p>
+          <table style="width: 100%;">
+            {checklist_html}
+          </table>
+        </div>
+
+        <!-- Teaser Stats -->
+        <div style="text-align: center; margin-bottom: 28px;">
+          <table style="margin: 0 auto; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 12px 20px; text-align: center;">
+                <div style="font-size: 24px; font-weight: 700; color: #6366f1;">{num_deliverables}</div>
+                <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Deliverables</div>
+              </td>
+              <td style="padding: 12px 20px; text-align: center; border-left: 1px solid #e5e7eb;">
+                <div style="font-size: 24px; font-weight: 700; color: #6366f1;">{int(total_hours)}</div>
+                <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Hours</div>
+              </td>
+              <td style="padding: 12px 20px; text-align: center; border-left: 1px solid #e5e7eb;">
+                <div style="font-size: 24px; font-weight: 700; color: #6366f1;">{valid_days}</div>
+                <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Days Valid</div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- CTA Button -->
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="{view_url}" style="display: inline-block; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-size: 16px; font-weight: 600; letter-spacing: 0.3px;">
+            View Full Quote & Approve →
+          </a>
+          <p style="color: #9ca3af; font-size: 12px; margin-top: 12px;">
+            Full pricing breakdown, timeline & approval available at the link above.
+          </p>
+        </div>
+
+        <!-- What's Included -->
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+          <p style="font-weight: 600; color: #111; font-size: 14px; margin: 0 0 12px;">Every Project Includes:</p>
+          <table style="width: 100%; font-size: 13px; color: #333;">
+            <tr><td style="padding: 3px 0;">✅ Custom design & development</td></tr>
+            <tr><td style="padding: 3px 0;">✅ Responsive mobile-first design</td></tr>
+            <tr><td style="padding: 3px 0;">✅ SEO optimization & performance tuning</td></tr>
+            <tr><td style="padding: 3px 0;">✅ 30-day post-launch support</td></tr>
+            <tr><td style="padding: 3px 0;">✅ Source code ownership</td></tr>
+          </table>
+        </div>
+
+        <p style="color: #9ca3af; font-size: 13px; text-align: center;">
+          Have questions or want to discuss? Simply reply to this email.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div style="background: #f9fafb; padding: 20px 30px; text-align: center; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
+        <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+          {provider_name} · ajayadesign@gmail.com
+        </p>
+        <p style="color: #d1d5db; font-size: 11px; margin-top: 4px;">
+          13721 Andrew Abernathy Pass, Manor, TX 78653
+        </p>
+      </div>
+    </div>
+    """
+    return subject, html
+
+
 def build_contract_email(
     client_name: str,
     project_name: str,

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Quote — AjayaDesign</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+            'mm-gold': '#C8A951',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
+            sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-database-compat.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    body { background: #0A0A0F; }
+    .sign-pad { touch-action: none; cursor: crosshair; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: fadeIn 0.4s ease-out; }
+    .quote-glow { box-shadow: 0 0 60px rgba(200,169,81,0.08), 0 0 120px rgba(237,28,36,0.04); }
+    .feature-card:hover { transform: translateY(-2px); border-color: rgba(200,169,81,0.4); }
+    .timeline-dot::before {
+      content: ''; position: absolute; top: 8px; left: -25px;
+      width: 12px; height: 12px; border-radius: 50%; background: #C8A951; border: 2px solid #0A0A0F;
+    }
+    .timeline-dot::after {
+      content: ''; position: absolute; top: 24px; left: -20px;
+      width: 2px; height: calc(100% - 8px); background: #1E1E2A;
+    }
+    .timeline-dot:last-child::after { display: none; }
+    @media print {
+      body { background: #fff; color: #111; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="font-sans text-gray-300 antialiased min-h-screen">
+
+  <!-- Loading -->
+  <div id="loading" class="min-h-screen flex items-center justify-center">
+    <div class="text-center animate-in">
+      <div class="w-3 h-3 rounded-full bg-mm-gold animate-pulse mx-auto mb-4"></div>
+      <p class="text-gray-500 font-mono text-sm">Loading quote...</p>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div id="error-screen" class="min-h-screen flex items-center justify-center hidden">
+    <div class="text-center max-w-md animate-in">
+      <div class="text-4xl mb-4">⚠️</div>
+      <h1 class="text-xl font-bold text-white mb-2">Quote Not Found</h1>
+      <p id="error-message" class="text-gray-500 font-mono text-sm">This link may have expired or is invalid.</p>
+    </div>
+  </div>
+
+  <!-- Already Approved -->
+  <div id="approved-screen" class="min-h-screen flex items-center justify-center hidden">
+    <div class="text-center max-w-md animate-in">
+      <div class="text-5xl mb-4">✅</div>
+      <h1 class="text-2xl font-bold text-green-400 mb-2 font-mono">Quote Approved!</h1>
+      <p id="approved-info" class="text-gray-400 font-mono text-sm">This quote has already been approved.</p>
+    </div>
+  </div>
+
+  <!-- ═══ QUOTE CONTENT ═══ -->
+  <div id="quote-page" class="hidden">
+
+    <!-- Header -->
+    <header class="border-b border-border-dim bg-surface-alt/80 backdrop-blur-sm sticky top-0 z-50 no-print">
+      <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="w-3 h-3 rounded-full bg-amd-red animate-pulse"></span>
+          <span class="font-mono text-sm font-bold text-white">Ajaya<span class="text-amd-red">Design</span></span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span id="quote-id-header" class="font-mono text-xs text-gray-500"></span>
+          <span id="quote-revision-header" class="font-mono text-xs text-mm-gold"></span>
+          <button onclick="window.print()" class="font-mono text-xs px-3 py-1.5 rounded border border-border-dim text-gray-400 hover:text-white hover:border-mm-gold transition-all cursor-pointer">
+            Print / PDF
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6">
+
+      <!-- Hero -->
+      <section class="py-16 sm:py-24 text-center border-b border-border-dim">
+        <p class="font-mono text-mm-gold text-xs tracking-[0.3em] uppercase mb-4">Project Quote</p>
+        <h1 id="quote-hero-title" class="font-mono text-3xl sm:text-5xl font-extrabold text-white leading-tight mb-4"></h1>
+        <p id="quote-hero-desc" class="text-gray-400 max-w-xl mx-auto text-sm sm:text-base leading-relaxed mb-8"></p>
+        <div class="inline-flex flex-wrap justify-center gap-4 font-mono text-xs">
+          <span id="quote-prepared-date" class="px-3 py-1.5 rounded bg-surface-card border border-border-dim text-gray-400"></span>
+          <span id="quote-valid-until" class="px-3 py-1.5 rounded bg-surface-card border border-border-dim text-gray-400"></span>
+          <span id="quote-client-badge" class="px-3 py-1.5 rounded bg-surface-card border border-border-dim text-mm-gold"></span>
+        </div>
+      </section>
+
+      <!-- Executive Summary -->
+      <section class="py-16 border-b border-border-dim">
+        <div class="grid md:grid-cols-[200px_1fr] gap-8">
+          <div><p class="font-mono text-mm-gold text-xs tracking-widest uppercase sticky top-24">Overview</p></div>
+          <div id="quote-overview" class="space-y-4 text-gray-300 leading-relaxed"></div>
+        </div>
+      </section>
+
+      <!-- Two Modes -->
+      <section id="quote-modes-section" class="py-16 border-b border-border-dim hidden">
+        <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-10">Two Modes, One System</p>
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- Market Mode -->
+          <div class="rounded-2xl bg-surface-card border border-border-dim p-8 quote-glow feature-card transition-all duration-300">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="w-10 h-10 rounded-xl bg-mm-gold/10 border border-mm-gold/20 flex items-center justify-center text-lg">🛒</span>
+              <div>
+                <h3 class="font-mono text-lg font-bold text-white">Market Mode</h3>
+                <p class="font-mono text-xs text-gray-500">For vendor markets &amp; pop-ups</p>
+              </div>
+            </div>
+            <ul class="space-y-3 text-sm text-gray-300">
+              <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> QR code scan → mobile-first order form</li>
+              <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Customer info collection (name, email, phone)</li>
+              <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Magnet set selection with live pricing</li>
+              <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Multi-photo upload with drag &amp; drop</li>
+              <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Payment method selection (Venmo, PayPal, Cash, Tap)</li>
+              <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Auto sales tax calculation (8.25%)</li>
+              <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Venmo &amp; PayPal deep links with total pre-filled</li>
+              <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Order confirmation with instructions per method</li>
+              <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Photos auto-uploaded to Google Drive by order #</li>
+            </ul>
+          </div>
+          <!-- Event Mode -->
+          <div class="rounded-2xl bg-surface-card border border-border-dim p-8 quote-glow feature-card transition-all duration-300">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="w-10 h-10 rounded-xl bg-electric-blue/10 border border-electric-blue/20 flex items-center justify-center text-lg">📸</span>
+              <div>
+                <h3 class="font-mono text-lg font-bold text-white">Event Mode</h3>
+                <p class="font-mono text-xs text-gray-500">For weddings, parties &amp; events</p>
+              </div>
+            </div>
+            <ul class="space-y-3 text-sm text-gray-300">
+              <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> QR code scan → instant camera or upload</li>
+              <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> In-app camera capture (snap a photo live)</li>
+              <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> Upload from gallery (existing photos)</li>
+              <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> Auto-upload to event-specific Google Drive folder</li>
+              <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> No login, no ordering — zero friction for guests</li>
+              <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> Thank you confirmation with event branding</li>
+              <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> Admin panel to create events &amp; generate QR codes</li>
+              <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> Bulk photo gallery view per event</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Admin Dashboard Features -->
+      <section id="quote-dashboard-section" class="py-16 border-b border-border-dim hidden">
+        <div class="grid md:grid-cols-[200px_1fr] gap-8">
+          <div><p class="font-mono text-mm-gold text-xs tracking-widest uppercase sticky top-24">Admin Dashboard</p></div>
+          <div>
+            <p class="text-gray-300 leading-relaxed mb-8">A real-time order management dashboard where you can view and manage all incoming orders — no refreshing needed.</p>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div class="rounded-lg bg-surface-alt border border-border-dim p-5">
+                <p class="font-mono text-xs text-mm-gold mb-2">Order Queue</p>
+                <p class="text-sm text-gray-400">Live feed of incoming orders with customer name, set type, qty, total, payment method, and status.</p>
+              </div>
+              <div class="rounded-lg bg-surface-alt border border-border-dim p-5">
+                <p class="font-mono text-xs text-mm-gold mb-2">Photo Preview</p>
+                <p class="text-sm text-gray-400">Thumbnail previews of uploaded photos per order. Click to open full-res in Google Drive.</p>
+              </div>
+              <div class="rounded-lg bg-surface-alt border border-border-dim p-5">
+                <p class="font-mono text-xs text-mm-gold mb-2">Google Drive Sync</p>
+                <p class="text-sm text-gray-400">Photos auto-organized into folders by order number. Zero manual file management.</p>
+              </div>
+              <div class="rounded-lg bg-surface-alt border border-border-dim p-5">
+                <p class="font-mono text-xs text-mm-gold mb-2">Payment Tracking</p>
+                <p class="text-sm text-gray-400">Mark orders as paid/unpaid. Filter by payment method. Daily sales summary.</p>
+              </div>
+              <div class="rounded-lg bg-surface-alt border border-border-dim p-5">
+                <p class="font-mono text-xs text-mm-gold mb-2">Event Manager</p>
+                <p class="text-sm text-gray-400">Create events, set dates, generate unique QR codes, and view all uploaded photos per event.</p>
+              </div>
+              <div class="rounded-lg bg-surface-alt border border-border-dim p-5">
+                <p class="font-mono text-xs text-mm-gold mb-2">QR Code Generator</p>
+                <p class="text-sm text-gray-400">Generate printable QR codes for market mode or event mode — each with its own branded landing page.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tech Architecture -->
+      <section id="quote-tech-section" class="py-16 border-b border-border-dim hidden">
+        <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-2">Technical Architecture</p>
+        <p class="text-gray-400 text-sm mb-8">Built for speed and reliability with no ongoing server costs.</p>
+        <div class="rounded-xl bg-surface-card border border-border-dim p-8">
+          <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 text-sm">
+            <div><p class="font-mono text-xs text-gray-500 mb-1">Frontend</p><p class="text-white font-medium">Single-page app (HTML/JS/CSS)</p><p class="text-gray-400 text-xs mt-1">Mobile-first, hosted on GitHub Pages — zero hosting cost.</p></div>
+            <div><p class="font-mono text-xs text-gray-500 mb-1">Backend</p><p class="text-white font-medium">Firebase (Firestore + Auth)</p><p class="text-gray-400 text-xs mt-1">Real-time order database with admin authentication. Free tier covers high volume.</p></div>
+            <div><p class="font-mono text-xs text-gray-500 mb-1">File Storage</p><p class="text-white font-medium">Google Drive API</p><p class="text-gray-400 text-xs mt-1">Photos uploaded directly to Drive, auto-organized by order # or event name.</p></div>
+            <div><p class="font-mono text-xs text-gray-500 mb-1">Payments</p><p class="text-white font-medium">Venmo &amp; PayPal Deep Links</p><p class="text-gray-400 text-xs mt-1">Pre-filled payment links with amount. Cash &amp; tap handled in person.</p></div>
+            <div><p class="font-mono text-xs text-gray-500 mb-1">Camera</p><p class="text-white font-medium">WebRTC / MediaDevices API</p><p class="text-gray-400 text-xs mt-1">In-browser camera capture for event mode — no app install required.</p></div>
+            <div><p class="font-mono text-xs text-gray-500 mb-1">Notifications</p><p class="text-white font-medium">Email + Real-time alerts</p><p class="text-gray-400 text-xs mt-1">Order confirmation emails to customers. Live push alerts on admin dashboard.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Timeline -->
+      <section id="quote-timeline-section" class="py-16 border-b border-border-dim hidden">
+        <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-10">Development Timeline</p>
+        <div class="relative pl-8 space-y-0">
+          <div class="relative timeline-dot pb-10">
+            <div class="flex items-center gap-3 mb-2"><span class="font-mono text-xs text-mm-gold">Phase 1</span><span class="font-mono text-xs text-gray-600">Week 1–2</span></div>
+            <h4 class="font-mono text-sm font-bold text-white mb-1">Market Mode — Customer Order Flow</h4>
+            <p class="text-sm text-gray-400">Mobile-first order form: customer info, set selection, photo upload, payment selection, tax calculation, and order submission.</p>
+          </div>
+          <div class="relative timeline-dot pb-10">
+            <div class="flex items-center gap-3 mb-2"><span class="font-mono text-xs text-mm-gold">Phase 2</span><span class="font-mono text-xs text-gray-600">Week 2–3</span></div>
+            <h4 class="font-mono text-sm font-bold text-white mb-1">Backend &amp; Google Drive Integration</h4>
+            <p class="text-sm text-gray-400">Firebase database, Google Drive API integration, auto-folder creation by order number, photo sync pipeline.</p>
+          </div>
+          <div class="relative timeline-dot pb-10">
+            <div class="flex items-center gap-3 mb-2"><span class="font-mono text-xs text-mm-gold">Phase 3</span><span class="font-mono text-xs text-gray-600">Week 3–4</span></div>
+            <h4 class="font-mono text-sm font-bold text-white mb-1">Admin Dashboard</h4>
+            <p class="text-sm text-gray-400">Real-time order queue, photo thumbnails, payment tracking, daily sales summary, order status management.</p>
+          </div>
+          <div class="relative timeline-dot pb-10">
+            <div class="flex items-center gap-3 mb-2"><span class="font-mono text-xs text-mm-gold">Phase 4</span><span class="font-mono text-xs text-gray-600">Week 4–5</span></div>
+            <h4 class="font-mono text-sm font-bold text-white mb-1">Event Mode</h4>
+            <p class="text-sm text-gray-400">Event creation panel, QR code generator per event, guest camera capture, gallery upload, auto-sync to Google Drive.</p>
+          </div>
+          <div class="relative timeline-dot pb-4">
+            <div class="flex items-center gap-3 mb-2"><span class="font-mono text-xs text-mm-gold">Phase 5</span><span class="font-mono text-xs text-gray-600">Week 5–6</span></div>
+            <h4 class="font-mono text-sm font-bold text-white mb-1">Testing, QA &amp; Launch</h4>
+            <p class="text-sm text-gray-400">Cross-device testing, accessibility audit, Playwright e2e tests, load testing, deployment to production.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Investment -->
+      <section class="py-16 border-b border-border-dim">
+        <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-10">Investment</p>
+        <div class="rounded-2xl bg-surface-card border border-border-dim overflow-hidden quote-glow">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-border-dim bg-surface-alt/50 font-mono text-xs text-gray-500">
+                <th class="text-left px-8 py-4">Deliverable</th>
+                <th class="text-right px-8 py-4">Est. Hours</th>
+                <th class="text-right px-8 py-4">Cost</th>
+              </tr>
+            </thead>
+            <tbody id="viewer-investment-table" class="text-gray-300"></tbody>
+            <tfoot>
+              <tr class="border-t-2 border-mm-gold/30 bg-surface-alt/30">
+                <td class="px-8 py-5 font-mono text-sm font-bold text-white" colspan="2">Project Total</td>
+                <td class="px-8 py-5 font-mono text-xl font-bold text-mm-gold text-right" id="viewer-project-total"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <div class="mt-8 grid sm:grid-cols-3 gap-4 font-mono text-xs">
+          <div class="rounded-lg bg-surface-alt border border-border-dim p-4 text-center">
+            <p class="text-gray-500 mb-1">Payment Schedule</p>
+            <p id="viewer-payment-schedule" class="text-white">50% upfront · 50% at launch</p>
+          </div>
+          <div class="rounded-lg bg-surface-alt border border-border-dim p-4 text-center">
+            <p class="text-gray-500 mb-1">Ongoing Costs</p>
+            <p class="text-white">$0/mo (GitHub Pages + Firebase free tier)</p>
+          </div>
+          <div class="rounded-lg bg-surface-alt border border-border-dim p-4 text-center">
+            <p class="text-gray-500 mb-1">Post-Launch Support</p>
+            <p class="text-white">30 days included free</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- What's Included -->
+      <section class="py-16 border-b border-border-dim">
+        <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-10">What's Included</p>
+        <div class="grid sm:grid-cols-2 gap-x-8 gap-y-4 text-sm text-gray-300">
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Full source code ownership</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Mobile-first responsive design</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Google Drive API setup &amp; configuration</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Firebase project setup &amp; database rules</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Venmo &amp; PayPal deep link integration</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Admin dashboard with real-time updates</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> QR code generation for markets &amp; events</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> In-browser camera capture (event mode)</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Automated e2e testing with Playwright</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> WCAG accessibility compliance</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> SEO meta tags &amp; structured data</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Deployment to GitHub Pages (zero cost hosting)</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Customer confirmation emails</div>
+          <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> 30 days post-launch bug fixes &amp; support</div>
+        </div>
+      </section>
+
+      <!-- ═══ Signature / Approval Section ═══ -->
+      <section class="py-16 no-print">
+        <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-10">Acceptance</p>
+        <div class="rounded-2xl bg-surface-card border border-border-dim p-8 sm:p-10 quote-glow">
+          <p class="text-gray-300 text-sm leading-relaxed mb-8">
+            By approving this quote, you authorize AjayaDesign to begin work on the project described above. The deposit is due upon acceptance. The remaining balance is due upon project completion and deployment.
+          </p>
+
+          <!-- Signature Pad -->
+          <div class="mb-6">
+            <label class="font-mono text-xs text-gray-400 block mb-2">Your Full Name *</label>
+            <input id="sign-your-name" type="text" placeholder="Type your full legal name"
+              class="w-full bg-surface border border-border-dim rounded-lg px-4 py-2.5 text-sm text-white font-mono focus:ring-2 focus:ring-mm-gold focus:border-mm-gold outline-none" />
+          </div>
+
+          <div class="mb-6">
+            <label class="font-mono text-xs text-gray-400 block mb-2">Draw Your Signature *</label>
+            <div class="border-2 border-dashed border-border-dim rounded-lg overflow-hidden bg-white relative">
+              <canvas id="sign-canvas" class="sign-pad w-full" height="150"></canvas>
+              <button onclick="clearSignature()" class="absolute top-2 right-2 text-xs text-gray-400 hover:text-gray-600 bg-white rounded px-2 py-1 shadow-sm cursor-pointer">Clear</button>
+            </div>
+            <p class="text-xs text-gray-600 mt-1 font-mono">Use your mouse or finger to draw your signature</p>
+          </div>
+
+          <div class="bg-mm-gold/10 border border-mm-gold/30 rounded-lg p-4 mb-6 text-sm text-mm-gold">
+            <strong>By signing below, you approve this quote and agree to the terms described above.</strong>
+            Your electronic signature is legally binding.
+          </div>
+
+          <div class="flex gap-3">
+            <button onclick="approveQuote()" id="approve-btn"
+              class="flex-1 bg-mm-gold text-surface font-mono font-bold py-3 rounded-lg hover:bg-mm-gold/90 transition text-sm cursor-pointer">
+              ✍️ Approve Quote
+            </button>
+            <button onclick="declineQuote()" id="decline-btn"
+              class="px-6 bg-surface border border-border-dim text-gray-400 font-mono font-bold py-3 rounded-lg hover:text-red-400 hover:border-red-400/50 transition text-sm cursor-pointer">
+              Decline
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-border-dim py-8 no-print">
+      <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amd-red"></span>
+          <span class="font-mono text-xs text-gray-500">AjayaDesign · Manor, TX</span>
+        </div>
+        <div class="font-mono text-xs text-gray-600">
+          <a href="https://ajayadesign.github.io" class="hover:text-white transition-colors">ajayadesign.github.io</a>
+          <span class="mx-2 text-border-dim">|</span>
+          <a href="mailto:ajayadesign@gmail.com" class="hover:text-white transition-colors">ajayadesign@gmail.com</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // ── State ──────────────────────────────────────────
+    let quoteToken = null;
+    let quoteData = null;
+    let canvas, ctx;
+    let isDrawing = false;
+    let hasDrawn = false;
+    let firebaseDb = null;
+
+    // ── Firebase ──────────────────────────────────────
+    function initFirebase() {
+      const cfg = window.__firebaseConfig;
+      if (!cfg) throw new Error('Firebase config not loaded');
+      firebase.initializeApp(cfg);
+      firebaseDb = firebase.database();
+    }
+
+    // ── Init ──────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      quoteToken = params.get('token');
+
+      if (!quoteToken) {
+        showError('No quote token provided. Please use the link from your email.');
+        return;
+      }
+
+      try {
+        initFirebase();
+        const snapshot = await firebaseDb.ref('quote_viewer/' + quoteToken).once('value');
+        quoteData = snapshot.val();
+        if (!quoteData) throw new Error('Quote not found or link expired.');
+      } catch (err) {
+        showError(err.message);
+        return;
+      }
+
+      // Already approved?
+      if (quoteData.approved_at || quoteData.status === 'approved') {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('approved-screen').classList.remove('hidden');
+        document.getElementById('approved-info').textContent =
+          `Approved by ${quoteData.signer_name || 'client'}` +
+          (quoteData.approved_at ? ` on ${new Date(quoteData.approved_at).toLocaleString()}` : '.');
+        return;
+      }
+
+      // Declined?
+      if (quoteData.status === 'declined') {
+        showError('This quote was declined.');
+        return;
+      }
+
+      populateQuote();
+      initSignaturePad();
+
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('quote-page').classList.remove('hidden');
+    });
+
+    function showError(msg) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('error-screen').classList.remove('hidden');
+      document.getElementById('error-message').textContent = msg;
+    }
+
+    // ── Populate ──────────────────────────────────────
+    function populateQuote() {
+      const q = quoteData;
+
+      // Header
+      document.getElementById('quote-id-header').textContent = q.quote_id ? `QUOTE-${q.quote_id}` : '';
+      const rev = q.revision || 1;
+      document.getElementById('quote-revision-header').textContent = rev > 1 ? `Revision v${rev}` : '';
+
+      // Hero
+      const titleParts = (q.project_name || 'Project Quote').split(/\s+/);
+      const midpoint = Math.ceil(titleParts.length / 2);
+      const line1 = titleParts.slice(0, midpoint).join(' ');
+      const line2 = titleParts.slice(midpoint).join(' ');
+      document.getElementById('quote-hero-title').innerHTML =
+        `${escH(line1)}<br><span class="text-mm-gold">${escH(line2)}</span>`;
+
+      // Description first paragraph for hero
+      const descLines = (q.project_description || '').split('\n\n');
+      document.getElementById('quote-hero-desc').innerHTML =
+        `A custom web application for <strong class="text-white">${escH(q.client_name)}</strong> — ${escH(descLines[0] || '')}`;
+
+      // Dates
+      const created = q.created_at ? new Date(q.created_at) : new Date();
+      const validDays = q.valid_days || 30;
+      const expires = new Date(created.getTime() + validDays * 86400000);
+      document.getElementById('quote-prepared-date').textContent = `Prepared: ${created.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+      document.getElementById('quote-valid-until').textContent = `Valid: ${validDays} days`;
+      document.getElementById('quote-client-badge').textContent = `Client: ${q.client_name}`;
+
+      // Overview (all desc paragraphs)
+      const $overview = document.getElementById('quote-overview');
+      $overview.innerHTML = descLines.map(p =>
+        `<p>${escH(p).replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')}</p>`
+      ).join('');
+
+      // Show MMC-specific sections if project contains certain keywords
+      const desc = (q.project_description || '').toLowerCase();
+      const isMmc = desc.includes('market mode') || desc.includes('event mode') || desc.includes('magnet moments');
+      if (isMmc) {
+        document.getElementById('quote-modes-section').classList.remove('hidden');
+        document.getElementById('quote-dashboard-section').classList.remove('hidden');
+        document.getElementById('quote-tech-section').classList.remove('hidden');
+        document.getElementById('quote-timeline-section').classList.remove('hidden');
+      }
+
+      // Investment table
+      const deliverables = q.deliverables || [];
+      const $tbody = document.getElementById('viewer-investment-table');
+      let grandTotal = 0;
+      deliverables.forEach(d => {
+        const cost = (d.hours || 0) * (d.rate || 0);
+        grandTotal += cost;
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-border-dim';
+        tr.innerHTML = `
+          <td class="px-8 py-4">${escH(d.name)}</td>
+          <td class="px-8 py-4 text-right font-mono text-gray-500">${d.hours}h</td>
+          <td class="px-8 py-4 text-right font-mono">$${cost.toLocaleString()}</td>
+        `;
+        $tbody.appendChild(tr);
+      });
+      document.getElementById('viewer-project-total').textContent = `$${grandTotal.toLocaleString()}`;
+      document.getElementById('viewer-payment-schedule').textContent = q.payment_schedule || '50% upfront · 50% at launch';
+    }
+
+    // ── Signature Pad ─────────────────────────────────
+    function initSignaturePad() {
+      canvas = document.getElementById('sign-canvas');
+      ctx = canvas.getContext('2d');
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = 150;
+        ctx.strokeStyle = '#1f2937';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDraw);
+      canvas.addEventListener('mouseleave', stopDraw);
+
+      canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e.touches[0]); });
+      canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
+      canvas.addEventListener('touchend', stopDraw);
+    }
+
+    function startDraw(e) {
+      isDrawing = true; hasDrawn = true;
+      const rect = canvas.getBoundingClientRect();
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    }
+    function draw(e) {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+      ctx.stroke();
+    }
+    function stopDraw() { isDrawing = false; }
+    function clearSignature() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      hasDrawn = false;
+    }
+
+    // ── Approve ───────────────────────────────────────
+    async function approveQuote() {
+      const name = document.getElementById('sign-your-name').value.trim();
+      if (!name) { alert('Please type your full name.'); return; }
+      if (!hasDrawn) { alert('Please draw your signature.'); return; }
+
+      const signatureData = canvas.toDataURL('image/png');
+      const $btn = document.getElementById('approve-btn');
+      $btn.disabled = true;
+      $btn.textContent = '⏳ Approving...';
+
+      try {
+        await firebaseDb.ref('quote_viewer/' + quoteToken).update({
+          signer_name: name,
+          signature_data: signatureData,
+          approved_at: new Date().toISOString(),
+          status: 'approved',
+        });
+
+        document.getElementById('quote-page').classList.add('hidden');
+        document.getElementById('approved-screen').classList.remove('hidden');
+        document.getElementById('approved-info').textContent =
+          `Thank you, ${name}! Your approval has been recorded.`;
+      } catch (err) {
+        alert('Approval failed: ' + err.message);
+        $btn.disabled = false;
+        $btn.textContent = '✍️ Approve Quote';
+      }
+    }
+
+    // ── Decline ───────────────────────────────────────
+    async function declineQuote() {
+      if (!confirm('Are you sure you want to decline this quote? You can always reach out to discuss changes.')) return;
+
+      const $btn = document.getElementById('decline-btn');
+      $btn.disabled = true;
+      $btn.textContent = 'Declining...';
+
+      try {
+        await firebaseDb.ref('quote_viewer/' + quoteToken).update({
+          status: 'declined',
+          declined_at: new Date().toISOString(),
+        });
+
+        showError('Quote declined. If you change your mind, please contact ajayadesign@gmail.com.');
+        document.getElementById('quote-page').classList.add('hidden');
+      } catch (err) {
+        alert('Failed: ' + err.message);
+        $btn.disabled = false;
+        $btn.textContent = 'Decline';
+      }
+    }
+
+    function escH(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+  </script>
+</body>
+</html>
