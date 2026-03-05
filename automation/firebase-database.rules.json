@@ -29,6 +29,17 @@
       ".read": "auth != null",
       ".write": "auth != null"
     },
+    "quotes": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "quote_viewer": {
+      ".indexOn": ["status"],
+      "$viewToken": {
+        ".read": true,
+        ".write": "!data.exists() || !data.child('status').val().matches(/^(approved|declined)$/)"
+      }
+    },
     "portfolio": {
       ".read": "auth != null",
       ".write": "auth != null"

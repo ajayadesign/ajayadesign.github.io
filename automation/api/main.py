@@ -1359,6 +1359,10 @@ app.include_router(email_router, prefix="/api/v1")
 app.include_router(portfolio_router, prefix="/api/v1")
 app.include_router(activity_router, prefix="/api/v1")
 
+# Quote routes
+from api.routes.quotes import quote_router
+app.include_router(quote_router, prefix="/api/v1")
+
 # Outreach agent routes
 from api.routes.outreach import outreach_router
 app.include_router(outreach_router, prefix="/api/v1")

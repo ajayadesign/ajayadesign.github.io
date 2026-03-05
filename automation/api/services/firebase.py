@@ -409,6 +409,107 @@ def delete_invoice_from_firebase(invoice_number: str) -> bool:
         return False
 
 
+# ── Quote Firebase Sync ──────────────────────────────────
+
+
+def sync_quote_to_firebase(quote_data: dict) -> bool:
+    """
+    Sync a quote to Firebase RTDB under quotes/{short_id}.
+    """
+    if not _initialized:
+        return False
+
+    short_id = quote_data.get("short_id", "")
+    if not short_id:
+        return False
+
+    try:
+        ref = firebase_db.reference(f"quotes/{short_id}")
+        fb_deliverables = [
+            {"description": d.get("description", ""), "hours": d.get("hours", 0),
+             "rate": d.get("rate", 0), "amount": d.get("amount", 0)}
+            for d in (quote_data.get("deliverables", []) if isinstance(quote_data.get("deliverables"), list) else [])
+        ]
+        ref.update({
+            "client_name": quote_data.get("client_name", ""),
+            "client_email": quote_data.get("client_email", ""),
+            "project_name": quote_data.get("project_name", ""),
+            "project_description": quote_data.get("project_description", ""),
+            "deliverables": fb_deliverables,
+            "subtotal": quote_data.get("subtotal", 0),
+            "tax_rate": quote_data.get("tax_rate", 0),
+            "tax_amount": quote_data.get("tax_amount", 0),
+            "total_amount": quote_data.get("total_amount", 0),
+            "payment_schedule": quote_data.get("payment_schedule", ""),
+            "valid_days": quote_data.get("valid_days", 30),
+            "custom_notes": quote_data.get("custom_notes", ""),
+            "revision": quote_data.get("revision", 1),
+            "status": quote_data.get("status", "draft"),
+            "view_token": quote_data.get("view_token", None),
+            "sent_at": quote_data.get("sent_at", None),
+            "approved_at": quote_data.get("approved_at", None),
+            "signer_name": quote_data.get("signer_name", None),
+            "updated_at": {'.sv': 'timestamp'},
+        })
+        logger.info(f"Firebase quotes/{short_id} synced → {quote_data.get('status')}")
+        return True
+    except Exception as e:
+        logger.error(f"Firebase sync_quote failed: {e}")
+        return False
+
+
+def delete_quote_from_firebase(short_id: str) -> bool:
+    """Remove a quote from Firebase."""
+    if not _initialized:
+        return False
+    try:
+        firebase_db.reference(f"quotes/{short_id}").delete()
+        return True
+    except Exception as e:
+        logger.error(f"Firebase delete quotes/{short_id} failed: {e}")
+        return False
+
+
+def publish_quote_for_viewing(view_token: str, quote_data: dict) -> bool:
+    """
+    Publish quote data to Firebase at quote_viewer/{view_token} so the
+    public quote.html page can read it without hitting our local API.
+    """
+    if not _initialized:
+        logger.warning("publish_quote_for_viewing skipped — Firebase not initialized")
+        return False
+
+    try:
+        ref = firebase_db.reference(f"quote_viewer/{view_token}")
+        ref.set({
+            "short_id": quote_data.get("short_id", ""),
+            "client_name": quote_data.get("client_name", ""),
+            "project_name": quote_data.get("project_name", ""),
+            "project_description": quote_data.get("project_description", ""),
+            "deliverables": quote_data.get("deliverables", []),
+            "subtotal": quote_data.get("subtotal", 0),
+            "tax_rate": quote_data.get("tax_rate", 0),
+            "tax_amount": quote_data.get("tax_amount", 0),
+            "total_amount": quote_data.get("total_amount", 0),
+            "payment_schedule": quote_data.get("payment_schedule", ""),
+            "valid_days": quote_data.get("valid_days", 30),
+            "custom_notes": quote_data.get("custom_notes", ""),
+            "revision": quote_data.get("revision", 1),
+            "provider_name": quote_data.get("provider_name", "AjayaDesign"),
+            "provider_email": quote_data.get("provider_email", "ajayadesign@gmail.com"),
+            "status": "sent",
+            "approved_at": None,
+            "signer_name": None,
+            "signature_data": None,
+            "published_at": {'.sv': 'timestamp'},
+        })
+        logger.info(f"Firebase quote_viewer/{view_token} published for viewing")
+        return True
+    except Exception as e:
+        logger.error(f"Firebase publish_quote_for_viewing failed: {e}")
+        return False
+
+
 # ── Public Contract Signing via Firebase ─────────────────────────
 
 

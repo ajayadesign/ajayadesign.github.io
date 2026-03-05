@@ -720,6 +720,10 @@
             class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
             💰 Invoices
           </button>
+          <button onclick="switchPortfolioSubTab('quotes')" id="portfolio-subtab-quotes"
+            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+            📋 Quotes
+          </button>
         </div>
         <!-- Sites list -->
         <div id="portfolio-sites-list" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3">
@@ -732,6 +736,10 @@
         <!-- Invoices list (hidden) -->
         <div id="portfolio-invoices-list" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3 hidden">
           <div class="text-center text-gray-600 text-xs font-mono py-8">Loading invoices...</div>
+        </div>
+        <!-- Quotes list (hidden) -->
+        <div id="portfolio-quotes-list" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3 hidden">
+          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading quotes...</div>
         </div>
       </div>
 
@@ -1022,6 +1030,7 @@
               <button onclick="savePortfolioEdit()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-green/10 text-neon-green border border-neon-green/30 hover:bg-neon-green/20 transition">💾 Save</button>
               <button onclick="createContractForSite()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20 transition">📝 New Contract</button>
               <button onclick="createInvoiceForSite()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-purple/10 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/20 transition">💰 New Invoice</button>
+              <button onclick="createQuoteForSite()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-orange/10 text-neon-orange border border-neon-orange/30 hover:bg-neon-orange/20 transition">📋 New Quote</button>
             </div>
           </div>
           <div id="pf-meta" class="flex flex-wrap gap-3 md:gap-6 text-sm text-gray-400"></div>
@@ -1081,6 +1090,13 @@
             <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">💰 Invoices</h3>
             <div id="pf-invoices-list" class="space-y-2">
               <p class="text-xs text-gray-600 font-mono">No invoices yet</p>
+            </div>
+          </div>
+          <!-- Site Quotes -->
+          <div id="pf-quotes-section">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">📋 Quotes</h3>
+            <div id="pf-quotes-list" class="space-y-2">
+              <p class="text-xs text-gray-600 font-mono">No quotes yet</p>
             </div>
           </div>
         </div>
@@ -1319,6 +1335,108 @@
             </div>
           </div>
 
+        </div>
+      </div>
+
+      <!-- ═══ Quote Detail / Builder (hidden initially) ═══ -->
+      <div id="quote-detail" class="flex-1 flex flex-col overflow-hidden hidden">
+        <div class="p-3 md:p-6 bg-surface-1 border-b border-border">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+            <div class="flex items-center gap-3">
+              <span id="qt-status-badge" class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold bg-gray-800 text-gray-400">DRAFT</span>
+              <h2 class="font-mono text-lg font-bold text-white">📋 Quote Builder</h2>
+              <span id="qt-revision" class="text-xs font-mono text-gray-500">v1</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="saveQuote()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-green/10 text-neon-green border border-neon-green/30 hover:bg-neon-green/20 transition">💾 Save</button>
+              <button onclick="sendQuote()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-electric/10 text-electric border border-electric/30 hover:bg-electric/20 transition">📧 Send to Client</button>
+              <button onclick="reviseQuote()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-purple/10 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/20 transition" title="Update price & resend as new revision">🔄 Revise & Resend</button>
+              <button onclick="createContractFromQuote()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-yellow/10 text-neon-yellow border border-neon-yellow/30 hover:bg-neon-yellow/20 transition" title="Convert approved quote to contract">📝 → Contract</button>
+              <button id="qt-btn-delete" onclick="deleteQuote()" class="hidden text-xs font-mono px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition" title="Delete this quote">🗑️ Delete</button>
+            </div>
+          </div>
+          <div id="qt-meta" class="text-xs font-mono text-gray-500"></div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-3 md:p-6 pb-20 md:pb-6 space-y-6">
+          <!-- Approved Quote View (populated by JS when status=approved) -->
+          <div id="qt-approved-view" class="hidden"></div>
+
+          <!-- Editable Form -->
+          <div id="qt-editable-form">
+          <!-- Client & Project Info -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Name *</label>
+              <input id="qt-client-name" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Email *</label>
+              <input id="qt-client-email" type="email" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Project Name *</label>
+              <input id="qt-project-name" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Valid Days</label>
+              <input id="qt-valid-days" type="number" value="30" min="1" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Payment Schedule</label>
+              <input id="qt-payment-schedule" value="50% upfront · 50% at launch" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
+            </div>
+            <div class="md:col-span-2 bg-surface-2 rounded-xl border border-border p-4">
+              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Project Description</label>
+              <textarea id="qt-project-desc" rows="5" class="w-full bg-transparent border-b border-border text-sm text-gray-300 font-mono focus:border-electric focus:outline-none py-1 resize-none"></textarea>
+            </div>
+          </div>
+
+          <!-- Deliverables -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">📦 Deliverables</h3>
+              <div class="flex items-center gap-2">
+                <button onclick="addQuoteDeliverable()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-electric/10 text-electric hover:bg-electric/20 transition">+ Add Item</button>
+                <button onclick="quickUpdateRate()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-neon-yellow/10 text-neon-yellow hover:bg-neon-yellow/20 transition" title="Change hourly rate for all items">💲 Rate</button>
+                <button onclick="quickUpdateTotal()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-neon-green/10 text-neon-green hover:bg-neon-green/20 transition" title="Set a target total and auto-scale rates">🎯 Set Total</button>
+                <button onclick="resetQuoteDeliverables()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-surface-2 text-gray-500 hover:text-gray-300 transition">↻ Reset</button>
+              </div>
+            </div>
+            <div id="qt-deliverables-container" class="space-y-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Totals -->
+          <div class="bg-surface-2 rounded-xl border border-border p-4">
+            <div class="grid grid-cols-2 gap-3 text-sm font-mono">
+              <div class="text-gray-500">Total Hours</div>
+              <div id="qt-total-hours" class="text-right text-white">0h</div>
+              <div class="text-white font-bold text-lg border-t border-border pt-2">Project Total</div>
+              <div id="qt-total-cost" class="text-right text-neon-green font-bold text-lg border-t border-border pt-2">$0</div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">📝 Notes</h3>
+            <textarea id="qt-notes" rows="3" class="w-full bg-surface-2 rounded-xl border border-border p-4 text-sm text-gray-300 font-mono focus:border-electric focus:outline-none resize-none" placeholder="Additional notes for the client..."></textarea>
+          </div>
+
+          <!-- Signature Section (read-only, shows after approval) -->
+          <div id="qt-signature-section" class="hidden">
+            <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">✍️ Client Approval</h3>
+            <div class="bg-surface-2 rounded-xl border border-neon-green/30 p-4">
+              <div class="flex items-center gap-4">
+                <img id="qt-signature-img" src="" class="h-16 border border-border rounded" alt="Client signature" />
+                <div>
+                  <p id="qt-signer-name" class="font-mono text-sm text-white"></p>
+                  <p id="qt-signed-at" class="text-xs text-gray-500 font-mono"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div><!-- /qt-editable-form -->
         </div>
       </div>
 
@@ -2593,6 +2711,7 @@
   <script src="js/portfolio.js"></script>
   <script src="js/contracts.js"></script>
   <script src="js/invoices.js"></script>
+  <script src="js/quotes.js"></script>
   <script src="js/history.js"></script>
   <!-- jsPDF for PDF generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -2614,7 +2733,7 @@
     }
     /* Auto-close sidebar when an item is selected */
     ['build-list','leads-panel-content','archived-panel-content',
-     'portfolio-sites-list','portfolio-contracts-list','portfolio-invoices-list',
+     'portfolio-sites-list','portfolio-contracts-list','portfolio-invoices-list','portfolio-quotes-list',
      'history-list'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('click', () => {

@@ -334,7 +334,7 @@ async function loadSiteInvoices(shortId) {
 // ── Sub-tab switching ──────────────────────────────────
 function switchPortfolioSubTab(tab) {
   portfolioSubTab = tab;
-  const tabs = ['sites', 'contracts', 'invoices'];
+  const tabs = ['sites', 'contracts', 'invoices', 'quotes'];
   tabs.forEach(t => {
     const $tab = document.getElementById('portfolio-subtab-' + t);
     const $panel = document.getElementById('portfolio-' + t + '-list');
@@ -350,6 +350,7 @@ function switchPortfolioSubTab(tab) {
 
   if (tab === 'contracts') loadAllContracts();
   if (tab === 'invoices') loadAllInvoices();
+  if (tab === 'quotes') loadAllQuotes();
 }
 
 // ── Load all contracts / invoices for sidebar ──────────
@@ -476,7 +477,87 @@ function createInvoiceForSite() {
   });
 }
 
+function createQuoteForSite() {
+  const site = portfolioSites.find(s => s.short_id === selectedPortfolioId);
+  if (!site) return;
+  openNewQuote({
+    build_id: site.id,
+    client_name: site.client_name,
+    client_email: site.email || '',
+    project_name: `Website for ${site.client_name}`,
+    project_description: site.goals || '',
+  });
+}
+
+// ── Load All Quotes (sidebar list) ────────────────────
+async function loadAllQuotes() {
+  const $list = document.getElementById('portfolio-quotes-list');
+  let quotes = null;
+
+  // Try API first
+  try {
+    const res = await fetch(`${API_BASE}/quotes`, { signal: AbortSignal.timeout(5000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    quotes = data.quotes || [];
+  } catch (_) {}
+
+  // Fallback: Firebase
+  if (!quotes && window.__db) {
+    try {
+      const snap = await window.__db.ref('quotes').once('value');
+      const val = snap.val();
+      // null/empty means no quotes exist yet — that's valid (empty list), not a failure
+      quotes = val
+        ? Object.entries(val).map(([key, q]) => ({ short_id: key, ...q }))
+        : [];
+      console.info('[Portfolio] Loaded %d quotes from Firebase', quotes.length);
+    } catch (_) {}
+  }
+
+  // Build the "+ New Quote" button shown at the top of every state
+  const newBtn = `<div class="mb-3"><button onclick="openNewQuote()" class="w-full py-2.5 rounded-xl border border-dashed border-electric/40 text-electric text-xs font-mono hover:bg-electric/10 transition">+ New Quote</button></div>`;
+
+  if (!quotes) {
+    $list.innerHTML = newBtn + '<p class="text-xs text-gray-600 font-mono p-4">Failed to load quotes — API and Firebase both unavailable</p>';
+    return;
+  }
+
+  if (quotes.length === 0) {
+    $list.innerHTML = newBtn + `<div class="text-center py-12"><div class="text-4xl mb-3 opacity-30">📋</div><p class="text-gray-500 font-mono text-sm">No quotes yet</p><p class="text-gray-600 font-mono text-xs mt-1">Click "+ New Quote" above to create one</p></div>`;
+    return;
+  }
+
+  $list.innerHTML = newBtn + quotes.map(q => `
+    <div onclick="openQuote('${q.short_id}')"
+      class="p-4 bg-surface-2 rounded-xl border border-border hover:border-border-glow cursor-pointer transition">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-mono text-sm font-bold text-white">${esc(q.client_name || 'Unnamed')}</h3>
+        <span class="px-2 py-0.5 rounded-full text-[0.6rem] font-mono ${quoteStatusClass(q.status)}">${(q.status || 'draft').toUpperCase()}</span>
+      </div>
+      <div class="text-xs text-gray-400 mb-1">${esc(q.project_name || '')}</div>
+      <div class="flex items-center justify-between text-[0.65rem]">
+        <span class="text-gray-600">#${q.short_id}${q.revision > 1 ? ' · Rev ' + q.revision : ''}</span>
+        <span class="text-neon-green font-mono">$${parseFloat(q.total_amount || 0).toFixed(2)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
 // ── Helpers ────────────────────────────────────────────
+function quoteStatusClass(status) {
+  const map = {
+    draft:    'bg-gray-800 text-gray-400',
+    sent:     'bg-electric/20 text-electric',
+    viewed:   'bg-neon-yellow/20 text-neon-yellow',
+    approved: 'bg-neon-green/20 text-neon-green',
+    declined: 'bg-brand-link/20 text-brand-link',
+    expired:  'bg-gray-700 text-gray-500',
+    revised:  'bg-neon-orange/20 text-neon-orange',
+  };
+  return map[status] || map.draft;
+}
+
 function contractStatusClass(status) {
   const map = {
     draft:    'bg-gray-800 text-gray-400',
@@ -500,7 +581,7 @@ function invoiceStatusClass(status) {
 }
 
 function hideAllMainPanels() {
-  const panels = ['empty-state', 'build-detail', 'lead-detail', 'portfolio-detail', 'contract-detail', 'invoice-detail', 'analytics-panel'];
+  const panels = ['empty-state', 'build-detail', 'lead-detail', 'portfolio-detail', 'contract-detail', 'invoice-detail', 'quote-detail', 'analytics-panel'];
   panels.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.add('hidden');
