@@ -102,6 +102,77 @@ async def send_telegram_contract_signed(
     return await _send_tg_message(payload)
 
 
+async def send_telegram_quote_approved(
+    quote_id: str,
+    client_name: str,
+    project_name: str,
+    total_amount: float,
+    signer_name: str,
+    approved_at: str,
+) -> bool:
+    """Send Telegram notification when a quote is approved. Returns True on success."""
+    token = settings.telegram_bot_token
+    chat_id = settings.telegram_chat_id
+
+    if not token or not chat_id:
+        logger.warning("Telegram not configured — skipping quote approval notification")
+        return False
+
+    amount_str = f"${total_amount:,.2f}" if total_amount else "N/A"
+
+    message = "\n".join([
+        "✅ *QUOTE APPROVED\\!*",
+        "",
+        f"📝 *Quote:* `{_esc_md(quote_id)}`",
+        f"🏢 *Client:* {_esc_md(client_name)}",
+        f"📁 *Project:* {_esc_md(project_name)}",
+        f"💰 *Amount:* {_esc_md(amount_str)}",
+        f"✍️ *Signed by:* {_esc_md(signer_name)}",
+        f"🕐 *Approved at:* {_esc_md(approved_at)}",
+        "",
+        "🎯 _Next step: send the contract\\!_",
+    ])
+
+    payload = {
+        "chat_id": chat_id,
+        "text": message,
+        "parse_mode": "MarkdownV2",
+    }
+
+    return await _send_tg_message(payload)
+
+
+async def send_telegram_quote_declined(
+    quote_id: str,
+    client_name: str,
+    project_name: str,
+    declined_at: str,
+) -> bool:
+    """Send Telegram notification when a quote is declined. Returns True on success."""
+    token = settings.telegram_bot_token
+    chat_id = settings.telegram_chat_id
+
+    if not token or not chat_id:
+        return False
+
+    message = "\n".join([
+        "❌ *QUOTE DECLINED*",
+        "",
+        f"📝 *Quote:* `{_esc_md(quote_id)}`",
+        f"🏢 *Client:* {_esc_md(client_name)}",
+        f"📁 *Project:* {_esc_md(project_name)}",
+        f"🕐 *Declined at:* {_esc_md(declined_at)}",
+        "",
+        "💡 _Consider sending a revised quote_",
+    ])
+
+    return await _send_tg_message({
+        "chat_id": chat_id,
+        "text": message,
+        "parse_mode": "MarkdownV2",
+    })
+
+
 async def _send_tg_message(payload: dict) -> bool:
     """Low-level Telegram sendMessage wrapper."""
     token = settings.telegram_bot_token

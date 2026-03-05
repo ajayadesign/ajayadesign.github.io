@@ -805,6 +805,9 @@ async def periodic_firebase_poll(interval: int = 60) -> None:
             # Poll for signatures submitted via Firebase bridge
             await process_firebase_signatures()
 
+            # Poll for quote approvals/declines via Firebase bridge
+            await process_firebase_quote_approvals()
+
             # Poll for retry commands from the admin UI
             await process_firebase_retry_commands()
 
@@ -1011,6 +1014,226 @@ async def process_firebase_signatures() -> None:
                 )
             except Exception as e:
                 logger.warning("Failed to send signing Telegram notification: %s", e)
+
+
+async def process_firebase_quote_approvals() -> None:
+    """
+    Poll Firebase for quotes that clients approved or declined via the public page.
+    Same bridge pattern as contract signatures: Firebase → API → Postgres → email/Telegram.
+    """
+    from api.services.firebase import (
+        get_pending_quote_approvals, mark_quote_approval_processed,
+        sync_quote_to_firebase,
+    )
+
+    pending = get_pending_quote_approvals()
+    if not pending:
+        return
+
+    from api.models.quote import Quote
+    from api.services.email_service import (
+        send_email,
+        build_quote_approved_notification_email,
+        build_quote_declined_notification_email,
+    )
+    from api.services.notify import (
+        send_telegram_quote_approved,
+        send_telegram_quote_declined,
+    )
+
+    logger.info("📋 Found %d pending quote approval(s) in Firebase", len(pending))
+
+    async with async_session() as session:
+        for entry in pending:
+            view_token = entry.get("view_token", "")
+            status = entry.get("status", "")
+            signer_name = entry.get("signer_name", "")
+            signature_data = entry.get("signature_data", "")
+            approved_at_str = entry.get("approved_at")
+            declined_at_str = entry.get("declined_at")
+
+            if not view_token:
+                continue
+
+            # Find the quote in Postgres by view_token
+            result = await session.execute(
+                select(Quote).where(Quote.view_token == view_token)
+            )
+            quote = result.scalar_one_or_none()
+            if not quote:
+                logger.warning("Quote approval for unknown token %s — skipping", view_token)
+                mark_quote_approval_processed(view_token)
+                continue
+
+            # Skip if already processed
+            if status == "approved" and quote.approved_at:
+                logger.info("Quote %s already approved — marking processed", quote.short_id)
+                mark_quote_approval_processed(view_token)
+                continue
+
+            if status == "declined" and quote.status == "declined":
+                logger.info("Quote %s already declined — marking processed", quote.short_id)
+                mark_quote_approval_processed(view_token)
+                continue
+
+            from datetime import datetime, timezone as tz
+            now = datetime.now(tz.utc)
+
+            if status == "approved":
+                # Record the approval in Postgres
+                quote.status = "approved"
+                quote.approved_at = now
+                quote.signer_name = signer_name
+                quote.signature_data = signature_data
+                await session.commit()
+                await session.refresh(quote)
+
+                logger.info("✅ Quote %s approved by %s (via Firebase bridge)",
+                            quote.short_id, signer_name)
+
+                # Log activity
+                from api.routes.activity import log_activity
+                await log_activity(
+                    entity_type="quote", entity_id=quote.short_id,
+                    action="approved", icon="✅",
+                    description=f"Quote approved by {signer_name} (via Firebase bridge)",
+                    actor=f"client:{signer_name}",
+                    metadata={"signer_name": signer_name},
+                )
+
+                # Sync back to Firebase quotes/ node so admin dashboard sees it
+                try:
+                    sync_quote_to_firebase({
+                        "short_id": quote.short_id,
+                        "client_name": quote.client_name,
+                        "client_email": quote.client_email,
+                        "project_name": quote.project_name,
+                        "project_description": quote.project_description or "",
+                        "deliverables": quote.deliverables or [],
+                        "subtotal": float(quote.subtotal or 0),
+                        "tax_rate": float(quote.tax_rate or 0),
+                        "tax_amount": float(quote.tax_amount or 0),
+                        "total_amount": float(quote.total_amount or 0),
+                        "payment_schedule": quote.payment_schedule or "",
+                        "valid_days": quote.valid_days or 30,
+                        "custom_notes": quote.custom_notes or "",
+                        "revision": quote.revision or 1,
+                        "status": "approved",
+                        "approved_at": now.isoformat(),
+                        "signer_name": signer_name,
+                        "signature_data": signature_data,
+                        "view_token": str(quote.view_token),
+                    })
+                except Exception:
+                    pass
+
+                # Mark Firebase quote_viewer entry as processed
+                mark_quote_approval_processed(view_token)
+
+                # Send admin email notification
+                try:
+                    from datetime import timedelta
+                    cst = tz(timedelta(hours=-6))
+                    now_cst = now.astimezone(cst)
+                    subject, html = build_quote_approved_notification_email(
+                        quote.short_id,
+                        quote.client_name,
+                        quote.project_name,
+                        float(quote.total_amount or 0),
+                        signer_name,
+                        now_cst.strftime("%B %d, %Y at %I:%M %p CST"),
+                    )
+                    await send_email(
+                        to=quote.provider_email or "ajayadesign@gmail.com",
+                        subject=subject,
+                        body_html=html,
+                    )
+                except Exception as e:
+                    logger.warning("Failed to send quote approval email: %s", e)
+
+                # Send Telegram notification
+                try:
+                    from datetime import timedelta
+                    cst = tz(timedelta(hours=-6))
+                    now_cst = now.astimezone(cst)
+                    await send_telegram_quote_approved(
+                        quote_id=quote.short_id,
+                        client_name=quote.client_name,
+                        project_name=quote.project_name,
+                        total_amount=float(quote.total_amount or 0),
+                        signer_name=signer_name,
+                        approved_at=now_cst.strftime("%B %d, %Y at %I:%M %p CST"),
+                    )
+                except Exception as e:
+                    logger.warning("Failed to send quote approval Telegram: %s", e)
+
+            elif status == "declined":
+                # Record decline in Postgres
+                quote.status = "declined"
+                await session.commit()
+                await session.refresh(quote)
+
+                logger.info("❌ Quote %s declined (via Firebase bridge)", quote.short_id)
+
+                # Log activity
+                from api.routes.activity import log_activity
+                await log_activity(
+                    entity_type="quote", entity_id=quote.short_id,
+                    action="declined", icon="❌",
+                    description=f"Quote declined by client (via Firebase bridge)",
+                    actor="client",
+                )
+
+                # Sync back to Firebase quotes/ node
+                try:
+                    sync_quote_to_firebase({
+                        "short_id": quote.short_id,
+                        "client_name": quote.client_name,
+                        "client_email": quote.client_email,
+                        "project_name": quote.project_name,
+                        "project_description": quote.project_description or "",
+                        "deliverables": quote.deliverables or [],
+                        "total_amount": float(quote.total_amount or 0),
+                        "status": "declined",
+                        "view_token": str(quote.view_token),
+                    })
+                except Exception:
+                    pass
+
+                mark_quote_approval_processed(view_token)
+
+                # Send admin email notification
+                try:
+                    from datetime import timedelta
+                    cst = tz(timedelta(hours=-6))
+                    now_cst = now.astimezone(cst)
+                    subject, html = build_quote_declined_notification_email(
+                        quote.short_id,
+                        quote.client_name,
+                        quote.project_name,
+                        now_cst.strftime("%B %d, %Y at %I:%M %p CST"),
+                    )
+                    await send_email(
+                        to=quote.provider_email or "ajayadesign@gmail.com",
+                        subject=subject,
+                        body_html=html,
+                    )
+                except Exception as e:
+                    logger.warning("Failed to send quote decline email: %s", e)
+
+                # Send Telegram notification
+                try:
+                    from datetime import timedelta
+                    cst = tz(timedelta(hours=-6))
+                    now_cst = now.astimezone(cst)
+                    await send_telegram_quote_declined(
+                        quote_id=quote.short_id,
+                        client_name=quote.client_name,
+                        project_name=quote.project_name,
+                        declined_at=now_cst.strftime("%B %d, %Y at %I:%M %p CST"),
+                    )
+                except Exception as e:
+                    logger.warning("Failed to send quote decline Telegram: %s", e)
 
 
 async def _migrate_protected_column():
