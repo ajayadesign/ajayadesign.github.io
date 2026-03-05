@@ -1,0 +1,487 @@
+/*!
+ * ╔══════════════════════════════════════════════════════════════════╗
+ * ║                    PROPRIETARY & CONFIDENTIAL                   ║
+ * ║                                                                 ║
+ * ║  This stylesheet and all associated source code, design,        ║
+ * ║  assets, and intellectual property are the exclusive property    ║
+ * ║  of:                                                            ║
+ * ║                                                                 ║
+ * ║                      ★ AjayaDesign ★                            ║
+ * ║                  https://ajayadesign.github.io                  ║
+ * ║                                                                 ║
+ * ║  © 2026 AjayaDesign. All rights reserved.                       ║
+ * ║                                                                 ║
+ * ║  UNAUTHORIZED USE, REPRODUCTION, DISTRIBUTION, OR MODIFICATION  ║
+ * ║  OF THIS CODE — IN WHOLE OR IN PART — IS STRICTLY PROHIBITED.   ║
+ * ║                                                                 ║
+ * ║  This work is provided for DEMO PURPOSES ONLY and remains the   ║
+ * ║  sole intellectual property of AjayaDesign. Any unauthorized     ║
+ * ║  use, copying, or distribution without explicit written consent  ║
+ * ║  from AjayaDesign will be subject to legal action, including     ║
+ * ║  but not limited to claims for copyright infringement,           ║
+ * ║  injunctive relief, and monetary damages under applicable        ║
+ * ║  intellectual property laws.                                     ║
+ * ║                                                                 ║
+ * ║  If you have obtained this code without authorization, you are   ║
+ * ║  required to delete it immediately and contact AjayaDesign.      ║
+ * ║                                                                 ║
+ * ║  Signature: AJDSGN-COMPUPLUS-2026-REPORT-CSS                    ║
+ * ╚══════════════════════════════════════════════════════════════════╝
+ *
+ * CompuPLUS - Comparison Report Styles
+ */
+
+.report-hero {
+  padding: 8rem 0 4rem;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.report-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 50%, rgba(13,110,253,0.15) 0%, transparent 50%),
+              radial-gradient(circle at 70% 50%, rgba(0,201,167,0.1) 0%, transparent 50%);
+}
+
+.report-hero h1 {
+  color: #fff;
+  position: relative;
+}
+
+.report-hero .subtitle {
+  color: rgba(255,255,255,0.7);
+  font-size: 1.15rem;
+  max-width: 700px;
+  margin: 1rem auto 0;
+  position: relative;
+}
+
+.report-meta {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  position: relative;
+}
+
+.report-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.85rem;
+}
+
+/* Score Cards */
+.score-comparison {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 2rem;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto 3rem;
+}
+
+.score-card {
+  padding: 2.5rem;
+  border-radius: var(--radius-xl);
+  text-align: center;
+}
+
+.score-card.old-site {
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+  border: 2px solid #fecaca;
+}
+
+.score-card.new-site {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border: 2px solid #bbf7d0;
+}
+
+.score-card h3 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.score-number {
+  font-size: 4rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  line-height: 1;
+}
+
+.score-card.old-site .score-number {
+  color: var(--danger);
+}
+
+.score-card.new-site .score-number {
+  color: var(--success);
+}
+
+.score-label {
+  font-size: 0.85rem;
+  color: var(--dark-600);
+  margin-top: 0.5rem;
+}
+
+.vs-badge {
+  width: 64px;
+  height: 64px;
+  background: var(--dark);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+  font-family: var(--font-heading);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Screenshot Comparison */
+.screenshot-comparison {
+  margin-bottom: 3rem;
+}
+
+.screenshot-comparison-title {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--dark);
+}
+
+.screenshot-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.screenshot-card {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 2px solid;
+  background: var(--white);
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.3s ease;
+}
+
+.screenshot-card:hover {
+  transform: translateY(-4px);
+}
+
+.screenshot-card.old {
+  border-color: #fecaca;
+}
+
+.screenshot-card.new {
+  border-color: #bbf7d0;
+}
+
+.screenshot-label {
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.screenshot-card.old .screenshot-label {
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+  color: var(--danger);
+}
+
+.screenshot-card.new .screenshot-label {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  color: var(--success);
+}
+
+.screenshot-frame {
+  max-height: 400px;
+  overflow: hidden;
+  position: relative;
+  background: #f8f9fa;
+}
+
+.screenshot-frame::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.95));
+  pointer-events: none;
+}
+
+.screenshot-frame-tall {
+  max-height: 500px;
+}
+
+.screenshot-frame img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: top;
+}
+
+.screenshot-caption {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--gray-200);
+}
+
+.screenshot-caption ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.screenshot-caption ul li {
+  font-size: 0.82rem;
+  color: var(--dark-600);
+  padding: 0.2rem 0;
+  padding-left: 1.25rem;
+  position: relative;
+}
+
+.screenshot-card.old .screenshot-caption ul li::before {
+  content: '✗';
+  position: absolute;
+  left: 0;
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.screenshot-card.new .screenshot-caption ul li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--success);
+  font-weight: 700;
+}
+
+.screenshot-vs {
+  width: 52px;
+  height: 52px;
+  background: var(--dark);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  font-family: var(--font-heading);
+  box-shadow: var(--shadow-xl);
+  align-self: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .screenshot-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .screenshot-vs {
+    margin: 0 auto;
+  }
+}
+
+/* Category Sections */
+.report-category {
+  margin-bottom: 3rem;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.category-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.category-header h3 {
+  font-size: 1.3rem;
+}
+
+/* Issue Cards */
+.issue-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.issue-card {
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid;
+}
+
+.issue-card.problem {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.issue-card.solution {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.issue-card .card-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.issue-card.problem .card-label {
+  color: var(--danger);
+}
+
+.issue-card.solution .card-label {
+  color: var(--success);
+}
+
+.issue-card h4 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.issue-card p {
+  font-size: 0.88rem;
+  color: var(--dark-600);
+  margin: 0;
+}
+
+.issue-card ul {
+  margin-top: 0.5rem;
+}
+
+.issue-card ul li {
+  font-size: 0.85rem;
+  color: var(--dark-600);
+  padding: 0.2rem 0;
+  padding-left: 1.25rem;
+  position: relative;
+}
+
+.issue-card.problem ul li::before {
+  content: '✗';
+  position: absolute;
+  left: 0;
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.issue-card.solution ul li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--success);
+  font-weight: 700;
+}
+
+/* Verdict */
+.verdict-section {
+  background: linear-gradient(135deg, var(--dark), #1a1a3e);
+  border-radius: var(--radius-2xl);
+  padding: 3rem;
+  color: var(--white);
+  text-align: center;
+  margin: 3rem 0;
+}
+
+.verdict-section h2 {
+  color: var(--white);
+  margin-bottom: 1rem;
+}
+
+.verdict-section p {
+  color: rgba(255,255,255,0.7);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.verdict-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.verdict-stat {
+  padding: 1.5rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.verdict-stat .number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--secondary);
+  font-family: var(--font-heading);
+}
+
+.verdict-stat .label {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .score-comparison {
+    grid-template-columns: 1fr;
+  }
+  
+  .vs-badge {
+    margin: 0 auto;
+  }
+  
+  .issue-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .verdict-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .report-meta {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  
+  .verdict-stats {
+    grid-template-columns: 1fr;
+  }
+}
