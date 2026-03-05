@@ -503,3 +503,71 @@ def build_payment_reminder_email(
     </div>
     """
     return subject, html
+
+
+def build_quote_approved_notification_email(
+    quote_short_id: str,
+    client_name: str,
+    project_name: str,
+    total_amount: float,
+    signer_name: str,
+    approved_at: str,
+) -> tuple[str, str]:
+    """Notification to admin that a quote was approved and signed. Returns (subject, html)."""
+    amount_str = f"${total_amount:,.2f}" if total_amount else "N/A"
+    subject = f"✅ Quote approved by {client_name} — {project_name}"
+    html = f"""
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+      <h1 style="color: #059669; text-align: center; font-size: 28px;">✅ Quote Approved!</h1>
+      <p style="color: #666; text-align: center; font-size: 14px; margin-top: -8px;">Time to send the contract!</p>
+      <div style="background: #ecfdf5; border: 1px solid #6ee7b7; border-radius: 12px; padding: 24px; margin: 24px 0;">
+        <p style="margin: 0 0 8px;"><strong>Quote:</strong> #{quote_short_id}</p>
+        <p style="margin: 0 0 8px;"><strong>Client:</strong> {client_name}</p>
+        <p style="margin: 0 0 8px;"><strong>Project:</strong> {project_name}</p>
+        <p style="margin: 0 0 8px;"><strong>Amount:</strong> {amount_str}</p>
+        <p style="margin: 0 0 8px;"><strong>Signed by:</strong> {signer_name}</p>
+        <p style="margin: 0;"><strong>Approved at:</strong> {approved_at}</p>
+      </div>
+      <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px; margin: 16px 0;">
+        <p style="color: #92400e; font-size: 14px; margin: 0; font-weight: 600;">⏭️ Next Step</p>
+        <p style="color: #92400e; font-size: 13px; margin-top: 8px;">
+          The client approved the quote. You can now create a contract from this quote in the admin dashboard.
+        </p>
+      </div>
+      <p style="color: #666; font-size: 14px; text-align: center;">
+        View details in your <a href=\"https://ajayadesign.github.io/admin/\" style=\"color: #059669;\">admin dashboard</a>.
+      </p>
+    </div>
+    """
+    return subject, html
+
+
+def build_quote_declined_notification_email(
+    quote_short_id: str,
+    client_name: str,
+    project_name: str,
+    declined_at: str,
+) -> tuple[str, str]:
+    """Notification to admin that a quote was declined. Returns (subject, html)."""
+    subject = f"❌ Quote declined by {client_name} — {project_name}"
+    html = f"""
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+      <h1 style="color: #dc2626; text-align: center; font-size: 28px;">❌ Quote Declined</h1>
+      <div style="background: #fef2f2; border: 1px solid #fca5a5; border-radius: 12px; padding: 24px; margin: 24px 0;">
+        <p style="margin: 0 0 8px;"><strong>Quote:</strong> #{quote_short_id}</p>
+        <p style="margin: 0 0 8px;"><strong>Client:</strong> {client_name}</p>
+        <p style="margin: 0 0 8px;"><strong>Project:</strong> {project_name}</p>
+        <p style="margin: 0;"><strong>Declined at:</strong> {declined_at}</p>
+      </div>
+      <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px; margin: 16px 0;">
+        <p style="color: #92400e; font-size: 14px; margin: 0; font-weight: 600;">💡 Suggestion</p>
+        <p style="color: #92400e; font-size: 13px; margin-top: 8px;">
+          Consider reaching out to discuss a revised offer. You can create a new revision from the admin dashboard.
+        </p>
+      </div>
+      <p style="color: #666; font-size: 14px; text-align: center;">
+        View details in your <a href=\"https://ajayadesign.github.io/admin/\" style=\"color: #dc2626;\">admin dashboard</a>.
+      </p>
+    </div>
+    """
+    return subject, html

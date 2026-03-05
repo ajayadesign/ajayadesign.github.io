@@ -713,3 +713,49 @@ def deploy_database_rules(rules_path: str = "") -> bool:
     except Exception as e:
         logger.error(f"Firebase deploy_database_rules failed: {e}")
         return False
+
+
+# ── Quote Approval Polling ────────────────────────────────
+
+def get_pending_quote_approvals() -> list[dict]:
+    """
+    Poll Firebase quote_viewer/ for quotes that clients have approved or declined
+    but haven't been synced back to Postgres yet.
+    Returns list of records where status is 'approved' or 'declined' and not processed.
+    """
+    if not _initialized:
+        return []
+
+    try:
+        ref = firebase_db.reference("quote_viewer")
+        snapshot = ref.get()
+        if not snapshot or not isinstance(snapshot, dict):
+            return []
+
+        results = []
+        for token, data in snapshot.items():
+            if not isinstance(data, dict):
+                continue
+            status = data.get("status", "")
+            processed = data.get("processed", False)
+            if status in ("approved", "declined") and not processed:
+                results.append({"view_token": token, **data})
+        return results
+    except Exception as e:
+        logger.error(f"Firebase get_pending_quote_approvals failed: {e}")
+        return []
+
+
+def mark_quote_approval_processed(view_token: str) -> bool:
+    """Mark a quote_viewer record as processed after syncing to Postgres."""
+    if not _initialized:
+        return False
+    try:
+        firebase_db.reference(f"quote_viewer/{view_token}").update({
+            "processed": True,
+            "processed_at": {'.sv': 'timestamp'},
+        })
+        return True
+    except Exception as e:
+        logger.error(f"Firebase mark_quote_approval_processed failed: {e}")
+        return False

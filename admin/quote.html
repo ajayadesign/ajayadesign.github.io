@@ -567,12 +567,28 @@
       $btn.textContent = '⏳ Approving...';
 
       try {
+        const now = new Date().toISOString();
+
+        // Update the quote_viewer record (what the API polls)
         await firebaseDb.ref('quote_viewer/' + quoteToken).update({
           signer_name: name,
           signature_data: signatureData,
-          approved_at: new Date().toISOString(),
+          approved_at: now,
           status: 'approved',
         });
+
+        // Also update the quotes/{short_id} node so admin dashboard reflects it instantly
+        const shortId = quoteData.short_id || quoteData.quote_id;
+        if (shortId) {
+          try {
+            await firebaseDb.ref('quotes/' + shortId).update({
+              status: 'approved',
+              approved_at: now,
+              signer_name: name,
+              signature_data: signatureData,
+            });
+          } catch (_) { /* non-critical — API poll will catch it */ }
+        }
 
         document.getElementById('quote-page').classList.add('hidden');
         document.getElementById('approved-screen').classList.remove('hidden');
@@ -594,10 +610,23 @@
       $btn.textContent = 'Declining...';
 
       try {
+        const now = new Date().toISOString();
+
         await firebaseDb.ref('quote_viewer/' + quoteToken).update({
           status: 'declined',
-          declined_at: new Date().toISOString(),
+          declined_at: now,
         });
+
+        // Also update quotes/{short_id} for instant admin visibility
+        const shortId = quoteData.short_id || quoteData.quote_id;
+        if (shortId) {
+          try {
+            await firebaseDb.ref('quotes/' + shortId).update({
+              status: 'declined',
+              declined_at: now,
+            });
+          } catch (_) { /* non-critical */ }
+        }
 
         showError('Quote declined. If you change your mind, please contact ajayadesign@gmail.com.');
         document.getElementById('quote-page').classList.add('hidden');
