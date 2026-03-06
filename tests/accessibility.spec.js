@@ -147,10 +147,11 @@ test('no horizontal overflow', async ({ page }) => {
 
 test('axe accessibility audit — zero critical or serious violations', async ({ page }) => {
   await page.goto('/');
-  // Scroll to trigger reveals so all content is in the DOM
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await page.waitForTimeout(1000);
-  await page.evaluate(() => window.scrollTo(0, 0));
+  // Force all reveal elements to visible so axe tests content at full opacity
+  await page.evaluate(() => {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  });
+  await page.waitForTimeout(700); // wait for opacity transitions to complete
 
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'])
