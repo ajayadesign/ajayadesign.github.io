@@ -1,0 +1,3 @@
+[submodule "velvet-bloom"]
+	path = velvet-bloom
+	url = https://github.com/ajayadesign/velvet-bloom.git
