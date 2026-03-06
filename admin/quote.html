@@ -480,13 +480,24 @@
         `<p>${escH(p).replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')}</p>`
       ).join('');
 
-      // Show MMC-specific sections if project contains certain keywords
+      // Show MMC-specific sections based on what's actually in the deliverables
       const desc = (q.project_description || '').toLowerCase();
+      const delText = (q.deliverables || []).map(d => (d.description || d.name || '').toLowerCase()).join(' ');
       const isMmc = desc.includes('market mode') || desc.includes('event mode') || desc.includes('magnet moments');
       if (isMmc) {
         document.getElementById('quote-modes-section').classList.remove('hidden');
+      }
+      // Only show admin dashboard section if deliverables include admin work
+      const hasAdmin = delText.includes('admin') || delText.includes('dashboard') || delText.includes('order management');
+      if (hasAdmin) {
         document.getElementById('quote-dashboard-section').classList.remove('hidden');
+      }
+      // Only show tech architecture if there are 5+ deliverables (substantial scope)
+      if ((q.deliverables || []).length >= 7) {
         document.getElementById('quote-tech-section').classList.remove('hidden');
+      }
+      // Only show timeline if there are 7+ deliverables (full project)
+      if ((q.deliverables || []).length >= 8) {
         document.getElementById('quote-timeline-section').classList.remove('hidden');
       }
 
