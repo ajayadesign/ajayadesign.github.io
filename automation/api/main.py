@@ -808,6 +808,9 @@ async def periodic_firebase_poll(interval: int = 60) -> None:
             # Poll for quote approvals/declines via Firebase bridge
             await process_firebase_quote_approvals()
 
+            # Poll for contract sends via Firebase fallback (email not yet sent)
+            await process_firebase_contract_sends()
+
             # Poll for retry commands from the admin UI
             await process_firebase_retry_commands()
 
@@ -1014,6 +1017,72 @@ async def process_firebase_signatures() -> None:
                 )
             except Exception as e:
                 logger.warning("Failed to send signing Telegram notification: %s", e)
+
+
+async def process_firebase_contract_sends() -> None:
+    """
+    Poll Firebase signing/ for contracts published from the frontend
+    (Firebase fallback) that still need the email sent via SMTP.
+    """
+    from api.services.firebase import (
+        get_pending_contract_sends, mark_contract_email_sent,
+    )
+    from api.services.email_service import build_contract_email, send_email
+
+    pending = get_pending_contract_sends()
+    if not pending:
+        return
+
+    logger.info("📧 Found %d pending contract email(s) in Firebase", len(pending))
+
+    for entry in pending:
+        token = entry.get("sign_token", "")
+        client_name = entry.get("client_name", "Client")
+        client_email = entry.get("client_email", "")
+        project_name = entry.get("project_name", "Project")
+        provider_name = entry.get("provider_name", "AjayaDesign")
+
+        if not client_email:
+            logger.warning("Skipping contract send — no client_email for token %s", token)
+            mark_contract_email_sent(token)
+            continue
+
+        sign_url = f"https://ajayadesign.github.io/admin/sign.html?token={token}"
+
+        subject, html = build_contract_email(
+            client_name=client_name,
+            project_name=project_name,
+            sign_url=sign_url,
+            provider_name=provider_name,
+        )
+
+        try:
+            result = await send_email(
+                to=client_email,
+                subject=subject,
+                body_html=html,
+            )
+            if result.get("success"):
+                logger.info("✅ Contract email sent to %s (token %s)", client_email, token)
+                mark_contract_email_sent(token)
+
+                # Log activity
+                try:
+                    from api.routes.activity import log_activity
+                    await log_activity(
+                        entity_type="contract",
+                        entity_id=entry.get("short_id", token[:8]),
+                        action="sent",
+                        icon="📧",
+                        description=f"Contract emailed to {client_email} (Firebase bridge)",
+                        metadata={"client_email": client_email, "sign_token": token},
+                    )
+                except Exception as e:
+                    logger.warning("Failed to log contract send activity: %s", e)
+            else:
+                logger.error("Contract email to %s failed: %s", client_email, result)
+        except Exception as e:
+            logger.error("Contract email send error for %s: %s", client_email, e)
 
 
 async def process_firebase_quote_approvals() -> None:
