@@ -17,18 +17,13 @@ function _normalizeQuote(q) {
   return q;
 }
 
-// ── Default deliverables (MMC template) ────────────────
+// ── Default deliverables (MMC template — bare minimum) ─
 const defaultDeliverables = [
-  { description: 'Market Mode — Customer Order Flow',         hours: 16, rate: 75 },
-  { description: 'Google Drive API Integration',              hours: 12, rate: 75 },
-  { description: 'Firebase Backend & Database',               hours: 10, rate: 75 },
-  { description: 'Payment Deep Links (Venmo/PayPal)',         hours:  4, rate: 75 },
-  { description: 'Admin Dashboard — Order Management',        hours: 16, rate: 75 },
-  { description: 'Event Mode — Photo Capture & Upload',       hours: 14, rate: 75 },
-  { description: 'Event Manager & QR Code Generator',         hours:  8, rate: 75 },
-  { description: 'Email Notifications',                       hours:  4, rate: 75 },
-  { description: 'Testing, QA & Accessibility Audit',         hours:  8, rate: 75 },
-  { description: 'Deployment & Launch Support',               hours:  4, rate: 75 },
+  { description: 'Market Mode — QR Scan & Order Form',       hours:  6, rate: 75 },
+  { description: 'Event Mode — Photo Capture & Upload',      hours:  6, rate: 75 },
+  { description: 'Google Drive Integration (auto-upload)',    hours:  4, rate: 75 },
+  { description: 'Firebase Backend & Database',               hours:  2, rate: 75 },
+  { description: 'Testing & Deployment',                      hours:  2, rate: 75 },
 ];
 
 // ── Default quote fields ───────────────────────────────
@@ -36,7 +31,7 @@ const defaultQuoteFields = {
   client_name: 'Magnet Moments Co.',
   client_email: '',
   project_name: 'Market & Event Photo Ordering System',
-  project_description: 'A custom dual-mode web application for Magnet Moments Co. — enabling on-site photo collection, order management, and payment at markets & events.\n\nMarket Mode: Buyers scan a QR code, enter their info, select a magnet set, upload photos, choose a payment method, and submit.\n\nEvent Mode: Guests scan a QR code, snap or upload photos, and images are automatically collected into a dedicated Google Drive folder.',
+  project_description: 'A streamlined dual-mode web app for Magnet Moments Co. — enabling on-site photo collection and ordering at markets & events.\n\nMarket Mode: Buyers scan a QR code, enter their info, select a magnet set, upload photos, and submit their order.\n\nEvent Mode: Guests scan a QR code, snap or upload photos, and images are automatically collected into a dedicated Google Drive folder.\n\nThis scope covers the core customer-facing flows. Admin dashboard enhancements are not included.',
   payment_schedule: '50% upfront · 50% at launch',
   valid_days: 30,
   notes: '',
