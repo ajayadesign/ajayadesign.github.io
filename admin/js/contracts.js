@@ -32,7 +32,9 @@ async function openContract(shortId) {
 
   // Try API first
   try {
-    const res = await fetch(`${API_BASE}/contracts/${shortId}`);
+    const res = await fetch(`${API_BASE}/contracts/${shortId}`, {
+      signal: AbortSignal.timeout(5000),
+    });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     currentContract = await res.json();
     contractClauses = (currentContract.clauses || []).map(c => ({ ...c }));
@@ -573,17 +575,19 @@ async function saveContract() {
     return;
   }
 
+  let saved = false;
+
+  // Try API first
   try {
     let res;
     if (currentContract && currentContract.short_id) {
-      // Update existing
       res = await fetch(`${API_BASE}/contracts/${currentContract.short_id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
+        signal: AbortSignal.timeout(5000),
       });
     } else {
-      // Create new
       const createData = { ...data };
       if (currentContract && currentContract._prefill_build_id) {
         createData.build_id = currentContract._prefill_build_id;
@@ -592,6 +596,7 @@ async function saveContract() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(createData),
+        signal: AbortSignal.timeout(5000),
       });
     }
 
@@ -602,12 +607,51 @@ async function saveContract() {
 
     currentContract = await res.json();
     contractClauses = (currentContract.clauses || []).map(c => ({ ...c }));
-    _populateContractForm();
-    alert('✅ Contract saved!');
-  } catch (err) {
-    console.error('[Contracts] Save failed:', err);
-    alert('Save failed: ' + err.message);
+    saved = true;
+  } catch (apiErr) {
+    console.warn('[Contracts] API save failed, trying Firebase:', apiErr.message);
   }
+
+  // Fallback: Firebase RTDB
+  if (!saved && window.__db) {
+    try {
+      const isNew = !currentContract || !currentContract.short_id;
+      const shortId = isNew ? _generateContractId() : currentContract.short_id;
+      const now = new Date().toISOString();
+
+      const fbData = {
+        ...data,
+        short_id: shortId,
+        status: (currentContract && currentContract.status) || 'draft',
+        created_at: (currentContract && currentContract.created_at) || now,
+        updated_at: now,
+      };
+
+      await window.__db.ref(`contracts/${shortId}`).set(fbData);
+      currentContract = fbData;
+      contractClauses = (fbData.clauses || []).map(c => ({ ...c }));
+      saved = true;
+      console.info('[Contracts] Saved to Firebase:', shortId);
+    } catch (fbErr) {
+      console.error('[Contracts] Firebase save failed:', fbErr);
+    }
+  }
+
+  if (saved) {
+    _populateContractForm();
+    if (typeof loadAllContracts === 'function') loadAllContracts();
+    alert('✅ Contract saved!');
+  } else {
+    alert('Save failed: API and Firebase both unavailable.');
+  }
+}
+
+// ── Generate short contract ID ─────────────────────────
+function _generateContractId() {
+  const hex = '0123456789abcdef';
+  let id = '';
+  for (let i = 0; i < 8; i++) id += hex[Math.floor(Math.random() * 16)];
+  return id;
 }
 
 // ── Delete contract (draft only) ───────────────────────
@@ -623,21 +667,42 @@ async function deleteContract() {
   }
   if (!confirm(`⚠️ Delete contract #${currentContract.short_id} for ${currentContract.client_name}?\n\nThis cannot be undone.`)) return;
 
+  let deleted = false;
+
+  // Try API first
   try {
-    const res = await fetch(`${API_BASE}/contracts/${currentContract.short_id}`, { method: 'DELETE' });
+    const res = await fetch(`${API_BASE}/contracts/${currentContract.short_id}`, {
+      method: 'DELETE',
+      signal: AbortSignal.timeout(5000),
+    });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.detail || `HTTP ${res.status}`);
     }
+    deleted = true;
+  } catch (apiErr) {
+    console.warn('[Contracts] API delete failed, trying Firebase:', apiErr.message);
+  }
+
+  // Fallback: Firebase
+  if (!deleted && window.__db) {
+    try {
+      await window.__db.ref(`contracts/${currentContract.short_id}`).remove();
+      deleted = true;
+      console.info('[Contracts] Deleted from Firebase:', currentContract.short_id);
+    } catch (fbErr) {
+      console.error('[Contracts] Firebase delete failed:', fbErr);
+    }
+  }
+
+  if (deleted) {
     alert('🗑️ Contract deleted.');
     currentContract = null;
     contractClauses = [];
     document.getElementById('contract-detail').classList.add('hidden');
-    // Refresh list if visible
     if (typeof loadAllContracts === 'function') loadAllContracts();
-  } catch (err) {
-    console.error('[Contracts] Delete failed:', err);
-    alert('Delete failed: ' + err.message);
+  } else {
+    alert('Delete failed: API and Firebase both unavailable.');
   }
 }
 
@@ -679,24 +744,81 @@ async function sendContract() {
   }
   if (!confirm(`Send contract to ${currentContract.client_email}?`)) return;
 
+  let sent = false;
+
+  // Try API first (sends email via Gmail SMTP)
   try {
     const res = await fetch(`${API_BASE}/contracts/${currentContract.short_id}/send`, {
       method: 'POST',
+      signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-
-    if (data.success) {
-      alert('✅ Contract sent to ' + currentContract.client_email);
-      _updateContractStatusBadge('sent');
-      currentContract.status = 'sent';
-    } else {
-      alert('⚠️ ' + (data.message || 'Send failed'));
-    }
-  } catch (err) {
-    console.error('[Contracts] Send failed:', err);
-    alert('Send failed: ' + err.message);
+    if (data.success) sent = true;
+  } catch (apiErr) {
+    console.warn('[Contracts] API send failed, publishing to Firebase:', apiErr.message);
   }
+
+  // Fallback: publish to Firebase signing/ so the public URL works
+  if (!sent && window.__db) {
+    try {
+      const token = _generateSignToken();
+      const now = new Date().toISOString();
+      const signingData = {
+        short_id: currentContract.short_id,
+        client_name: currentContract.client_name,
+        client_email: currentContract.client_email,
+        project_name: currentContract.project_name,
+        project_description: currentContract.project_description || '',
+        total_amount: currentContract.total_amount || 0,
+        deposit_amount: currentContract.deposit_amount || 0,
+        payment_method: currentContract.payment_method || '',
+        payment_terms: currentContract.payment_terms || '',
+        clauses: currentContract.clauses || contractClauses,
+        custom_notes: currentContract.custom_notes || '',
+        status: 'sent',
+        sent_at: now,
+        provider_name: 'AjayaDesign',
+        provider_email: 'ajayadesign@gmail.com',
+      };
+
+      await window.__db.ref(`signing/${token}`).set(signingData);
+      await window.__db.ref(`contracts/${currentContract.short_id}/status`).set('sent');
+      await window.__db.ref(`contracts/${currentContract.short_id}/sent_at`).set(now);
+      await window.__db.ref(`contracts/${currentContract.short_id}/sign_token`).set(token);
+
+      currentContract.status = 'sent';
+      currentContract.sign_token = token;
+
+      const signUrl = `${location.origin}/admin/sign.html?token=${token}`;
+      _updateContractStatusBadge('sent');
+      if (typeof loadAllContracts === 'function') loadAllContracts();
+
+      const copyLink = confirm(`✅ Contract published!\n\nSigning link:\n${signUrl}\n\nNote: Email send requires the API. You can share this link manually.\n\nCopy link to clipboard?`);
+      if (copyLink) {
+        try { await navigator.clipboard.writeText(signUrl); } catch (_) {}
+      }
+      return;
+    } catch (fbErr) {
+      console.error('[Contracts] Firebase publish failed:', fbErr);
+      alert('Send failed: API unavailable and Firebase publish failed.');
+      return;
+    }
+  }
+
+  if (sent) {
+    alert('✅ Contract sent to ' + currentContract.client_email);
+    _updateContractStatusBadge('sent');
+    currentContract.status = 'sent';
+    if (typeof loadAllContracts === 'function') loadAllContracts();
+  }
+}
+
+function _generateSignToken() {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let tok = '';
+  for (let i = 0; i < 24; i++) tok += chars[Math.floor(Math.random() * chars.length)];
+  return tok;
 }
 
 // ── PDF Generation (client-side with jsPDF) ────────────
