@@ -759,3 +759,49 @@ def mark_quote_approval_processed(view_token: str) -> bool:
     except Exception as e:
         logger.error(f"Firebase mark_quote_approval_processed failed: {e}")
         return False
+
+
+def get_pending_contract_sends() -> list[dict]:
+    """
+    Poll Firebase signing/ for contracts published from the frontend
+    that need the API to send the email.
+    Returns list of records where status='sent' and email_sent is falsy.
+    """
+    if not _initialized:
+        return []
+
+    try:
+        ref = firebase_db.reference("signing")
+        snapshot = ref.order_by_child("status").equal_to("sent").get()
+        if not snapshot or not isinstance(snapshot, dict):
+            return []
+
+        results = []
+        for token, data in snapshot.items():
+            if not isinstance(data, dict):
+                continue
+            if data.get("email_sent"):
+                continue
+            # Must have a client_email to send to
+            if not data.get("client_email"):
+                continue
+            results.append({"sign_token": token, **data})
+        return results
+    except Exception as e:
+        logger.error(f"Firebase get_pending_contract_sends failed: {e}")
+        return []
+
+
+def mark_contract_email_sent(sign_token: str) -> bool:
+    """Mark a signing record as email_sent after sending the contract email."""
+    if not _initialized:
+        return False
+    try:
+        firebase_db.reference(f"signing/{sign_token}").update({
+            "email_sent": True,
+            "email_sent_at": {'.sv': 'timestamp'},
+        })
+        return True
+    except Exception as e:
+        logger.error(f"Firebase mark_contract_email_sent failed: {e}")
+        return False
