@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Quote — Magnet Moments Co. | AjayaDesign</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#0A0A0F" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF6B6B',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+            'mm-gold': '#C8A951',
+            'mm-cream': '#FDF8EF',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
+            sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body { background: #0A0A0F; }
+    @media print {
+      body { background: #fff; color: #111; }
+      .no-print { display: none !important; }
+      .print-break { page-break-before: always; }
+      section { padding: 1rem 0; }
+    }
+    .quote-glow {
+      box-shadow: 0 0 60px rgba(200,169,81,0.08), 0 0 120px rgba(237,28,36,0.04);
+    }
+    .feature-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(200,169,81,0.4);
+    }
+    .timeline-dot::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: -25px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #C8A951;
+      border: 2px solid #0A0A0F;
+    }
+    .timeline-dot::after {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: -20px;
+      width: 2px;
+      height: calc(100% - 8px);
+      background: #1E1E2A;
+    }
+    .timeline-dot:last-child::after { display: none; }
+  </style>
+</head>
+
+<body class="font-sans text-gray-300 antialiased">
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <header class="border-b border-border-dim bg-surface-alt/80 backdrop-blur-sm sticky top-0 z-50 no-print">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="w-3 h-3 rounded-full bg-amd-red animate-pulse"></span>
+        <span class="font-mono text-sm font-bold text-white">Ajaya<span class="text-amd-red">Design</span></span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="font-mono text-xs text-gray-500">QUOTE-MMC-2026-001</span>
+        <button onclick="window.print()" class="font-mono text-xs px-3 py-1.5 rounded border border-border-dim text-gray-400 hover:text-white hover:border-mm-gold transition-all cursor-pointer">
+          Print / PDF
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6">
+
+    <!-- ═══════════════════ HERO / COVER ═══════════════════ -->
+    <section class="py-16 sm:py-24 text-center border-b border-border-dim">
+      <p class="font-mono text-mm-gold text-xs tracking-[0.3em] uppercase mb-4">Project Quote</p>
+      <h1 class="font-mono text-3xl sm:text-5xl font-extrabold text-white leading-tight mb-4">
+        Market &amp; Event<br>
+        <span class="text-mm-gold">Photo Ordering System</span>
+      </h1>
+      <p class="text-gray-400 max-w-xl mx-auto text-sm sm:text-base leading-relaxed mb-8">
+        A custom web application for <strong class="text-white">Magnet Moments Co.</strong> — enabling on-site photo collection, order management, and payment at markets &amp; events.
+      </p>
+      <div class="inline-flex flex-wrap justify-center gap-4 font-mono text-xs">
+        <span class="px-3 py-1.5 rounded bg-surface-card border border-border-dim text-gray-400">Prepared: March 4, 2026</span>
+        <span class="px-3 py-1.5 rounded bg-surface-card border border-border-dim text-gray-400">Valid: 30 days</span>
+        <span class="px-3 py-1.5 rounded bg-surface-card border border-border-dim text-mm-gold">Client: Magnet Moments Co.</span>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ EXECUTIVE SUMMARY ═══════════════════ -->
+    <section class="py-16 border-b border-border-dim">
+      <div class="grid md:grid-cols-[200px_1fr] gap-8">
+        <div>
+          <p class="font-mono text-mm-gold text-xs tracking-widest uppercase sticky top-24">Overview</p>
+        </div>
+        <div class="space-y-4 text-gray-300 leading-relaxed">
+          <p>
+            This project delivers a <strong class="text-white">dual-mode web application</strong> for Magnet Moments Co. that replaces the current QR-to-Shopify workflow with a streamlined, purpose-built system designed for speed and simplicity at live events.
+          </p>
+          <p>
+            <strong class="text-white">Market Mode</strong> — Buyers scan a QR code, enter their info, select a magnet set, upload photos, choose a payment method, and submit. You receive a complete order dashboard with photos automatically synced to Google Drive.
+          </p>
+          <p>
+            <strong class="text-white">Event Mode</strong> — Guests scan a QR code, snap or upload photos, and images are automatically collected into a dedicated Google Drive folder for the event. No ordering, no payment — just frictionless photo collection.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ TWO MODES ═══════════════════ -->
+    <section class="py-16 border-b border-border-dim">
+      <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-10">Two Modes, One System</p>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Market Mode -->
+        <div class="rounded-2xl bg-surface-card border border-border-dim p-8 quote-glow feature-card transition-all duration-300">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="w-10 h-10 rounded-xl bg-mm-gold/10 border border-mm-gold/20 flex items-center justify-center text-lg">🛒</span>
+            <div>
+              <h3 class="font-mono text-lg font-bold text-white">Market Mode</h3>
+              <p class="font-mono text-xs text-gray-500">For vendor markets &amp; pop-ups</p>
+            </div>
+          </div>
+          <ul class="space-y-3 text-sm text-gray-300">
+            <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> QR code scan → mobile-first order form</li>
+            <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Customer info collection (name, email, phone)</li>
+            <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Magnet set selection with live pricing</li>
+            <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Multi-photo upload with drag &amp; drop</li>
+            <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Payment method selection (Venmo, PayPal, Cash, Tap)</li>
+            <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Auto sales tax calculation (8.25%)</li>
+            <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Venmo &amp; PayPal deep links with total pre-filled</li>
+            <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Order confirmation with instructions per method</li>
+            <li class="flex items-start gap-2"><span class="text-mm-gold mt-0.5">▸</span> Photos auto-uploaded to Google Drive by order #</li>
+          </ul>
+        </div>
+
+        <!-- Event Mode -->
+        <div class="rounded-2xl bg-surface-card border border-border-dim p-8 quote-glow feature-card transition-all duration-300">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="w-10 h-10 rounded-xl bg-electric-blue/10 border border-electric-blue/20 flex items-center justify-center text-lg">📸</span>
+            <div>
+              <h3 class="font-mono text-lg font-bold text-white">Event Mode</h3>
+              <p class="font-mono text-xs text-gray-500">For weddings, parties &amp; events</p>
+            </div>
+          </div>
+          <ul class="space-y-3 text-sm text-gray-300">
+            <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> QR code scan → instant camera or upload</li>
+            <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> In-app camera capture (snap a photo live)</li>
+            <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> Upload from gallery (existing photos)</li>
+            <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> Auto-upload to event-specific Google Drive folder</li>
+            <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> No login, no ordering — zero friction for guests</li>
+            <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> Thank you confirmation with event branding</li>
+            <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> Admin panel to create events &amp; generate QR codes</li>
+            <li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">▸</span> Bulk photo gallery view per event</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ PRODUCT PRICING TABLE ═══════════════════ -->
+    <section class="py-16 border-b border-border-dim">
+      <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-2">Product Catalog</p>
+      <p class="text-gray-400 text-sm mb-8">Magnet set pricing built into the order system. Sales tax of <strong class="text-white">8.25%</strong> calculated automatically at checkout.</p>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- 2x2 Sets -->
+        <div class="rounded-xl bg-surface-card border border-border-dim overflow-hidden">
+          <div class="px-6 py-4 border-b border-border-dim bg-surface-alt/50">
+            <h4 class="font-mono text-sm font-bold text-white">2×2 Magnet Sets</h4>
+          </div>
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-border-dim text-gray-500 font-mono text-xs">
+                <th class="text-left px-6 py-3">Set</th>
+                <th class="text-right px-6 py-3">Price</th>
+                <th class="text-right px-6 py-3">+ Tax</th>
+              </tr>
+            </thead>
+            <tbody id="table-2x2" class="text-gray-300"></tbody>
+          </table>
+        </div>
+
+        <!-- 2x3 Sets -->
+        <div class="rounded-xl bg-surface-card border border-border-dim overflow-hidden">
+          <div class="px-6 py-4 border-b border-border-dim bg-surface-alt/50">
+            <h4 class="font-mono text-sm font-bold text-white">2×3 Magnet Sets</h4>
+          </div>
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-border-dim text-gray-500 font-mono text-xs">
+                <th class="text-left px-6 py-3">Set</th>
+                <th class="text-right px-6 py-3">Price</th>
+                <th class="text-right px-6 py-3">+ Tax</th>
+              </tr>
+            </thead>
+            <tbody id="table-2x3" class="text-gray-300"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ ORDER DASHBOARD ═══════════════════ -->
+    <section class="py-16 border-b border-border-dim">
+      <div class="grid md:grid-cols-[200px_1fr] gap-8">
+        <div>
+          <p class="font-mono text-mm-gold text-xs tracking-widest uppercase sticky top-24">Admin Dashboard</p>
+        </div>
+        <div>
+          <p class="text-gray-300 leading-relaxed mb-8">
+            A real-time order management dashboard where you can view and manage all incoming orders — no refreshing needed.
+          </p>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div class="rounded-lg bg-surface-alt border border-border-dim p-5">
+              <p class="font-mono text-xs text-mm-gold mb-2">Order Queue</p>
+              <p class="text-sm text-gray-400">Live feed of incoming orders with customer name, set type, qty, total, payment method, and status.</p>
+            </div>
+            <div class="rounded-lg bg-surface-alt border border-border-dim p-5">
+              <p class="font-mono text-xs text-mm-gold mb-2">Photo Preview</p>
+              <p class="text-sm text-gray-400">Thumbnail previews of uploaded photos per order. Click to open full-res in Google Drive.</p>
+            </div>
+            <div class="rounded-lg bg-surface-alt border border-border-dim p-5">
+              <p class="font-mono text-xs text-mm-gold mb-2">Google Drive Sync</p>
+              <p class="text-sm text-gray-400">Photos auto-organized into folders by order number (e.g. <code class="text-mm-gold/80 text-xs bg-surface-card px-1 rounded">MMC-0042/</code>). Zero manual file management.</p>
+            </div>
+            <div class="rounded-lg bg-surface-alt border border-border-dim p-5">
+              <p class="font-mono text-xs text-mm-gold mb-2">Payment Tracking</p>
+              <p class="text-sm text-gray-400">Mark orders as paid/unpaid. Filter by payment method. Daily sales summary.</p>
+            </div>
+            <div class="rounded-lg bg-surface-alt border border-border-dim p-5">
+              <p class="font-mono text-xs text-mm-gold mb-2">Event Manager</p>
+              <p class="text-sm text-gray-400">Create events, set dates, generate unique QR codes, and view all uploaded photos per event.</p>
+            </div>
+            <div class="rounded-lg bg-surface-alt border border-border-dim p-5">
+              <p class="font-mono text-xs text-mm-gold mb-2">QR Code Generator</p>
+              <p class="text-sm text-gray-400">Generate printable QR codes for market mode or event mode — each with its own branded landing page.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ TECH ARCHITECTURE ═══════════════════ -->
+    <section class="py-16 border-b border-border-dim print-break">
+      <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-2">Technical Architecture</p>
+      <p class="text-gray-400 text-sm mb-8">Built for speed and reliability with no ongoing server costs.</p>
+
+      <div class="rounded-xl bg-surface-card border border-border-dim p-8">
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 text-sm">
+          <div>
+            <p class="font-mono text-xs text-gray-500 mb-1">Frontend</p>
+            <p class="text-white font-medium">Single-page app (HTML/JS/CSS)</p>
+            <p class="text-gray-400 text-xs mt-1">Mobile-first, hosted on GitHub Pages — zero hosting cost.</p>
+          </div>
+          <div>
+            <p class="font-mono text-xs text-gray-500 mb-1">Backend</p>
+            <p class="text-white font-medium">Firebase (Firestore + Auth)</p>
+            <p class="text-gray-400 text-xs mt-1">Real-time order database with admin authentication. Free tier covers high volume.</p>
+          </div>
+          <div>
+            <p class="font-mono text-xs text-gray-500 mb-1">File Storage</p>
+            <p class="text-white font-medium">Google Drive API</p>
+            <p class="text-gray-400 text-xs mt-1">Photos uploaded directly to Drive, auto-organized by order # or event name.</p>
+          </div>
+          <div>
+            <p class="font-mono text-xs text-gray-500 mb-1">Payments</p>
+            <p class="text-white font-medium">Venmo &amp; PayPal Deep Links</p>
+            <p class="text-gray-400 text-xs mt-1">Pre-filled payment links with amount. Cash &amp; tap handled in person.</p>
+          </div>
+          <div>
+            <p class="font-mono text-xs text-gray-500 mb-1">Camera</p>
+            <p class="text-white font-medium">WebRTC / MediaDevices API</p>
+            <p class="text-gray-400 text-xs mt-1">In-browser camera capture for event mode — no app install required.</p>
+          </div>
+          <div>
+            <p class="font-mono text-xs text-gray-500 mb-1">Notifications</p>
+            <p class="text-white font-medium">Email + Real-time alerts</p>
+            <p class="text-gray-400 text-xs mt-1">Order confirmation emails to customers. Live push alerts on admin dashboard.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ DEVELOPMENT TIMELINE ═══════════════════ -->
+    <section class="py-16 border-b border-border-dim">
+      <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-10">Development Timeline</p>
+
+      <div class="relative pl-8 space-y-0">
+        <!-- Phase 1 -->
+        <div class="relative timeline-dot pb-10">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="font-mono text-xs text-mm-gold">Phase 1</span>
+            <span class="font-mono text-xs text-gray-600">Week 1–2</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white mb-1">Market Mode — Customer Order Flow</h4>
+          <p class="text-sm text-gray-400">Mobile-first order form: customer info, set selection, photo upload, payment selection, tax calculation, and order submission. QR code landing page.</p>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="relative timeline-dot pb-10">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="font-mono text-xs text-mm-gold">Phase 2</span>
+            <span class="font-mono text-xs text-gray-600">Week 2–3</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white mb-1">Backend &amp; Google Drive Integration</h4>
+          <p class="text-sm text-gray-400">Firebase database, Google Drive API integration, auto-folder creation by order number, photo sync pipeline, Venmo/PayPal deep link generation.</p>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="relative timeline-dot pb-10">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="font-mono text-xs text-mm-gold">Phase 3</span>
+            <span class="font-mono text-xs text-gray-600">Week 3–4</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white mb-1">Admin Dashboard</h4>
+          <p class="text-sm text-gray-400">Real-time order queue, photo thumbnails, payment tracking, daily sales summary, order status management.</p>
+        </div>
+
+        <!-- Phase 4 -->
+        <div class="relative timeline-dot pb-10">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="font-mono text-xs text-mm-gold">Phase 4</span>
+            <span class="font-mono text-xs text-gray-600">Week 4–5</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white mb-1">Event Mode</h4>
+          <p class="text-sm text-gray-400">Event creation panel, QR code generator per event, guest camera capture, gallery upload, auto-sync to event-specific Google Drive folder.</p>
+        </div>
+
+        <!-- Phase 5 -->
+        <div class="relative timeline-dot pb-4">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="font-mono text-xs text-mm-gold">Phase 5</span>
+            <span class="font-mono text-xs text-gray-600">Week 5–6</span>
+          </div>
+          <h4 class="font-mono text-sm font-bold text-white mb-1">Testing, QA &amp; Launch</h4>
+          <p class="text-sm text-gray-400">Cross-device testing, accessibility audit, Playwright e2e tests, load testing with mock orders, deployment to production, and QR code printout delivery.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ INVESTMENT ═══════════════════ -->
+    <section class="py-16 border-b border-border-dim print-break">
+      <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-10">Investment</p>
+
+      <div class="rounded-2xl bg-surface-card border border-border-dim overflow-hidden quote-glow">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-border-dim bg-surface-alt/50 font-mono text-xs text-gray-500">
+              <th class="text-left px-8 py-4">Deliverable</th>
+              <th class="text-right px-8 py-4">Est. Hours</th>
+              <th class="text-right px-8 py-4">Cost</th>
+            </tr>
+          </thead>
+          <tbody id="investment-table" class="text-gray-300"></tbody>
+          <tfoot>
+            <tr class="border-t-2 border-mm-gold/30 bg-surface-alt/30">
+              <td class="px-8 py-5 font-mono text-sm font-bold text-white" colspan="2">Project Total</td>
+              <td class="px-8 py-5 font-mono text-xl font-bold text-mm-gold text-right" id="project-total"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="mt-8 grid sm:grid-cols-3 gap-4 font-mono text-xs">
+        <div class="rounded-lg bg-surface-alt border border-border-dim p-4 text-center">
+          <p class="text-gray-500 mb-1">Payment Schedule</p>
+          <p class="text-white">50% upfront · 50% at launch</p>
+        </div>
+        <div class="rounded-lg bg-surface-alt border border-border-dim p-4 text-center">
+          <p class="text-gray-500 mb-1">Ongoing Costs</p>
+          <p class="text-white">$0/mo (GitHub Pages + Firebase free tier)</p>
+        </div>
+        <div class="rounded-lg bg-surface-alt border border-border-dim p-4 text-center">
+          <p class="text-gray-500 mb-1">Post-Launch Support</p>
+          <p class="text-white">30 days included free</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ WHAT'S INCLUDED ═══════════════════ -->
+    <section class="py-16 border-b border-border-dim">
+      <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-10">What's Included</p>
+
+      <div class="grid sm:grid-cols-2 gap-x-8 gap-y-4 text-sm text-gray-300">
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Full source code ownership</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Mobile-first responsive design</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Google Drive API setup &amp; configuration</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Firebase project setup &amp; database rules</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Venmo &amp; PayPal deep link integration</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Admin dashboard with real-time updates</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> QR code generation for markets &amp; events</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> In-browser camera capture (event mode)</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Automated e2e testing with Playwright</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> WCAG accessibility compliance</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> SEO meta tags &amp; structured data</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Deployment to GitHub Pages (zero cost hosting)</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> Customer confirmation emails</div>
+        <div class="flex items-start gap-2"><span class="text-mm-gold">✓</span> 30 days post-launch bug fixes &amp; support</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ ACCEPTANCE ═══════════════════ -->
+    <section class="py-16 print-break">
+      <p class="font-mono text-mm-gold text-xs tracking-widest uppercase mb-10">Acceptance</p>
+
+      <div class="rounded-2xl bg-surface-card border border-border-dim p-8 sm:p-10 quote-glow">
+        <p class="text-gray-300 text-sm leading-relaxed mb-8">
+          By approving this quote, you authorize AjayaDesign to begin work on the Market &amp; Event Photo Ordering System for Magnet Moments Co. as described above. The 50% upfront deposit is due upon acceptance. The remaining 50% is due upon project completion and deployment.
+        </p>
+
+        <div class="grid sm:grid-cols-2 gap-8 pt-8 border-t border-border-dim">
+          <div>
+            <p class="font-mono text-xs text-gray-500 mb-6">Client — Magnet Moments Co.</p>
+            <div class="border-b border-gray-600 mb-2 h-12"></div>
+            <p class="font-mono text-xs text-gray-500">Signature &amp; Date</p>
+          </div>
+          <div>
+            <p class="font-mono text-xs text-gray-500 mb-6">AjayaDesign</p>
+            <div class="border-b border-gray-600 mb-2 h-12"></div>
+            <p class="font-mono text-xs text-gray-500">Ajaya Dahal · Date</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="mt-12 text-center no-print">
+        <p class="text-gray-400 text-sm mb-6">Ready to get started?</p>
+        <a href="mailto:ajayadesign@gmail.com?subject=Quote%20Approved%20-%20Magnet%20Moments%20Co.&body=I'd%20like%20to%20approve%20quote%20QUOTE-MMC-2026-001%20and%20proceed%20with%20the%20project."
+           class="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-mm-gold text-surface font-mono font-bold text-sm hover:bg-mm-gold/90 transition-colors">
+          Approve Quote →
+        </a>
+        <p class="font-mono text-xs text-gray-600 mt-4">Or reply to the email this was sent with.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
+  <footer class="border-t border-border-dim py-8 no-print">
+    <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-amd-red"></span>
+        <span class="font-mono text-xs text-gray-500">AjayaDesign · Manor, TX</span>
+      </div>
+      <div class="font-mono text-xs text-gray-600">
+        <a href="https://ajayadesign.github.io" class="hover:text-white transition-colors">ajayadesign.github.io</a>
+        <span class="mx-2 text-border-dim">|</span>
+        <a href="mailto:ajayadesign@gmail.com" class="hover:text-white transition-colors">ajayadesign@gmail.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+  <script>
+  (function() {
+    'use strict';
+
+    const TAX_RATE = 0.0825;
+
+    /* ── Product Catalog ── */
+    const catalog = {
+      '2x2': [
+        { label: 'Single Magnet', qty: 1, price: 4.00 },
+        { label: 'Set of 3',     qty: 3, price: 12.00 },
+        { label: 'Set of 6',     qty: 6, price: 19.00 },
+        { label: 'Set of 9',     qty: 9, price: 25.00 },
+        { label: 'Set of 12',    qty: 12, price: 30.00 },
+      ],
+      '2x3': [
+        { label: 'Single Magnet', qty: 1, price: 4.50 },
+        { label: 'Set of 3',     qty: 3, price: 13.50 },
+        { label: 'Set of 6',     qty: 6, price: 22.00 },
+        { label: 'Set of 9',     qty: 9, price: 32.00 },
+        { label: 'Set of 12',    qty: 12, price: 40.00 },
+      ],
+    };
+
+    /* ── Render price tables ── */
+    function renderTable(id, items) {
+      const tbody = document.getElementById(id);
+      items.forEach(item => {
+        const tax = item.price * TAX_RATE;
+        const total = item.price + tax;
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-border-dim last:border-0';
+        tr.innerHTML = `
+          <td class="px-6 py-3">${item.label}</td>
+          <td class="px-6 py-3 text-right font-mono">$${item.price.toFixed(2)}</td>
+          <td class="px-6 py-3 text-right font-mono text-mm-gold">$${total.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+    renderTable('table-2x2', catalog['2x2']);
+    renderTable('table-2x3', catalog['2x3']);
+
+    /* ── Investment table ── */
+    const deliverables = [
+      { name: 'Market Mode — Customer Order Flow',           hours: 16, rate: 75 },
+      { name: 'Google Drive API Integration',                hours: 12, rate: 75 },
+      { name: 'Firebase Backend &amp; Database',             hours: 10, rate: 75 },
+      { name: 'Payment Deep Links (Venmo/PayPal)',           hours:  4, rate: 75 },
+      { name: 'Admin Dashboard — Order Management',          hours: 16, rate: 75 },
+      { name: 'Event Mode — Photo Capture &amp; Upload',     hours: 14, rate: 75 },
+      { name: 'Event Manager &amp; QR Code Generator',       hours:  8, rate: 75 },
+      { name: 'Email Notifications',                         hours:  4, rate: 75 },
+      { name: 'Testing, QA &amp; Accessibility Audit',       hours:  8, rate: 75 },
+      { name: 'Deployment &amp; Launch Support',             hours:  4, rate: 75 },
+    ];
+
+    const investTbody = document.getElementById('investment-table');
+    let grandTotal = 0;
+
+    deliverables.forEach(d => {
+      const cost = d.hours * d.rate;
+      grandTotal += cost;
+      const tr = document.createElement('tr');
+      tr.className = 'border-b border-border-dim';
+      tr.innerHTML = `
+        <td class="px-8 py-4">${d.name}</td>
+        <td class="px-8 py-4 text-right font-mono text-gray-500">${d.hours}h</td>
+        <td class="px-8 py-4 text-right font-mono">$${cost.toLocaleString()}</td>
+      `;
+      investTbody.appendChild(tr);
+    });
+
+    document.getElementById('project-total').textContent = `$${grandTotal.toLocaleString()}`;
+  })();
+  </script>
+
+</body>
+</html>

@@ -915,15 +915,48 @@ async def process_firebase_signatures() -> None:
                 mark_signature_processed(token)
                 continue
 
-            # Find contract in Postgres
+            # Find contract in Postgres by sign_token
             result = await session.execute(
                 select(Contract).where(Contract.sign_token == token)
             )
             contract = result.scalar_one_or_none()
+
+            # If contract doesn't exist in Postgres (created via Firebase fallback),
+            # create it from the signing data so it syncs to the local DB.
             if not contract:
-                logger.warning("Signature for unknown token %s — skipping", token)
-                mark_signature_processed(token)
-                continue
+                short_id = sig.get("short_id", token[:8])
+                # Check if short_id already exists (avoid duplicates)
+                existing = await session.execute(
+                    select(Contract).where(Contract.short_id == short_id)
+                )
+                contract = existing.scalar_one_or_none()
+                if contract:
+                    # Contract exists with different sign_token — update it
+                    contract.sign_token = token
+                else:
+                    logger.info("Creating contract %s from Firebase signing data", short_id)
+                    from datetime import datetime as dt_cls, timezone as tz_cls
+                    import uuid as uuid_mod
+                    contract = Contract(
+                        id=str(uuid_mod.uuid4()),
+                        short_id=short_id,
+                        client_name=sig.get("client_name", "Unknown"),
+                        client_email=sig.get("client_email", ""),
+                        project_name=sig.get("project_name", "Project"),
+                        project_description=sig.get("project_description", ""),
+                        total_amount=float(sig.get("total_amount", 0)),
+                        deposit_amount=float(sig.get("deposit_amount", 0)),
+                        payment_method=sig.get("payment_method", ""),
+                        payment_terms=sig.get("payment_terms", ""),
+                        clauses=sig.get("clauses", []),
+                        custom_notes=sig.get("custom_notes", ""),
+                        provider_name=sig.get("provider_name", "AjayaDesign"),
+                        provider_email=sig.get("provider_email", "ajayadesign@gmail.com"),
+                        sign_token=token,
+                        status="sent",
+                        sent_at=dt_cls.fromisoformat(sig["sent_at"]) if sig.get("sent_at") else dt_cls.now(tz_cls.utc),
+                    )
+                    session.add(contract)
 
             if contract.signed_at:
                 logger.info("Contract %s already signed — marking processed", contract.short_id)
