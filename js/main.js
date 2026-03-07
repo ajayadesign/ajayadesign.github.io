@@ -270,6 +270,44 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.classList.add('bg-green-600');
   });
 
+  // ── Lazy-Load Portfolio Iframes ──
+  // Only load iframes when their card is visible; unload when far off-screen.
+  // Caps concurrent iframes to avoid memory/CPU spikes that crash the tab.
+  const MAX_CONCURRENT_IFRAMES = 6;
+  const loadedIframes = new Set();
+
+  function loadIframe(iframe) {
+    if (!iframe.dataset.src || iframe.src) return;
+    iframe.src = iframe.dataset.src;
+    loadedIframes.add(iframe);
+  }
+
+  function unloadIframe(iframe) {
+    if (!iframe.src) return;
+    iframe.removeAttribute('src');
+    loadedIframes.delete(iframe);
+  }
+
+  const iframeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const iframe = entry.target.querySelector('iframe[data-src]');
+      if (!iframe) return;
+
+      if (entry.isIntersecting) {
+        // Enforce concurrency cap — evict oldest loaded iframe if at limit
+        if (loadedIframes.size >= MAX_CONCURRENT_IFRAMES) {
+          const oldest = loadedIframes.values().next().value;
+          unloadIframe(oldest);
+        }
+        loadIframe(iframe);
+      } else {
+        unloadIframe(iframe);
+      }
+    });
+  }, { rootMargin: '200px 0px' });
+
+  document.querySelectorAll('.project-card').forEach(card => iframeObserver.observe(card));
+
   // ── Portfolio Filtering ──
   const filterBtns = document.querySelectorAll('.filter-btn');
   const projectCards = document.querySelectorAll('.project-card');
