@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ajayadesign.github.io/dahal-event-planner/sitemap.xml
