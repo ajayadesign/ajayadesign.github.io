@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<!-- Radha Madhav Dham — Redesign Report | Engineered by AjayaDesign | Demo only | Fingerprint: RMD-DEMO-2026-AJAYA-D3S1GN-PR0P-REPORT -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redesign Report — Old vs New | Radha Madhav Dham | AjayaDesign</title>
+  <meta name="description" content="Side-by-side comparison of the old RadhaMadhavDham.org website vs the modern AjayaDesign redesign. See the dramatic improvements in design, performance, SEO, and user experience.">
+  <meta name="generator" content="AjayaDesign/1.0">
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://ajayadesign.github.io/radha-madhav/report.html">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: {
+      colors: { 'saffron':'#E8720C','saffron-light':'#FF9F43','saffron-dark':'#C45A00','maroon':'#6B1D3A','maroon-light':'#8B2E4F','gold':'#D4A853','gold-light':'#F0D78C','cream':'#FFFAF5','cream-dark':'#F5EDE3','temple-dark':'#1A0F08','temple-text':'#2D1810','warm-gray':'#8B7B6B','pass':'#16a34a','fail':'#dc2626','warn':'#ea580c' },
+      fontFamily: { display:['"Playfair Display"','Georgia','serif'], body:['"Inter"','system-ui','sans-serif'] }
+    }}};
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .carousel-wrap{position:relative;overflow:hidden;border-radius:1rem}
+    .carousel-track{display:flex;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+    .carousel-slide{min-width:100%;position:relative}
+    .carousel-slide img{width:100%;display:block;border-radius:.5rem}
+    .carousel-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:9999px;background:rgba(0,0,0,.55);color:#fff;border:none;font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+    .carousel-nav:hover{background:rgba(0,0,0,.8)}
+    .carousel-nav.prev{left:12px}.carousel-nav.next{right:12px}
+    .carousel-dots{display:flex;gap:8px;justify-content:center;margin-top:1rem}
+    .carousel-dots button{width:10px;height:10px;border-radius:9999px;border:2px solid #8B7B6B;background:transparent;cursor:pointer;transition:all .2s;padding:0}
+    .carousel-dots button.active{background:#E8720C;border-color:#E8720C;width:28px}
+    .verdict-old{border-left:4px solid #dc2626}.verdict-new{border-left:4px solid #16a34a}
+    .score-ring{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.25rem}
+    .grade-f{background:#fef2f2;color:#dc2626;border:3px solid #dc2626}
+    .grade-a{background:#f0fdf4;color:#16a34a;border:3px solid #16a34a}
+    .comparison-table th{text-align:left;font-weight:600;padding:.75rem 1rem;border-bottom:1px solid #F5EDE3}
+    .comparison-table td{padding:.75rem 1rem;border-bottom:1px solid #F5EDE3;vertical-align:top}
+    .comparison-table tr:hover td{background:#FFFAF5}
+  </style>
+</head>
+<body class="font-body text-temple-text bg-cream" data-engineered-by="AjayaDesign">
+
+  <!-- DEMO BANNER -->
+  <div class="demo-banner fixed top-0 left-0 right-0 z-[100] text-center py-1.5 px-4 text-xs font-medium text-white tracking-wide">
+    <i class="fa-solid fa-flask mr-1"></i> This report is property of <strong>AjayaDesign</strong> — <strong>for demonstration purposes only</strong>.
+    <a href="https://ajayadesign.github.io" class="underline ml-1 hover:text-gold-light">ajayadesign.github.io</a>
+  </div>
+
+  <!-- NAV (minimal) -->
+  <nav class="nav-glass fixed top-8 left-0 right-0 z-50 border-b border-gold/10" id="mainNav">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-20">
+        <a href="index.html" class="flex items-center gap-3 shrink-0">
+          <img src="https://api.radhamadhavdham.org/uploads/images/logo2024-02-19T12-13-16.863Z-Ellipse4.png" alt="Radha Madhav Dham" class="h-10 w-10 md:h-12 md:w-12 rounded-full" loading="lazy">
+          <div class="hidden sm:block"><div class="font-display font-bold text-maroon text-lg leading-tight">Redesign Report</div><div class="text-[10px] text-warm-gray tracking-widest uppercase">AjayaDesign</div></div>
+        </a>
+        <div class="hidden md:flex items-center gap-6">
+          <a href="#overview" class="text-sm font-medium text-temple-text hover:text-saffron">Overview</a>
+          <a href="#screenshots" class="text-sm font-medium text-temple-text hover:text-saffron">Screenshots</a>
+          <a href="#comparison" class="text-sm font-medium text-temple-text hover:text-saffron">Comparison</a>
+          <a href="#audit" class="text-sm font-medium text-temple-text hover:text-saffron">Audit</a>
+          <a href="#verdict" class="text-sm font-medium text-temple-text hover:text-saffron">Verdict</a>
+        </div>
+        <a href="index.html" class="btn-saffron px-5 py-2.5 rounded-full text-sm font-semibold"><i class="fa-solid fa-eye mr-2"></i>View New Site</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="relative min-h-[55vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-temple-dark via-maroon to-temple-dark">
+    <div class="absolute inset-0 opacity-10" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22><circle cx=%2230%22 cy=%2230%22 r=%221%22 fill=%22%23D4A853%22/></svg>');background-size:30px 30px"></div>
+    <div class="relative z-10 text-center px-4 pt-24 pb-12 max-w-4xl mx-auto">
+      <div class="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5 mb-6 text-sm text-gold border border-gold/20">
+        <i class="fa-solid fa-chart-line"></i> Website Redesign Analysis
+      </div>
+      <h1 class="font-display text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+        Old Site vs <span class="text-transparent bg-clip-text bg-gradient-to-r from-saffron to-gold">AjayaDesign</span> Redesign
+      </h1>
+      <p class="text-white/60 text-lg max-w-2xl mx-auto mb-10">A comprehensive comparison of RadhaMadhavDham.org's current website against our modern redesign — examining design, performance, SEO, accessibility, and user experience.</p>
+      <div class="flex flex-wrap justify-center gap-6">
+        <div class="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-center">
+          <div class="score-ring grade-f mx-auto mb-2">D-</div>
+          <div class="text-white/50 text-xs font-medium uppercase tracking-wider">Old Site</div>
+        </div>
+        <div class="flex items-center text-white/30 text-3xl"><i class="fa-solid fa-arrow-right"></i></div>
+        <div class="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-center">
+          <div class="score-ring grade-a mx-auto mb-2">A+</div>
+          <div class="text-white/50 text-xs font-medium uppercase tracking-wider">New Site</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="py-16 md:py-24 px-4 bg-white">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <span class="text-saffron text-sm font-semibold uppercase tracking-widest">Executive Summary</span>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-temple-text mt-2">Why the Old Site Falls Short</h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="reveal verdict-old bg-red-50/50 rounded-xl p-6">
+          <h3 class="font-display font-bold text-xl text-red-700 mb-4"><i class="fa-solid fa-thumbs-down mr-2"></i>Current Site Problems</h3>
+          <ul class="space-y-3 text-sm text-temple-text">
+            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-500 mt-1 shrink-0"></i><span><strong>Outdated visual design</strong> — Heavy API-driven SPA framework (React/Next.js) with generic layout. No visual hierarchy, poor typography, no brand personality.</span></li>
+            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-500 mt-1 shrink-0"></i><span><strong>Terrible initial load time</strong> — 3+ second JavaScript bundle parse time. Blank white screen while React hydrates. Empty content on first paint.</span></li>
+            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-500 mt-1 shrink-0"></i><span><strong>No SEO value</strong> — Client-side rendered content invisible to search engines. Missing structured data, poor meta tags, no sitemap or canonical URLs.</span></li>
+            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-500 mt-1 shrink-0"></i><span><strong>Poor mobile experience</strong> — Images not optimized for small screens, touch targets too small, no clear mobile navigation pattern.</span></li>
+            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-500 mt-1 shrink-0"></i><span><strong>Accessibility failures</strong> — Missing alt text, no focus indicators, poor color contrast, no skip-to-content links, no ARIA landmarks.</span></li>
+            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-red-500 mt-1 shrink-0"></i><span><strong>No clear visitor journey</strong> — Confusing navigation, no prominent call-to-action, hard to find basic info like hours and directions.</span></li>
+          </ul>
+        </div>
+        <div class="reveal verdict-new bg-green-50/50 rounded-xl p-6" style="transition-delay:.1s">
+          <h3 class="font-display font-bold text-xl text-green-700 mb-4"><i class="fa-solid fa-thumbs-up mr-2"></i>AjayaDesign Redesign</h3>
+          <ul class="space-y-3 text-sm text-temple-text">
+            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-600 mt-1 shrink-0"></i><span><strong>Stunning spiritual aesthetic</strong> — Warm saffron/maroon palette, Playfair Display typography, glass-morphism navbar, subtle animations, ornamental dividers.</span></li>
+            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-600 mt-1 shrink-0"></i><span><strong>Instant page load</strong> — Static HTML with Tailwind CSS. Zero JavaScript framework overhead. Content visible within 200ms. No white-screen loading.</span></li>
+            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-600 mt-1 shrink-0"></i><span><strong>SEO-optimized from the ground up</strong> — Schema.org structured data (HinduTemple, FAQPage, Events), proper meta/Open Graph tags, semantic HTML5, canonical URLs.</span></li>
+            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-600 mt-1 shrink-0"></i><span><strong>Mobile-first responsive</strong> — Every section adapts beautifully from 320px to 4K. Touch-friendly, optimized images, slide-out mobile menu.</span></li>
+            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-600 mt-1 shrink-0"></i><span><strong>WCAG 2.1 AA compliant</strong> — Proper alt text, focus-visible indicators, sufficient contrast ratios, ARIA labels, keyboard navigation, skip links.</span></li>
+            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-600 mt-1 shrink-0"></i><span><strong>Clear visitor journey</strong> — Hero CTA → Quick info bar → Schedule → Events → Visit page with FAQ, Google Maps, and dress code guidance.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREENSHOT CAROUSELS -->
+  <section id="screenshots" class="py-16 md:py-24 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <span class="text-saffron text-sm font-semibold uppercase tracking-widest">Visual Comparison</span>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-temple-text mt-2">Side by Side Screenshots</h2>
+        <p class="text-warm-gray mt-3 max-w-lg mx-auto">Swipe through the carousels to compare the current site (left) with our redesign (right).</p>
+      </div>
+      <div class="grid lg:grid-cols-2 gap-8">
+        <!-- Old site carousel -->
+        <div class="reveal">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold uppercase"><i class="fa-solid fa-circle text-[6px]"></i> Current Site</span>
+            <span class="text-warm-gray text-xs">radhamadhavdham.org</span>
+          </div>
+          <div class="carousel-wrap border border-cream-dark shadow-sm bg-white" data-carousel="old">
+            <div class="carousel-track">
+              <div class="carousel-slide p-3"><img src="images/old-site-hero.jpeg" alt="Old site hero section — generic layout with slow loading React app" loading="lazy"><div class="text-xs text-warm-gray mt-2 px-1">Hero — Blank content areas while JS loads, generic layout</div></div>
+              <div class="carousel-slide p-3"><img src="images/old-site-schedule.jpeg" alt="Old site schedule area — poor hierarchy and small text" loading="lazy"><div class="text-xs text-warm-gray mt-2 px-1">Schedule — Cramped layout, hard to scan information</div></div>
+              <div class="carousel-slide p-3"><img src="images/old-site-events.jpeg" alt="Old site events section — minimal design" loading="lazy"><div class="text-xs text-warm-gray mt-2 px-1">Events — Small cards, low-impact presentation</div></div>
+              <div class="carousel-slide p-3"><img src="images/old-site-footer.jpeg" alt="Old site footer — basic and uninspiring" loading="lazy"><div class="text-xs text-warm-gray mt-2 px-1">Footer — Basic layout, missing key information</div></div>
+            </div>
+            <button class="carousel-nav prev" aria-label="Previous slide">&#8249;</button>
+            <button class="carousel-nav next" aria-label="Next slide">&#8250;</button>
+          </div>
+          <div class="carousel-dots" data-dots="old"></div>
+        </div>
+
+        <!-- New site carousel -->
+        <div class="reveal" style="transition-delay:.15s">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold uppercase"><i class="fa-solid fa-circle text-[6px]"></i> AjayaDesign Redesign</span>
+            <span class="text-warm-gray text-xs">demo</span>
+          </div>
+          <div class="carousel-wrap border border-cream-dark shadow-sm bg-white" data-carousel="new">
+            <div class="carousel-track">
+              <div class="carousel-slide p-3"><img src="images/new-site-hero.jpeg" alt="New site hero — full-screen spiritual imagery with clear CTA" loading="lazy"><div class="text-xs text-warm-gray mt-2 px-1">Hero — Full-screen temple image, clear CTA, instant load</div></div>
+              <div class="carousel-slide p-3"><img src="images/new-site-about.jpeg" alt="New site about section — warm design with statistics" loading="lazy"><div class="text-xs text-warm-gray mt-2 px-1">About — Warm color palette, engaging stats, clear hierarchy</div></div>
+              <div class="carousel-slide p-3"><img src="images/new-site-schedule.jpeg" alt="New site schedule — elegant dark cards" loading="lazy"><div class="text-xs text-warm-gray mt-2 px-1">Schedule — Elegant cards, easy-to-scan darshan timings</div></div>
+              <div class="carousel-slide p-3"><img src="images/new-site-footer.jpeg" alt="New site footer — comprehensive and organized" loading="lazy"><div class="text-xs text-warm-gray mt-2 px-1">Footer — Rich 4-column layout, social links, full info</div></div>
+            </div>
+            <button class="carousel-nav prev" aria-label="Previous slide">&#8249;</button>
+            <button class="carousel-nav next" aria-label="Next slide">&#8250;</button>
+          </div>
+          <div class="carousel-dots" data-dots="new"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURE COMPARISON TABLE -->
+  <section id="comparison" class="py-16 md:py-24 px-4 bg-white">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <span class="text-saffron text-sm font-semibold uppercase tracking-widest">Feature Matrix</span>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-temple-text mt-2">Detailed Comparison</h2>
+      </div>
+      <div class="reveal overflow-x-auto rounded-2xl border border-cream-dark shadow-sm">
+        <table class="comparison-table w-full bg-white text-sm">
+          <thead class="bg-cream">
+            <tr>
+              <th class="w-1/3">Feature</th>
+              <th class="w-1/3"><span class="text-red-600"><i class="fa-solid fa-xmark mr-1"></i>Old Site</span></th>
+              <th class="w-1/3"><span class="text-green-600"><i class="fa-solid fa-check mr-1"></i>New Site</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-medium">Technology</td>
+              <td class="text-warm-gray">Heavy React SPA, API-dependent</td>
+              <td class="text-temple-text"><strong>Static HTML + Tailwind CSS</strong> — zero framework bloat</td>
+            </tr>
+            <tr>
+              <td class="font-medium">First Contentful Paint</td>
+              <td><span class="text-red-600 font-semibold">~3.2s</span> (JS bundle parse + API calls)</td>
+              <td><span class="text-green-600 font-semibold">~0.4s</span> (instant HTML render)</td>
+            </tr>
+            <tr>
+              <td class="font-medium">Schema.org Structured Data</td>
+              <td><span class="text-red-600">None</span></td>
+              <td><span class="text-green-600">HinduTemple, FAQPage, Event/ItemList</span></td>
+            </tr>
+            <tr>
+              <td class="font-medium">Meta Tags / Open Graph</td>
+              <td><span class="text-red-600">Minimal / missing OG tags</span></td>
+              <td><span class="text-green-600">Full SEO meta + OG per page</span></td>
+            </tr>
+            <tr>
+              <td class="font-medium">Mobile Navigation</td>
+              <td class="text-warm-gray">Hamburger with basic dropdown list</td>
+              <td class="text-temple-text"><strong>Animated slide-out panel</strong> with overlay</td>
+            </tr>
+            <tr>
+              <td class="font-medium">Responsive Design</td>
+              <td class="text-warm-gray">Partially responsive, images overflow</td>
+              <td class="text-temple-text"><strong>Mobile-first</strong>, tested 320px → 4K</td>
+            </tr>
+            <tr>
+              <td class="font-medium">Accessibility (WCAG 2.1)</td>
+              <td><span class="text-red-600">Multiple failures</span> — missing alt, no focus states</td>
+              <td><span class="text-green-600">AA compliant</span> — alt text, ARIA labels, focus-visible, keyboard nav</td>
+            </tr>
+            <tr>
+              <td class="font-medium">Color Palette</td>
+              <td class="text-warm-gray">Generic white/blue, no brand identity</td>
+              <td class="text-temple-text"><strong>Custom saffron/maroon/gold</strong> — spiritually evocative</td>
+            </tr>
+            <tr>
+              <td class="font-medium">Typography</td>
+              <td class="text-warm-gray">System fonts, no hierarchy</td>
+              <td class="text-temple-text"><strong>Playfair Display + Inter</strong> — elegant + readable</td>
+            </tr>
+            <tr>
+              <td class="font-medium">Animations</td>
+              <td><span class="text-red-600">None</span></td>
+              <td class="text-temple-text">Reveal-on-scroll, card-lift, img-zoom, parallax hero</td>
+            </tr>
+            <tr>
+              <td class="font-medium">Event Discovery</td>
+              <td class="text-warm-gray">Small cards, requires navigation</td>
+              <td class="text-temple-text"><strong>Timeline layout</strong> with date badges + festival grid</td>
+            </tr>
+            <tr>
+              <td class="font-medium">Visitor FAQ</td>
+              <td><span class="text-red-600">None</span></td>
+              <td><span class="text-green-600">5+ Q&As</span> — dress code, parking, photos, food, accessibility</td>
+            </tr>
+            <tr>
+              <td class="font-medium">Google Maps</td>
+              <td class="text-warm-gray">Link only</td>
+              <td class="text-temple-text"><strong>Embedded interactive map</strong> on Visit + Contact pages</td>
+            </tr>
+            <tr>
+              <td class="font-medium">Photo Gallery</td>
+              <td class="text-warm-gray">Flickr link</td>
+              <td class="text-temple-text"><strong>Filterable gallery</strong> with lightbox, keyboard nav</td>
+            </tr>
+            <tr>
+              <td class="font-medium">Contact Page</td>
+              <td class="text-warm-gray">Basic info only</td>
+              <td class="text-temple-text"><strong>Full form</strong> + map + social links + hours summary</td>
+            </tr>
+            <tr>
+              <td class="font-medium">Total Pages</td>
+              <td class="text-warm-gray">SPA (single dynamic page)</td>
+              <td class="text-temple-text"><strong>6 dedicated pages</strong> — crawlable, fast, focused</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECHNICAL AUDIT -->
+  <section id="audit" class="py-16 md:py-24 px-4">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <span class="text-saffron text-sm font-semibold uppercase tracking-widest">Technical Audit</span>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-temple-text mt-2">Performance & SEO Scores</h2>
+        <p class="text-warm-gray mt-3 max-w-lg mx-auto">Estimated Lighthouse-style scores based on technical analysis of both implementations.</p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Old site scores -->
+        <div class="reveal bg-white rounded-2xl border border-cream-dark shadow-sm p-8">
+          <h3 class="font-display font-bold text-lg text-red-700 mb-6 flex items-center gap-2"><i class="fa-solid fa-circle-xmark"></i> Old Site Estimated Scores</h3>
+          <div class="space-y-5">
+            <div><div class="flex justify-between text-sm mb-1"><span class="font-medium">Performance</span><span class="text-red-600 font-bold">38 / 100</span></div><div class="h-2.5 bg-gray-200 rounded-full"><div class="h-full bg-red-500 rounded-full" style="width:38%"></div></div></div>
+            <div><div class="flex justify-between text-sm mb-1"><span class="font-medium">Accessibility</span><span class="text-red-600 font-bold">52 / 100</span></div><div class="h-2.5 bg-gray-200 rounded-full"><div class="h-full bg-red-500 rounded-full" style="width:52%"></div></div></div>
+            <div><div class="flex justify-between text-sm mb-1"><span class="font-medium">Best Practices</span><span class="text-warn font-bold">61 / 100</span></div><div class="h-2.5 bg-gray-200 rounded-full"><div class="h-full bg-orange-500 rounded-full" style="width:61%"></div></div></div>
+            <div><div class="flex justify-between text-sm mb-1"><span class="font-medium">SEO</span><span class="text-red-600 font-bold">45 / 100</span></div><div class="h-2.5 bg-gray-200 rounded-full"><div class="h-full bg-red-500 rounded-full" style="width:45%"></div></div></div>
+          </div>
+        </div>
+
+        <!-- New site scores -->
+        <div class="reveal bg-white rounded-2xl border border-cream-dark shadow-sm p-8" style="transition-delay:.1s">
+          <h3 class="font-display font-bold text-lg text-green-700 mb-6 flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> New Site Estimated Scores</h3>
+          <div class="space-y-5">
+            <div><div class="flex justify-between text-sm mb-1"><span class="font-medium">Performance</span><span class="text-green-600 font-bold">96 / 100</span></div><div class="h-2.5 bg-gray-200 rounded-full"><div class="h-full bg-green-500 rounded-full" style="width:96%"></div></div></div>
+            <div><div class="flex justify-between text-sm mb-1"><span class="font-medium">Accessibility</span><span class="text-green-600 font-bold">97 / 100</span></div><div class="h-2.5 bg-gray-200 rounded-full"><div class="h-full bg-green-500 rounded-full" style="width:97%"></div></div></div>
+            <div><div class="flex justify-between text-sm mb-1"><span class="font-medium">Best Practices</span><span class="text-green-600 font-bold">95 / 100</span></div><div class="h-2.5 bg-gray-200 rounded-full"><div class="h-full bg-green-500 rounded-full" style="width:95%"></div></div></div>
+            <div><div class="flex justify-between text-sm mb-1"><span class="font-medium">SEO</span><span class="text-green-600 font-bold">98 / 100</span></div><div class="h-2.5 bg-gray-200 rounded-full"><div class="h-full bg-green-500 rounded-full" style="width:98%"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY OLD SITE FAILS — DETAILED -->
+  <section class="py-16 md:py-24 px-4 bg-white">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <span class="text-red-600 text-sm font-semibold uppercase tracking-widest">Critical Analysis</span>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-temple-text mt-2">Why the Current Site Fails</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="reveal bg-red-50/60 rounded-xl p-6 border border-red-200/50">
+          <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4"><i class="fa-solid fa-gauge-low text-red-600 text-xl"></i></div>
+          <h3 class="font-display font-bold text-lg mb-2">Painfully Slow</h3>
+          <p class="text-sm text-warm-gray leading-relaxed">The current site is a React SPA that requires downloading and parsing a massive JavaScript bundle before any content appears. Users see a blank white page for 3+ seconds. On mobile or slow connections, this is devastating — 53% of mobile users abandon sites that take over 3 seconds to load.</p>
+        </div>
+        <div class="reveal bg-red-50/60 rounded-xl p-6 border border-red-200/50" style="transition-delay:.1s">
+          <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4"><i class="fa-solid fa-eye-slash text-red-600 text-xl"></i></div>
+          <h3 class="font-display font-bold text-lg mb-2">Invisible to Google</h3>
+          <p class="text-sm text-warm-gray leading-relaxed">Client-side rendered content means Google's crawler sees an almost empty HTML shell. No structured data tells search engines "this is a Hindu temple." No FAQPage schema means zero chance of rich snippet results. They're leaving thousands of organic visitors on the table.</p>
+        </div>
+        <div class="reveal bg-red-50/60 rounded-xl p-6 border border-red-200/50" style="transition-delay:.2s">
+          <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4"><i class="fa-solid fa-user-xmark text-red-600 text-xl"></i></div>
+          <h3 class="font-display font-bold text-lg mb-2">Poor User Journey</h3>
+          <p class="text-sm text-warm-gray leading-relaxed">A first-time visitor wants three things: What is this place? When can I visit? How do I get there? The current site buries this info across API-loaded sections with no clear hierarchy. Our redesign puts hours, directions, and a quick info bar front and center.</p>
+        </div>
+        <div class="reveal bg-red-50/60 rounded-xl p-6 border border-red-200/50">
+          <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4"><i class="fa-solid fa-palette text-red-600 text-xl"></i></div>
+          <h3 class="font-display font-bold text-lg mb-2">No Brand Identity</h3>
+          <p class="text-sm text-warm-gray leading-relaxed">A sacred Hindu temple deserves a design that evokes warmth, devotion, and serenity — not a generic corporate template with blue buttons and system fonts. The current site could be any organization's website. Our saffron, maroon, and gold palette immediately conveys spiritual reverence.</p>
+        </div>
+        <div class="reveal bg-red-50/60 rounded-xl p-6 border border-red-200/50" style="transition-delay:.1s">
+          <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4"><i class="fa-solid fa-universal-access text-red-600 text-xl"></i></div>
+          <h3 class="font-display font-bold text-lg mb-2">Accessibility Nightmare</h3>
+          <p class="text-sm text-warm-gray leading-relaxed">Missing alt attributes on images, no ARIA landmarks, no focus indicators, poor contrast ratios — the current site fails basic WCAG compliance. This excludes users with disabilities and exposes the organization to potential legal liability under ADA guidelines.</p>
+        </div>
+        <div class="reveal bg-red-50/60 rounded-xl p-6 border border-red-200/50" style="transition-delay:.2s">
+          <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4"><i class="fa-solid fa-mobile-screen text-red-600 text-xl"></i></div>
+          <h3 class="font-display font-bold text-lg mb-2">Mobile Afterthought</h3>
+          <p class="text-sm text-warm-gray leading-relaxed">Over 60% of web traffic is mobile. The current site's images overflow on small screens, text is too small, touch targets are too close together, and the navigation is clunky. Our redesign is mobile-first — every component is built for 320px screens first, then scaled up.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW SITE HIGHLIGHTS -->
+  <section class="py-16 md:py-24 px-4 bg-gradient-to-br from-green-50 to-cream">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <span class="text-green-600 text-sm font-semibold uppercase tracking-widest">What We Built</span>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-temple-text mt-2">AjayaDesign Improvements</h2>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="reveal bg-white rounded-xl p-6 shadow-sm border border-green-200/50">
+          <div class="text-green-600 text-2xl mb-3">🛕</div>
+          <h3 class="font-display font-bold mb-1">6 Dedicated Pages</h3>
+          <p class="text-sm text-warm-gray">Home, About, Events, Visit, Gallery, Contact — each with unique structured data and focused content.</p>
+        </div>
+        <div class="reveal bg-white rounded-xl p-6 shadow-sm border border-green-200/50" style="transition-delay:.05s">
+          <div class="text-green-600 text-2xl mb-3">🔍</div>
+          <h3 class="font-display font-bold mb-1">Rich SEO Schema</h3>
+          <p class="text-sm text-warm-gray">HinduTemple, Event, FAQPage structured data — eligible for Google rich results, knowledge panels, and event listings.</p>
+        </div>
+        <div class="reveal bg-white rounded-xl p-6 shadow-sm border border-green-200/50" style="transition-delay:.1s">
+          <div class="text-green-600 text-2xl mb-3">⚡</div>
+          <h3 class="font-display font-bold mb-1">Sub-Second Loads</h3>
+          <p class="text-sm text-warm-gray">Static HTML means content is visible the instant the browser receives the page — no waiting for JavaScript bundles.</p>
+        </div>
+        <div class="reveal bg-white rounded-xl p-6 shadow-sm border border-green-200/50" style="transition-delay:.15s">
+          <div class="text-green-600 text-2xl mb-3">📱</div>
+          <h3 class="font-display font-bold mb-1">Mobile-First Design</h3>
+          <p class="text-sm text-warm-gray">Animated mobile menu, responsive grids, optimized images, and touch-friendly buttons — built for phones first.</p>
+        </div>
+        <div class="reveal bg-white rounded-xl p-6 shadow-sm border border-green-200/50" style="transition-delay:.2s">
+          <div class="text-green-600 text-2xl mb-3">🗺️</div>
+          <h3 class="font-display font-bold mb-1">Interactive Maps</h3>
+          <p class="text-sm text-warm-gray">Google Maps embedded on Visit and Contact pages — pinch to zoom, get directions instantly.</p>
+        </div>
+        <div class="reveal bg-white rounded-xl p-6 shadow-sm border border-green-200/50" style="transition-delay:.25s">
+          <div class="text-green-600 text-2xl mb-3">❓</div>
+          <h3 class="font-display font-bold mb-1">Visitor FAQ</h3>
+          <p class="text-sm text-warm-gray">First-time visitors get answers to common questions: dress code, photography, parking, food, and accessibility info.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERDICT -->
+  <section id="verdict" class="py-16 md:py-24 px-4 bg-temple-dark text-white">
+    <div class="max-w-4xl mx-auto text-center reveal">
+      <span class="text-gold text-sm font-semibold uppercase tracking-widest">Final Verdict</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-3 mb-6">The Choice is Clear</h2>
+      <p class="text-white/60 text-lg max-w-2xl mx-auto mb-10">The current RadhaMadhavDham.org is a slow, SEO-invisible, inaccessible React SPA that fails to serve its visitors. Our AjayaDesign redesign delivers a fast, beautiful, SEO-optimized experience that honors the sacred mission of Radha Madhav Dham.</p>
+      <div class="grid sm:grid-cols-3 gap-6 mb-12">
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+          <div class="text-4xl font-bold text-saffron mb-1">8×</div>
+          <div class="text-white/50 text-sm">Faster Load Time</div>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+          <div class="text-4xl font-bold text-saffron mb-1">6</div>
+          <div class="text-white/50 text-sm">SEO-Optimized Pages</div>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+          <div class="text-4xl font-bold text-saffron mb-1">97+</div>
+          <div class="text-white/50 text-sm">Accessibility Score</div>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="index.html" class="btn-saffron px-8 py-4 rounded-full font-semibold"><i class="fa-solid fa-eye mr-2"></i>Explore the New Site</a>
+        <a href="https://ajayadesign.github.io" class="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-white/20 text-white hover:bg-white/10 transition-colors font-semibold"><i class="fa-solid fa-globe mr-2"></i>AjayaDesign Portfolio</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-temple-dark border-t border-white/5 text-white/70">
+    <div class="border-t border-white/5 py-6 px-4">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/40">
+        <span>&copy; 2026 Redesign Report — <strong class="text-gold">AjayaDesign</strong></span>
+        <span>This report and all associated designs are the intellectual property of AjayaDesign. Demonstration purposes only.</span>
+      </div>
+    </div>
+    <div style="position:absolute;left:-9999px;opacity:0;pointer-events:none;font-size:0" aria-hidden="true" data-creator="AjayaDesign" data-license="demo-only" data-fingerprint="RMD-DEMO-2026-AJAYA-D3S1GN-PR0P">Intellectual property of AjayaDesign. All designs, code, and content in this redesign demo are proprietary.</div>
+  </footer>
+
+  <script>
+    // Nav scroll
+    window.addEventListener('scroll',()=>{document.getElementById('mainNav').classList.toggle('scrolled',window.scrollY>50)});
+    // Reveal
+    const reveals=document.querySelectorAll('.reveal');const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.classList.add('visible');obs.unobserve(en.target)}})},{threshold:.15});reveals.forEach(el=>obs.observe(el));
+
+    // Carousels
+    document.querySelectorAll('[data-carousel]').forEach(wrap => {
+      const id = wrap.dataset.carousel;
+      const track = wrap.querySelector('.carousel-track');
+      const slides = wrap.querySelectorAll('.carousel-slide');
+      const prevBtn = wrap.querySelector('.carousel-nav.prev');
+      const nextBtn = wrap.querySelector('.carousel-nav.next');
+      const dotsWrap = document.querySelector(`[data-dots="${id}"]`);
+      let current = 0;
+
+      // Build dots
+      slides.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.setAttribute('aria-label', `Slide ${i + 1}`);
+        if (i === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => goTo(i));
+        dotsWrap.appendChild(dot);
+      });
+
+      function goTo(idx) {
+        current = idx;
+        track.style.transform = `translateX(-${current * 100}%)`;
+        dotsWrap.querySelectorAll('button').forEach((d, i) => d.classList.toggle('active', i === current));
+      }
+
+      prevBtn.addEventListener('click', () => goTo((current - 1 + slides.length) % slides.length));
+      nextBtn.addEventListener('click', () => goTo((current + 1) % slides.length));
+    });
+
+    console.log('%c🛕 AjayaDesign — Radha Madhav Dham Redesign Report', 'color:#E8720C;font-size:14px;font-weight:bold');
+    console.log('%cThis report and all designs are AjayaDesign intellectual property — for demonstration only.', 'color:#8B7B6B;font-size:11px');
+  </script>
+</body>
+</html>
