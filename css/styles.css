@@ -82,3 +82,16 @@ body {
 @keyframes blink {
   50% { opacity: 0; }
 }
+
+/* ── Portfolio Filter ── */
+.project-card {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.project-card.filter-hidden {
+  display: none;
+}
+.filter-btn.active {
+  border-color: rgba(237, 28, 36, 0.6) !important;
+  background: rgba(237, 28, 36, 0.1) !important;
+  color: #FF6B6B !important;
+}

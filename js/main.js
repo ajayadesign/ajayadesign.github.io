@@ -270,4 +270,47 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.classList.add('bg-green-600');
   });
 
+  // ── Portfolio Filtering ──
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const projectCards = document.querySelectorAll('.project-card');
+  const filterPath = document.getElementById('filter-path');
+  const filterCount = document.getElementById('filter-count');
+
+  if (filterBtns.length && projectCards.length) {
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+
+        // Update active state
+        filterBtns.forEach(b => {
+          b.classList.remove('active');
+          b.classList.add('border-border-dim', 'text-gray-400');
+        });
+        btn.classList.add('active');
+        btn.classList.remove('border-border-dim', 'text-gray-400');
+
+        // Update terminal path
+        if (filterPath) {
+          filterPath.textContent = filter === 'all' ? '*' : filter + '/';
+        }
+
+        // Filter cards
+        let count = 0;
+        projectCards.forEach(card => {
+          const tags = (card.dataset.tags || '').split(',');
+          const match = filter === 'all' || tags.includes(filter);
+          if (match) {
+            card.classList.remove('filter-hidden');
+            count++;
+          } else {
+            card.classList.add('filter-hidden');
+          }
+        });
+
+        // Update count
+        if (filterCount) filterCount.textContent = count;
+      });
+    });
+  }
+
 });
