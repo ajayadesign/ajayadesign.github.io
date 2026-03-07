@@ -43,12 +43,22 @@
     .screenshot-frame::-webkit-scrollbar { width: 3px; }
     .screenshot-frame::-webkit-scrollbar-thumb { background: #14b8a6; border-radius: 9px; }
     .screenshot-frame img { width: 100%; display: block; }
-    .carousel-container { position: relative; overflow: hidden; }
-    .carousel-track { display: flex; transition: transform .5s cubic-bezier(.4,0,.2,1); }
-    .carousel-slide { min-width: 100%; padding: 0 1rem; }
-    .dot-active { background: #14b8a6 !important; transform: scale(1.3); }
     .meter-bar { height: 8px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
     .meter-fill { height: 100%; border-radius: 999px; transition: width 1s ease; }
+    /* Tabbed viewer */
+    .tab-btn { transition: all .3s ease; position: relative; }
+    .tab-btn.active { color: #14b8a6; background: rgba(20,184,166,.08); }
+    .tab-btn.active::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); width: 60%; height: 3px; background: #14b8a6; border-radius: 999px; }
+    .tab-panel { display: none; animation: fadeSlideIn .4s ease; }
+    .tab-panel.active { display: block; }
+    @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    /* Page gallery */
+    .page-card { transition: all .3s ease; }
+    .page-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,.1); }
+    .page-card:hover .page-thumb { transform: scale(1.03); }
+    .page-thumb { transition: transform .4s ease; }
+    .page-card .page-overlay { opacity: 0; transition: opacity .3s ease; }
+    .page-card:hover .page-overlay { opacity: 1; }
   </style>
 </head>
 
@@ -79,15 +89,15 @@
       <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
         <span class="inline-block px-4 py-1.5 bg-white/10 backdrop-blur rounded-full text-ev-teal-light text-sm font-medium mb-6 border border-white/20">📊 Website Redesign Report</span>
         <h1 class="font-display text-4xl md:text-6xl font-extrabold text-white mb-4">Old vs. New <span class="bg-gradient-to-r from-ev-teal to-ev-sky bg-clip-text text-transparent">Side by Side</span></h1>
-        <p class="text-lg text-gray-300 max-w-2xl mx-auto">A comprehensive comparison showing how the Everest Phones website was transformed from a basic landing page into a modern, multi-page, SEO-optimized experience.</p>
+        <p class="text-lg text-gray-300 max-w-2xl mx-auto">A comprehensive comparison showing how Everest Phones' fragmented, multi-domain web presence was unified into a modern, cohesive, SEO-optimized experience.</p>
         <div class="flex flex-wrap justify-center gap-6 mt-10">
           <div class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/20 text-center min-w-[140px]">
-            <div class="text-3xl font-extrabold text-white">1</div>
-            <div class="text-gray-300 text-sm mt-1">Old Page</div>
+            <div class="text-3xl font-extrabold text-danger">3</div>
+            <div class="text-gray-300 text-sm mt-1">Fragmented Pages</div>
           </div>
           <div class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/20 text-center min-w-[140px]">
             <div class="text-3xl font-extrabold text-ev-teal-light">6</div>
-            <div class="text-gray-300 text-sm mt-1">New Pages</div>
+            <div class="text-gray-300 text-sm mt-1">Unified Pages</div>
           </div>
           <div class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/20 text-center min-w-[140px]">
             <div class="text-3xl font-extrabold text-ev-sky">100%</div>
@@ -113,18 +123,18 @@
               <div class="score-ring bg-red-100 text-danger">2/10</div>
               <div>
                 <h3 class="font-display font-bold text-lg text-danger">Old Website</h3>
-                <p class="text-gray-500 text-sm">Single page, minimal content</p>
+                <p class="text-gray-500 text-sm">3 disjointed pages, no cohesion</p>
               </div>
             </div>
             <ul class="space-y-3">
-              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">Single-page layout with minimal business information</span></li>
-              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">No SEO optimization — zero meta tags, no schema, no OG tags</span></li>
-              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">No structured data for search engines to understand</span></li>
-              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">Generic design with no brand identity or visual hierarchy</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm"><strong>Splash page</strong> — just a logo and two buttons (Wholesale / Retail), zero useful content</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm"><strong>Grade List</strong> — plain text list of grades on a separate page, poor formatting</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm"><strong>Retail Site</strong> — a basic page with broken carousel images and inconsistent design</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">Three separate pages with different designs — no unified brand identity</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">No SEO — zero meta tags, no schema markup, no OG tags on any page</span></li>
               <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">No dedicated services, about, FAQ, or contact pages</span></li>
-              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">Phone grading system not documented for customers</span></li>
-              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">Missing mobile-friendly responsive design elements</span></li>
-              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">No call-to-action elements or customer conversion paths</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">Grading system poorly documented — just a wall of text</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">No customer conversion paths, contact forms, or map integration</span></li>
             </ul>
           </div>
 
@@ -227,9 +237,9 @@
             </div>
             <div class="grid sm:grid-cols-2 gap-4 text-sm">
               <div class="space-y-2 text-gray-500">
-                <p><span class="text-danger font-bold">✗</span> Single page with limited info</p>
-                <p><span class="text-danger font-bold">✗</span> Grading system not explained</p>
-                <p><span class="text-danger font-bold">✗</span> No FAQ, no detailed service info</p>
+                <p><span class="text-danger font-bold">✗</span> 3 disjointed pages with no content strategy</p>
+                <p><span class="text-danger font-bold">✗</span> Grading system poorly documented (text wall)</p>
+                <p><span class="text-danger font-bold">✗</span> No FAQ, no services breakdown, no about page</p>
               </div>
               <div class="space-y-2 text-gray-500">
                 <p><span class="text-success font-bold">✓</span> 6 pages: Home, Services, About, FAQ, Contact, Report</p>
@@ -299,164 +309,336 @@
     </section>
 
 
-    <!-- ═══ SCREENSHOT CAROUSEL ═══ -->
-    <section class="py-20 bg-white" id="carousel-section">
+    <!-- ═══ SCREENSHOT COMPARISON — TABBED VIEWER ═══ -->
+    <section class="py-20 bg-white" id="comparison-section">
       <div class="max-w-6xl mx-auto px-6">
         <div class="text-center mb-12">
           <p class="text-ev-teal font-semibold text-sm tracking-wider uppercase">Visual Comparison</p>
-          <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-ev-navy mt-3">Screenshot Carousel — Old vs. New</h2>
-          <p class="text-gray-500 mt-2">Navigate through side-by-side comparisons of each page.</p>
+          <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-ev-navy mt-3">Old vs. New — Side by Side</h2>
+          <p class="text-gray-500 mt-2">Click any tab to compare the old fragmented pages with the new unified design.</p>
         </div>
 
-        <div class="carousel-container rounded-3xl bg-ev-surface border border-ev-border p-4 md:p-8 shadow-lg">
-          <!-- Controls -->
-          <div class="flex items-center justify-between mb-6">
-            <button id="rpt-prev" class="w-10 h-10 bg-ev-teal/10 rounded-full flex items-center justify-center hover:bg-ev-teal/20 transition-colors" aria-label="Previous">
-              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
-            </button>
-            <div class="text-center">
-              <span id="rpt-slide-label" class="font-display font-bold text-xl text-ev-navy">Homepage</span>
-              <span id="rpt-slide-counter" class="block text-sm text-gray-400 mt-1">1 / 5</span>
-            </div>
-            <button id="rpt-next" class="w-10 h-10 bg-ev-teal/10 rounded-full flex items-center justify-center hover:bg-ev-teal/20 transition-colors" aria-label="Next">
-              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
-            </button>
-          </div>
+        <!-- Tabs -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8" id="comparison-tabs" role="tablist">
+          <button class="tab-btn active px-4 py-2.5 rounded-xl text-sm font-semibold" data-tab="landing" role="tab" aria-selected="true">Landing Page</button>
+          <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:text-ev-teal" data-tab="gradelist" role="tab" aria-selected="false">Grade List</button>
+          <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:text-ev-teal" data-tab="retail" role="tab" aria-selected="false">Retail Site</button>
+          <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:text-ev-teal" data-tab="services" role="tab" aria-selected="false">Services</button>
+          <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:text-ev-teal" data-tab="about" role="tab" aria-selected="false">About</button>
+          <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:text-ev-teal" data-tab="faq" role="tab" aria-selected="false">FAQ</button>
+          <button class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:text-ev-teal" data-tab="contact" role="tab" aria-selected="false">Contact</button>
+        </div>
 
-          <!-- Slides -->
-          <div class="carousel-track" id="rpt-carousel-track">
-            <!-- Slide 1: Homepage -->
-            <div class="carousel-slide" data-label="Homepage">
-              <div class="comparison-grid">
-                <div>
-                  <div class="flex items-center gap-2 mb-3"><span class="tag-old px-3 py-1 rounded-full text-xs font-medium">OLD</span><span class="text-sm text-gray-400">everestphones.com</span></div>
-                  <div class="screenshot-frame border border-red-200"><img src="screenshots/old-index.png" alt="Old homepage screenshot" loading="lazy"></div>
-                </div>
-                <div>
-                  <div class="flex items-center gap-2 mb-3"><span class="tag-new px-3 py-1 rounded-full text-xs font-medium">NEW</span><span class="text-sm text-gray-400">index.html</span></div>
-                  <div class="screenshot-frame border border-green-200"><img src="screenshots/new-index.png" alt="New homepage screenshot" loading="lazy"></div>
-                </div>
-              </div>
+        <!-- Tab Panels -->
+        <div class="rounded-3xl bg-ev-surface border border-ev-border p-4 md:p-8 shadow-lg">
+
+          <!-- Landing Page -->
+          <div class="tab-panel active" data-panel="landing" role="tabpanel">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-danger text-xs font-bold border border-red-200">OLD</span>
+              <span class="text-sm text-gray-500">Splash screen — everestphones.com</span>
+              <span class="mx-2 text-gray-300">→</span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-success text-xs font-bold border border-green-200">NEW</span>
+              <span class="text-sm text-gray-500">Full homepage — index.html</span>
             </div>
-            <!-- Slide 2: Services -->
-            <div class="carousel-slide" data-label="Services">
-              <div class="comparison-grid">
-                <div>
-                  <div class="flex items-center gap-2 mb-3"><span class="tag-old px-3 py-1 rounded-full text-xs font-medium">OLD</span><span class="text-sm text-gray-400">N/A — no services page</span></div>
-                  <div class="screenshot-frame border border-red-200 flex items-center justify-center h-64 bg-red-50">
-                    <div class="text-center p-6"><span class="text-3xl mb-2 block">🚫</span><p class="text-sm text-gray-400">No services page existed</p></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex items-center gap-2 mb-3"><span class="tag-new px-3 py-1 rounded-full text-xs font-medium">NEW</span><span class="text-sm text-gray-400">services.html</span></div>
-                  <div class="screenshot-frame border border-green-200"><img src="screenshots/new-services.png" alt="New services page screenshot" loading="lazy"></div>
-                </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <div class="screenshot-frame border border-red-200"><img src="screenshots/old-index.png" alt="Old landing splash page" loading="lazy"></div>
+                <p class="text-xs text-gray-400 mt-3 text-center">Just a logo and two buttons — no content, no SEO, no information</p>
               </div>
-            </div>
-            <!-- Slide 3: About -->
-            <div class="carousel-slide" data-label="About &amp; Grading">
-              <div class="comparison-grid">
-                <div>
-                  <div class="flex items-center gap-2 mb-3"><span class="tag-old px-3 py-1 rounded-full text-xs font-medium">OLD</span><span class="text-sm text-gray-400">N/A — no about page</span></div>
-                  <div class="screenshot-frame border border-red-200 flex items-center justify-center h-64 bg-red-50">
-                    <div class="text-center p-6"><span class="text-3xl mb-2 block">🚫</span><p class="text-sm text-gray-400">No about page existed</p></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex items-center gap-2 mb-3"><span class="tag-new px-3 py-1 rounded-full text-xs font-medium">NEW</span><span class="text-sm text-gray-400">about.html</span></div>
-                  <div class="screenshot-frame border border-green-200"><img src="screenshots/new-about.png" alt="New about page screenshot" loading="lazy"></div>
-                </div>
-              </div>
-            </div>
-            <!-- Slide 4: FAQ -->
-            <div class="carousel-slide" data-label="FAQ">
-              <div class="comparison-grid">
-                <div>
-                  <div class="flex items-center gap-2 mb-3"><span class="tag-old px-3 py-1 rounded-full text-xs font-medium">OLD</span><span class="text-sm text-gray-400">N/A — no FAQ page</span></div>
-                  <div class="screenshot-frame border border-red-200 flex items-center justify-center h-64 bg-red-50">
-                    <div class="text-center p-6"><span class="text-3xl mb-2 block">🚫</span><p class="text-sm text-gray-400">No FAQ page existed</p></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex items-center gap-2 mb-3"><span class="tag-new px-3 py-1 rounded-full text-xs font-medium">NEW</span><span class="text-sm text-gray-400">faq.html</span></div>
-                  <div class="screenshot-frame border border-green-200"><img src="screenshots/new-faq.png" alt="New FAQ page screenshot" loading="lazy"></div>
-                </div>
-              </div>
-            </div>
-            <!-- Slide 5: Contact -->
-            <div class="carousel-slide" data-label="Contact">
-              <div class="comparison-grid">
-                <div>
-                  <div class="flex items-center gap-2 mb-3"><span class="tag-old px-3 py-1 rounded-full text-xs font-medium">OLD</span><span class="text-sm text-gray-400">N/A — no contact page</span></div>
-                  <div class="screenshot-frame border border-red-200 flex items-center justify-center h-64 bg-red-50">
-                    <div class="text-center p-6"><span class="text-3xl mb-2 block">🚫</span><p class="text-sm text-gray-400">No dedicated contact page existed</p></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex items-center gap-2 mb-3"><span class="tag-new px-3 py-1 rounded-full text-xs font-medium">NEW</span><span class="text-sm text-gray-400">contact.html</span></div>
-                  <div class="screenshot-frame border border-green-200"><img src="screenshots/new-contact.png" alt="New contact page screenshot" loading="lazy"></div>
-                </div>
+              <div>
+                <div class="screenshot-frame border border-green-200"><img src="screenshots/new-index.png" alt="New homepage" loading="lazy"></div>
+                <p class="text-xs text-gray-400 mt-3 text-center">Full hero, carriers, services, grading preview, stats, CTAs</p>
               </div>
             </div>
           </div>
 
-          <!-- Dots -->
-          <div class="flex justify-center gap-2 mt-6" id="rpt-carousel-dots"></div>
+          <!-- Grade List -->
+          <div class="tab-panel" data-panel="gradelist" role="tabpanel">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-danger text-xs font-bold border border-red-200">OLD</span>
+              <span class="text-sm text-gray-500">Grade list — everestphones.com/grade-list</span>
+              <span class="mx-2 text-gray-300">→</span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-success text-xs font-bold border border-green-200">NEW</span>
+              <span class="text-sm text-gray-500">Integrated into — about.html</span>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <div class="screenshot-frame border border-red-200"><img src="screenshots/old-gradelist.png" alt="Old grade list page" loading="lazy"></div>
+                <p class="text-xs text-gray-400 mt-3 text-center">Plain text wall of grades — different UI from landing, no nav consistency</p>
+              </div>
+              <div>
+                <div class="screenshot-frame border border-green-200"><img src="screenshots/new-about.png" alt="New about page with grading" loading="lazy"></div>
+                <p class="text-xs text-gray-400 mt-3 text-center">Full 8-grade system with visual cards, battery health, and clear hierarchy</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Retail Site -->
+          <div class="tab-panel" data-panel="retail" role="tabpanel">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-danger text-xs font-bold border border-red-200">OLD</span>
+              <span class="text-sm text-gray-500">Retail site — everestphones.com/retail-site</span>
+              <span class="mx-2 text-gray-300">→</span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-success text-xs font-bold border border-green-200">NEW</span>
+              <span class="text-sm text-gray-500">Unified homepage — index.html</span>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <div class="screenshot-frame border border-red-200"><img src="screenshots/old-retail.png" alt="Old retail site page" loading="lazy"></div>
+                <p class="text-xs text-gray-400 mt-3 text-center">Broken carousel images, completely different design from other pages, basic layout</p>
+              </div>
+              <div>
+                <div class="screenshot-frame border border-green-200"><img src="screenshots/new-index.png" alt="New unified homepage" loading="lazy"></div>
+                <p class="text-xs text-gray-400 mt-3 text-center">All retail content unified into one cohesive, professionally designed homepage</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Services (no old equivalent) -->
+          <div class="tab-panel" data-panel="services" role="tabpanel">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-danger text-xs font-bold border border-red-200">OLD</span>
+              <span class="text-sm text-gray-500">No services page existed</span>
+              <span class="mx-2 text-gray-300">→</span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-success text-xs font-bold border border-green-200">NEW</span>
+              <span class="text-sm text-gray-500">Dedicated — services.html</span>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <div class="screenshot-frame border border-red-200 flex items-center justify-center bg-red-50/50" style="min-height:400px">
+                  <div class="text-center p-8">
+                    <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4"><svg class="w-8 h-8 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg></div>
+                    <p class="text-sm font-medium text-danger">No Page Existed</p>
+                    <p class="text-xs text-gray-400 mt-1">Services were not listed anywhere on the old site</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="screenshot-frame border border-green-200"><img src="screenshots/new-services.png" alt="New services page" loading="lazy"></div>
+                <p class="text-xs text-gray-400 mt-3 text-center">6 repair types, phone sales, carrier unlocking, wholesale, prepaid plans</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- About (no old equivalent) -->
+          <div class="tab-panel" data-panel="about" role="tabpanel">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-danger text-xs font-bold border border-red-200">OLD</span>
+              <span class="text-sm text-gray-500">No about page existed</span>
+              <span class="mx-2 text-gray-300">→</span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-success text-xs font-bold border border-green-200">NEW</span>
+              <span class="text-sm text-gray-500">Dedicated — about.html</span>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <div class="screenshot-frame border border-red-200 flex items-center justify-center bg-red-50/50" style="min-height:400px">
+                  <div class="text-center p-8">
+                    <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4"><svg class="w-8 h-8 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg></div>
+                    <p class="text-sm font-medium text-danger">No Page Existed</p>
+                    <p class="text-xs text-gray-400 mt-1">No company story, mission, or team information</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="screenshot-frame border border-green-200"><img src="screenshots/new-about.png" alt="New about page" loading="lazy"></div>
+                <p class="text-xs text-gray-400 mt-3 text-center">Company story, mission & values, full 8-grade system, stats</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ (no old equivalent) -->
+          <div class="tab-panel" data-panel="faq" role="tabpanel">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-danger text-xs font-bold border border-red-200">OLD</span>
+              <span class="text-sm text-gray-500">No FAQ page existed</span>
+              <span class="mx-2 text-gray-300">→</span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-success text-xs font-bold border border-green-200">NEW</span>
+              <span class="text-sm text-gray-500">Dedicated — faq.html</span>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <div class="screenshot-frame border border-red-200 flex items-center justify-center bg-red-50/50" style="min-height:400px">
+                  <div class="text-center p-8">
+                    <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4"><svg class="w-8 h-8 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg></div>
+                    <p class="text-sm font-medium text-danger">No Page Existed</p>
+                    <p class="text-xs text-gray-400 mt-1">Customers had no self-service FAQ resource</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="screenshot-frame border border-green-200"><img src="screenshots/new-faq.png" alt="New FAQ page" loading="lazy"></div>
+                <p class="text-xs text-gray-400 mt-3 text-center">12 accordion Q&As across 5 categories with FAQPage schema</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact (no old equivalent) -->
+          <div class="tab-panel" data-panel="contact" role="tabpanel">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-danger text-xs font-bold border border-red-200">OLD</span>
+              <span class="text-sm text-gray-500">No contact page existed</span>
+              <span class="mx-2 text-gray-300">→</span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-success text-xs font-bold border border-green-200">NEW</span>
+              <span class="text-sm text-gray-500">Dedicated — contact.html</span>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <div class="screenshot-frame border border-red-200 flex items-center justify-center bg-red-50/50" style="min-height:400px">
+                  <div class="text-center p-8">
+                    <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4"><svg class="w-8 h-8 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg></div>
+                    <p class="text-sm font-medium text-danger">No Page Existed</p>
+                    <p class="text-xs text-gray-400 mt-1">No contact form, no map, just a phone number in the header</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="screenshot-frame border border-green-200"><img src="screenshots/new-contact.png" alt="New contact page" loading="lazy"></div>
+                <p class="text-xs text-gray-400 mt-3 text-center">Contact form, Google Maps embed, address/phone/email cards, social links</p>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
 
 
-    <!-- ═══ PAGES OVERVIEW ═══ -->
+    <!-- ═══ NEW PAGES GALLERY ═══ -->
     <section class="py-20 bg-ev-surface">
-      <div class="max-w-5xl mx-auto px-6">
+      <div class="max-w-6xl mx-auto px-6">
         <div class="text-center mb-12">
           <p class="text-ev-teal font-semibold text-sm tracking-wider uppercase">Site Architecture</p>
           <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-ev-navy mt-3">New Pages At a Glance</h2>
+          <p class="text-gray-500 mt-3 max-w-2xl mx-auto">Every page features consistent branding, full SEO, responsive design, and conversion-optimized CTAs. Click any card to visit.</p>
         </div>
+
+        <!-- Old Site Summary Banner -->
+        <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 border border-red-100 mb-10">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg class="w-5 h-5 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            </div>
+            <div>
+              <h4 class="font-display font-bold text-ev-navy">What the old site looked like</h4>
+              <p class="text-sm text-gray-600 mt-1">The previous everestphones.com had <strong>3 disjointed pages</strong> with no shared navigation or design language: a <span class="text-danger font-medium">splash screen</span> with just two buttons, a <span class="text-danger font-medium">plain-text grade list</span>, and a <span class="text-danger font-medium">retail page</span> with broken carousel images. Each page looked like a different website entirely.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page Gallery Grid -->
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="bg-white rounded-2xl p-6 border border-ev-border hover:shadow-lg transition-shadow">
-            <div class="w-10 h-10 rounded-xl bg-ev-teal/10 flex items-center justify-center mb-4">
-              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+
+          <!-- Homepage -->
+          <a href="index.html" class="page-card block bg-white rounded-2xl border border-ev-border overflow-hidden relative">
+            <div class="relative overflow-hidden" style="height:200px">
+              <img src="screenshots/new-index.png" alt="Homepage" class="page-thumb w-full h-full object-cover object-top" loading="lazy">
+              <div class="page-overlay absolute inset-0 bg-gradient-to-t from-ev-navy/80 to-transparent flex items-end p-4">
+                <span class="text-white text-sm font-semibold flex items-center gap-1.5">View Page <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></span>
+              </div>
             </div>
-            <h3 class="font-bold text-ev-navy mb-1">Homepage</h3>
-            <p class="text-sm text-gray-500">Hero, carrier partners, services overview, grading preview, why choose us, stats, CTA.</p>
-          </div>
-          <div class="bg-white rounded-2xl p-6 border border-ev-border hover:shadow-lg transition-shadow">
-            <div class="w-10 h-10 rounded-xl bg-ev-teal/10 flex items-center justify-center mb-4">
-              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            <div class="p-5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="w-2 h-2 rounded-full bg-ev-teal"></span>
+                <h3 class="font-bold text-ev-navy">Homepage</h3>
+              </div>
+              <p class="text-sm text-gray-500">Hero, carrier partners, services overview, grading preview, why choose us, stats, CTA.</p>
+              <p class="text-xs text-ev-teal font-medium mt-2">index.html</p>
             </div>
-            <h3 class="font-bold text-ev-navy mb-1">Services</h3>
-            <p class="text-sm text-gray-500">Phone sales, expert repairs (6 types), carrier unlocking, wholesale, prepaid plans &amp; accessories.</p>
-          </div>
-          <div class="bg-white rounded-2xl p-6 border border-ev-border hover:shadow-lg transition-shadow">
-            <div class="w-10 h-10 rounded-xl bg-ev-teal/10 flex items-center justify-center mb-4">
-              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </a>
+
+          <!-- Services -->
+          <a href="services.html" class="page-card block bg-white rounded-2xl border border-ev-border overflow-hidden relative">
+            <div class="relative overflow-hidden" style="height:200px">
+              <img src="screenshots/new-services.png" alt="Services" class="page-thumb w-full h-full object-cover object-top" loading="lazy">
+              <div class="page-overlay absolute inset-0 bg-gradient-to-t from-ev-navy/80 to-transparent flex items-end p-4">
+                <span class="text-white text-sm font-semibold flex items-center gap-1.5">View Page <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></span>
+              </div>
             </div>
-            <h3 class="font-bold text-ev-navy mb-1">About &amp; Grading</h3>
-            <p class="text-sm text-gray-500">Company story, mission &amp; values, full 8-grade quality system breakdown, by-the-numbers stats.</p>
-          </div>
-          <div class="bg-white rounded-2xl p-6 border border-ev-border hover:shadow-lg transition-shadow">
-            <div class="w-10 h-10 rounded-xl bg-ev-teal/10 flex items-center justify-center mb-4">
-              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div class="p-5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="w-2 h-2 rounded-full bg-ev-teal"></span>
+                <h3 class="font-bold text-ev-navy">Services</h3>
+              </div>
+              <p class="text-sm text-gray-500">Phone sales, expert repairs (6 types), carrier unlocking, wholesale, prepaid plans &amp; accessories.</p>
+              <p class="text-xs text-ev-teal font-medium mt-2">services.html</p>
             </div>
-            <h3 class="font-bold text-ev-navy mb-1">FAQ</h3>
-            <p class="text-sm text-gray-500">12 accordion Q&amp;As covering grading, warranty, repairs, carriers, trade-ins, and wholesale.</p>
-          </div>
-          <div class="bg-white rounded-2xl p-6 border border-ev-border hover:shadow-lg transition-shadow">
-            <div class="w-10 h-10 rounded-xl bg-ev-teal/10 flex items-center justify-center mb-4">
-              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </a>
+
+          <!-- About -->
+          <a href="about.html" class="page-card block bg-white rounded-2xl border border-ev-border overflow-hidden relative">
+            <div class="relative overflow-hidden" style="height:200px">
+              <img src="screenshots/new-about.png" alt="About & Grading" class="page-thumb w-full h-full object-cover object-top" loading="lazy">
+              <div class="page-overlay absolute inset-0 bg-gradient-to-t from-ev-navy/80 to-transparent flex items-end p-4">
+                <span class="text-white text-sm font-semibold flex items-center gap-1.5">View Page <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></span>
+              </div>
             </div>
-            <h3 class="font-bold text-ev-navy mb-1">Contact</h3>
-            <p class="text-sm text-gray-500">Contact form with subject selector, Google Maps embed, address/phone/email cards, social links.</p>
-          </div>
-          <div class="bg-white rounded-2xl p-6 border border-ev-border hover:shadow-lg transition-shadow">
-            <div class="w-10 h-10 rounded-xl bg-ev-teal/10 flex items-center justify-center mb-4">
-              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <div class="p-5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="w-2 h-2 rounded-full bg-ev-teal"></span>
+                <h3 class="font-bold text-ev-navy">About &amp; Grading</h3>
+              </div>
+              <p class="text-sm text-gray-500">Company story, mission &amp; values, full 8-grade quality system breakdown, by-the-numbers stats.</p>
+              <p class="text-xs text-ev-teal font-medium mt-2">about.html</p>
             </div>
-            <h3 class="font-bold text-ev-navy mb-1">This Report</h3>
-            <p class="text-sm text-gray-500">Side-by-side comparison, scoring breakdown, screenshot carousel, and technology overview.</p>
+          </a>
+
+          <!-- FAQ -->
+          <a href="faq.html" class="page-card block bg-white rounded-2xl border border-ev-border overflow-hidden relative">
+            <div class="relative overflow-hidden" style="height:200px">
+              <img src="screenshots/new-faq.png" alt="FAQ" class="page-thumb w-full h-full object-cover object-top" loading="lazy">
+              <div class="page-overlay absolute inset-0 bg-gradient-to-t from-ev-navy/80 to-transparent flex items-end p-4">
+                <span class="text-white text-sm font-semibold flex items-center gap-1.5">View Page <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></span>
+              </div>
+            </div>
+            <div class="p-5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="w-2 h-2 rounded-full bg-ev-teal"></span>
+                <h3 class="font-bold text-ev-navy">FAQ</h3>
+              </div>
+              <p class="text-sm text-gray-500">12 accordion Q&amp;As covering grading, warranty, repairs, carriers, trade-ins, and wholesale.</p>
+              <p class="text-xs text-ev-teal font-medium mt-2">faq.html</p>
+            </div>
+          </a>
+
+          <!-- Contact -->
+          <a href="contact.html" class="page-card block bg-white rounded-2xl border border-ev-border overflow-hidden relative">
+            <div class="relative overflow-hidden" style="height:200px">
+              <img src="screenshots/new-contact.png" alt="Contact" class="page-thumb w-full h-full object-cover object-top" loading="lazy">
+              <div class="page-overlay absolute inset-0 bg-gradient-to-t from-ev-navy/80 to-transparent flex items-end p-4">
+                <span class="text-white text-sm font-semibold flex items-center gap-1.5">View Page <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></span>
+              </div>
+            </div>
+            <div class="p-5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="w-2 h-2 rounded-full bg-ev-teal"></span>
+                <h3 class="font-bold text-ev-navy">Contact</h3>
+              </div>
+              <p class="text-sm text-gray-500">Contact form with subject selector, Google Maps embed, address/phone/email cards, social links.</p>
+              <p class="text-xs text-ev-teal font-medium mt-2">contact.html</p>
+            </div>
+          </a>
+
+          <!-- This Report -->
+          <div class="page-card block bg-gradient-to-br from-ev-navy to-ev-navy-light rounded-2xl border border-ev-slate overflow-hidden relative">
+            <div class="flex items-center justify-center" style="height:200px">
+              <div class="text-center">
+                <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-3">
+                  <svg class="w-7 h-7 text-ev-teal-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                </div>
+                <p class="text-ev-teal-light text-sm font-semibold">You Are Here</p>
+              </div>
+            </div>
+            <div class="p-5">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="w-2 h-2 rounded-full bg-ev-teal-light"></span>
+                <h3 class="font-bold text-white">This Report</h3>
+              </div>
+              <p class="text-sm text-gray-400">Side-by-side comparison, scoring breakdown, visual comparison, and technology overview.</p>
+              <p class="text-xs text-ev-teal-light font-medium mt-2">report.html</p>
+            </div>
           </div>
+
         </div>
       </div>
     </section>
@@ -518,45 +700,32 @@
     This website was designed and built by AjayaDesign (https://ajayadesign.github.io) as a portfolio demonstration piece. Build ID: EP-2026-0307-AD.
   </div>
 
-  <!-- Report Carousel JS (self-contained, doesn't rely on main.js carousel) -->
+  <!-- Tabbed Comparison Viewer JS -->
   <script>
   (function() {
-    const track = document.getElementById('rpt-carousel-track');
-    const slides = track ? track.querySelectorAll('.carousel-slide') : [];
-    const dotsContainer = document.getElementById('rpt-carousel-dots');
-    const label = document.getElementById('rpt-slide-label');
-    const counter = document.getElementById('rpt-slide-counter');
-    let current = 0;
-    const total = slides.length;
+    const tabs = document.querySelectorAll('#comparison-tabs .tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
 
-    function buildDots() {
-      if (!dotsContainer) return;
-      dotsContainer.innerHTML = '';
-      for (let i = 0; i < total; i++) {
-        const dot = document.createElement('button');
-        dot.className = 'w-2.5 h-2.5 rounded-full bg-gray-300 transition-all duration-300' + (i === 0 ? ' dot-active' : '');
-        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
-        dot.addEventListener('click', function() { goTo(i); });
-        dotsContainer.appendChild(dot);
-      }
-    }
+    tabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        var target = this.getAttribute('data-tab');
 
-    function goTo(idx) {
-      current = ((idx % total) + total) % total;
-      track.style.transform = 'translateX(-' + (current * 100) + '%)';
-      if (label) label.textContent = slides[current].getAttribute('data-label') || '';
-      if (counter) counter.textContent = (current + 1) + ' / ' + total;
-      dotsContainer.querySelectorAll('button').forEach(function(d, i) {
-        d.classList.toggle('dot-active', i === current);
+        tabs.forEach(function(t) {
+          t.classList.remove('active');
+          t.classList.add('text-gray-500');
+          t.setAttribute('aria-selected', 'false');
+        });
+        this.classList.add('active');
+        this.classList.remove('text-gray-500');
+        this.setAttribute('aria-selected', 'true');
+
+        panels.forEach(function(p) {
+          p.classList.remove('active');
+        });
+        var activePanel = document.querySelector('[data-panel="' + target + '"]');
+        if (activePanel) activePanel.classList.add('active');
       });
-    }
-
-    buildDots();
-
-    var prev = document.getElementById('rpt-prev');
-    var next = document.getElementById('rpt-next');
-    if (prev) prev.addEventListener('click', function() { goTo(current - 1); });
-    if (next) next.addEventListener('click', function() { goTo(current + 1); });
+    });
   })();
   </script>
 </body>
