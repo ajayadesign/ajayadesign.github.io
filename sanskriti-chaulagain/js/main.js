@@ -8,12 +8,12 @@
 
   /* ============== Typed Text Rotation ============== */
   const typedPhrases = [
-    'Marketing Specialist',
-    'SEO Optimization Expert',
-    'Digital Marketing Strategist',
-    'Brand Marketing Pro',
+    'Marketing Analytics Specialist',
+    'SEO & Content Strategist',
+    'Data-Driven Marketing Expert',
+    'Python · SQL · Tableau · Power BI',
     'MS Marketing Research — Texas State',
-    'Content & Social Media Marketer'
+    'Digital Campaign Optimizer'
   ];
 
   let phraseIndex = 0;
@@ -75,7 +75,8 @@
       if (scrollPos >= top && scrollPos < top + height) {
         navLinks.forEach(function (link) {
           link.classList.remove('active');
-          if (link.getAttribute('href') === '#' + id) {
+          var href = link.getAttribute('href');
+          if (href && href === '#' + id) {
             link.classList.add('active');
           }
         });
@@ -84,6 +85,60 @@
   }
 
   window.addEventListener('scroll', highlightNav, { passive: true });
+
+  /* ============== Sidebar Scroll Spy ============== */
+  var sidebarItems = document.querySelectorAll('.sidebar-item');
+  var resumePages = document.querySelectorAll('.resume-page');
+  var sidebarSubLinks = document.querySelectorAll('.sidebar-submenu a');
+
+  function updateSidebar() {
+    var scrollPos = window.scrollY + 160;
+    var activePageId = null;
+
+    // Find which resume-page is in view
+    resumePages.forEach(function (page) {
+      var top = page.offsetTop;
+      var height = page.offsetHeight;
+      if (scrollPos >= top && scrollPos < top + height) {
+        activePageId = page.id;
+      }
+    });
+
+    // Update sidebar parent items
+    sidebarItems.forEach(function (item) {
+      var link = item.querySelector('.sidebar-link');
+      if (!link) return;
+      var href = link.getAttribute('href');
+      if (href && href.substring(1) === activePageId) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+
+    // Update submenu links — highlight the one closest above scrollPos
+    var closestLink = null;
+    var closestDist = Infinity;
+    sidebarSubLinks.forEach(function (link) {
+      link.classList.remove('active');
+      var href = link.getAttribute('href');
+      if (!href) return;
+      var target = document.querySelector(href);
+      if (target) {
+        var dist = scrollPos - target.offsetTop;
+        if (dist >= 0 && dist < closestDist) {
+          closestDist = dist;
+          closestLink = link;
+        }
+      }
+    });
+
+    if (closestLink) {
+      closestLink.classList.add('active');
+    }
+  }
+
+  window.addEventListener('scroll', updateSidebar, { passive: true });
 
   /* ============== Mobile Nav Toggle ============== */
   const navToggle = document.getElementById('navToggle');
@@ -123,7 +178,7 @@
 
   function animateSkills() {
     if (skillsAnimated) return;
-    const skillsSection = document.getElementById('skills');
+    const skillsSection = document.getElementById('page-skills');
     if (!skillsSection) return;
     const top = skillsSection.getBoundingClientRect().top;
     if (top < window.innerHeight - 100) {
