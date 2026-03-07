@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redesign Report — Everest Phones | Old vs New Website Comparison</title>
+  <meta name="description" content="Side-by-side comparison of the Everest Phones website redesign by AjayaDesign. See the old site vs. the modern SEO-optimized rebuild." />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="author" content="AjayaDesign" />
+  <meta name="designer" content="AjayaDesign — https://ajayadesign.github.io" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'ev-navy': '#0f172a', 'ev-navy-light': '#1e293b', 'ev-slate': '#334155',
+            'ev-teal': '#14b8a6', 'ev-teal-dark': '#0d9488', 'ev-teal-light': '#2dd4bf',
+            'ev-sky': '#38bdf8', 'ev-surface': '#f8fafc', 'ev-card': '#ffffff', 'ev-border': '#e2e8f0',
+            'danger': '#ef4444', 'success': '#22c55e',
+          },
+          fontFamily: {
+            sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', '"Inter"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <meta name="generator" content="AjayaDesign Pipeline v2.0" />
+  <style>
+    .score-ring { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; }
+    .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 768px) { .comparison-grid { grid-template-columns: 1fr; } }
+    .tag-old { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+    .tag-new { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+    .screenshot-frame { border-radius: 1rem; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,.08); max-height: 600px; overflow-y: auto; }
+    .screenshot-frame::-webkit-scrollbar { width: 3px; }
+    .screenshot-frame::-webkit-scrollbar-thumb { background: #14b8a6; border-radius: 9px; }
+    .screenshot-frame img { width: 100%; display: block; }
+    .carousel-container { position: relative; overflow: hidden; }
+    .carousel-track { display: flex; transition: transform .5s cubic-bezier(.4,0,.2,1); }
+    .carousel-slide { min-width: 100%; padding: 0 1rem; }
+    .dot-active { background: #14b8a6 !important; transform: scale(1.3); }
+    .meter-bar { height: 8px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
+    .meter-fill { height: 100%; border-radius: 999px; transition: width 1s ease; }
+  </style>
+</head>
+
+<body class="font-sans text-gray-700 antialiased bg-ev-surface">
+
+  <!-- ═══ REPORT HEADER ═══ -->
+  <nav class="fixed top-0 w-full z-50 backdrop-blur-xl bg-white/90 border-b border-ev-border">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-ev-teal to-ev-sky flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+        </div>
+        <span class="font-display text-xl font-extrabold text-ev-navy">Everest<span class="text-ev-teal">Phones</span></span>
+      </a>
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-gray-400">Redesign Report by</span>
+        <a href="https://ajayadesign.github.io" target="_blank" rel="noopener noreferrer" class="font-semibold text-ev-teal hover:text-ev-teal-dark transition-colors">AjayaDesign</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ═══ HERO ═══ -->
+    <section class="relative overflow-hidden bg-gradient-to-br from-ev-navy via-ev-navy-light to-ev-slate pt-32 pb-20">
+      <div class="absolute top-0 right-0 w-96 h-96 bg-ev-teal/10 rounded-full blur-[120px]"></div>
+      <div class="absolute bottom-0 left-0 w-80 h-80 bg-ev-sky/10 rounded-full blur-[100px]"></div>
+      <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
+        <span class="inline-block px-4 py-1.5 bg-white/10 backdrop-blur rounded-full text-ev-teal-light text-sm font-medium mb-6 border border-white/20">📊 Website Redesign Report</span>
+        <h1 class="font-display text-4xl md:text-6xl font-extrabold text-white mb-4">Old vs. New <span class="bg-gradient-to-r from-ev-teal to-ev-sky bg-clip-text text-transparent">Side by Side</span></h1>
+        <p class="text-lg text-gray-300 max-w-2xl mx-auto">A comprehensive comparison showing how the Everest Phones website was transformed from a basic landing page into a modern, multi-page, SEO-optimized experience.</p>
+        <div class="flex flex-wrap justify-center gap-6 mt-10">
+          <div class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/20 text-center min-w-[140px]">
+            <div class="text-3xl font-extrabold text-white">1</div>
+            <div class="text-gray-300 text-sm mt-1">Old Page</div>
+          </div>
+          <div class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/20 text-center min-w-[140px]">
+            <div class="text-3xl font-extrabold text-ev-teal-light">6</div>
+            <div class="text-gray-300 text-sm mt-1">New Pages</div>
+          </div>
+          <div class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/20 text-center min-w-[140px]">
+            <div class="text-3xl font-extrabold text-ev-sky">100%</div>
+            <div class="text-gray-300 text-sm mt-1">SEO Optimized</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ═══ EXECUTIVE SUMMARY ═══ -->
+    <section class="py-20 bg-white">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-12">
+          <p class="text-ev-teal font-semibold text-sm tracking-wider uppercase">Executive Summary</p>
+          <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-ev-navy mt-3">Why the Old Site Needed a Rebuild</h2>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8">
+
+          <!-- Old Site -->
+          <div class="bg-red-50 rounded-3xl p-8 border border-red-100">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="score-ring bg-red-100 text-danger">2/10</div>
+              <div>
+                <h3 class="font-display font-bold text-lg text-danger">Old Website</h3>
+                <p class="text-gray-500 text-sm">Single page, minimal content</p>
+              </div>
+            </div>
+            <ul class="space-y-3">
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">Single-page layout with minimal business information</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">No SEO optimization — zero meta tags, no schema, no OG tags</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">No structured data for search engines to understand</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">Generic design with no brand identity or visual hierarchy</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">No dedicated services, about, FAQ, or contact pages</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">Phone grading system not documented for customers</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">Missing mobile-friendly responsive design elements</span></li>
+              <li class="flex items-start gap-2"><span class="text-danger mt-0.5 font-bold">✗</span><span class="text-gray-600 text-sm">No call-to-action elements or customer conversion paths</span></li>
+            </ul>
+          </div>
+
+          <!-- New Site -->
+          <div class="bg-green-50 rounded-3xl p-8 border border-green-100">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="score-ring bg-green-100 text-success">9/10</div>
+              <div>
+                <h3 class="font-display font-bold text-lg text-success">New Website</h3>
+                <p class="text-gray-500 text-sm">Custom design, fully optimized</p>
+              </div>
+            </div>
+            <ul class="space-y-3">
+              <li class="flex items-start gap-2"><span class="text-success mt-0.5 font-bold">✓</span><span class="text-gray-600 text-sm">6+&nbsp;pages covering every business vertical and service</span></li>
+              <li class="flex items-start gap-2"><span class="text-success mt-0.5 font-bold">✓</span><span class="text-gray-600 text-sm">Full SEO: meta tags, OG, Twitter Cards, canonical URLs</span></li>
+              <li class="flex items-start gap-2"><span class="text-success mt-0.5 font-bold">✓</span><span class="text-gray-600 text-sm">Schema.org structured data (LocalBusiness, Service, FAQPage)</span></li>
+              <li class="flex items-start gap-2"><span class="text-success mt-0.5 font-bold">✓</span><span class="text-gray-600 text-sm">Custom brand identity: Teal/Navy palette, Plus Jakarta Sans</span></li>
+              <li class="flex items-start gap-2"><span class="text-success mt-0.5 font-bold">✓</span><span class="text-gray-600 text-sm">Complete grading system documentation (8 grades, detailed)</span></li>
+              <li class="flex items-start gap-2"><span class="text-success mt-0.5 font-bold">✓</span><span class="text-gray-600 text-sm">Mobile-first responsive with smooth scroll animations</span></li>
+              <li class="flex items-start gap-2"><span class="text-success mt-0.5 font-bold">✓</span><span class="text-gray-600 text-sm">Conversion-optimized CTAs, contact form, and map</span></li>
+              <li class="flex items-start gap-2"><span class="text-success mt-0.5 font-bold">✓</span><span class="text-gray-600 text-sm">FAQ with accordion, breadcrumbs, sticky nav, social links</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ═══ SCORE BREAKDOWN ═══ -->
+    <section class="py-20 bg-ev-surface">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-12">
+          <p class="text-ev-teal font-semibold text-sm tracking-wider uppercase">Detailed Scoring</p>
+          <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-ev-navy mt-3">Category-by-Category Breakdown</h2>
+        </div>
+        <div class="grid gap-6">
+
+          <!-- SEO -->
+          <div class="bg-white rounded-2xl p-6 sm:p-8 border border-ev-border">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-display font-bold text-ev-navy text-lg">SEO &amp; Discoverability</h3>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="px-3 py-1 rounded-full tag-old font-medium">Old: 0/10</span>
+                <span class="px-3 py-1 rounded-full tag-new font-medium">New: 9/10</span>
+              </div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4 text-sm">
+              <div class="space-y-2 text-gray-500">
+                <p><span class="text-danger font-bold">✗</span> No title tags or meta descriptions</p>
+                <p><span class="text-danger font-bold">✗</span> No canonical URLs</p>
+                <p><span class="text-danger font-bold">✗</span> No schema/structured data</p>
+                <p><span class="text-danger font-bold">✗</span> No Open Graph or Twitter Cards</p>
+              </div>
+              <div class="space-y-2 text-gray-500">
+                <p><span class="text-success font-bold">✓</span> Keyword-rich titles &amp; descriptions per page</p>
+                <p><span class="text-success font-bold">✓</span> Canonical URLs on every page</p>
+                <p><span class="text-success font-bold">✓</span> LocalBusiness, Service &amp; FAQPage schemas</p>
+                <p><span class="text-success font-bold">✓</span> OG tags + Twitter Cards with geo meta</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="meter-bar"><div class="meter-fill bg-gradient-to-r from-danger to-success" style="width:90%"></div></div>
+            </div>
+          </div>
+
+          <!-- Design -->
+          <div class="bg-white rounded-2xl p-6 sm:p-8 border border-ev-border">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-display font-bold text-ev-navy text-lg">Visual Design &amp; Branding</h3>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="px-3 py-1 rounded-full tag-old font-medium">Old: 2/10</span>
+                <span class="px-3 py-1 rounded-full tag-new font-medium">New: 9/10</span>
+              </div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4 text-sm">
+              <div class="space-y-2 text-gray-500">
+                <p><span class="text-danger font-bold">✗</span> Generic layout with no brand colors</p>
+                <p><span class="text-danger font-bold">✗</span> No visual hierarchy or typography system</p>
+                <p><span class="text-danger font-bold">✗</span> No iconography or visual elements</p>
+              </div>
+              <div class="space-y-2 text-gray-500">
+                <p><span class="text-success font-bold">✓</span> Custom Teal/Navy palette with gradients</p>
+                <p><span class="text-success font-bold">✓</span> Plus Jakarta Sans headings + Inter body</p>
+                <p><span class="text-success font-bold">✓</span> SVG icons, glassmorphism, custom scrollbar</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="meter-bar"><div class="meter-fill bg-gradient-to-r from-danger to-success" style="width:88%"></div></div>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="bg-white rounded-2xl p-6 sm:p-8 border border-ev-border">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-display font-bold text-ev-navy text-lg">Content &amp; Structure</h3>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="px-3 py-1 rounded-full tag-old font-medium">Old: 3/10</span>
+                <span class="px-3 py-1 rounded-full tag-new font-medium">New: 10/10</span>
+              </div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4 text-sm">
+              <div class="space-y-2 text-gray-500">
+                <p><span class="text-danger font-bold">✗</span> Single page with limited info</p>
+                <p><span class="text-danger font-bold">✗</span> Grading system not explained</p>
+                <p><span class="text-danger font-bold">✗</span> No FAQ, no detailed service info</p>
+              </div>
+              <div class="space-y-2 text-gray-500">
+                <p><span class="text-success font-bold">✓</span> 6 pages: Home, Services, About, FAQ, Contact, Report</p>
+                <p><span class="text-success font-bold">✓</span> Full 8-grade system with descriptions</p>
+                <p><span class="text-success font-bold">✓</span> 12 FAQ items, detailed repair &amp; service info</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="meter-bar"><div class="meter-fill bg-gradient-to-r from-danger to-success" style="width:95%"></div></div>
+            </div>
+          </div>
+
+          <!-- Mobile / UX -->
+          <div class="bg-white rounded-2xl p-6 sm:p-8 border border-ev-border">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-display font-bold text-ev-navy text-lg">Mobile &amp; User Experience</h3>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="px-3 py-1 rounded-full tag-old font-medium">Old: 3/10</span>
+                <span class="px-3 py-1 rounded-full tag-new font-medium">New: 9/10</span>
+              </div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4 text-sm">
+              <div class="space-y-2 text-gray-500">
+                <p><span class="text-danger font-bold">✗</span> No mobile menu or responsive nav</p>
+                <p><span class="text-danger font-bold">✗</span> No scroll animations or interactions</p>
+                <p><span class="text-danger font-bold">✗</span> No sticky navigation</p>
+              </div>
+              <div class="space-y-2 text-gray-500">
+                <p><span class="text-success font-bold">✓</span> Responsive hamburger menu + mobile nav drawer</p>
+                <p><span class="text-success font-bold">✓</span> IntersectionObserver scroll reveal animations</p>
+                <p><span class="text-success font-bold">✓</span> Sticky nav with backdrop blur &amp; scroll shadow</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="meter-bar"><div class="meter-fill bg-gradient-to-r from-danger to-success" style="width:85%"></div></div>
+            </div>
+          </div>
+
+          <!-- Conversion -->
+          <div class="bg-white rounded-2xl p-6 sm:p-8 border border-ev-border">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-display font-bold text-ev-navy text-lg">Lead Conversion &amp; CTAs</h3>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="px-3 py-1 rounded-full tag-old font-medium">Old: 1/10</span>
+                <span class="px-3 py-1 rounded-full tag-new font-medium">New: 9/10</span>
+              </div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4 text-sm">
+              <div class="space-y-2 text-gray-500">
+                <p><span class="text-danger font-bold">✗</span> No contact form or clear CTAs</p>
+                <p><span class="text-danger font-bold">✗</span> No map embed or directions</p>
+                <p><span class="text-danger font-bold">✗</span> No service-specific inquiry paths</p>
+              </div>
+              <div class="space-y-2 text-gray-500">
+                <p><span class="text-success font-bold">✓</span> Full contact form with subject selector</p>
+                <p><span class="text-success font-bold">✓</span> Google Maps embed + address card</p>
+                <p><span class="text-success font-bold">✓</span> CTA sections on every page &amp; "Get a Quote" nav</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="meter-bar"><div class="meter-fill bg-gradient-to-r from-danger to-success" style="width:92%"></div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ═══ SCREENSHOT CAROUSEL ═══ -->
+    <section class="py-20 bg-white" id="carousel-section">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-12">
+          <p class="text-ev-teal font-semibold text-sm tracking-wider uppercase">Visual Comparison</p>
+          <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-ev-navy mt-3">Screenshot Carousel — Old vs. New</h2>
+          <p class="text-gray-500 mt-2">Navigate through side-by-side comparisons of each page.</p>
+        </div>
+
+        <div class="carousel-container rounded-3xl bg-ev-surface border border-ev-border p-4 md:p-8 shadow-lg">
+          <!-- Controls -->
+          <div class="flex items-center justify-between mb-6">
+            <button id="rpt-prev" class="w-10 h-10 bg-ev-teal/10 rounded-full flex items-center justify-center hover:bg-ev-teal/20 transition-colors" aria-label="Previous">
+              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <div class="text-center">
+              <span id="rpt-slide-label" class="font-display font-bold text-xl text-ev-navy">Homepage</span>
+              <span id="rpt-slide-counter" class="block text-sm text-gray-400 mt-1">1 / 5</span>
+            </div>
+            <button id="rpt-next" class="w-10 h-10 bg-ev-teal/10 rounded-full flex items-center justify-center hover:bg-ev-teal/20 transition-colors" aria-label="Next">
+              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
+          <!-- Slides -->
+          <div class="carousel-track" id="rpt-carousel-track">
+            <!-- Slide 1: Homepage -->
+            <div class="carousel-slide" data-label="Homepage">
+              <div class="comparison-grid">
+                <div>
+                  <div class="flex items-center gap-2 mb-3"><span class="tag-old px-3 py-1 rounded-full text-xs font-medium">OLD</span><span class="text-sm text-gray-400">everestphones.com</span></div>
+                  <div class="screenshot-frame border border-red-200"><img src="screenshots/old-index.webp" alt="Old homepage screenshot" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-64 text-gray-400 text-sm\'>Screenshot pending capture</div>'"></div>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 mb-3"><span class="tag-new px-3 py-1 rounded-full text-xs font-medium">NEW</span><span class="text-sm text-gray-400">index.html</span></div>
+                  <div class="screenshot-frame border border-green-200"><img src="screenshots/new-index.webp" alt="New homepage screenshot" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-64 text-gray-400 text-sm\'>Screenshot pending capture</div>'"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Slide 2: Services -->
+            <div class="carousel-slide" data-label="Services">
+              <div class="comparison-grid">
+                <div>
+                  <div class="flex items-center gap-2 mb-3"><span class="tag-old px-3 py-1 rounded-full text-xs font-medium">OLD</span><span class="text-sm text-gray-400">N/A — no services page</span></div>
+                  <div class="screenshot-frame border border-red-200 flex items-center justify-center h-64 bg-red-50">
+                    <div class="text-center p-6"><span class="text-3xl mb-2 block">🚫</span><p class="text-sm text-gray-400">No services page existed</p></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 mb-3"><span class="tag-new px-3 py-1 rounded-full text-xs font-medium">NEW</span><span class="text-sm text-gray-400">services.html</span></div>
+                  <div class="screenshot-frame border border-green-200"><img src="screenshots/new-services.webp" alt="New services page screenshot" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-64 text-gray-400 text-sm\'>Screenshot pending capture</div>'"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Slide 3: About -->
+            <div class="carousel-slide" data-label="About &amp; Grading">
+              <div class="comparison-grid">
+                <div>
+                  <div class="flex items-center gap-2 mb-3"><span class="tag-old px-3 py-1 rounded-full text-xs font-medium">OLD</span><span class="text-sm text-gray-400">N/A — no about page</span></div>
+                  <div class="screenshot-frame border border-red-200 flex items-center justify-center h-64 bg-red-50">
+                    <div class="text-center p-6"><span class="text-3xl mb-2 block">🚫</span><p class="text-sm text-gray-400">No about page existed</p></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 mb-3"><span class="tag-new px-3 py-1 rounded-full text-xs font-medium">NEW</span><span class="text-sm text-gray-400">about.html</span></div>
+                  <div class="screenshot-frame border border-green-200"><img src="screenshots/new-about.webp" alt="New about page screenshot" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-64 text-gray-400 text-sm\'>Screenshot pending capture</div>'"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Slide 4: FAQ -->
+            <div class="carousel-slide" data-label="FAQ">
+              <div class="comparison-grid">
+                <div>
+                  <div class="flex items-center gap-2 mb-3"><span class="tag-old px-3 py-1 rounded-full text-xs font-medium">OLD</span><span class="text-sm text-gray-400">N/A — no FAQ page</span></div>
+                  <div class="screenshot-frame border border-red-200 flex items-center justify-center h-64 bg-red-50">
+                    <div class="text-center p-6"><span class="text-3xl mb-2 block">🚫</span><p class="text-sm text-gray-400">No FAQ page existed</p></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 mb-3"><span class="tag-new px-3 py-1 rounded-full text-xs font-medium">NEW</span><span class="text-sm text-gray-400">faq.html</span></div>
+                  <div class="screenshot-frame border border-green-200"><img src="screenshots/new-faq.webp" alt="New FAQ page screenshot" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-64 text-gray-400 text-sm\'>Screenshot pending capture</div>'"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Slide 5: Contact -->
+            <div class="carousel-slide" data-label="Contact">
+              <div class="comparison-grid">
+                <div>
+                  <div class="flex items-center gap-2 mb-3"><span class="tag-old px-3 py-1 rounded-full text-xs font-medium">OLD</span><span class="text-sm text-gray-400">N/A — no contact page</span></div>
+                  <div class="screenshot-frame border border-red-200 flex items-center justify-center h-64 bg-red-50">
+                    <div class="text-center p-6"><span class="text-3xl mb-2 block">🚫</span><p class="text-sm text-gray-400">No dedicated contact page existed</p></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 mb-3"><span class="tag-new px-3 py-1 rounded-full text-xs font-medium">NEW</span><span class="text-sm text-gray-400">contact.html</span></div>
+                  <div class="screenshot-frame border border-green-200"><img src="screenshots/new-contact.webp" alt="New contact page screenshot" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-64 text-gray-400 text-sm\'>Screenshot pending capture</div>'"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dots -->
+          <div class="flex justify-center gap-2 mt-6" id="rpt-carousel-dots"></div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ═══ PAGES OVERVIEW ═══ -->
+    <section class="py-20 bg-ev-surface">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-12">
+          <p class="text-ev-teal font-semibold text-sm tracking-wider uppercase">Site Architecture</p>
+          <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-ev-navy mt-3">New Pages At a Glance</h2>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="bg-white rounded-2xl p-6 border border-ev-border hover:shadow-lg transition-shadow">
+            <div class="w-10 h-10 rounded-xl bg-ev-teal/10 flex items-center justify-center mb-4">
+              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            </div>
+            <h3 class="font-bold text-ev-navy mb-1">Homepage</h3>
+            <p class="text-sm text-gray-500">Hero, carrier partners, services overview, grading preview, why choose us, stats, CTA.</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 border border-ev-border hover:shadow-lg transition-shadow">
+            <div class="w-10 h-10 rounded-xl bg-ev-teal/10 flex items-center justify-center mb-4">
+              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            </div>
+            <h3 class="font-bold text-ev-navy mb-1">Services</h3>
+            <p class="text-sm text-gray-500">Phone sales, expert repairs (6 types), carrier unlocking, wholesale, prepaid plans &amp; accessories.</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 border border-ev-border hover:shadow-lg transition-shadow">
+            <div class="w-10 h-10 rounded-xl bg-ev-teal/10 flex items-center justify-center mb-4">
+              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h3 class="font-bold text-ev-navy mb-1">About &amp; Grading</h3>
+            <p class="text-sm text-gray-500">Company story, mission &amp; values, full 8-grade quality system breakdown, by-the-numbers stats.</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 border border-ev-border hover:shadow-lg transition-shadow">
+            <div class="w-10 h-10 rounded-xl bg-ev-teal/10 flex items-center justify-center mb-4">
+              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h3 class="font-bold text-ev-navy mb-1">FAQ</h3>
+            <p class="text-sm text-gray-500">12 accordion Q&amp;As covering grading, warranty, repairs, carriers, trade-ins, and wholesale.</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 border border-ev-border hover:shadow-lg transition-shadow">
+            <div class="w-10 h-10 rounded-xl bg-ev-teal/10 flex items-center justify-center mb-4">
+              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="font-bold text-ev-navy mb-1">Contact</h3>
+            <p class="text-sm text-gray-500">Contact form with subject selector, Google Maps embed, address/phone/email cards, social links.</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 border border-ev-border hover:shadow-lg transition-shadow">
+            <div class="w-10 h-10 rounded-xl bg-ev-teal/10 flex items-center justify-center mb-4">
+              <svg class="w-5 h-5 text-ev-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <h3 class="font-bold text-ev-navy mb-1">This Report</h3>
+            <p class="text-sm text-gray-500">Side-by-side comparison, scoring breakdown, screenshot carousel, and technology overview.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ═══ TECH STACK ═══ -->
+    <section class="py-20 bg-white">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="text-center mb-12">
+          <p class="text-ev-teal font-semibold text-sm tracking-wider uppercase">Under the Hood</p>
+          <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-ev-navy mt-3">Technologies Used</h2>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-6">
+          <div class="flex items-start gap-4 p-5 rounded-xl bg-ev-surface border border-ev-border">
+            <div class="w-10 h-10 rounded-lg bg-sky-50 flex items-center justify-center flex-shrink-0 text-lg font-bold text-sky-600">Tw</div>
+            <div><h4 class="font-bold text-ev-navy">Tailwind CSS</h4><p class="text-sm text-gray-500 mt-1">Utility-first CSS framework with custom design tokens for brand consistency.</p></div>
+          </div>
+          <div class="flex items-start gap-4 p-5 rounded-xl bg-ev-surface border border-ev-border">
+            <div class="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center flex-shrink-0 text-lg font-bold text-yellow-600">JS</div>
+            <div><h4 class="font-bold text-ev-navy">Vanilla JavaScript</h4><p class="text-sm text-gray-500 mt-1">Zero-dependency: IntersectionObserver, accordion, carousel, mobile menu.</p></div>
+          </div>
+          <div class="flex items-start gap-4 p-5 rounded-xl bg-ev-surface border border-ev-border">
+            <div class="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0 text-lg font-bold text-orange-600">LD</div>
+            <div><h4 class="font-bold text-ev-navy">Schema.org JSON-LD</h4><p class="text-sm text-gray-500 mt-1">LocalBusiness, Service, and FAQPage structured data for rich search results.</p></div>
+          </div>
+          <div class="flex items-start gap-4 p-5 rounded-xl bg-ev-surface border border-ev-border">
+            <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0 text-lg font-bold text-purple-600">GF</div>
+            <div><h4 class="font-bold text-ev-navy">Google Fonts</h4><p class="text-sm text-gray-500 mt-1">Plus Jakarta Sans + Inter — modern, professional typography system.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ═══ CTA ═══ -->
+    <section class="py-20 bg-gradient-to-br from-ev-navy via-ev-navy-light to-ev-slate relative overflow-hidden">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-ev-teal/5 via-transparent to-transparent"></div>
+      <div class="relative z-10 max-w-3xl mx-auto px-6 text-center">
+        <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-white mb-4">Ready to Transform Your Online Presence?</h2>
+        <p class="text-lg text-gray-300 mb-8">This report demonstrates what a modern, SEO-optimized website can do for your business. Let's bring your brand to the next level.</p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="https://ajayadesign.github.io" class="px-8 py-4 bg-ev-teal text-white font-semibold rounded-xl hover:bg-ev-teal-dark transition-all shadow-xl shadow-ev-teal/20">Visit AjayaDesign</a>
+          <a href="index.html" class="px-8 py-4 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 transition-all">View New Site →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="bg-ev-navy text-gray-400 py-8">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <p>&copy; 2024 Redesign Report for Everest Phones. All rights reserved.</p>
+      <p class="text-gray-500">Built by <a href="https://ajayadesign.github.io" class="text-ev-teal hover:underline">AjayaDesign</a> · Property of AjayaDesign — for demonstration purposes only</p>
+    </div>
+  </footer>
+
+  <div data-ad-build="EP-2026-0307" data-ad-engine="AjayaDesign Pipeline v2.0" data-ad-license="demo-only" aria-hidden="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">
+    This website was designed and built by AjayaDesign (https://ajayadesign.github.io) as a portfolio demonstration piece. Build ID: EP-2026-0307-AD.
+  </div>
+
+  <!-- Report Carousel JS (self-contained, doesn't rely on main.js carousel) -->
+  <script>
+  (function() {
+    const track = document.getElementById('rpt-carousel-track');
+    const slides = track ? track.querySelectorAll('.carousel-slide') : [];
+    const dotsContainer = document.getElementById('rpt-carousel-dots');
+    const label = document.getElementById('rpt-slide-label');
+    const counter = document.getElementById('rpt-slide-counter');
+    let current = 0;
+    const total = slides.length;
+
+    function buildDots() {
+      if (!dotsContainer) return;
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i < total; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-gray-300 transition-all duration-300' + (i === 0 ? ' dot-active' : '');
+        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        dot.addEventListener('click', function() { goTo(i); });
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    function goTo(idx) {
+      current = ((idx % total) + total) % total;
+      track.style.transform = 'translateX(-' + (current * 100) + '%)';
+      if (label) label.textContent = slides[current].getAttribute('data-label') || '';
+      if (counter) counter.textContent = (current + 1) + ' / ' + total;
+      dotsContainer.querySelectorAll('button').forEach(function(d, i) {
+        d.classList.toggle('dot-active', i === current);
+      });
+    }
+
+    buildDots();
+
+    var prev = document.getElementById('rpt-prev');
+    var next = document.getElementById('rpt-next');
+    if (prev) prev.addEventListener('click', function() { goTo(current - 1); });
+    if (next) next.addEventListener('click', function() { goTo(current + 1); });
+  })();
+  </script>
+</body>
+</html>
