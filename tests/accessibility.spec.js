@@ -131,7 +131,7 @@ test('portfolio links point to live GitHub Pages sites', async ({ page }) => {
   expect(count).toBeGreaterThanOrEqual(4);
   for (let i = 0; i < count; i++) {
     const href = await links.nth(i).getAttribute('href');
-    // Each portfolio card links to its own GitHub Pages domain
+    // Each portfolio card links to a GitHub Pages site (own domain or subpath)
     expect(href).toMatch(/^https:\/\/[a-z0-9-]+\.github\.io\//);
     await expect(links.nth(i)).toHaveAttribute('rel', /noopener/);
   }
