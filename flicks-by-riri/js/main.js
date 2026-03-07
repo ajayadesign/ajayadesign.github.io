@@ -120,17 +120,46 @@
       e.preventDefault();
       const btn = form.querySelector('button[type="submit"]');
       const origHTML = btn.innerHTML;
-      btn.innerHTML = '<span>Sent! ✓</span>';
+      btn.innerHTML = '<span>Sending...</span>';
       btn.disabled = true;
-      btn.style.opacity = '0.7';
-      setTimeout(() => {
-        btn.innerHTML = origHTML;
-        btn.disabled = false;
-        btn.style.opacity = '';
-        form.reset();
-      }, 3000);
+
+      const data = new FormData(form);
+      fetch(form.action, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      }).then(res => {
+        btn.innerHTML = res.ok ? '<span>Sent! ✓</span>' : '<span>Error — try DM</span>';
+        if (res.ok) form.reset();
+      }).catch(() => {
+        btn.innerHTML = '<span>Error — try DM</span>';
+      }).finally(() => {
+        setTimeout(() => {
+          btn.innerHTML = origHTML;
+          btn.disabled = false;
+        }, 3000);
+      });
     });
   }
+
+  /* --- Active Nav on Scroll --- */
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link:not(.nav-link-cta)');
+  function updateActiveNav() {
+    const scrollY = window.scrollY + 120;
+    sections.forEach(section => {
+      const top = section.offsetTop;
+      const height = section.offsetHeight;
+      const id = section.getAttribute('id');
+      if (scrollY >= top && scrollY < top + height) {
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+  updateActiveNav();
 
   /* --- Smooth Scroll for anchors --- */
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
