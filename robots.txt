@@ -1,0 +1,18 @@
+# AjayaDesign Robots.txt
+# https://ajayadesign.github.io
+
+User-agent: *
+Allow: /
+
+# Internal tools & admin
+Disallow: /admin/
+Disallow: /automation/
+Disallow: /insight-dashboard/
+Disallow: /track/
+Disallow: /test-results/
+Disallow: /tests/
+
+# Report pages (internal analytics)
+Disallow: /*report.html
+
+Sitemap: https://ajayadesign.github.io/sitemap.xml

@@ -16,11 +16,75 @@
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="theme-color" content="#0A0A0F" />
 
+  <!-- Canonical -->
+  <link rel="canonical" href="https://ajayadesign.github.io/" />
+
   <!-- Open Graph -->
   <meta property="og:title" content="AjayaDesign | High-Performance Web Design in Manor, TX" />
   <meta property="og:description" content="Websites built with engineering precision. SEO-driven digital engines for technical businesses and local pros." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://ajayadesign.github.io" />
+  <meta property="og:url" content="https://ajayadesign.github.io/" />
+  <meta property="og:site_name" content="AjayaDesign" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AjayaDesign | High-Performance Web Design in Manor, TX" />
+  <meta name="twitter:description" content="Blazing-fast, SEO-tuned websites engineered with hardware-lab precision. Free preview in 24 hours." />
+
+  <!-- Additional SEO -->
+  <meta name="geo.region" content="US-TX" />
+  <meta name="geo.placename" content="Manor" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "AjayaDesign",
+        "url": "https://ajayadesign.github.io/",
+        "description": "High-performance web design in Manor, TX",
+        "publisher": { "@id": "#organization" }
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": "#organization",
+        "name": "AjayaDesign",
+        "url": "https://ajayadesign.github.io/",
+        "description": "Websites built with engineering precision. High-performance, SEO-driven digital engines for technical businesses and local pros in Manor, TX.",
+        "founder": {
+          "@type": "Person",
+          "name": "Ajaya Dahal",
+          "url": "https://ajayadahal.github.io/"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Manor",
+          "addressRegion": "TX",
+          "addressCountry": "US"
+        },
+        "areaServed": [
+          { "@type": "City", "name": "Manor", "containedInPlace": { "@type": "State", "name": "Texas" } },
+          { "@type": "City", "name": "Austin", "containedInPlace": { "@type": "State", "name": "Texas" } },
+          { "@type": "City", "name": "Pflugerville", "containedInPlace": { "@type": "State", "name": "Texas" } },
+          { "@type": "City", "name": "Taylor", "containedInPlace": { "@type": "State", "name": "Texas" } }
+        ],
+        "serviceType": ["Web Design", "Web Development", "SEO Optimization", "Website Maintenance"],
+        "priceRange": "$",
+        "knowsAbout": ["HTML", "CSS", "JavaScript", "Tailwind CSS", "SEO", "Web Performance", "Accessibility", "GitHub Pages"],
+        "slogan": "Websites Built with Engineering Precision"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ajayadesign.github.io/" }
+        ]
+      }
+    ]
+  }
+  </script>
 
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -402,16 +466,45 @@
   <!-- ═══════════════════ PREVIOUS WORKS ═══════════════════ -->
   <section id="works" class="py-24 sm:py-32">
     <div class="max-w-6xl mx-auto px-6">
-      <div class="reveal text-center mb-16">
+      <div class="reveal text-center mb-10">
         <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Portfolio</p>
         <h2 class="font-mono text-3xl sm:text-4xl font-bold text-white">Previous <span class="text-amd-red">Works</span></h2>
         <p class="mt-4 text-gray-400 max-w-xl mx-auto">Live sites engineered and deployed through the AjayaDesign pipeline.</p>
       </div>
 
+      <!-- ── Terminal Filter Bar ── -->
+      <div class="reveal mb-8">
+        <div class="rounded-xl bg-surface-card border border-border-dim overflow-hidden">
+          <!-- Terminal chrome -->
+          <div class="flex items-center gap-2 px-4 py-2 border-b border-border-dim bg-surface-alt/50">
+            <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
+            <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
+            <span class="w-2 h-2 rounded-full bg-green-500/60"></span>
+            <span class="ml-2 font-mono text-xs text-gray-400">portfolio_browser.sh</span>
+          </div>
+          <!-- Filter body -->
+          <div class="px-4 sm:px-6 py-4">
+            <div class="flex items-center gap-2 mb-4 font-mono text-sm">
+              <span class="text-gray-400"><span class="text-amd-red">$</span> ls ~/builds/<span id="filter-path" class="text-electric-blue">*</span></span>
+              <span class="text-gray-500">—</span>
+              <span class="text-gray-400"><span id="filter-count" class="text-white font-bold">17</span> builds found</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button data-filter="all" class="filter-btn active px-3 py-1.5 rounded font-mono text-xs border transition-all duration-200 border-amd-red/60 bg-amd-red/10 text-amd-red-text">all/</button>
+              <button data-filter="local" class="filter-btn px-3 py-1.5 rounded font-mono text-xs border transition-all duration-200 border-border-dim text-gray-400 hover:border-amd-red/40 hover:text-amd-red-text">local-biz/</button>
+              <button data-filter="creative" class="filter-btn px-3 py-1.5 rounded font-mono text-xs border transition-all duration-200 border-border-dim text-gray-400 hover:border-amd-red/40 hover:text-amd-red-text">creative/</button>
+              <button data-filter="services" class="filter-btn px-3 py-1.5 rounded font-mono text-xs border transition-all duration-200 border-border-dim text-gray-400 hover:border-amd-red/40 hover:text-amd-red-text">services/</button>
+              <button data-filter="fitness" class="filter-btn px-3 py-1.5 rounded font-mono text-xs border transition-all duration-200 border-border-dim text-gray-400 hover:border-amd-red/40 hover:text-amd-red-text">fitness/</button>
+              <button data-filter="retail" class="filter-btn px-3 py-1.5 rounded font-mono text-xs border transition-all duration-200 border-border-dim text-gray-400 hover:border-amd-red/40 hover:text-amd-red-text">retail/</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
         <!-- Project 1 — Chhaya Photography -->
-        <a href="https://chhayaphotography.github.io/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://chhayaphotography.github.io/" target="_blank" rel="noopener noreferrer" data-tags="creative,services" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <!-- Browser chrome -->
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
@@ -440,7 +533,7 @@
         </a>
 
         <!-- Project 2 — Ajaya Dahal (Personal) -->
-        <a href="https://ajayadahal.github.io/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://ajayadahal.github.io/" target="_blank" rel="noopener noreferrer" data-tags="creative" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <!-- Browser chrome -->
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
@@ -469,7 +562,7 @@
         </a>
 
         <!-- Project 3 — Sanz the Nanny -->
-        <a href="https://sanz-the-nanny.github.io/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://sanz-the-nanny.github.io/" target="_blank" rel="noopener noreferrer" data-tags="services" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <!-- Browser chrome -->
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
@@ -498,7 +591,7 @@
         </a>
 
         <!-- Project 4 — Magnet Moments Co. -->
-        <a href="https://magnetmomentsco.github.io/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://magnetmomentsco.github.io/" target="_blank" rel="noopener noreferrer" data-tags="retail" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <!-- Browser chrome -->
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
@@ -527,7 +620,7 @@
         </a>
 
         <!-- Project 5 — AJ Builds Drone -->
-        <a href="https://aj-builds-drone.github.io/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://aj-builds-drone.github.io/" target="_blank" rel="noopener noreferrer" data-tags="creative" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <!-- Browser chrome -->
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
@@ -556,7 +649,7 @@
         </a>
 
         <!-- Project 6 — WoW!!! Mo:Mo -->
-        <a href="https://wow-momo.github.io/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://wow-momo.github.io/" target="_blank" rel="noopener noreferrer" data-tags="local" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <!-- Browser chrome -->
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
@@ -585,7 +678,7 @@
         </a>
 
         <!-- Project 7 — Apex Auto Collision -->
-        <a href="https://ajayadesign.github.io/apex-auto/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://ajayadesign.github.io/apex-auto/" target="_blank" rel="noopener noreferrer" data-tags="local" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
@@ -610,7 +703,7 @@
         </a>
 
         <!-- Project 8 — Austin Barbell -->
-        <a href="https://ajayadesign.github.io/austin-barbell/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://ajayadesign.github.io/austin-barbell/" target="_blank" rel="noopener noreferrer" data-tags="fitness" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
@@ -635,7 +728,7 @@
         </a>
 
         <!-- Project 9 — CompuPLUS -->
-        <a href="https://ajayadesign.github.io/compu-plus/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://ajayadesign.github.io/compu-plus/" target="_blank" rel="noopener noreferrer" data-tags="local" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
@@ -660,7 +753,7 @@
         </a>
 
         <!-- Project 10 — Monument Pilates -->
-        <a href="https://ajayadesign.github.io/monument-pilates/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://ajayadesign.github.io/monument-pilates/" target="_blank" rel="noopener noreferrer" data-tags="fitness" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
@@ -685,7 +778,7 @@
         </a>
 
         <!-- Project 11 — Velvet & Bloom -->
-        <a href="https://ajayadesign.github.io/velvet-bloom/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://ajayadesign.github.io/velvet-bloom/" target="_blank" rel="noopener noreferrer" data-tags="retail" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
@@ -710,7 +803,7 @@
         </a>
 
         <!-- Project 12 — Radha Madhav Dham -->
-        <a href="https://ajayadesign.github.io/radha-madhav/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://ajayadesign.github.io/radha-madhav/" target="_blank" rel="noopener noreferrer" data-tags="services" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
@@ -735,7 +828,7 @@
         </a>
 
         <!-- Project 13 — Sno Ball Dude Shave Ice -->
-        <a href="https://ajayadesign.github.io/snoball-dude/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://ajayadesign.github.io/snoball-dude/" target="_blank" rel="noopener noreferrer" data-tags="local" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
@@ -760,7 +853,7 @@
         </a>
 
         <!-- Project 14 — Sanskriti Chaulagain Portfolio -->
-        <a href="https://ajayadesign.github.io/sanskriti-chaulagain/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://ajayadesign.github.io/sanskriti-chaulagain/" target="_blank" rel="noopener noreferrer" data-tags="creative" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
@@ -785,7 +878,7 @@
         </a>
 
         <!-- Project 15 — Dahal Event Planner -->
-        <a href="https://dahal-event-planner.github.io/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://dahal-event-planner.github.io/" target="_blank" rel="noopener noreferrer" data-tags="services" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
@@ -810,7 +903,7 @@
         </a>
 
         <!-- Project 16 — Zach The Pilot -->
-        <a href="https://zach-the-pilot.github.io/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://zach-the-pilot.github.io/" target="_blank" rel="noopener noreferrer" data-tags="services" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
@@ -835,7 +928,7 @@
         </a>
 
         <!-- Project 17 — Flicks by Riri -->
-        <a href="https://ajayadesign.github.io/flicks-by-riri/" target="_blank" rel="noopener noreferrer" class="reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
+        <a href="https://ajayadesign.github.io/flicks-by-riri/" target="_blank" rel="noopener noreferrer" data-tags="creative" class="project-card reveal group block rounded-2xl bg-surface-card border border-border-dim overflow-hidden hover:border-amd-red/40 transition-all duration-300 hover:-translate-y-1">
           <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border-dim bg-surface-alt/50">
             <span class="w-2 h-2 rounded-full bg-red-500/60"></span>
             <span class="w-2 h-2 rounded-full bg-yellow-500/60"></span>
