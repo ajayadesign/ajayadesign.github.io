@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<!-- Radha Madhav Dham — Gallery | Engineered by AjayaDesign | Demo only | Fingerprint: RMD-DEMO-2026-AJAYA-D3S1GN-PR0P-GALLERY -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo Gallery | Radha Madhav Dham — Austin, TX</title>
+  <meta name="description" content="Browse stunning photos of Radha Madhav Dham — the temple, holy landmarks, festivals, peacocks, wildflowers, and the beautiful 200-acre grounds in Austin's Hill Country.">
+  <meta name="generator" content="AjayaDesign/1.0">
+  <link rel="canonical" href="https://ajayadesign.github.io/radha-madhav/gallery.html">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: {
+      colors: { 'saffron':'#E8720C','saffron-light':'#FF9F43','saffron-dark':'#C45A00','maroon':'#6B1D3A','maroon-light':'#8B2E4F','gold':'#D4A853','gold-light':'#F0D78C','cream':'#FFFAF5','cream-dark':'#F5EDE3','temple-dark':'#1A0F08','temple-text':'#2D1810','warm-gray':'#8B7B6B' },
+      fontFamily: { display:['"Playfair Display"','Georgia','serif'], body:['"Inter"','system-ui','sans-serif'] }
+    }}};
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="font-body text-temple-text bg-cream" data-engineered-by="AjayaDesign">
+
+  <!-- DEMO BANNER -->
+  <div class="demo-banner fixed top-0 left-0 right-0 z-[100] text-center py-1.5 px-4 text-xs font-medium text-white tracking-wide">
+    <i class="fa-solid fa-flask mr-1"></i> This site is property of <strong>AjayaDesign</strong> — <strong>demonstration purposes only</strong>.
+    <a href="https://ajayadesign.github.io" class="underline ml-1 hover:text-gold-light">ajayadesign.github.io</a>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav-glass fixed top-8 left-0 right-0 z-50 border-b border-gold/10" id="mainNav">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-20">
+        <a href="index.html" class="flex items-center gap-3 shrink-0">
+          <img src="https://api.radhamadhavdham.org/uploads/images/logo2024-02-19T12-13-16.863Z-Ellipse4.png" alt="Radha Madhav Dham" class="h-10 w-10 md:h-12 md:w-12 rounded-full" loading="lazy">
+          <div class="hidden sm:block"><div class="font-display font-bold text-maroon text-lg leading-tight">Radha Madhav Dham</div><div class="text-[10px] text-warm-gray tracking-widest uppercase">Austin, Texas</div></div>
+        </a>
+        <div class="hidden lg:flex items-center gap-8">
+          <a href="index.html" class="nav-link text-sm font-medium text-temple-text hover:text-saffron">Home</a>
+          <a href="about.html" class="nav-link text-sm font-medium text-temple-text hover:text-saffron">About</a>
+          <a href="events.html" class="nav-link text-sm font-medium text-temple-text hover:text-saffron">Events</a>
+          <a href="visit.html" class="nav-link text-sm font-medium text-temple-text hover:text-saffron">Visit</a>
+          <a href="gallery.html" class="nav-link text-sm font-medium text-temple-text hover:text-saffron active">Gallery</a>
+          <a href="contact.html" class="nav-link text-sm font-medium text-temple-text hover:text-saffron">Contact</a>
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="https://radhamadhavdham.org/donate-us" target="_blank" rel="noopener" class="btn-saffron hidden md:inline-flex px-5 py-2.5 rounded-full text-sm font-semibold"><i class="fa-solid fa-heart mr-2"></i>Donate</a>
+          <button id="menuToggle" class="lg:hidden p-2 text-temple-text hover:text-saffron" aria-label="Open menu"><i class="fa-solid fa-bars text-xl"></i></button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div id="mobileMenu" class="mobile-menu fixed inset-y-0 right-0 w-72 bg-cream z-[60] shadow-2xl p-6 pt-20">
+    <button id="menuClose" class="absolute top-6 right-6 text-temple-text hover:text-saffron" aria-label="Close menu"><i class="fa-solid fa-xmark text-2xl"></i></button>
+    <div class="flex flex-col gap-4">
+      <a href="index.html" class="text-lg font-medium text-temple-text">Home</a><a href="about.html" class="text-lg font-medium text-temple-text">About</a><a href="events.html" class="text-lg font-medium text-temple-text">Events</a>
+      <a href="visit.html" class="text-lg font-medium text-temple-text">Visit</a><a href="gallery.html" class="text-lg font-display font-semibold text-maroon">Gallery</a><a href="contact.html" class="text-lg font-medium text-temple-text">Contact</a>
+    </div>
+  </div>
+  <div id="menuOverlay" class="fixed inset-0 bg-black/30 z-[55] hidden"></div>
+
+  <!-- HERO -->
+  <section class="relative h-[50vh] min-h-[350px] flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0">
+      <img src="https://api.radhamadhavdham.org/uploads/overnightmultipleimages/image2024-02-20T02-17-58.424Z-FullgloriousviewRMD.jpg" alt="Radha Madhav Dham" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-b from-temple-dark/60 via-temple-dark/40 to-temple-dark/70"></div>
+    </div>
+    <div class="relative z-10 text-center px-4 pt-20">
+      <div class="ornament-divider text-gold mb-4"><span class="text-gold/80 text-xs tracking-[0.3em] uppercase font-medium">Visual Journey</span></div>
+      <h1 class="font-display text-4xl md:text-6xl font-bold text-white mb-4">Photo Gallery</h1>
+      <p class="text-white/70 text-lg max-w-xl mx-auto">Experience the beauty and serenity of Radha Madhav Dham through images</p>
+    </div>
+  </section>
+
+  <!-- FILTER TABS -->
+  <section class="py-10 px-4 border-b border-cream-dark">
+    <div class="max-w-7xl mx-auto flex flex-wrap justify-center gap-3">
+      <button class="gallery-filter active px-5 py-2 rounded-full text-sm font-medium border border-cream-dark transition-all bg-saffron text-white" data-filter="all">All</button>
+      <button class="gallery-filter px-5 py-2 rounded-full text-sm font-medium border border-cream-dark transition-all hover:border-saffron hover:text-saffron" data-filter="temple">Temple</button>
+      <button class="gallery-filter px-5 py-2 rounded-full text-sm font-medium border border-cream-dark transition-all hover:border-saffron hover:text-saffron" data-filter="landmarks">Landmarks</button>
+      <button class="gallery-filter px-5 py-2 rounded-full text-sm font-medium border border-cream-dark transition-all hover:border-saffron hover:text-saffron" data-filter="nature">Nature</button>
+      <button class="gallery-filter px-5 py-2 rounded-full text-sm font-medium border border-cream-dark transition-all hover:border-saffron hover:text-saffron" data-filter="events">Events</button>
+    </div>
+  </section>
+
+  <!-- GALLERY GRID -->
+  <section class="py-16 md:py-24 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="galleryGrid">
+        <!-- Temple -->
+        <div class="gallery-item img-zoom rounded-xl overflow-hidden cursor-pointer group relative" data-category="temple" data-caption="Full view of Radha Madhav Dham temple">
+          <img src="https://api.radhamadhavdham.org/uploads/overnightmultipleimages/image2024-02-20T02-17-58.424Z-FullgloriousviewRMD.jpg" alt="Full view of Radha Madhav Dham" class="w-full h-48 md:h-56 object-cover" loading="lazy">
+          <div class="absolute inset-0 bg-temple-dark/0 group-hover:bg-temple-dark/40 transition-all flex items-end p-3 opacity-0 group-hover:opacity-100">
+            <span class="text-white text-xs font-medium">Temple Grounds</span>
+          </div>
+        </div>
+
+        <div class="gallery-item img-zoom rounded-xl overflow-hidden cursor-pointer group relative row-span-2" data-category="temple" data-caption="Nikunj Darshan of Radha Krishna">
+          <img src="https://api.radhamadhavdham.org/uploads/about_s3/s2_img_path2024-04-01T10-02-23.282Z-s2_img_path2024-02-06T05-56-59.531Z-Rectangle3213.png" alt="Nikunj Darshan" class="w-full h-full min-h-[250px] md:min-h-[470px] object-cover" loading="lazy">
+          <div class="absolute inset-0 bg-temple-dark/0 group-hover:bg-temple-dark/40 transition-all flex items-end p-3 opacity-0 group-hover:opacity-100">
+            <span class="text-white text-xs font-medium">Nikunj Darshan</span>
+          </div>
+        </div>
+
+        <div class="gallery-item img-zoom rounded-xl overflow-hidden cursor-pointer group relative" data-category="nature" data-caption="Flying kites with temple in view">
+          <img src="https://api.radhamadhavdham.org/uploads/homesection4/image_22024-02-18T21-06-17.941Z-FlyingKiteswithtempleview.jpg" alt="Kite flying at temple" class="w-full h-48 md:h-56 object-cover" loading="lazy">
+          <div class="absolute inset-0 bg-temple-dark/0 group-hover:bg-temple-dark/40 transition-all flex items-end p-3 opacity-0 group-hover:opacity-100">
+            <span class="text-white text-xs font-medium">Temple View</span>
+          </div>
+        </div>
+
+        <div class="gallery-item img-zoom rounded-xl overflow-hidden cursor-pointer group relative" data-category="events" data-caption="Temple programs and devotional retreats">
+          <img src="https://api.radhamadhavdham.org/uploads/aboutS5/img_path2024-02-12T07-10-09.903Z-evd2.png" alt="Temple programs" class="w-full h-48 md:h-56 object-cover" loading="lazy">
+          <div class="absolute inset-0 bg-temple-dark/0 group-hover:bg-temple-dark/40 transition-all flex items-end p-3 opacity-0 group-hover:opacity-100">
+            <span class="text-white text-xs font-medium">Devotional Programs</span>
+          </div>
+        </div>
+
+        <!-- Landmarks -->
+        <div class="gallery-item img-zoom rounded-xl overflow-hidden cursor-pointer group relative" data-category="landmarks" data-caption="Govardhan Hill at Radha Madhav Dham">
+          <img src="https://farm8.staticflickr.com/7297/14101652143_4ed643cf3a.jpg" alt="Govardhan Hill" class="w-full h-48 md:h-56 object-cover" loading="lazy">
+          <div class="absolute inset-0 bg-temple-dark/0 group-hover:bg-temple-dark/40 transition-all flex items-end p-3 opacity-0 group-hover:opacity-100">
+            <span class="text-white text-xs font-medium">Govardhan Hill</span>
+          </div>
+        </div>
+
+        <div class="gallery-item img-zoom rounded-xl overflow-hidden cursor-pointer group relative" data-category="landmarks" data-caption="Sacred grounds and pathways">
+          <img src="https://farm3.staticflickr.com/2929/13894975387_c5dea3d3fe.jpg" alt="Temple grounds" class="w-full h-48 md:h-56 object-cover" loading="lazy">
+          <div class="absolute inset-0 bg-temple-dark/0 group-hover:bg-temple-dark/40 transition-all flex items-end p-3 opacity-0 group-hover:opacity-100">
+            <span class="text-white text-xs font-medium">Sacred Grounds</span>
+          </div>
+        </div>
+
+        <div class="gallery-item img-zoom rounded-xl overflow-hidden cursor-pointer group relative" data-category="landmarks" data-caption="Barsana Hill and holy places">
+          <img src="https://live.staticflickr.com/2898/14082048094_ab54525222_b.jpg" alt="Barsana Hill" class="w-full h-48 md:h-56 object-cover" loading="lazy">
+          <div class="absolute inset-0 bg-temple-dark/0 group-hover:bg-temple-dark/40 transition-all flex items-end p-3 opacity-0 group-hover:opacity-100">
+            <span class="text-white text-xs font-medium">Barsana Hill</span>
+          </div>
+        </div>
+
+        <!-- Nature -->
+        <div class="gallery-item img-zoom rounded-xl overflow-hidden cursor-pointer group relative" data-category="nature" data-caption="Hilltop view of Barsana">
+          <img src="https://api.radhamadhavdham.org/uploads/aboutS5/img_path2024-03-15T18-43-00.367Z-ontopofbarsana.jpeg" alt="On top of Barsana" class="w-full h-48 md:h-56 object-cover" loading="lazy">
+          <div class="absolute inset-0 bg-temple-dark/0 group-hover:bg-temple-dark/40 transition-all flex items-end p-3 opacity-0 group-hover:opacity-100">
+            <span class="text-white text-xs font-medium">Hilltop View</span>
+          </div>
+        </div>
+
+        <div class="gallery-item img-zoom rounded-xl overflow-hidden cursor-pointer group relative" data-category="nature" data-caption="Overnight stay accommodations">
+          <img src="https://api.radhamadhavdham.org/uploads/rentmultipleimages/image2026-01-06T19-13-40.843Z-54349442915_ab347fe0dc_k.jpg" alt="Accommodation view" class="w-full h-48 md:h-56 object-cover" loading="lazy">
+          <div class="absolute inset-0 bg-temple-dark/0 group-hover:bg-temple-dark/40 transition-all flex items-end p-3 opacity-0 group-hover:opacity-100">
+            <span class="text-white text-xs font-medium">Ashram Accommodation</span>
+          </div>
+        </div>
+
+        <div class="gallery-item img-zoom rounded-xl overflow-hidden cursor-pointer group relative" data-category="events" data-caption="Philosophy and learning programs">
+          <img src="https://api.radhamadhavdham.org/uploads/Philosophy/image_12024-03-21T02-41-05.206Z-HINDUISMShorts(1).jpg" alt="Hinduism Shorts" class="w-full h-48 md:h-56 object-cover" loading="lazy">
+          <div class="absolute inset-0 bg-temple-dark/0 group-hover:bg-temple-dark/40 transition-all flex items-end p-3 opacity-0 group-hover:opacity-100">
+            <span class="text-white text-xs font-medium">Learning Programs</span>
+          </div>
+        </div>
+
+        <div class="gallery-item img-zoom rounded-xl overflow-hidden cursor-pointer group relative" data-category="events" data-caption="Jagadguru Shree Kripaluji Maharaj lectures">
+          <img src="https://api.radhamadhavdham.org/uploads/Philosophy/image_22024-03-15T19-45-52.106Z-800x300MjiJ.jpg" alt="Philosophy lectures" class="w-full h-48 md:h-56 object-cover" loading="lazy">
+          <div class="absolute inset-0 bg-temple-dark/0 group-hover:bg-temple-dark/40 transition-all flex items-end p-3 opacity-0 group-hover:opacity-100">
+            <span class="text-white text-xs font-medium">Spiritual Lectures</span>
+          </div>
+        </div>
+
+        <div class="gallery-item img-zoom rounded-xl overflow-hidden cursor-pointer group relative" data-category="events" data-caption="Bhagavad Gita study">
+          <img src="https://api.radhamadhavdham.org/uploads/Philosophy/image_42024-03-21T02-41-05.215Z-Gitab.jpg" alt="Bhagavad Gita" class="w-full h-48 md:h-56 object-cover" loading="lazy">
+          <div class="absolute inset-0 bg-temple-dark/0 group-hover:bg-temple-dark/40 transition-all flex items-end p-3 opacity-0 group-hover:opacity-100">
+            <span class="text-white text-xs font-medium">Bhagavad Gita</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-12">
+        <a href="https://flickr.com/photos/radhamadhavdham/albums/" target="_blank" rel="noopener" class="btn-maroon inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold">
+          <i class="fa-brands fa-flickr"></i> View All on Flickr
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox-overlay" id="lightbox">
+    <button class="absolute top-6 right-6 text-white/80 hover:text-white text-3xl z-10" id="lightboxClose" aria-label="Close lightbox">&times;</button>
+    <button class="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-4xl z-10" id="lightboxPrev" aria-label="Previous image">&#8249;</button>
+    <button class="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-4xl z-10" id="lightboxNext" aria-label="Next image">&#8250;</button>
+    <div class="max-w-5xl mx-auto px-4 flex flex-col items-center">
+      <img id="lightboxImg" src="" alt="" class="max-h-[80vh] max-w-full object-contain rounded-lg">
+      <p id="lightboxCaption" class="text-white/70 text-sm mt-4 text-center"></p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-temple-dark border-t border-white/5 text-white/70">
+    <div class="max-w-7xl mx-auto px-4 py-16">
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div><div class="flex items-center gap-3 mb-4"><img src="https://api.radhamadhavdham.org/uploads/images/logo2024-02-19T12-13-16.863Z-Ellipse4.png" alt="Logo" class="h-10 w-10 rounded-full" loading="lazy"><div class="font-display font-bold text-white text-lg">Radha Madhav Dham</div></div><p class="text-sm leading-relaxed">Inspiring devotion to Radha Krishna.</p></div>
+        <div><h4 class="font-display font-semibold text-white mb-4">Quick Links</h4><ul class="space-y-2 text-sm"><li><a href="about.html" class="hover:text-gold transition-colors">About</a></li><li><a href="events.html" class="hover:text-gold transition-colors">Events</a></li><li><a href="visit.html" class="hover:text-gold transition-colors">Visit</a></li><li><a href="gallery.html" class="hover:text-gold transition-colors">Gallery</a></li><li><a href="contact.html" class="hover:text-gold transition-colors">Contact</a></li></ul></div>
+        <div><h4 class="font-display font-semibold text-white mb-4">Contact</h4><ul class="space-y-3 text-sm"><li class="flex items-start gap-2"><i class="fa-solid fa-location-dot text-saffron mt-1 shrink-0"></i>400 Barsana Road,<br>Austin, TX 78737</li><li class="flex items-center gap-2"><i class="fa-solid fa-phone text-saffron shrink-0"></i><a href="tel:+15122887180" class="hover:text-gold transition-colors">(512) 288-7180</a></li></ul></div>
+        <div><h4 class="font-display font-semibold text-white mb-4">Social</h4><div class="flex gap-3"><a href="https://www.facebook.com/RadhaMadhavDham" target="_blank" rel="noopener" aria-label="Facebook" class="w-9 h-9 rounded-full bg-white/5 hover:bg-saffron/20 flex items-center justify-center transition-colors"><i class="fa-brands fa-facebook-f text-sm"></i></a><a href="https://www.instagram.com/radhamadhavdham/" target="_blank" rel="noopener" aria-label="Instagram" class="w-9 h-9 rounded-full bg-white/5 hover:bg-saffron/20 flex items-center justify-center transition-colors"><i class="fa-brands fa-instagram text-sm"></i></a><a href="https://www.youtube.com/RadhaMadhavDham" target="_blank" rel="noopener" aria-label="YouTube" class="w-9 h-9 rounded-full bg-white/5 hover:bg-saffron/20 flex items-center justify-center transition-colors"><i class="fa-brands fa-youtube text-sm"></i></a><a href="https://flickr.com/photos/radhamadhavdham/albums/" target="_blank" rel="noopener" aria-label="Flickr" class="w-9 h-9 rounded-full bg-white/5 hover:bg-saffron/20 flex items-center justify-center transition-colors"><i class="fa-brands fa-flickr text-sm"></i></a></div></div>
+      </div>
+    </div>
+    <div class="border-t border-white/5 py-4 px-4"><div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/40"><span>&copy; 2026 Radha Madhav Dham.</span><span>Demo by <a href="https://ajayadesign.github.io" class="text-gold hover:text-gold-light font-medium">AjayaDesign</a> — demonstration only.</span></div></div>
+    <div style="position:absolute;left:-9999px;opacity:0;pointer-events:none;font-size:0" aria-hidden="true" data-creator="AjayaDesign" data-license="demo-only" data-fingerprint="RMD-DEMO-2026-AJAYA-D3S1GN-PR0P">Intellectual property of AjayaDesign.</div>
+  </footer>
+
+  <script>
+    // Mobile menu
+    const menuToggle=document.getElementById('menuToggle'),menuClose=document.getElementById('menuClose'),mobileMenu=document.getElementById('mobileMenu'),menuOverlay=document.getElementById('menuOverlay');
+    function openMenu(){mobileMenu.classList.add('open');menuOverlay.classList.remove('hidden');document.body.style.overflow='hidden'}
+    function closeMenu(){mobileMenu.classList.remove('open');menuOverlay.classList.add('hidden');document.body.style.overflow=''}
+    menuToggle.addEventListener('click',openMenu);menuClose.addEventListener('click',closeMenu);menuOverlay.addEventListener('click',closeMenu);
+    window.addEventListener('scroll',()=>{document.getElementById('mainNav').classList.toggle('scrolled',window.scrollY>50)});
+    const reveals=document.querySelectorAll('.reveal');const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.classList.add('visible');obs.unobserve(en.target)}})},{threshold:.15});reveals.forEach(el=>obs.observe(el));
+
+    // Gallery filter
+    const filters = document.querySelectorAll('.gallery-filter');
+    const items = document.querySelectorAll('.gallery-item');
+    filters.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filters.forEach(f => { f.classList.remove('bg-saffron','text-white'); f.classList.add('bg-transparent'); });
+        btn.classList.add('bg-saffron','text-white');
+        btn.classList.remove('bg-transparent');
+        const cat = btn.dataset.filter;
+        items.forEach(item => {
+          if (cat === 'all' || item.dataset.category === cat) {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    let currentIdx = 0;
+    const galleryItems = Array.from(items);
+
+    function openLightbox(idx) {
+      currentIdx = idx;
+      const item = galleryItems[idx];
+      lightboxImg.src = item.querySelector('img').src;
+      lightboxImg.alt = item.dataset.caption;
+      lightboxCaption.textContent = item.dataset.caption;
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    galleryItems.forEach((item, i) => item.addEventListener('click', () => openLightbox(i)));
+    document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+    document.getElementById('lightboxPrev').addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentIdx = (currentIdx - 1 + galleryItems.length) % galleryItems.length;
+      openLightbox(currentIdx);
+    });
+    document.getElementById('lightboxNext').addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentIdx = (currentIdx + 1) % galleryItems.length;
+      openLightbox(currentIdx);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') document.getElementById('lightboxPrev').click();
+      if (e.key === 'ArrowRight') document.getElementById('lightboxNext').click();
+    });
+
+    console.log('%c🛕 RMD Demo by AjayaDesign','color:#E8720C;font-size:14px;font-weight:bold');
+  </script>
+</body>
+</html>
