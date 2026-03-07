@@ -123,11 +123,14 @@
       btn.innerHTML = '<span>Sending...</span>';
       btn.disabled = true;
 
-      const data = new FormData(form);
+      const data = new URLSearchParams(new FormData(form));
       fetch(form.action, {
         method: 'POST',
         body: data,
-        headers: { 'Accept': 'application/json' }
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json'
+        }
       }).then(res => {
         btn.innerHTML = res.ok ? '<span>Sent! ✓</span>' : '<span>Error — try DM</span>';
         if (res.ok) form.reset();
