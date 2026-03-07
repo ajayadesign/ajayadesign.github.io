@@ -1,0 +1,72 @@
+/* ═══════════════════════════════════════════════
+   Everest Phones — Custom Styles
+   Built by AjayaDesign Pipeline v2.0
+   ═══════════════════════════════════════════════ */
+
+html { scroll-behavior: smooth; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #14b8a6; border-radius: 3px; }
+
+/* Section reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Active nav link */
+.nav-link.active {
+  color: #14b8a6;
+  background: rgba(20, 184, 166, 0.05);
+  font-weight: 600;
+}
+
+/* FAQ accordion */
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+}
+.faq-answer.open {
+  max-height: 500px;
+}
+.faq-chevron {
+  transition: transform 0.3s ease;
+}
+.faq-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Carousel */
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+.carousel-slide {
+  min-width: 100%;
+  flex-shrink: 0;
+}
+
+/* Report comparison cards */
+.comparison-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.comparison-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* Score meter animation */
+@keyframes fillMeter {
+  from { width: 0; }
+}
+.score-fill {
+  animation: fillMeter 1.2s ease-out forwards;
+}
