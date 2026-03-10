@@ -445,7 +445,7 @@ def _load_first_names() -> set[str]:
                 if line and not line.startswith("#"):
                     names.add(line.lower())
     except FileNotFoundError:
-        log.warning("common_first_names.txt not found at %s — all salutations will be generic", names_path)
+        logger.warning("common_first_names.txt not found at %s — all salutations will be generic", names_path)
     return names
 
 _COMMON_FIRST_NAMES = _load_first_names()
