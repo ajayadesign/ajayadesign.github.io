@@ -23,3 +23,5 @@ automation/firebase-service-account.json
 .DS_Store
 Thumbs.db
 .playwright-mcp/
+
+data/

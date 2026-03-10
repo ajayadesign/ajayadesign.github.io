@@ -323,13 +323,26 @@ async def send_email_record(email_id: str) -> bool:
         )
 
         try:
-            # Use existing email_service.py
-            result = await smtp_send(
-                to=prospect.owner_email,
-                subject=email.subject,
-                body_html=tracked_html,
-                reply_to=settings.smtp_email,
-            )
+            # Try SMTP pool first (multi-provider), fall back to direct Gmail
+            try:
+                from api.services.smtp_pool import send_via_pool
+                result = await send_via_pool(
+                    to=prospect.owner_email,
+                    subject=email.subject,
+                    body_html=tracked_html,
+                    reply_to=settings.smtp_email,
+                )
+                # Track which provider was used
+                if isinstance(result, dict) and result.get("provider_id"):
+                    email.smtp_provider_id = result["provider_id"]
+            except Exception:
+                # Pool not configured or import error — fall back to direct Gmail
+                result = await smtp_send(
+                    to=prospect.owner_email,
+                    subject=email.subject,
+                    body_html=tracked_html,
+                    reply_to=settings.smtp_email,
+                )
 
             # ── Check SMTP result (email_service returns dict, never raises) ──
             if isinstance(result, dict) and not result.get("success"):
@@ -422,7 +435,18 @@ async def process_send_queue() -> dict:
         )
         today_count = today_count_result.scalar() or 0
 
-        remaining = MAX_DAILY_SENDS - today_count
+        # Use SMTP pool capacity if available, else fall back to MAX_DAILY_SENDS
+        try:
+            from api.services.smtp_pool import get_pool_status
+            pool = await get_pool_status()
+            pool_remaining = pool.get("total_remaining", 0)
+            if pool["provider_count"] > 0:
+                remaining = pool_remaining
+            else:
+                remaining = MAX_DAILY_SENDS - today_count
+        except Exception:
+            remaining = MAX_DAILY_SENDS - today_count
+
         if remaining <= 0:
             logger.info("Daily send limit reached (%d sent today)", today_count)
             stats["skipped"] = remaining

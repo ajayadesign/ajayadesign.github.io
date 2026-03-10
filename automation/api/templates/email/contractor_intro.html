@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; font-size: 15px;">
+{% if owner_first_name == 'there' %}
+<p>Hi there,</p>
+{% else %}
+<p>Hi {{ owner_first_name }},</p>
+{% endif %}
+
+<p>I noticed {{ business_name }} is a registered {{ industry_noun }} in {{ city }}. That means you passed inspections, you're licensed — the hard part's done.</p>
+
+<p>But here's the thing: when someone in {{ city }} Googles "{{ industry_noun }} near me," a website is what gets you on the first page. Right now, most of your competitors who show up there have one — even if they don't have your skills or track record.</p>
+
+<p>I build websites specifically for contractors in DFW. Fast, mobile-friendly, shows up on Google. Here's a recent one I did for a {{ portfolio_industry }} in the area: <a href="https://{{ sender_url }}" style="color: #2563eb;">{{ sender_url }}</a></p>
+
+<p>Would it be worth 5 minutes to see what I'd build for {{ business_name }}? I'll sketch a mockup — no cost, no commitment.</p>
+
+<p style="margin-top: 28px;">— {{ sender_name }}</p>
+<p style="color: #888; font-size: 13px;">Web developer in Manor, TX · <a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
+
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a> if you'd rather not hear from me.</p>
+<img src="__TRACKING_PIXEL_URL__" width="1" height="1" alt="" style="display:none;">
+</body>
+</html>

@@ -72,6 +72,34 @@ _MIGRATIONS = [
     # ── Indexes ──
     ("ix_wp_score",           "prospects", "CREATE INDEX IF NOT EXISTS ix_prospects_wp_score ON prospects (wp_score DESC NULLS LAST)"),
     ("ix_enriched_at",        "prospects", "CREATE INDEX IF NOT EXISTS ix_prospects_enriched_at ON prospects (enriched_at)"),
+
+    # ── SMTP Provider Pool (Mass Outreach) ──
+    ("smtp_providers_table",  "smtp_providers", """
+        CREATE TABLE IF NOT EXISTS smtp_providers (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            name TEXT NOT NULL UNIQUE,
+            host TEXT NOT NULL,
+            port INTEGER NOT NULL DEFAULT 587,
+            username TEXT NOT NULL,
+            password TEXT NOT NULL,
+            use_tls BOOLEAN DEFAULT TRUE,
+            from_email TEXT,
+            from_name TEXT,
+            daily_limit INTEGER NOT NULL DEFAULT 100,
+            daily_sent INTEGER NOT NULL DEFAULT 0,
+            last_reset DATE NOT NULL DEFAULT CURRENT_DATE,
+            enabled BOOLEAN DEFAULT TRUE,
+            priority INTEGER DEFAULT 0,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            updated_at TIMESTAMPTZ DEFAULT NOW()
+        )
+    """),
+
+    # ── Mass outreach: track which SMTP provider sent each email ──
+    ("smtp_provider_id",     "outreach_emails", "ALTER TABLE outreach_emails ADD COLUMN IF NOT EXISTS smtp_provider_id UUID REFERENCES smtp_providers(id)"),
+
+    # ── Index for imported prospects ──
+    ("ix_status_imported",   "prospects", "CREATE INDEX IF NOT EXISTS ix_prospects_status_imported ON prospects (status) WHERE status = 'imported'"),
 ]
 
 
