@@ -16,7 +16,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ajaya"]
+      test: ["CMD-SHELL", "pg_isready -U ajaya -d ajayadesign"]
       interval: 5s
       timeout: 3s
       retries: 5

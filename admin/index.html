@@ -1873,6 +1873,181 @@
         <!-- Mode Banner -->
         <div id="outreach-mode-banner" class="hidden px-4 py-2 text-xs font-mono rounded-lg mb-2"></div>
 
+        <!-- ═══ Sub-Tab: Agent vs Mass Outreach ═══ -->
+        <div class="flex gap-1 bg-surface-1 rounded-xl border border-border p-1 mb-2">
+          <button onclick="switchOutreachMode('agent')" id="outreach-mode-agent"
+            class="flex-1 py-2 text-xs font-mono font-semibold uppercase tracking-widest text-center rounded-lg bg-electric/10 text-electric border border-electric/30 transition">
+            🎯 Agent
+          </button>
+          <button onclick="switchOutreachMode('mass')" id="outreach-mode-mass"
+            class="flex-1 py-2 text-xs font-mono font-semibold uppercase tracking-widest text-center rounded-lg text-gray-500 hover:text-gray-300 transition">
+            📨 Mass Outreach
+          </button>
+        </div>
+
+        <!-- ═══ MASS OUTREACH PANEL ═══ -->
+        <div id="mass-outreach-section" class="hidden space-y-4">
+
+          <!-- Pool Status Cards -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-surface-1 rounded-xl border border-border p-4 text-center">
+              <div class="text-[0.6rem] font-mono text-gray-500 uppercase tracking-widest mb-1">Pool Capacity</div>
+              <div id="mass-pool-total" class="text-2xl font-bold text-electric">0</div>
+              <div class="text-[0.55rem] text-gray-600">/day</div>
+            </div>
+            <div class="bg-surface-1 rounded-xl border border-border p-4 text-center">
+              <div class="text-[0.6rem] font-mono text-gray-500 uppercase tracking-widest mb-1">Sent Today</div>
+              <div id="mass-pool-sent" class="text-2xl font-bold text-emerald-400">0</div>
+              <div id="mass-pool-bar" class="mt-2 h-1.5 rounded-full bg-surface-2 overflow-hidden">
+                <div id="mass-pool-bar-fill" class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-electric transition-all duration-1000" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="bg-surface-1 rounded-xl border border-border p-4 text-center">
+              <div class="text-[0.6rem] font-mono text-gray-500 uppercase tracking-widest mb-1">Remaining</div>
+              <div id="mass-pool-remaining" class="text-2xl font-bold text-sky-400">0</div>
+            </div>
+            <div class="bg-surface-1 rounded-xl border border-border p-4 text-center">
+              <div class="text-[0.6rem] font-mono text-gray-500 uppercase tracking-widest mb-1">Providers</div>
+              <div id="mass-pool-providers" class="text-2xl font-bold text-purple-400">0</div>
+              <div class="text-[0.55rem] text-gray-600">active</div>
+            </div>
+          </div>
+
+          <!-- SMTP Provider Manager -->
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-mono text-sm font-semibold text-gray-300 uppercase tracking-wide">SMTP Providers</h3>
+              <button onclick="massShowAddProvider()" class="px-3 py-1.5 bg-electric/10 text-electric border border-electric/30 rounded-lg text-xs font-mono font-semibold hover:bg-electric/20 transition">+ Add Provider</button>
+            </div>
+            <div id="mass-provider-list" class="space-y-2">
+              <div class="text-xs text-gray-600 font-mono text-center py-4">No providers configured. Add your first SMTP provider above.</div>
+            </div>
+          </div>
+
+          <!-- Add/Edit Provider Modal (inline) -->
+          <div id="mass-provider-form" class="hidden bg-surface-1 rounded-xl border border-electric/30 p-4">
+            <h3 id="mass-provider-form-title" class="font-mono text-sm font-semibold text-electric uppercase tracking-wide mb-4">Add SMTP Provider</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Name</label>
+                <input id="mp-name" type="text" placeholder="e.g. gmail, brevo" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
+              </div>
+              <div>
+                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Host</label>
+                <input id="mp-host" type="text" placeholder="smtp.gmail.com" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
+              </div>
+              <div>
+                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Port</label>
+                <input id="mp-port" type="number" value="587" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
+              </div>
+              <div>
+                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Username</label>
+                <input id="mp-username" type="text" placeholder="you@gmail.com" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
+              </div>
+              <div>
+                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Password / API Key</label>
+                <input id="mp-password" type="password" placeholder="App password or SMTP key" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
+              </div>
+              <div>
+                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Daily Limit</label>
+                <input id="mp-limit" type="number" value="100" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
+              </div>
+              <div>
+                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">From Email (optional)</label>
+                <input id="mp-from" type="text" placeholder="Override sender address" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
+              </div>
+              <div>
+                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Priority (0-10)</label>
+                <input id="mp-priority" type="number" value="0" min="0" max="10" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
+              </div>
+            </div>
+            <input id="mp-edit-id" type="hidden" value="">
+            <div class="flex gap-2 mt-4">
+              <button onclick="massSaveProvider()" class="px-4 py-2 bg-electric/10 text-electric border border-electric/30 rounded-lg text-xs font-mono font-semibold hover:bg-electric/20 transition">Save</button>
+              <button onclick="massCancelProvider()" class="px-4 py-2 text-gray-500 font-mono text-xs hover:text-white transition">Cancel</button>
+              <button onclick="massTestProvider()" class="ml-auto px-4 py-2 bg-emerald-600/10 text-emerald-400 border border-emerald-600/30 rounded-lg text-xs font-mono hover:bg-emerald-600/20 transition">⚡ Test Connection</button>
+            </div>
+            <div id="mass-provider-msg" class="hidden mt-2 text-xs font-mono px-3 py-2 rounded-lg"></div>
+          </div>
+
+          <!-- Import Section -->
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-mono text-sm font-semibold text-gray-300 uppercase tracking-wide">📥 Import Prospects</h3>
+              <div id="mass-import-stats" class="text-xs font-mono text-gray-500"></div>
+            </div>
+            <div id="mass-import-dropzone" class="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-electric/50 transition cursor-pointer"
+                 ondragover="event.preventDefault(); this.classList.add('border-electric/50')"
+                 ondragleave="this.classList.remove('border-electric/50')"
+                 ondrop="massHandleDrop(event)"
+                 onclick="document.getElementById('mass-import-file').click()">
+              <input id="mass-import-file" type="file" accept=".xlsx,.xls" class="hidden" onchange="massHandleFile(this)">
+              <div class="text-3xl mb-2">📎</div>
+              <div class="text-sm text-gray-400 font-mono">Drag &amp; drop Excel file or click to browse</div>
+              <div class="text-[0.6rem] text-gray-600 mt-1">.xlsx format — Registered Contractors</div>
+            </div>
+            <!-- Preview Table (hidden until file selected) -->
+            <div id="mass-import-preview" class="hidden mt-4">
+              <div class="flex items-center justify-between mb-3">
+                <div class="text-xs font-mono text-gray-400">
+                  <span id="mass-preview-count" class="text-electric font-semibold">0</span> prospects with email
+                  (<span id="mass-preview-dedup">0</span> duplicates merged,
+                  <span id="mass-preview-noemail">0</span> skipped no email)
+                </div>
+                <button onclick="massExecuteImport()" id="mass-import-btn" class="px-4 py-2 bg-emerald-600/10 text-emerald-400 border border-emerald-600/30 rounded-lg text-xs font-mono font-semibold hover:bg-emerald-600/20 transition">
+                  🚀 Import All
+                </button>
+              </div>
+              <div class="overflow-x-auto max-h-64 overflow-y-auto rounded-lg border border-border">
+                <table class="w-full text-xs font-mono">
+                  <thead class="bg-surface-2 sticky top-0">
+                    <tr class="text-gray-500 uppercase">
+                      <th class="px-3 py-2 text-left">Name</th>
+                      <th class="px-3 py-2 text-left">Email</th>
+                      <th class="px-3 py-2 text-left">Type</th>
+                      <th class="px-3 py-2 text-left">City</th>
+                      <th class="px-3 py-2 text-left">Phone</th>
+                    </tr>
+                  </thead>
+                  <tbody id="mass-preview-body" class="divide-y divide-border text-gray-400"></tbody>
+                </table>
+              </div>
+              <div id="mass-import-result" class="hidden mt-3 px-4 py-3 rounded-lg text-xs font-mono"></div>
+            </div>
+          </div>
+
+          <!-- Email Verification -->
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-mono text-sm font-semibold text-gray-300 uppercase tracking-wide">✉️ Email Verification</h3>
+              <button onclick="massVerifyBatch()" class="px-3 py-1.5 bg-sky-600/10 text-sky-400 border border-sky-600/30 rounded-lg text-xs font-mono hover:bg-sky-600/20 transition">Verify Batch (50)</button>
+            </div>
+            <div id="mass-verify-result" class="text-xs font-mono text-gray-500">Click to verify unverified imported emails via MX + SMTP probe</div>
+          </div>
+
+          <!-- 🚀 Activate Imported Prospects -->
+          <div class="bg-surface-1 rounded-xl border border-border p-4">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-mono text-sm font-semibold text-gray-300 uppercase tracking-wide">🚀 Activate &amp; Enqueue</h3>
+              <div class="flex gap-2">
+                <button onclick="massActivatePreview()" class="px-3 py-1.5 bg-emerald-600/10 text-emerald-400 border border-emerald-600/30 rounded-lg text-xs font-mono hover:bg-emerald-600/20 transition">Preview</button>
+                <button onclick="massActivateBatch()" class="px-3 py-1.5 bg-orange-600/10 text-orange-400 border border-orange-600/30 rounded-lg text-xs font-mono hover:bg-orange-600/20 transition">Activate Batch (200)</button>
+              </div>
+            </div>
+            <div class="flex gap-3 mb-3">
+              <label class="flex items-center gap-1 text-xs text-gray-400">
+                <input type="checkbox" id="activate-verified-only" class="rounded bg-gray-800 border-gray-600"> Verified only
+              </label>
+              <input type="number" id="activate-limit" value="200" min="1" max="1000" class="w-20 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-xs text-white font-mono">
+            </div>
+            <div id="mass-activate-result" class="text-xs font-mono text-gray-500">Preview to see eligible imported prospects, then activate to create email drafts (pending approval).</div>
+          </div>
+
+        </div>
+        <!-- END mass-outreach-section -->
+
+        <!-- ═══ AGENT SECTION (existing) ═══ -->
+        <div id="agent-outreach-section">
         <!-- ═══ MISSION CONTROL — Sci-Fi Hero ═══ -->
         <div id="mc-hero" class="mc-panel">
           <!-- Header bar -->
@@ -2493,6 +2668,8 @@
           </div>
         </div>
 
+        </div><!-- END agent-outreach-section -->
+
       </div>
 
     </main>
@@ -2720,6 +2897,7 @@
   <script src="js/analytics.js"></script>
   <script src="js/traffic.js"></script>
   <script src="js/outreach.js"></script>
+  <script src="js/mass_outreach.js"></script>
   <script>
     /* ═══ Mobile Sidebar Toggle ═══ */
     function toggleMobileSidebar() {

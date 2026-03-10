@@ -48,6 +48,40 @@ SEQUENCE_TEMPLATES = {
     5: {"template": "resurrection.html", "subject": "{{business_name}} — quick check-in"},
 }
 
+# ─── Contractor Registry Templates (3-touch drip) ────────────────────
+CONTRACTOR_TEMPLATES = {
+    1: {"template": "contractor_intro.html", "subject": "{{owner_first_name}}, your {{registration_type}} license is public — your website should be too"},
+    2: {"template": "contractor_followup.html", "subject": "re: quick question about {{business_name}}"},
+    3: {"template": "contractor_breakup.html", "subject": "closing the loop — {{business_name}}"},
+}
+
+# ─── Contractor industry → (noun, service_example, portfolio_industry) ──
+CONTRACTOR_INDUSTRY_INFO = {
+    "electrician":          ("electrician", "panel upgrade and rewiring", "electrician"),
+    "plumber":              ("plumber", "repiping and water heater", "plumber"),
+    "hvac":                 ("HVAC contractor", "AC repair and installation", "HVAC company"),
+    "roofer":               ("roofer", "roof replacement and repair", "roofer"),
+    "general_contractor":   ("general contractor", "remodeling and build-out", "contractor"),
+    "residential_builder":  ("residential builder", "custom home and addition", "builder"),
+    "foundation":           ("foundation contractor", "foundation repair", "foundation company"),
+    "landscaper":           ("landscaper", "landscape design and maintenance", "landscaper"),
+    "irrigation":           ("irrigation contractor", "sprinkler installation", "irrigation company"),
+    "fence_contractor":     ("fence contractor", "fence installation and repair", "fence company"),
+    "pool_contractor":      ("pool contractor", "pool construction and renovation", "pool builder"),
+    "tree_service":         ("tree service", "tree removal and trimming", "tree service"),
+    "demolition":           ("demolition contractor", "demolition", "contractor"),
+    "paving":               ("paving contractor", "driveway and sidewalk", "paving company"),
+    "fire_alarm":           ("fire alarm technician", "fire alarm installation", "contractor"),
+    "fire_sprinkler":       ("fire sprinkler contractor", "fire sprinkler installation", "contractor"),
+    "backflow":             ("backflow technician", "backflow testing", "contractor"),
+    "sign_contractor":      ("sign contractor", "sign installation", "contractor"),
+    "energy_consultant":    ("energy consultant", "energy audit", "contractor"),
+    "green_building":       ("green building contractor", "green building", "contractor"),
+    "medical_gas":          ("medical gas technician", "medical gas piping", "contractor"),
+    "mover":                ("moving company", "local and long-distance moving", "moving company"),
+    "water_treatment":      ("water treatment specialist", "water treatment", "contractor"),
+}
+
 # ─── WP-Score-Driven Templates (step 1 overrides) ────────────────────
 # Higher priority = checked first. Each entry has a condition checker,
 # template file, and subject line.
@@ -320,29 +354,54 @@ async def compose_email(
         # Build variable map from real data
         variables = _build_variables(prospect, audit)
 
-        # Render subject line — use no-website variant if applicable
-        subject_template = step_config["subject"]
-        template_name = step_config["template"]
+        # ── Contractor Registry → dedicated 3-touch templates ──
+        is_contractor = prospect.source == "contractor_registry"
+        if is_contractor:
+            # Contractor-specific variables
+            bt = prospect.business_type or "contractor"
+            info = CONTRACTOR_INDUSTRY_INFO.get(bt, ("contractor", "contracting", "contractor"))
+            variables["industry_noun"] = info[0]
+            variables["service_example"] = info[1]
+            variables["portfolio_industry"] = info[2]
+            # Use first tag as registration_type display
+            tags = prospect.tags or []
+            variables["registration_type"] = tags[0].split(" (")[0] if tags else bt.replace("_", " ")
+
+            # Map to 3-step contractor sequence
+            contractor_step = min(sequence_step, 3)
+            cstep = CONTRACTOR_TEMPLATES.get(contractor_step)
+            if cstep:
+                step_config = cstep
+                template_name = cstep["template"]
+                subject_template = cstep["subject"]
+            else:
+                template_name = step_config["template"]
+                subject_template = step_config["subject"]
+        else:
+            # Render subject line — use no-website variant if applicable
+            subject_template = step_config["subject"]
+            template_name = step_config["template"]
 
         # Website is DOWN (has URL but unreachable) → special template
-        if prospect.has_website and prospect.website_url and not audit and sequence_step == 1:
-            if prospect.notes and "unreachable" in prospect.notes.lower():
-                subject_template = WEBSITE_DOWN_SUBJECTS.get(sequence_step, subject_template)
-                template_name = "website_down.html"
-        # No website at all → different template
-        elif not prospect.has_website and sequence_step == 1:
-            subject_template = NO_WEBSITE_SUBJECTS.get(sequence_step, subject_template)
-            template_name = "no_website_intro.html"
-        # ── WP-Score-driven template selection (step 1 only) ──
-        elif sequence_step == 1 and prospect.wp_score is not None:
-            wp_override = _select_wp_template(prospect, audit)
-            if wp_override:
-                template_name = wp_override["template"]
-                subject_template = wp_override["subject"]
-                logger.info(
-                    "wp_score template override: %s → %s (wp=%d)",
-                    prospect.business_name, template_name, prospect.wp_score,
-                )
+        if not is_contractor:
+            if prospect.has_website and prospect.website_url and not audit and sequence_step == 1:
+                if prospect.notes and "unreachable" in prospect.notes.lower():
+                    subject_template = WEBSITE_DOWN_SUBJECTS.get(sequence_step, subject_template)
+                    template_name = "website_down.html"
+            # No website at all → different template
+            elif not prospect.has_website and sequence_step == 1:
+                subject_template = NO_WEBSITE_SUBJECTS.get(sequence_step, subject_template)
+                template_name = "no_website_intro.html"
+            # ── WP-Score-driven template selection (step 1 only) ──
+            elif sequence_step == 1 and prospect.wp_score is not None:
+                wp_override = _select_wp_template(prospect, audit)
+                if wp_override:
+                    template_name = wp_override["template"]
+                    subject_template = wp_override["subject"]
+                    logger.info(
+                        "wp_score template override: %s → %s (wp=%d)",
+                        prospect.business_name, template_name, prospect.wp_score,
+                    )
         subject = simple_render(subject_template, variables)
 
         # Render HTML body using Jinja2

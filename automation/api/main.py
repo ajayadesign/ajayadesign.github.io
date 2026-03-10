@@ -1367,6 +1367,8 @@ async def _migrate_protected_column():
 async def lifespan(app: FastAPI):
     """Startup / shutdown hook."""
     logger.info("🚀 Starting AjayaDesign Automation API v2.0.0-python")
+    # Ensure all models are registered with Base.metadata before create_all
+    import api.models.smtp_provider  # noqa: F401
     await init_db()
     logger.info("✅ Database ready")
 
@@ -1691,6 +1693,10 @@ app.include_router(quote_router, prefix="/api/v1")
 # Outreach agent routes
 from api.routes.outreach import outreach_router
 app.include_router(outreach_router, prefix="/api/v1")
+
+# Mass outreach routes (SMTP pool, import, verification)
+from api.routes.mass_outreach import mass_router
+app.include_router(mass_router, prefix="/api/v1")
 
 
 @app.get("/", include_in_schema=False)
