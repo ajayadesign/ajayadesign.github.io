@@ -1050,13 +1050,24 @@ async def recover_all_bad_states() -> dict:
                 Prospect.updated_at < day_ago,
             )
         )
+        stale_enriched_ids = []
         for p in result.scalars().all():
             email_result = await db.execute(
                 select(OutreachEmail).where(OutreachEmail.prospect_id == p.id).limit(1)
             )
             if not email_result.scalars().first():
+                # Reset to imported so activate can pick them up again
+                if p.source == "contractor_registry":
+                    p.status = "imported"
+                else:
+                    p.status = "discovered"
+                p.updated_at = now
                 recovered["stale_enriched"] += 1
-                # Don't change status — pipeline worker will pick these up
+                stale_enriched_ids.append(str(p.id))
+
+        if stale_enriched_ids:
+            logger.warning("Reset %d stale enriched prospects: %s",
+                           len(stale_enriched_ids), stale_enriched_ids[:5])
 
         recovered["total"] = sum(v for k, v in recovered.items() if k != "total")
 

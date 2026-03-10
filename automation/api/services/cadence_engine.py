@@ -161,6 +161,12 @@ async def enqueue_prospect(prospect_id: str) -> Optional[str]:
             logger.warning("Cannot enqueue %s — no email", prospect.business_name)
             return None
 
+        # Guard: skip prospects where email was actively verified as invalid
+        # (email_verified=False + mx_provider set means verification ran and failed)
+        if prospect.email_verified is False and prospect.mx_provider is not None:
+            logger.info("Skipping %s — email verified as invalid", prospect.business_name)
+            return None
+
         # Guard: block registrar/platform/chain emails
         if _is_blocked_email(prospect.owner_email):
             logger.warning("Blocked %s — bad email domain: %s", prospect.business_name, prospect.owner_email)
@@ -242,6 +248,11 @@ async def schedule_next_step(prospect_id: str, current_step: int) -> Optional[st
     async with async_session_factory() as db:
         prospect = await db.get(Prospect, prospect_id)
         if not prospect:
+            return None
+
+        # Contractors only get 3 steps (intro/followup/breakup) — no step 4-5
+        if prospect.source == "contractor_registry" and next_step > 3:
+            logger.info("Contractor sequence complete for %s (3 steps)", prospect.business_name)
             return None
 
         # Check exit conditions (§8.3)

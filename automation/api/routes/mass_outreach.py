@@ -315,59 +315,63 @@ class ActivateRequest(BaseModel):
 
 
 @mass_router.post("/activate")
-async def activate_imported_prospects(body: ActivateRequest, db: AsyncSession = Depends(get_db)):
+async def activate_imported_prospects(body: ActivateRequest):
     """
     Move imported prospects into the outreach pipeline.
 
     For each prospect:
-    1. Status → 'enriched' (so cadence engine's enqueue picks them up)
+    1. Status → 'enriched' one-at-a-time (so failures can be rolled back)
     2. Calls enqueue_prospect() → creates step-1 email as pending_approval
     3. Status ends at 'queued' with a draft email waiting for approval
 
     Uses contractor-specific templates (3-touch drip) automatically
     because source='contractor_registry' is detected by compose_email().
     """
+    from api.database import async_session_factory
     from api.services.cadence_engine import enqueue_prospect
 
-    # ── Phase 1: Collect IDs and batch-update status ──────────
-    query = (
-        select(Prospect.id)
-        .where(
-            Prospect.status == "imported",
-            Prospect.owner_email.isnot(None),
+    # ── Phase 1: Collect eligible IDs ──────────────────────
+    async with async_session_factory() as db:
+        query = (
+            select(Prospect.id)
+            .where(
+                Prospect.status == "imported",
+                Prospect.owner_email.isnot(None),
+            )
+            .order_by(Prospect.created_at)
+            .limit(body.limit)
         )
-        .order_by(Prospect.created_at)
-        .limit(body.limit)
-    )
 
-    if body.only_verified:
-        query = query.where(Prospect.email_verified == True)  # noqa: E712
+        if body.only_verified:
+            query = query.where(Prospect.email_verified == True)  # noqa: E712
 
-    if body.business_types:
-        query = query.where(Prospect.business_type.in_(body.business_types))
+        if body.business_types:
+            query = query.where(Prospect.business_type.in_(body.business_types))
 
-    result = await db.execute(query)
-    prospect_ids = [str(row[0]) for row in result.all()]
+        result = await db.execute(query)
+        prospect_ids = [str(row[0]) for row in result.all()]
 
     if not prospect_ids:
         return {"activated": 0, "skipped": 0, "errors": 0, "total": 0}
 
-    # Batch update all to 'enriched' in one shot
-    from sqlalchemy import update
-    await db.execute(
-        update(Prospect)
-        .where(Prospect.id.in_([uuid.UUID(pid) for pid in prospect_ids]))
-        .values(status="enriched")
-    )
-    await db.commit()
-    # Release the route's DB connection so enqueue_prospect() can use the pool
-    await db.close()
-
-    # ── Phase 2: Enqueue each prospect (uses its own session) ─
+    # ── Phase 2: Activate one-by-one (set enriched → enqueue → queued) ─
+    # Each prospect is handled in its own transaction so failures don't
+    # leave the batch in a weird state.
     stats = {"activated": 0, "skipped": 0, "errors": 0, "total": len(prospect_ids)}
 
     for pid in prospect_ids:
         try:
+            # Set to enriched
+            async with async_session_factory() as db:
+                from sqlalchemy import update as sql_update
+                await db.execute(
+                    sql_update(Prospect)
+                    .where(Prospect.id == uuid.UUID(pid))
+                    .values(status="enriched")
+                )
+                await db.commit()
+
+            # Enqueue (uses its own session internally)
             email_id = await enqueue_prospect(pid)
             if email_id:
                 stats["activated"] += 1
@@ -376,6 +380,21 @@ async def activate_imported_prospects(body: ActivateRequest, db: AsyncSession = 
         except Exception as e:
             stats["errors"] += 1
             logger.warning("Failed to activate %s: %s", pid, e)
+            # Roll back to imported so it can be retried
+            try:
+                async with async_session_factory() as db:
+                    from sqlalchemy import update as sql_update
+                    await db.execute(
+                        sql_update(Prospect)
+                        .where(
+                            Prospect.id == uuid.UUID(pid),
+                            Prospect.status == "enriched",
+                        )
+                        .values(status="imported")
+                    )
+                    await db.commit()
+            except Exception:
+                logger.error("Rollback failed for %s", pid)
 
     logger.info("Batch activate: %d activated, %d skipped, %d errors out of %d",
                 stats["activated"], stats["skipped"], stats["errors"], stats["total"])
