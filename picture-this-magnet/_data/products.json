@@ -1,0 +1,372 @@
+{
+  "lastUpdated": "2026-03-11T01:22:02.746823+00:00",
+  "shopifyDomain": "picturethismagnet.myshopify.com",
+  "productCount": 3,
+  "products": [
+    {
+      "id": 7294832246863,
+      "title": "Bulk Single Image",
+      "handle": "bulk-1-image",
+      "body_html": "<p data-mce-fragment=\"1\">This bulk package offers a single identical image, providing endless possibilities for creating souvenirs, crafting party favors, funeral memorials, business logos, QR codes, contact information, promotions, fundraisers, motivational phrases and much more. Same great<span class=\"Apple-converted-space\" data-mce-fragment=\"1\">\u00a0 </span>high quality product.</p>",
+      "published_at": "2024-04-20T00:27:34-07:00",
+      "created_at": "2024-03-22T22:25:23-07:00",
+      "updated_at": "2026-03-10T18:22:02-07:00",
+      "vendor": "PictureThisMagnet",
+      "product_type": "souvenir",
+      "tags": [],
+      "variants": [
+        {
+          "id": 41319253114959,
+          "title": "Set of 9 Magnets",
+          "option1": "Set of 9 Magnets",
+          "option2": null,
+          "option3": null,
+          "sku": "NINEMAGS-2x2-9",
+          "requires_shipping": true,
+          "taxable": true,
+          "featured_image": null,
+          "available": true,
+          "price": "22.00",
+          "grams": 0,
+          "compare_at_price": null,
+          "position": 2,
+          "product_id": 7294832246863,
+          "created_at": "2024-03-22T22:25:26-07:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        },
+        {
+          "id": 41319253147727,
+          "title": "Set of 18 Magnets",
+          "option1": "Set of 18 Magnets",
+          "option2": null,
+          "option3": null,
+          "sku": "NINEMAGS-2x2-9",
+          "requires_shipping": true,
+          "taxable": true,
+          "featured_image": null,
+          "available": true,
+          "price": "44.00",
+          "grams": 0,
+          "compare_at_price": null,
+          "position": 3,
+          "product_id": 7294832246863,
+          "created_at": "2024-03-22T22:25:26-07:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        },
+        {
+          "id": 41319253180495,
+          "title": "Set of 27 Magnets",
+          "option1": "Set of 27 Magnets",
+          "option2": null,
+          "option3": null,
+          "sku": "",
+          "requires_shipping": true,
+          "taxable": true,
+          "featured_image": null,
+          "available": true,
+          "price": "66.00",
+          "grams": 0,
+          "compare_at_price": null,
+          "position": 4,
+          "product_id": 7294832246863,
+          "created_at": "2024-03-22T22:25:26-07:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        },
+        {
+          "id": 41319253213263,
+          "title": "Set of 36 Magnets",
+          "option1": "Set of 36 Magnets",
+          "option2": null,
+          "option3": null,
+          "sku": "",
+          "requires_shipping": true,
+          "taxable": true,
+          "featured_image": null,
+          "available": true,
+          "price": "88.00",
+          "grams": 0,
+          "compare_at_price": null,
+          "position": 5,
+          "product_id": 7294832246863,
+          "created_at": "2024-03-22T22:25:26-07:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        },
+        {
+          "id": 41319253246031,
+          "title": "Set of 45 Magnets",
+          "option1": "Set of 45 Magnets",
+          "option2": null,
+          "option3": null,
+          "sku": "",
+          "requires_shipping": true,
+          "taxable": true,
+          "featured_image": null,
+          "available": true,
+          "price": "110.00",
+          "grams": 0,
+          "compare_at_price": null,
+          "position": 6,
+          "product_id": 7294832246863,
+          "created_at": "2024-03-22T22:25:26-07:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        },
+        {
+          "id": 41319253278799,
+          "title": "Set of 54 Magnets",
+          "option1": "Set of 54 Magnets",
+          "option2": null,
+          "option3": null,
+          "sku": "",
+          "requires_shipping": true,
+          "taxable": true,
+          "featured_image": null,
+          "available": true,
+          "price": "132.00",
+          "grams": 0,
+          "compare_at_price": null,
+          "position": 7,
+          "product_id": 7294832246863,
+          "created_at": "2024-03-22T22:25:26-07:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        },
+        {
+          "id": 41319253311567,
+          "title": "Set of 63 Magnets",
+          "option1": "Set of 63 Magnets",
+          "option2": null,
+          "option3": null,
+          "sku": "",
+          "requires_shipping": true,
+          "taxable": true,
+          "featured_image": null,
+          "available": true,
+          "price": "154.00",
+          "grams": 0,
+          "compare_at_price": null,
+          "position": 8,
+          "product_id": 7294832246863,
+          "created_at": "2024-03-22T22:25:26-07:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        },
+        {
+          "id": 41319253344335,
+          "title": "Set of 72 Magnets",
+          "option1": "Set of 72 Magnets",
+          "option2": null,
+          "option3": null,
+          "sku": "",
+          "requires_shipping": true,
+          "taxable": true,
+          "featured_image": null,
+          "available": true,
+          "price": "176.00",
+          "grams": 0,
+          "compare_at_price": null,
+          "position": 9,
+          "product_id": 7294832246863,
+          "created_at": "2024-03-22T22:25:26-07:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        },
+        {
+          "id": 41319253377103,
+          "title": "Set of 81 Magnets",
+          "option1": "Set of 81 Magnets",
+          "option2": null,
+          "option3": null,
+          "sku": "",
+          "requires_shipping": true,
+          "taxable": true,
+          "featured_image": null,
+          "available": true,
+          "price": "198.00",
+          "grams": 0,
+          "compare_at_price": null,
+          "position": 10,
+          "product_id": 7294832246863,
+          "created_at": "2024-03-22T22:25:26-07:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        },
+        {
+          "id": 41319253409871,
+          "title": "Set of 90 Magnets",
+          "option1": "Set of 90 Magnets",
+          "option2": null,
+          "option3": null,
+          "sku": "",
+          "requires_shipping": true,
+          "taxable": true,
+          "featured_image": null,
+          "available": true,
+          "price": "220.00",
+          "grams": 0,
+          "compare_at_price": null,
+          "position": 11,
+          "product_id": 7294832246863,
+          "created_at": "2024-03-22T22:25:26-07:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        },
+        {
+          "id": 41319253442639,
+          "title": "Set of 99 Magnets",
+          "option1": "Set of 99 Magnets",
+          "option2": null,
+          "option3": null,
+          "sku": "",
+          "requires_shipping": true,
+          "taxable": true,
+          "featured_image": null,
+          "available": true,
+          "price": "242.00",
+          "grams": 0,
+          "compare_at_price": null,
+          "position": 12,
+          "product_id": 7294832246863,
+          "created_at": "2024-03-22T22:25:26-07:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        }
+      ],
+      "images": [
+        {
+          "id": 37065570484303,
+          "created_at": "2024-03-24T00:24:22-07:00",
+          "position": 1,
+          "updated_at": "2024-03-27T21:31:24-07:00",
+          "product_id": 7294832246863,
+          "variant_ids": [],
+          "src": "https://cdn.shopify.com/s/files/1/0585/5838/2159/files/IMG_8305.jpg?v=1711600284",
+          "width": 1568,
+          "height": 1568
+        }
+      ],
+      "options": [
+        {
+          "name": "Size",
+          "position": 1,
+          "values": [
+            "Set of 9 Magnets",
+            "Set of 18 Magnets",
+            "Set of 27 Magnets",
+            "Set of 36 Magnets",
+            "Set of 45 Magnets",
+            "Set of 54 Magnets",
+            "Set of 63 Magnets",
+            "Set of 72 Magnets",
+            "Set of 81 Magnets",
+            "Set of 90 Magnets",
+            "Set of 99 Magnets"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7261637509199,
+      "title": "PictureThisMagnet Gift Card",
+      "handle": "picturethismagnet-gift-card",
+      "body_html": "<p><span style=\"font-size: 0.875rem;\">Give the gift of love with our surprise gift card. Perfect for showing your love and appreciation for your special someone. With this gift, they can choose exactly what they want and be reminded of your love every time they use it. Don't miss the chance to make their day even more special.</span></p>\n<br>",
+      "published_at": "2024-03-19T23:07:00-07:00",
+      "created_at": "2024-03-03T21:40:16-08:00",
+      "updated_at": "2026-03-10T18:22:02-07:00",
+      "vendor": "PictureThisMagnet",
+      "product_type": "",
+      "tags": [],
+      "variants": [
+        {
+          "id": 41237298905167,
+          "title": "$10.00",
+          "option1": "$10.00",
+          "option2": null,
+          "option3": null,
+          "sku": "",
+          "requires_shipping": false,
+          "taxable": false,
+          "featured_image": null,
+          "available": true,
+          "price": "10.00",
+          "grams": 0,
+          "compare_at_price": null,
+          "position": 1,
+          "product_id": 7261637509199,
+          "created_at": "2024-03-03T21:40:17-08:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        }
+      ],
+      "images": [
+        {
+          "id": 37027788324943,
+          "created_at": "2024-03-15T04:57:55-07:00",
+          "position": 1,
+          "updated_at": "2024-03-15T04:57:56-07:00",
+          "product_id": 7261637509199,
+          "variant_ids": [],
+          "src": "https://cdn.shopify.com/s/files/1/0585/5838/2159/files/Untitleddesign_8.png?v=1710503876",
+          "width": 1080,
+          "height": 1080
+        }
+      ],
+      "options": [
+        {
+          "name": "Denominations",
+          "position": 1,
+          "values": [
+            "$10.00"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7261110763599,
+      "title": "Photo Magnets",
+      "handle": "photo-magnets",
+      "body_html": "<p><strong><span style=\"font-size: 0.875rem;\">2x2 Square Photo Magnet features high quality printing that produces vivid colors and sharp details, showcasing exceptional craftmanship.</span></strong></p>\n<p>\u00a0</p>",
+      "published_at": "2024-03-01T23:13:06-08:00",
+      "created_at": "2024-03-01T23:13:06-08:00",
+      "updated_at": "2026-03-10T18:22:02-07:00",
+      "vendor": "PictureThisMagnet",
+      "product_type": "souvenir",
+      "tags": [],
+      "variants": [
+        {
+          "id": 41236417642575,
+          "title": "Default Title",
+          "option1": "Default Title",
+          "option2": null,
+          "option3": null,
+          "sku": "NINEMAGS-2x2-9",
+          "requires_shipping": true,
+          "taxable": true,
+          "featured_image": null,
+          "available": true,
+          "price": "25.00",
+          "grams": 227,
+          "compare_at_price": null,
+          "position": 1,
+          "product_id": 7261110763599,
+          "created_at": "2024-03-02T20:40:29-08:00",
+          "updated_at": "2026-03-10T18:22:02-07:00"
+        }
+      ],
+      "images": [
+        {
+          "id": 37094136283215,
+          "created_at": "2024-03-27T21:28:46-07:00",
+          "position": 1,
+          "updated_at": "2024-03-27T21:33:55-07:00",
+          "product_id": 7261110763599,
+          "variant_ids": [],
+          "src": "https://cdn.shopify.com/s/files/1/0585/5838/2159/files/IMG_8450.jpg?v=1711600435",
+          "width": 1575,
+          "height": 1575
+        }
+      ],
+      "options": [
+        {
+          "name": "Title",
+          "position": 1,
+          "values": [
+            "Default Title"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Build Report — PictureThisMagnet</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Design Tokens (PictureThisMagnet palette) ── */
+:root {
+  --color-primary: #0B7A70;
+  --color-primary-light: #5EEAD4;
+  --color-primary-dark: #0A6B62;
+  --color-secondary: #06B6D4;
+  --color-secondary-light: #67E8F9;
+  --color-accent: #F59E0B;
+  --color-cream: #F8FAFB;
+  --color-cream-dark: #EEF2F4;
+  --color-charcoal: #1E293B;
+  --color-text: #475569;
+  --color-text-light: #526177;
+  --color-white: #FFFFFF;
+  --color-border: #E2E8F0;
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-accent: 'Cormorant Garamond', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-cream);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── Report Header ── */
+.report-header {
+  background: linear-gradient(135deg, var(--color-charcoal) 0%, #0f2027 50%, var(--color-primary-dark) 100%);
+  color: white;
+  padding: 4rem 2rem 3rem;
+  text-align: center;
+}
+.report-header .badge {
+  display: inline-block;
+  background: var(--color-primary);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.35rem 1rem;
+  border-radius: 50px;
+  margin-bottom: 1.25rem;
+}
+.report-header h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.report-header .subtitle {
+  font-family: var(--font-accent);
+  font-size: 1.2rem;
+  opacity: 0.7;
+  font-style: italic;
+}
+.report-meta {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+/* ── TOC ── */
+.toc {
+  max-width: 800px;
+  margin: -1.5rem auto 0;
+  background: var(--color-white);
+  border-radius: 12px;
+  padding: 1.75rem 2rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  position: relative;
+  z-index: 2;
+}
+.toc h2 {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  color: var(--color-charcoal);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.toc ol {
+  list-style: none;
+  counter-reset: toc;
+  columns: 2;
+  column-gap: 2rem;
+}
+.toc li {
+  counter-increment: toc;
+  padding: 0.3rem 0;
+}
+.toc li::before {
+  content: "0" counter(toc) ".";
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+  font-family: var(--font-mono);
+}
+.toc a {
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+.toc a:hover { color: var(--color-primary); }
+
+/* ── Main content ── */
+.report { max-width: 800px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+
+/* ── Section ── */
+.section {
+  margin-bottom: 4rem;
+  scroll-margin-top: 2rem;
+}
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+.section h2 {
+  font-family: var(--font-heading);
+  font-size: 1.65rem;
+  color: var(--color-charcoal);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-border);
+}
+.section h3 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  color: var(--color-charcoal);
+  margin: 1.75rem 0 0.5rem;
+}
+.section p { margin-bottom: 1rem; }
+
+/* ── Comparison cards ── */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin: 1.25rem 0;
+}
+.compare-card {
+  background: var(--color-white);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid var(--color-border);
+}
+.compare-card.before { border-left-color: var(--color-text-light); }
+.compare-card.after  { border-left-color: var(--color-primary); }
+.compare-card .label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.compare-card.before .label { color: var(--color-text-light); }
+.compare-card.after  .label { color: var(--color-primary); }
+.compare-card ul {
+  list-style: none;
+  font-size: 0.88rem;
+}
+.compare-card li {
+  padding: 0.2rem 0;
+  padding-left: 1.25rem;
+  position: relative;
+}
+.compare-card.before li::before { content: "✗"; position: absolute; left: 0; color: #c0392b; font-weight: 700; }
+.compare-card.after  li::before { content: "✓"; position: absolute; left: 0; color: var(--color-primary); font-weight: 700; }
+
+/* ── Color swatches ── */
+.swatches {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 1rem 0 1.5rem;
+}
+.swatch {
+  text-align: center;
+}
+.swatch-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin: 0 auto 0.4rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 3px solid white;
+}
+.swatch-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-charcoal);
+}
+.swatch-hex {
+  font-size: 0.65rem;
+  color: var(--color-text-light);
+  font-family: var(--font-mono);
+}
+
+/* ── Tech stack list ── */
+.tech-stack {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.tech-item {
+  background: var(--color-white);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-border);
+}
+.tech-item strong {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--color-charcoal);
+  margin-bottom: 0.15rem;
+}
+.tech-item span {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+}
+
+/* ── Code blocks ── */
+.code-block {
+  background: var(--color-charcoal);
+  color: #e0e0e0;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.8;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 1rem 0;
+  position: relative;
+}
+.code-block .label {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #888;
+}
+.code-block .cm  { color: #6a9955; }
+.code-block .kw  { color: #c586c0; }
+.code-block .fn  { color: #dcdcaa; }
+.code-block .str { color: #ce9178; }
+.code-block .num { color: #b5cea8; }
+.code-block .op  { color: #d4d4d4; }
+
+/* ── Diagram ── */
+.diagram {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  text-align: center;
+}
+.diagram-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.diagram-box {
+  background: var(--color-cream);
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-charcoal);
+  min-width: 120px;
+}
+.diagram-box.highlight {
+  background: #ccfbf1;
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+}
+.diagram-box.blue {
+  background: #e0f7fa;
+  border-color: var(--color-secondary);
+  color: #0e7490;
+}
+.diagram-box.gold {
+  background: #fef3c7;
+  border-color: var(--color-accent);
+  color: #92400e;
+}
+.diagram-arrow {
+  font-size: 1.2rem;
+  color: var(--color-text-light);
+}
+.diagram-caption {
+  font-size: 0.78rem;
+  color: var(--color-text-light);
+  margin-top: 1rem;
+  font-style: italic;
+}
+
+/* ── Callout ── */
+.callout {
+  background: var(--color-white);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 0 10px 10px 0;
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0;
+  font-size: 0.92rem;
+}
+.callout.idea { border-left-color: var(--color-accent); }
+.callout.success { border-left-color: var(--color-primary); }
+.callout.warning { border-left-color: #e74c3c; }
+.callout .callout-title {
+  font-weight: 700;
+  color: var(--color-charcoal);
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+/* ── File tree ── */
+.file-tree {
+  background: var(--color-charcoal);
+  color: #ccc;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.8;
+  white-space: pre;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+.file-tree .dir { color: var(--color-accent); }
+.file-tree .file { color: #9cdcfe; }
+.file-tree .comment { color: #6a9955; }
+
+/* ── Table ── */
+.report table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.88rem;
+  background: var(--color-white);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.report th {
+  background: var(--color-cream-dark);
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--color-charcoal);
+}
+.report td {
+  padding: 0.65rem 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1rem 0;
+}
+.table-wrap table { margin: 0; }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .compare { grid-template-columns: 1fr; }
+  .toc ol { columns: 1; }
+  .toc { padding: 1.25rem 1rem; }
+  .report-header { padding: 2.5rem 1rem 2rem; }
+  .report-header h1 { font-size: 1.6rem; }
+  .report-meta { flex-direction: column; gap: 0.25rem; }
+  .report { padding: 2rem 1rem 4rem; }
+  .diagram-flow { flex-direction: column; }
+  .diagram-arrow { transform: rotate(90deg); }
+  .callout { padding: 1rem; }
+  .section h2 { font-size: 1.3rem; }
+  .report th, .report td { padding: 0.5rem 0.6rem; font-size: 0.78rem; }
+  .tech-stack { grid-template-columns: 1fr; }
+  .code-block { font-size: 0.75rem; padding: 1rem; }
+  code { word-break: break-all; }
+  .file-tree { font-size: 0.7rem; padding: 1rem; }
+}
+
+/* ── Print ── */
+@media print {
+  .report-header { background: white; color: black; border-bottom: 2px solid #ccc; }
+  .toc { box-shadow: none; border: 1px solid #ccc; }
+  body { background: white; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header class="report-header">
+  <span class="badge">Client Report</span>
+  <h1>Website Build Report</h1>
+  <p class="subtitle">PictureThisMagnet — Custom Static Site with Shopify Integration</p>
+  <div class="report-meta">
+    <span>Prepared: March 11, 2026</span>
+    <span>For: Lily</span>
+    <span>By: AJ</span>
+    <span>Version: 1.0</span>
+  </div>
+</header>
+
+<!-- ═══════════════════ TABLE OF CONTENTS ═══════════════════ -->
+<nav class="toc">
+  <h2>Contents</h2>
+  <p style="padding:0.3rem 0;font-size:0.9rem;"><span style="color:var(--color-primary);font-weight:700;font-size:0.8rem;margin-right:0.5rem;font-family:var(--font-mono);">00.</span><a href="#summary" style="color:var(--color-text);text-decoration:none;">Summary — The Big Picture</a></p>
+  <ol>
+    <li><a href="#what-was-built">What Was Built</a></li>
+    <li><a href="#design">Design Decisions — Colors, Theme &amp; Typography</a></li>
+    <li><a href="#tech">Technology Stack</a></li>
+    <li><a href="#shopify">Shopify Cart Integration</a></li>
+    <li><a href="#auto-sync">Automatic Product Sync</a></li>
+    <li><a href="#seo">SEO &amp; Nationwide Shipping Keywords</a></li>
+    <li><a href="#accessibility">Accessibility Compliance (WCAG AA)</a></li>
+    <li><a href="#mobile">Mobile Compatibility</a></li>
+    <li><a href="#testing">Automated Testing Results</a></li>
+    <li><a href="#site-structure">Site Structure &amp; File Organization</a></li>
+    <li><a href="#footer-credit">Designer Footer Credit</a></li>
+    <li><a href="#github-actions">GitHub Actions &amp; Deployment</a></li>
+    <li><a href="#whats-next">What's Next — Future Enhancements</a></li>
+  </ol>
+</nav>
+
+<!-- ═══════════════════ REPORT BODY ═══════════════════ -->
+<main class="report">
+
+  <!-- ═══ 00 — Summary ═══ -->
+  <section class="section" id="summary">
+    <span class="section-num">00</span>
+    <h2>Summary — The Big Picture</h2>
+    <p>Hi Lily — this report covers everything that went into building the PictureThisMagnet website from scratch. The site is a fully custom, hand-coded static website that connects directly to your Shopify store for product data and checkout.</p>
+    <p>No Shopify theme, no website builders — every page was designed and coded specifically for PictureThisMagnet. The result is a fast, accessible, mobile-friendly site that you own and control through GitHub Pages.</p>
+
+    <h3>What you're getting</h3>
+    <div class="compare">
+      <div class="compare-card before">
+        <span class="label">❌ Before</span>
+        <ul>
+          <li>Default Shopify storefront</li>
+          <li>Limited design control</li>
+          <li>Generic look shared with other stores</li>
+          <li>No custom pages (FAQ, events, wholesale)</li>
+          <li>No accessibility testing</li>
+        </ul>
+      </div>
+      <div class="compare-card after">
+        <span class="label">✓ After</span>
+        <ul>
+          <li>12 custom-designed HTML pages</li>
+          <li>Unique brand identity with curated colors &amp; fonts</li>
+          <li>Dedicated pages for events, wholesale, FAQ</li>
+          <li>WCAG AA accessible (tested with axe-core)</li>
+          <li>Mobile-optimized with 44px touch targets</li>
+          <li>Automated product sync every 6 hours</li>
+          <li>Live Shopify cart integration</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 01 — What Was Built ═══ -->
+  <section class="section" id="what-was-built">
+    <span class="section-num">01</span>
+    <h2>What Was Built</h2>
+    <p>The site includes 12 fully designed and coded HTML pages, each with consistent branding, navigation, and footer. Every page is connected to the Shopify cart system.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Page</th><th>URL</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Home</td><td>/</td><td>Hero, featured products, newsletter, trust badges</td></tr>
+          <tr><td>Shop</td><td>/shop/</td><td>Full product catalog with live Shopify data</td></tr>
+          <tr><td>About</td><td>/about/</td><td>Meet the maker — Lily's story and brand values</td></tr>
+          <tr><td>Contact</td><td>/contact/</td><td>Contact form via FormSubmit.co</td></tr>
+          <tr><td>Events</td><td>/events/</td><td>Event booking and photo station information</td></tr>
+          <tr><td>FAQ</td><td>/faq/</td><td>Frequently asked questions with accordion UI</td></tr>
+          <tr><td>Wholesale</td><td>/wholesale/</td><td>B2B bulk pricing and inquiry form</td></tr>
+          <tr><td>Privacy</td><td>/policies/privacy/</td><td>Privacy policy</td></tr>
+          <tr><td>Shipping</td><td>/policies/shipping/</td><td>Shipping information and expectations</td></tr>
+          <tr><td>Terms</td><td>/policies/terms/</td><td>Terms of service</td></tr>
+          <tr><td>Refund</td><td>/policies/refund/</td><td>Refund and return policy</td></tr>
+          <tr><td>404</td><td>/404.html</td><td>Custom error page with navigation back</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout success">
+      <div class="callout-title">✦ Key Feature</div>
+      Every page includes a slide-out cart drawer, hamburger menu on mobile, back-to-top button, and a newsletter popup — all working without any page reload.
+    </div>
+  </section>
+
+  <!-- ═══ 02 — Design Decisions ═══ -->
+  <section class="section" id="design">
+    <span class="section-num">02</span>
+    <h2>Design Decisions — Colors, Theme &amp; Typography</h2>
+
+    <h3>Color Palette</h3>
+    <p>I selected these colors to feel modern and trustworthy while standing out from typical e-commerce pastels. The teal conveys craftsmanship and quality, while the warm cream background keeps things soft and inviting.</p>
+
+    <div class="swatches">
+      <div class="swatch">
+        <div class="swatch-circle" style="background:#0B7A70;"></div>
+        <div class="swatch-name">Primary</div>
+        <div class="swatch-hex">#0B7A70</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-circle" style="background:#0A6B62;"></div>
+        <div class="swatch-name">Primary Dark</div>
+        <div class="swatch-hex">#0A6B62</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-circle" style="background:#5EEAD4;"></div>
+        <div class="swatch-name">Primary Light</div>
+        <div class="swatch-hex">#5EEAD4</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-circle" style="background:#06B6D4;"></div>
+        <div class="swatch-name">Accent</div>
+        <div class="swatch-hex">#06B6D4</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-circle" style="background:#F8FAFB;"></div>
+        <div class="swatch-name">Cream</div>
+        <div class="swatch-hex">#F8FAFB</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-circle" style="background:#1E293B;"></div>
+        <div class="swatch-name">Charcoal</div>
+        <div class="swatch-hex">#1E293B</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-circle" style="background:#475569;"></div>
+        <div class="swatch-name">Text</div>
+        <div class="swatch-hex">#475569</div>
+      </div>
+    </div>
+
+    <p>Every color meets <strong>WCAG AA contrast requirements</strong> (4.5:1 minimum for body text, 3:1 for large text). The primary teal (#0B7A70) delivers a 5.2:1 contrast ratio on white — well above the threshold.</p>
+
+    <h3>Typography</h3>
+    <div class="tech-stack">
+      <div class="tech-item">
+        <strong>Playfair Display</strong>
+        <span>Headings — elegant serif with high contrast strokes</span>
+      </div>
+      <div class="tech-item">
+        <strong>Inter</strong>
+        <span>Body text — clean, highly-legible sans-serif</span>
+      </div>
+      <div class="tech-item">
+        <strong>Cormorant Garamond</strong>
+        <span>Accent text — refined italic for taglines and quotes</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">🎨 Design Philosophy</div>
+      The site balances sophistication with approachability. Playfair Display gives the headings an artisan feel that matches handmade photo magnets, while Inter keeps the body copy clean and easy to read at any screen size.
+    </div>
+  </section>
+
+  <!-- ═══ 03 — Technology Stack ═══ -->
+  <section class="section" id="tech">
+    <span class="section-num">03</span>
+    <h2>Technology Stack</h2>
+    <p>Simple tools, professional results. No frameworks or build tools — just clean HTML, CSS, and JavaScript that loads fast and works everywhere.</p>
+
+    <div class="tech-stack">
+      <div class="tech-item">
+        <strong>HTML5 + CSS3</strong>
+        <span>Semantic markup, CSS custom properties, responsive grid</span>
+      </div>
+      <div class="tech-item">
+        <strong>Vanilla JavaScript</strong>
+        <span>Cart, product sync, animations — no jQuery or React needed</span>
+      </div>
+      <div class="tech-item">
+        <strong>Shopify Storefront API</strong>
+        <span>Cart mutations via GraphQL, product data via REST</span>
+      </div>
+      <div class="tech-item">
+        <strong>GitHub Pages</strong>
+        <span>Free hosting with custom domain, SSL, and CDN</span>
+      </div>
+      <div class="tech-item">
+        <strong>GitHub Actions</strong>
+        <span>Automated product sync every 6 hours</span>
+      </div>
+      <div class="tech-item">
+        <strong>FormSubmit.co</strong>
+        <span>Contact and wholesale forms without a backend server</span>
+      </div>
+      <div class="tech-item">
+        <strong>Playwright</strong>
+        <span>Automated accessibility and mobile testing</span>
+      </div>
+      <div class="tech-item">
+        <strong>axe-core</strong>
+        <span>WCAG 2.1 AA compliance checking on every page</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 04 — Shopify Cart Integration ═══ -->
+  <section class="section" id="shopify">
+    <span class="section-num">04</span>
+    <h2>Shopify Cart Integration</h2>
+    <p>The site connects to your Shopify store (<code>picturethismagnet.myshopify.com</code>) using the Storefront API. Customers can browse products on your site and add items to their cart — when they're ready to checkout, they're taken directly to Shopify's secure checkout.</p>
+
+    <h3>How it works</h3>
+    <div class="diagram">
+      <div class="diagram-flow">
+        <div class="diagram-box">Customer clicks<br>"Add to Cart"</div>
+        <span class="diagram-arrow">→</span>
+        <div class="diagram-box highlight">Storefront API<br>creates cart</div>
+        <span class="diagram-arrow">→</span>
+        <div class="diagram-box blue">Cart drawer<br>slides open</div>
+        <span class="diagram-arrow">→</span>
+        <div class="diagram-box gold">Shopify Checkout<br>(secure)</div>
+      </div>
+      <p class="diagram-caption">Cart state is managed client-side via the Storefront API — no server needed</p>
+    </div>
+
+    <h3>Your products</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Product</th><th>Price</th><th>Variants</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Photo Magnets (Set of 9)</td><td>$25.00</td><td>1</td></tr>
+          <tr><td>Bulk Single Image</td><td>From $22.00</td><td>11 (9–99 magnets)</td></tr>
+          <tr><td>Gift Card</td><td>$10.00</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">🔒 Security</div>
+      All payment processing happens on Shopify's PCI-compliant checkout. Your site never touches credit card data. The Storefront API token is a public read-only token — it's safe to include in client-side code.
+    </div>
+  </section>
+
+  <!-- ═══ 05 — Automatic Product Sync ═══ -->
+  <section class="section" id="auto-sync">
+    <span class="section-num">05</span>
+    <h2>Automatic Product Sync</h2>
+    <p>A Python script fetches your product catalog from Shopify every 6 hours and saves it locally. This means your site always shows up-to-date products, prices, and availability — even if Shopify's API is temporarily slow.</p>
+
+    <h3>Sync architecture</h3>
+    <div class="diagram">
+      <div class="diagram-flow">
+        <div class="diagram-box gold">Shopify Store<br>picturethismagnet.myshopify.com</div>
+        <span class="diagram-arrow">→</span>
+        <div class="diagram-box highlight">sync-products.py<br>(GitHub Actions)</div>
+        <span class="diagram-arrow">→</span>
+        <div class="diagram-box blue">_data/products.json<br>(committed to repo)</div>
+        <span class="diagram-arrow">→</span>
+        <div class="diagram-box">GitHub Pages<br>auto-deploys</div>
+      </div>
+      <p class="diagram-caption">Runs every 6 hours at 00:00, 06:00, 12:00, 18:00 UTC — or manually anytime</p>
+    </div>
+
+    <h3>Client-side fallback</h3>
+    <p>The browser also fetches live data directly from Shopify when the page loads. If Shopify is unreachable, it falls back to the locally-synced <code>_data/products.json</code>. This dual approach ensures products always display.</p>
+
+    <div class="code-block"><span class="label">JavaScript</span><span class="cm">// Primary: fetch live from Shopify</span>
+<span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`https://${SHOPIFY_DOMAIN}/products.json`</span>);
+
+<span class="cm">// Fallback: use synced static data</span>
+<span class="kw">const</span> fallback = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/_data/products.json'</span>);</div>
+  </section>
+
+  <!-- ═══ 06 — SEO ═══ -->
+  <section class="section" id="seo">
+    <span class="section-num">06</span>
+    <h2>SEO &amp; Nationwide Shipping Keywords</h2>
+    <p>Every page has its own unique meta description and Open Graph tags optimized for search and social sharing. Key phrases are woven naturally into the content:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Keyword / Phrase</th><th>Pages</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>custom photo magnets</td><td>Home, Shop, About, Contact, FAQ</td></tr>
+          <tr><td>ships nationwide / nationwide across the USA</td><td>Home, Shop, About</td></tr>
+          <tr><td>personalized magnets</td><td>Home, Shop</td></tr>
+          <tr><td>bulk photo magnets</td><td>Shop, Wholesale</td></tr>
+          <tr><td>wholesale magnets / volume discounts</td><td>Wholesale</td></tr>
+          <tr><td>event photo magnets / wedding magnets</td><td>Events</td></tr>
+          <tr><td>gift card</td><td>Home, Shop</td></tr>
+          <tr><td>2x2 square photo magnet</td><td>Shop, FAQ</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Additional SEO assets included:</p>
+    <ul style="list-style:disc;padding-left:1.5rem;margin-bottom:1rem;font-size:0.92rem;">
+      <li><code>robots.txt</code> — allows all crawlers, references sitemap</li>
+      <li><code>sitemap.xml</code> — lists all 12 pages with priorities and update frequency</li>
+      <li><code>site.webmanifest</code> — enables "Add to Home Screen" on mobile</li>
+      <li>Open Graph meta tags for Facebook/Instagram sharing</li>
+    </ul>
+  </section>
+
+  <!-- ═══ 07 — Accessibility ═══ -->
+  <section class="section" id="accessibility">
+    <span class="section-num">07</span>
+    <h2>Accessibility Compliance (WCAG AA)</h2>
+    <p>Every page passes automated accessibility testing against WCAG 2.0 and 2.1 at the A and AA conformance levels. This means the site works well for people using screen readers, keyboard navigation, and assistive technologies.</p>
+
+    <h3>What was tested</h3>
+    <ul style="list-style:disc;padding-left:1.5rem;margin-bottom:1rem;font-size:0.92rem;">
+      <li><strong>Color contrast</strong> — all text meets 4.5:1 minimum ratio (body) and 3:1 (large text)</li>
+      <li><strong>Keyboard navigation</strong> — all interactive elements reachable via Tab key</li>
+      <li><strong>ARIA labels</strong> — buttons, nav toggle, cart drawer, and dialogs properly labeled</li>
+      <li><strong>Semantic HTML</strong> — proper heading hierarchy, landmark regions, list structures</li>
+      <li><strong>Image alt text</strong> — all images have descriptive alt attributes</li>
+      <li><strong>Form labels</strong> — every input has an associated label, even if visually hidden</li>
+    </ul>
+
+    <div class="callout success">
+      <div class="callout-title">✅ Result</div>
+      All 11 tested pages pass axe-core with <strong>zero violations</strong>. Tests run automatically via Playwright to catch regressions.
+    </div>
+
+    <h3>Contrast ratios achieved</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Element</th><th>Foreground</th><th>Background</th><th>Ratio</th><th>Required</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Body text</td><td>#475569</td><td>#F8FAFB</td><td>5.8:1</td><td>4.5:1</td></tr>
+          <tr><td>Primary on white</td><td>#0B7A70</td><td>#FFFFFF</td><td>5.2:1</td><td>4.5:1</td></tr>
+          <tr><td>Primary dark on white</td><td>#0A6B62</td><td>#FFFFFF</td><td>6.3:1</td><td>4.5:1</td></tr>
+          <tr><td>Light text on cream</td><td>#526177</td><td>#F8FAFB</td><td>6.0:1</td><td>4.5:1</td></tr>
+          <tr><td>Nav CTA (Shop Now)</td><td>#FFFFFF</td><td>#0B7A70</td><td>5.2:1</td><td>4.5:1</td></tr>
+          <tr><td>Footer logo accent</td><td>#5EEAD4</td><td>#1E293B</td><td>9.9:1</td><td>4.5:1</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══ 08 — Mobile ═══ -->
+  <section class="section" id="mobile">
+    <span class="section-num">08</span>
+    <h2>Mobile Compatibility</h2>
+    <p>The site is fully responsive and tested on multiple mobile viewports. The design adapts at 768px (tablet) and 480px (small phone) breakpoints.</p>
+
+    <h3>Mobile features</h3>
+    <ul style="list-style:disc;padding-left:1.5rem;margin-bottom:1rem;font-size:0.92rem;">
+      <li><strong>Hamburger menu</strong> — slides in from the right with overlay backdrop</li>
+      <li><strong>44px minimum touch targets</strong> — nav toggle, cart button, and CTA buttons all meet the Google-recommended 44×44px minimum</li>
+      <li><strong>No horizontal overflow</strong> — tested on viewports as narrow as 320px</li>
+      <li><strong>Responsive images</strong> — Shopify CDN delivers optimized sizes</li>
+      <li><strong>Scroll-triggered animations</strong> — sections fade in as you scroll, disabled in reduced-motion preference</li>
+    </ul>
+
+    <h3>Tested viewports</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Device</th><th>Width</th><th>Height</th><th>Tests</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>iPhone SE</td><td>375px</td><td>812px</td><td>10 passed ✓</td></tr>
+          <tr><td>iPhone Mini</td><td>320px</td><td>568px</td><td>10 passed ✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══ 09 — Testing ═══ -->
+  <section class="section" id="testing">
+    <span class="section-num">09</span>
+    <h2>Automated Testing Results</h2>
+    <p>The test suite runs via Playwright and covers both accessibility (axe-core) and mobile compatibility across all viewports.</p>
+
+    <div class="code-block"><span class="label">Terminal</span><span class="cm"># Run all tests</span>
+$ npx playwright test
+
+<span class="fn">Running 31 tests using 4 workers</span>
+
+  <span class="str">✓</span>  accessibility.spec.js — Home page (WCAG AA)
+  <span class="str">✓</span>  accessibility.spec.js — Shop page (WCAG AA)
+  <span class="str">✓</span>  accessibility.spec.js — About page (WCAG AA)
+  <span class="str">✓</span>  accessibility.spec.js — Contact page (WCAG AA)
+  <span class="str">✓</span>  accessibility.spec.js — Events page (WCAG AA)
+  <span class="str">✓</span>  accessibility.spec.js — FAQ page (WCAG AA)
+  <span class="str">✓</span>  accessibility.spec.js — Wholesale page (WCAG AA)
+  <span class="str">✓</span>  accessibility.spec.js — Privacy page (WCAG AA)
+  <span class="str">✓</span>  accessibility.spec.js — Shipping page (WCAG AA)
+  <span class="str">✓</span>  accessibility.spec.js — Terms page (WCAG AA)
+  <span class="str">✓</span>  accessibility.spec.js — Refund page (WCAG AA)
+  <span class="str">✓</span>  mobile.spec.js — iPhone SE: 7 overflow + 3 interaction
+  <span class="str">✓</span>  mobile.spec.js — iPhone Mini: 7 overflow + 3 interaction
+
+  <span class="fn">31 passed</span> (12.1s)</div>
+  </section>
+
+  <!-- ═══ 10 — Site Structure ═══ -->
+  <section class="section" id="site-structure">
+    <span class="section-num">10</span>
+    <h2>Site Structure &amp; File Organization</h2>
+
+    <div class="file-tree"><span class="dir">picturethismagnet.github.io/</span>
+├── <span class="file">index.html</span>              <span class="comment"># Home page</span>
+├── <span class="dir">shop/</span>
+│   └── <span class="file">index.html</span>          <span class="comment"># Product catalog</span>
+├── <span class="dir">about/</span>
+│   └── <span class="file">index.html</span>          <span class="comment"># Meet the maker</span>
+├── <span class="dir">contact/</span>
+│   └── <span class="file">index.html</span>          <span class="comment"># Contact form</span>
+├── <span class="dir">events/</span>
+│   └── <span class="file">index.html</span>          <span class="comment"># Event booking</span>
+├── <span class="dir">faq/</span>
+│   └── <span class="file">index.html</span>          <span class="comment"># FAQ accordion</span>
+├── <span class="dir">wholesale/</span>
+│   └── <span class="file">index.html</span>          <span class="comment"># B2B wholesale</span>
+├── <span class="dir">policies/</span>
+│   ├── <span class="dir">privacy/</span>  <span class="dir">shipping/</span>  <span class="dir">terms/</span>  <span class="dir">refund/</span>
+├── <span class="file">404.html</span>                <span class="comment"># Custom error page</span>
+├── <span class="dir">assets/</span>
+│   ├── <span class="dir">css/</span>
+│   │   └── <span class="file">style.css</span>       <span class="comment"># 2700+ lines — full design system</span>
+│   └── <span class="dir">js/</span>
+│       ├── <span class="file">main.js</span>         <span class="comment"># Nav, animations, popup</span>
+│       ├── <span class="file">products.js</span>     <span class="comment"># Live product sync</span>
+│       └── <span class="file">shopify-cart.js</span>  <span class="comment"># Cart via Storefront API</span>
+├── <span class="dir">_data/</span>
+│   └── <span class="file">products.json</span>       <span class="comment"># Synced product catalog</span>
+├── <span class="dir">scripts/</span>
+│   └── <span class="file">sync-products.py</span>    <span class="comment"># Shopify product fetcher</span>
+├── <span class="dir">.github/workflows/</span>
+│   └── <span class="file">sync-products.yml</span>   <span class="comment"># 6-hour cron + deploy</span>
+├── <span class="dir">tests/</span>
+│   ├── <span class="file">accessibility.spec.js</span>
+│   └── <span class="file">mobile.spec.js</span>
+├── <span class="file">robots.txt</span>  <span class="file">sitemap.xml</span>  <span class="file">site.webmanifest</span>
+└── <span class="file">package.json</span></div>
+  </section>
+
+  <!-- ═══ 11 — Footer Credit ═══ -->
+  <section class="section" id="footer-credit">
+    <span class="section-num">11</span>
+    <h2>Designer Footer Credit</h2>
+    <p>Every page includes a "Designed by AjayaDesign" credit in the footer with a link to <code>ajayadesign.github.io</code>. This is present on all 12 pages.</p>
+
+    <div class="code-block"><span class="label">HTML</span>&lt;<span class="kw">div</span> class=<span class="str">"footer-credit"</span>&gt;
+  &lt;<span class="kw">p</span>&gt;Designed by &lt;<span class="kw">a</span> href=<span class="str">"https://ajayadesign.github.io"</span>&gt;AjayaDesign&lt;/<span class="kw">a</span>&gt;&lt;/<span class="kw">p</span>&gt;
+&lt;/<span class="kw">div</span>&gt;</div>
+  </section>
+
+  <!-- ═══ 12 — GitHub Actions ═══ -->
+  <section class="section" id="github-actions">
+    <span class="section-num">12</span>
+    <h2>GitHub Actions &amp; Deployment</h2>
+    <p>The site is hosted on GitHub Pages and deployed automatically whenever changes are pushed to the <code>main</code> branch. A separate workflow handles product synchronization.</p>
+
+    <h3>Workflows</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Workflow</th><th>Trigger</th><th>What it does</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>sync-products.yml</td><td>Every 6 hours (cron) or manual</td><td>Fetches products from Shopify, commits changes, deploys to Pages</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>GitHub repository</h3>
+    <div class="code-block"><span class="label">Git</span><span class="fn">Remote:</span> https://github.com/picturethismagnet/picturethismagnet.github.io.git
+<span class="fn">Branch:</span> main
+<span class="fn">Hosting:</span> GitHub Pages (auto-deploy on push)</div>
+
+    <div class="callout idea">
+      <div class="callout-title">💡 Manual Sync</div>
+      You can trigger a product sync anytime from the GitHub Actions tab — click "Run workflow" on the "Sync Products from Shopify" workflow. Useful after adding a new product on Shopify.
+    </div>
+  </section>
+
+  <!-- ═══ 13 — What's Next ═══ -->
+  <section class="section" id="whats-next">
+    <span class="section-num">13</span>
+    <h2>What's Next — Future Enhancements</h2>
+    <p>The site is live and fully functional. Here are some potential additions for future phases:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Enhancement</th><th>Description</th><th>Priority</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Individual product pages</td><td>Auto-generated detail pages for each product with gallery, variant selector, and JSON-LD structured data</td><td>High</td></tr>
+          <tr><td>Custom domain</td><td>Point picturethismagnet.com to GitHub Pages via DNS settings</td><td>High</td></tr>
+          <tr><td>Google Analytics</td><td>Track visitor behavior, conversion funnels, popular products</td><td>Medium</td></tr>
+          <tr><td>Image upload for custom orders</td><td>Allow customers to upload photos directly on the site instead of going through Shopify</td><td>Medium</td></tr>
+          <tr><td>Event calendar integration</td><td>Connect to a booking system for event photo stations</td><td>Low</td></tr>
+          <tr><td>Blog / Content pages</td><td>SEO-driven content about photo magnets, gift ideas, event planning</td><td>Low</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">📬 Questions?</div>
+      If anything in this report needs clarification or you'd like to discuss next steps, just reach out. The site is designed to grow with your business.
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>
