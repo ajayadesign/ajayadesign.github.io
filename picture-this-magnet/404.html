@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found — PictureThisMagnet</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0D9488">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"></noscript>
+
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+  <script>
+    // Redirect old Shopify URLs to new site
+    (function () {
+      var map = {
+        '/collections': '/shop/',
+        '/collections/all': '/shop/',
+        '/products': '/shop/',
+        '/pages/about': '/about/',
+        '/pages/contact': '/contact/',
+        '/pages/faq': '/faq/',
+        '/pages/events': '/events/',
+        '/pages/wholesale': '/wholesale/'
+      };
+      var path = window.location.pathname.replace(/\/+$/, '').toLowerCase();
+      if (map[path]) {
+        window.location.replace(map[path]);
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <nav class="navbar scrolled" role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <a href="/" class="nav-logo" aria-label="PictureThisMagnet Home"><img src="/assets/images/favicon.svg" alt="" width="32" height="32" class="nav-logo-img">Picture<span>This</span>Magnet</a>
+      <div class="nav-links" id="nav-links">
+        <a href="/shop/">Shop</a>
+        <a href="/events/">Events</a>
+        <a href="/wholesale/">Wholesale</a>
+        <a href="/about/">About</a>
+        <a href="/faq/">FAQ</a>
+        <a href="/contact/">Contact</a>
+        <a href="/shop/" class="btn btn-primary btn-sm nav-cta">Shop Now</a>
+      </div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links"><span></span><span></span><span></span></button>
+    </div>
+    <div class="nav-overlay" id="nav-overlay"></div>
+  </nav>
+
+  <main id="main-content">
+    <section class="page-header" style="padding:6rem 0;">
+      <div class="container text-center">
+        <h1 style="font-size:6rem;margin-bottom:0.5rem;">404</h1>
+        <p style="font-size:1.25rem;margin-bottom:2rem;">Oops — that page doesn't exist. It may have been moved or the link might be outdated.</p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+          <a href="/" class="btn btn-primary btn-lg">Go Home</a>
+          <a href="/shop/" class="btn btn-outline btn-lg">Browse Shop</a>
+          <a href="/contact/" class="btn btn-outline btn-lg">Contact Us</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-bottom" style="border:none;padding-top:0;">
+        <p>&copy; 2026 PictureThisMagnet. All rights reserved.</p>
+        <div class="footer-bottom-links"><a href="/policies/terms/">Terms</a><a href="/policies/privacy/">Privacy</a><a href="mailto:picturethis.susan@gmail.com">picturethis.susan@gmail.com</a></div>
+      </div>
+      <div class="footer-credit"><p>Designed by <a href="https://ajayadesign.github.io" target="_blank" rel="noopener noreferrer">AjayaDesign</a></p></div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/main.js" defer></script>
+</body>
+</html>

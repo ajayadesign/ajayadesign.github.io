@@ -1,0 +1,15 @@
+{
+  "name": "picturethismagnet.github.io",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PictureThisMagnet — Custom photo magnets website",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --ui"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@playwright/test": "^1.48.0",
+    "http-server": "^14.1.1"
+  }
+}

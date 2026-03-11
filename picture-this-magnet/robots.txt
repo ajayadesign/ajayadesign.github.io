@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://picturethismagnet.github.io/sitemap.xml
