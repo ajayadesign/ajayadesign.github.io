@@ -164,7 +164,9 @@ async def enqueue_prospect(prospect_id: str) -> Optional[str]:
         # Guard: skip prospects where email was actively verified as invalid
         # (email_verified=False + mx_provider set means verification ran and failed)
         if prospect.email_verified is False and prospect.mx_provider is not None:
-            logger.info("Skipping %s — email verified as invalid", prospect.business_name)
+            logger.info("Skipping %s — email verified as invalid, marking dead", prospect.business_name)
+            prospect.status = "dead"
+            await db.commit()
             return None
 
         # Guard: block registrar/platform/chain emails
@@ -477,8 +479,12 @@ async def process_send_queue() -> dict:
 
     # ── Step-spacing guard: don't send step N if step N-1 was sent < MIN_STEP_GAP_DAYS ago ──
     emails = []
+    dirty = False  # track if we need to flush cancellations
     async with async_session_factory() as db:
         for email in candidates:
+            # Re-attach detached email to this session so changes are tracked
+            email = await db.merge(email)
+
             if email.sequence_step > 1:
                 # Check when the previous step was sent
                 prev_r = await db.execute(
@@ -502,11 +508,34 @@ async def process_send_queue() -> dict:
                         )
                         continue
                 else:
-                    # Previous step was never sent — skip this follow-up
-                    logger.info(
-                        "⏳ Skipping step %d for prospect %s — step %d not yet sent",
-                        email.sequence_step, email.prospect_id, email.sequence_step - 1,
+                    # Previous step was never sent — check if it still exists as approved/pending
+                    prev_exists_r = await db.execute(
+                        select(OutreachEmail.status)
+                        .where(
+                            OutreachEmail.prospect_id == email.prospect_id,
+                            OutreachEmail.sequence_step == email.sequence_step - 1,
+                        )
+                        .order_by(OutreachEmail.created_at.desc())
+                        .limit(1)
                     )
+                    prev_status = prev_exists_r.scalar()
+                    if prev_status in ("cancelled", "bounced", None):
+                        # Prerequisite step was cancelled/bounced/never created — cancel this follow-up
+                        logger.info(
+                            "🛑 Cancelling step %d for prospect %s — step %d is %s",
+                            email.sequence_step, email.prospect_id,
+                            email.sequence_step - 1, prev_status or "missing",
+                        )
+                        email.status = "cancelled"
+                        email.error_message = f"Auto-cancelled: step {email.sequence_step - 1} {prev_status or 'missing'}"
+                        dirty = True
+                    else:
+                        # Step 1 still pending — just skip for now
+                        logger.debug(
+                            "⏳ Step %d for prospect %s waiting — step %d is %s",
+                            email.sequence_step, email.prospect_id,
+                            email.sequence_step - 1, prev_status,
+                        )
                     continue
 
             # Also check prospect hasn't been moved to manual_handling / replied
@@ -518,10 +547,14 @@ async def process_send_queue() -> dict:
                 )
                 email.status = "cancelled"
                 email.error_message = f"Auto-cancelled: prospect is {prospect.status}"
-                await db.commit()
+                dirty = True
                 continue
 
             emails.append(email)
+
+        # Batch-commit all cancellations at once
+        if dirty:
+            await db.commit()
 
     for email in emails:
         stats["attempted"] += 1

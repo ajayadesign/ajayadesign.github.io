@@ -11,11 +11,13 @@
   // Use the global API_BASE from admin.js (auto-detects hostname + ?api= param)
   const _API = (typeof API_BASE !== 'undefined') ? API_BASE : `http://${location.hostname}:3001/api/v1`;
   const MODE_CHECK_INTERVAL = 30000; // 30s
+  const MODE_FAST_RETRIES = [2000, 3000, 5000]; // fast retries before falling back to 30s
 
   // ── State ────────────────────────────────────────────
   let _mode = 'light';
   let _apiAvailable = false;
   let _modeCheckTimer = null;
+  let _fastRetryIndex = 0;
   let _listeners = {};
   let _initialized = false;
   let _agentStatus = 'unknown';
@@ -2869,8 +2871,32 @@
     await detectMode();
     // THEN set up Firebase listeners (skips data listeners if API is available)
     _initFirebaseListeners();
-    _modeCheckTimer = setInterval(detectMode, MODE_CHECK_INTERVAL);
+    // If API wasn't available on first try, do fast retries (2s, 3s, 5s)
+    // before falling back to the slow 30s poll — avoids stale Firebase data
+    if (!_apiAvailable) {
+      _scheduleFastRetry();
+    } else {
+      _modeCheckTimer = setInterval(detectMode, MODE_CHECK_INTERVAL);
+    }
   };
+
+  function _scheduleFastRetry() {
+    if (_apiAvailable) {
+      // API found — switch to slow poll
+      _modeCheckTimer = setInterval(detectMode, MODE_CHECK_INTERVAL);
+      return;
+    }
+    if (_fastRetryIndex < MODE_FAST_RETRIES.length) {
+      const delay = MODE_FAST_RETRIES[_fastRetryIndex++];
+      setTimeout(async () => {
+        await detectMode();
+        _scheduleFastRetry();
+      }, delay);
+    } else {
+      // Exhausted fast retries — fall back to 30s poll
+      _modeCheckTimer = setInterval(detectMode, MODE_CHECK_INTERVAL);
+    }
+  }
 
   // ── Send Queue panel ────────────────────────────────
   async function _loadSendQueue() {
