@@ -207,12 +207,28 @@ async def enqueue_prospect(prospect_id: str) -> Optional[str]:
         return None
 
     # ── Phase 3: Create email record + update status (short session)
+    # Use FOR UPDATE to serialize concurrent enqueue attempts for
+    # the same prospect (prevents TOCTOU duplicate from Phase 1 guard)
     send_time = get_next_send_time(biz_type)
     tracking_id = str(uuid4())
 
     async with async_session_factory() as db:
-        prospect = await db.get(Prospect, prospect_id)
+        prospect = await db.get(Prospect, prospect_id, with_for_update=True)
         if not prospect:
+            return None
+
+        # Re-check duplicate guard under lock — the authoritative check
+        existing = await db.execute(
+            select(OutreachEmail.id).where(
+                OutreachEmail.prospect_id == p_id,
+                OutreachEmail.sequence_step == 1,
+            ).limit(1)
+        )
+        if existing.first():
+            logger.info("Skipping %s — step 1 email already exists (race guard)", biz_name)
+            if prospect.status != "queued":
+                prospect.status = "queued"
+                await db.commit()
             return None
 
         email = OutreachEmail(
