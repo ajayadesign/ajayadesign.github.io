@@ -404,6 +404,9 @@ class PipelineWorker:
 
         This bridges the gap for bulk-imported prospects that already
         have emails but never entered the discovery→audit→recon flow.
+
+        Uses FOR UPDATE SKIP LOCKED so concurrent agents claim
+        different rows.
         """
         from sqlalchemy import update as sql_update
 
@@ -416,31 +419,25 @@ class PipelineWorker:
                 )
                 .order_by(Prospect.created_at)
                 .limit(ACTIVATE_BATCH_SIZE)
+                .with_for_update(skip_locked=True)
             )
             rows = result.fetchall()
 
-        if not rows:
-            return 0
+            if not rows:
+                return 0
 
-        count = 0
+            ids = [r[0] for r in rows]
+            await db.execute(
+                sql_update(Prospect)
+                .where(Prospect.id.in_(ids))
+                .values(status="enriched")
+            )
+            await db.commit()
+
         for row in rows:
-            pid, biz_name = str(row[0]), row[1] or "Unknown"
-            try:
-                async with async_session_factory() as db:
-                    await db.execute(
-                        sql_update(Prospect)
-                        .where(Prospect.id == row[0], Prospect.status == "imported")
-                        .values(status="enriched")
-                    )
-                    await db.commit()
-                count += 1
-                pipeline_log("ACTIVATE", f"Auto-activated {biz_name} → enriched", biz=biz_name)
-            except Exception as e:
-                logger.error("Auto-activate failed for %s: %s", biz_name, e)
-                self._stats["errors"] += 1
-
-        pipeline_log("ACTIVATE", f"Auto-activated {count}/{len(rows)} imported prospects → enriched")
-        return count
+            pipeline_log("ACTIVATE", f"Auto-activated {row[1] or 'Unknown'} → enriched", biz=row[1] or 'Unknown')
+        pipeline_log("ACTIVATE", f"Auto-activated {len(rows)} imported prospects → enriched")
+        return len(rows)
 
     # ── Phase 1: Audits ────────────────────────────────────────────────
 
@@ -449,6 +446,7 @@ class PipelineWorker:
         from api.services.intel_engine import audit_prospect
 
         # Get top prospects needing audit (exclude already-unreachable sites)
+        # FOR UPDATE SKIP LOCKED so concurrent agents claim different rows
         async with async_session_factory() as db:
             result = await db.execute(
                 select(Prospect.id).where(
@@ -462,6 +460,7 @@ class PipelineWorker:
                 ).order_by(
                     Prospect.priority_score.desc()
                 ).limit(AUDIT_BATCH_SIZE)
+                .with_for_update(skip_locked=True)
             )
             prospect_ids = [str(r[0]) for r in result.fetchall()]
 
@@ -506,6 +505,7 @@ class PipelineWorker:
         """
         from api.services.deep_enrichment import deep_enrich_prospect
 
+        # FOR UPDATE SKIP LOCKED so concurrent agents claim different rows
         async with async_session_factory() as db:
             result = await db.execute(
                 select(Prospect.id).where(
@@ -515,6 +515,7 @@ class PipelineWorker:
                 ).order_by(
                     Prospect.priority_score.desc()
                 ).limit(ENRICH_BATCH_SIZE)
+                .with_for_update(skip_locked=True)
             )
             prospect_ids = [str(r[0]) for r in result.fetchall()]
 
@@ -582,6 +583,7 @@ class PipelineWorker:
                     Prospect.wp_score.desc().nullslast(),
                     Prospect.priority_score.desc(),
                 ).limit(BACKFILL_BATCH_SIZE)
+                .with_for_update(skip_locked=True)
             )
             prospect_ids = [str(r[0]) for r in result.fetchall()]
 
@@ -681,6 +683,7 @@ class PipelineWorker:
                 logger.info("Fast-tracked %d audited prospects (already have email) → enriched", len(fast_track_ids))
 
             # Path 1: Audited prospects needing recon
+            # FOR UPDATE SKIP LOCKED so concurrent agents claim different rows
             result1 = await db.execute(
                 select(Prospect.id).where(
                     Prospect.status == "audited",
@@ -688,6 +691,7 @@ class PipelineWorker:
                 ).order_by(
                     Prospect.priority_score.desc()
                 ).limit(RECON_BATCH_SIZE)
+                .with_for_update(skip_locked=True)
             )
             audited_ids = [str(r[0]) for r in result1.fetchall()]
 
@@ -717,6 +721,7 @@ class PipelineWorker:
                     ).order_by(
                         Prospect.priority_score.desc()
                     ).limit(remaining)
+                    .with_for_update(skip_locked=True)
                 )
                 nosite_ids = [str(r[0]) for r in result2.fetchall()]
 
@@ -787,6 +792,7 @@ class PipelineWorker:
         """
         from api.services.scoring_engine import score_prospect
 
+        # FOR UPDATE SKIP LOCKED so concurrent agents claim different rows
         async with async_session_factory() as db:
             result = await db.execute(
                 select(Prospect.id).where(
@@ -795,6 +801,7 @@ class PipelineWorker:
                 ).order_by(
                     Prospect.created_at.asc()
                 ).limit(SCORE_BATCH_SIZE)
+                .with_for_update(skip_locked=True)
             )
             prospect_ids = [str(r[0]) for r in result.fetchall()]
 
@@ -841,6 +848,21 @@ class PipelineWorker:
         """
         from api.services.cadence_engine import enqueue_prospect
 
+        # Collect owner_emails that already have active outreach to avoid
+        # emailing the same person through different prospect records
+        async with async_session_factory() as db:
+            already_emailed = await db.execute(
+                select(Prospect.owner_email)
+                .join(OutreachEmail, OutreachEmail.prospect_id == Prospect.id)
+                .where(
+                    OutreachEmail.sequence_step == 1,
+                    OutreachEmail.status.in_(["sent", "pending_approval", "approved"]),
+                )
+                .distinct()
+            )
+            skip_emails = {r[0].lower() for r in already_emailed.fetchall() if r[0]}
+
+        # FOR UPDATE SKIP LOCKED so concurrent agents claim different rows
         async with async_session_factory() as db:
             result = await db.execute(
                 select(Prospect.id).where(
@@ -855,6 +877,7 @@ class PipelineWorker:
                     Prospect.wp_score.desc().nullslast(),
                     Prospect.priority_score.desc(),
                 ).limit(ENQUEUE_BATCH_SIZE)
+                .with_for_update(skip_locked=True)
             )
             prospect_ids = [str(r[0]) for r in result.fetchall()]
 
@@ -874,12 +897,17 @@ class PipelineWorker:
         count = 0
         for pid in prospect_ids:
             biz_name, email = name_map.get(pid, ('Unknown', ''))
+            # Skip if this owner_email already has active outreach
+            if email and email.lower() in skip_emails:
+                pipeline_log("EMAIL", f"Skipped {biz_name} — {email} already has outreach", biz=biz_name)
+                continue
             pipeline_log("EMAIL", f'Composing email for {biz_name} (wp_score-driven template)', biz=biz_name)
             try:
                 email_id = await enqueue_prospect(pid)
                 if email_id:
                     count += 1
                     self._stats["enqueues_completed"] += 1
+                    skip_emails.add(email.lower())  # prevent same email in this batch
                     pipeline_log("EMAIL", f"Email queued → {email} (pending approval)", biz=biz_name)
             except Exception as e:
                 logger.error("Enqueue failed for %s: %s", pid, e)
