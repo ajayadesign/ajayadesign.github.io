@@ -223,41 +223,42 @@ async def check_bounces() -> dict:
 
         from api.services.cadence_engine import handle_bounce
 
-        async with async_session_factory() as db:
-            for msg_id in all_msg_ids:
-                result["checked"] += 1
-                try:
-                    status, msg_data = conn.fetch(msg_id, "(RFC822)")
-                    if status != "OK" or not msg_data[0]:
-                        continue
+        for msg_id in all_msg_ids:
+            result["checked"] += 1
+            try:
+                status, msg_data = conn.fetch(msg_id, "(RFC822)")
+                if status != "OK" or not msg_data[0]:
+                    continue
 
-                    raw = msg_data[0][1]
-                    msg = email.message_from_bytes(raw, policy=email.policy.default)
+                raw = msg_data[0][1]
+                msg = email.message_from_bytes(raw, policy=email.policy.default)
 
-                    subject = msg.get("Subject", "")
-                    from_addr = msg.get("From", "")
+                subject = msg.get("Subject", "")
+                from_addr = msg.get("From", "")
 
-                    # Verify it's actually a bounce
-                    is_bounce = False
-                    from_lower = from_addr.lower()
-                    if any(s.lower() in from_lower for s in BOUNCE_SENDERS):
-                        is_bounce = True
-                    if _is_bounce_subject(subject):
-                        is_bounce = True
+                # Verify it's actually a bounce
+                is_bounce = False
+                from_lower = from_addr.lower()
+                if any(s.lower() in from_lower for s in BOUNCE_SENDERS):
+                    is_bounce = True
+                if _is_bounce_subject(subject):
+                    is_bounce = True
 
-                    if not is_bounce:
-                        continue
+                if not is_bounce:
+                    continue
 
-                    # Extract bounced recipient addresses
-                    bounced_addrs = _extract_bounced_emails(msg)
-                    if not bounced_addrs:
-                        logger.debug(
-                            "Bounce msg %s: couldn't extract recipient from '%s'",
-                            msg_id, subject,
-                        )
-                        continue
+                # Extract bounced recipient addresses
+                bounced_addrs = _extract_bounced_emails(msg)
+                if not bounced_addrs:
+                    logger.debug(
+                        "Bounce msg %s: couldn't extract recipient from '%s'",
+                        msg_id, subject,
+                    )
+                    continue
 
-                    for addr in bounced_addrs:
+                for addr in bounced_addrs:
+                    # Use a short-lived session per address to avoid holding connections
+                    async with async_session_factory() as db:
                         # Find matching sent email in DB
                         email_row = (
                             await db.execute(
@@ -290,31 +291,32 @@ async def check_bounces() -> dict:
                         )[:500]
                         await db.commit()
 
-                        # Call handle_bounce to cancel future emails + mark prospect dead
-                        try:
-                            await handle_bounce(str(email_row.id))
-                        except Exception as e:
-                            logger.error("handle_bounce failed for %s: %s", email_row.id, e)
+                    # Call handle_bounce outside the session to avoid nesting
+                    try:
+                        await handle_bounce(str(email_row.id))
+                    except Exception as e:
+                        logger.error("handle_bounce failed for %s: %s", email_row.id, e)
 
+                    async with async_session_factory() as db:
                         prospect = await db.get(Prospect, email_row.prospect_id)
-                        biz_name = prospect.business_name if prospect else "Unknown"
-                        result["bounced"] += 1
-                        result["details"].append({
-                            "email": addr,
-                            "business": biz_name,
-                            "email_id": str(email_row.id),
-                        })
-                        logger.info(
-                            "📬 Bounce detected: %s (%s) — marked bounced",
-                            addr, biz_name,
-                        )
+                    biz_name = prospect.business_name if prospect else "Unknown"
+                    result["bounced"] += 1
+                    result["details"].append({
+                        "email": addr,
+                        "business": biz_name,
+                        "email_id": str(email_row.id),
+                    })
+                    logger.info(
+                        "📬 Bounce detected: %s (%s) — marked bounced",
+                        addr, biz_name,
+                    )
 
-                    # Mark the bounce notification as read
-                    conn.store(msg_id, "+FLAGS", "\\Seen")
+                # Mark the bounce notification as read
+                conn.store(msg_id, "+FLAGS", "\\Seen")
 
-                except Exception as e:
-                    logger.error("Error processing bounce msg %s: %s", msg_id, e)
-                    result["errors"].append(str(e))
+            except Exception as e:
+                logger.error("Error processing bounce msg %s: %s", msg_id, e)
+                result["errors"].append(str(e))
 
         conn.close()
         conn.logout()
