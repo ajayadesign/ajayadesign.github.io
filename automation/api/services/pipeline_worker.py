@@ -44,6 +44,7 @@ ENQUEUE_BATCH_SIZE = 10              # Max enqueue per cycle per agent
 ENRICH_BATCH_SIZE = 3                # Max deep enrichments per cycle per agent
 SCORE_BATCH_SIZE = 20                # Max scores per cycle per agent
 BACKFILL_BATCH_SIZE = 5              # Max backfill enrichments per cycle per agent
+ACTIVATE_BATCH_SIZE = 20             # Max imported→enriched activations per cycle
 STUCK_THRESHOLD_MIN = 15             # Minutes before a task is considered stuck
 MAX_RETRIES = 3                      # Max retries for any single prospect
 MAX_AGENTS = 5                       # Maximum number of concurrent agents
@@ -196,6 +197,9 @@ class PipelineWorker:
         else:
             pipeline_log("CRAWL", "Crawler paused — skipping auto-crawl (use Start Agent to enable)")
         
+        # Phase 0.7: Auto-activate imported prospects that already have emails
+        activated = await self._process_auto_activate()
+
         # Phase 1: Audit discovered prospects that have websites
         audited = await self._process_audits()
         
@@ -216,12 +220,12 @@ class PipelineWorker:
         
         elapsed = round(time.time() - cycle_start, 1)
         
-        pipeline_log("SYS", f"Cycle #{self._cycle_count} done in {elapsed}s — crawled={crawled} audited={audited} enriched={enriched} backfilled={backfilled} reconned={reconned} scored={scored} enqueued={enqueued}")
+        pipeline_log("SYS", f"Cycle #{self._cycle_count} done in {elapsed}s — activated={activated} crawled={crawled} audited={audited} enriched={enriched} backfilled={backfilled} reconned={reconned} scored={scored} enqueued={enqueued}")
 
-        if recovered or crawled or audited or enriched or backfilled or reconned or scored or enqueued:
+        if recovered or activated or crawled or audited or enriched or backfilled or reconned or scored or enqueued:
             logger.info(
-                "Agent #%d cycle #%d done in %.1fs: recovered=%d, crawled=%d, audited=%d, enriched=%d, backfilled=%d, reconned=%d, scored=%d, enqueued=%d",
-                self._agent_id, self._cycle_count, elapsed, recovered, crawled, audited, enriched, backfilled, reconned, scored, enqueued,
+                "Agent #%d cycle #%d done in %.1fs: recovered=%d, activated=%d, crawled=%d, audited=%d, enriched=%d, backfilled=%d, reconned=%d, scored=%d, enqueued=%d",
+                self._agent_id, self._cycle_count, elapsed, recovered, activated, crawled, audited, enriched, backfilled, reconned, scored, enqueued,
             )
             # Push stats to Firebase
             await self._push_stats()
@@ -390,6 +394,53 @@ class PipelineWorker:
             logger.error("Auto-crawl error for ring %s: %s", target_ring.name, e)
             self._stats["errors"] += 1
             return 0
+
+    # ── Phase 0.7: Auto-Activate Imported Prospects ──────────────────
+
+    async def _process_auto_activate(self) -> int:
+        """
+        Move imported prospects (with owner_email) → enriched so the
+        enqueue phase picks them up and creates step-1 email drafts.
+
+        This bridges the gap for bulk-imported prospects that already
+        have emails but never entered the discovery→audit→recon flow.
+        """
+        from sqlalchemy import update as sql_update
+
+        async with async_session_factory() as db:
+            result = await db.execute(
+                select(Prospect.id, Prospect.business_name)
+                .where(
+                    Prospect.status == "imported",
+                    Prospect.owner_email.isnot(None),
+                )
+                .order_by(Prospect.created_at)
+                .limit(ACTIVATE_BATCH_SIZE)
+            )
+            rows = result.fetchall()
+
+        if not rows:
+            return 0
+
+        count = 0
+        for row in rows:
+            pid, biz_name = str(row[0]), row[1] or "Unknown"
+            try:
+                async with async_session_factory() as db:
+                    await db.execute(
+                        sql_update(Prospect)
+                        .where(Prospect.id == row[0], Prospect.status == "imported")
+                        .values(status="enriched")
+                    )
+                    await db.commit()
+                count += 1
+                pipeline_log("ACTIVATE", f"Auto-activated {biz_name} → enriched", biz=biz_name)
+            except Exception as e:
+                logger.error("Auto-activate failed for %s: %s", biz_name, e)
+                self._stats["errors"] += 1
+
+        pipeline_log("ACTIVATE", f"Auto-activated {count}/{len(rows)} imported prospects → enriched")
+        return count
 
     # ── Phase 1: Audits ────────────────────────────────────────────────
 
