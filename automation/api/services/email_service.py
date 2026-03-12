@@ -7,6 +7,7 @@ Setup:
 3. Set SMTP_EMAIL and SMTP_APP_PASSWORD in .env / docker-compose
 """
 
+import asyncio
 import logging
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -54,12 +55,15 @@ async def send_email(
     msg.attach(MIMEText(body_html, "html"))
 
     try:
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=15) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(sender, password)
-            server.sendmail(sender, [to], msg.as_string())
+        def _sync_send():
+            with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=15) as server:
+                server.ehlo()
+                server.starttls()
+                server.ehlo()
+                server.login(sender, password)
+                server.sendmail(sender, [to], msg.as_string())
+
+        await asyncio.to_thread(_sync_send)
 
         logger.info(f"✅ Email sent to {to}: {subject}")
         return {"success": True, "message": f"Email sent to {to}"}

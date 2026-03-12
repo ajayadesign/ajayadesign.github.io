@@ -5,6 +5,7 @@ Pre-send verification saves SMTP quota by skipping undeliverable addresses.
 Uses dns.resolver for MX lookups and smtplib for RCPT TO probes.
 """
 
+import asyncio
 import logging
 import smtplib
 import socket
@@ -123,7 +124,7 @@ async def batch_verify(limit: int = 50) -> dict:
 
     for prospect in prospects:
         try:
-            result = verify_email_address(prospect.owner_email)
+            result = await asyncio.to_thread(verify_email_address, prospect.owner_email)
 
             async with async_session_factory() as db:
                 p = await db.get(Prospect, prospect.id)

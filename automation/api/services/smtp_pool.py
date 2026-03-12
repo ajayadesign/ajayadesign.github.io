@@ -6,6 +6,7 @@ daily send capacity. Tracks per-provider quotas, resets at midnight,
 and falls back to alternate providers when one is exhausted.
 """
 
+import asyncio
 import logging
 import re
 import smtplib
@@ -140,6 +141,23 @@ async def send_via_pool(
     return last_error or {"success": False, "message": "All providers failed"}
 
 
+def _sync_send(host: str, port: int, use_tls: bool, username: str, password: str,
+               sender: str, to: str, raw_msg: str) -> None:
+    """Blocking SMTP send — runs in a thread to avoid blocking the event loop."""
+    if use_tls and port == 465:
+        with smtplib.SMTP_SSL(host, port, timeout=15) as server:
+            server.login(username, password)
+            server.sendmail(sender, [to], raw_msg)
+    else:
+        with smtplib.SMTP(host, port, timeout=15) as server:
+            server.ehlo()
+            if use_tls:
+                server.starttls()
+                server.ehlo()
+            server.login(username, password)
+            server.sendmail(sender, [to], raw_msg)
+
+
 async def _send_via_provider(
     provider: SmtpProvider,
     to: str,
@@ -167,20 +185,10 @@ async def _send_via_provider(
     msg.attach(MIMEText(body_html, "html"))
 
     try:
-        if provider.use_tls and provider.port == 465:
-            # SSL (port 465)
-            with smtplib.SMTP_SSL(provider.host, provider.port, timeout=15) as server:
-                server.login(provider.username, provider.password)
-                server.sendmail(sender, [to], msg.as_string())
-        else:
-            # STARTTLS (port 587, 2525, etc.)
-            with smtplib.SMTP(provider.host, provider.port, timeout=15) as server:
-                server.ehlo()
-                if provider.use_tls:
-                    server.starttls()
-                    server.ehlo()
-                server.login(provider.username, provider.password)
-                server.sendmail(sender, [to], msg.as_string())
+        await asyncio.to_thread(
+            _sync_send, provider.host, provider.port, provider.use_tls,
+            provider.username, provider.password, sender, to, msg.as_string(),
+        )
 
         logger.info("✅ [%s] Email sent to %s: %s", provider.name, to, subject[:50])
         return {"success": True, "message": f"Sent via {provider.name}"}
