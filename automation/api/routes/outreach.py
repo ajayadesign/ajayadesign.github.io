@@ -16,6 +16,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from sqlalchemy import func, select, case, text, or_
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.database import get_db, async_session_factory
@@ -378,7 +379,13 @@ async def list_bounced_prospects(
 async def get_prospect(prospect_id: str, db: AsyncSession = Depends(get_db)):
     """Get full prospect detail including audits, email history, and score breakdown."""
     result = await db.execute(
-        select(Prospect).where(Prospect.id == uuid.UUID(prospect_id))
+        select(Prospect)
+        .where(Prospect.id == uuid.UUID(prospect_id))
+        .options(
+            selectinload(Prospect.audits),
+            selectinload(Prospect.emails),
+            selectinload(Prospect.activities),
+        )
     )
     prospect = result.scalar_one_or_none()
     if not prospect:

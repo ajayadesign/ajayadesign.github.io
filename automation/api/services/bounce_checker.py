@@ -472,16 +472,16 @@ async def check_replies() -> dict:
                         addr, info["name"], cancelled,
                     )
 
-                    # Telegram notification
-                    try:
-                        from api.services.telegram_outreach import send_message
-                        await send_message(
-                            f"📩 *Reply detected:* {info['name']}\n"
-                            f"📧 From: {addr}\n"
-                            f"🤝 Auto-set to manual handling — {cancelled} emails cancelled"
-                        )
-                    except Exception:
-                        pass
+                # Telegram notification — outside DB session
+                try:
+                    from api.services.telegram_outreach import send_message
+                    await send_message(
+                        f"📩 *Reply detected:* {info['name']}\n"
+                        f"📧 From: {addr}\n"
+                        f"🤝 Auto-set to manual handling — {cancelled} emails cancelled"
+                    )
+                except Exception:
+                    pass
 
             except Exception as e:
                 logger.debug("Reply search for %s failed: %s", addr, e)

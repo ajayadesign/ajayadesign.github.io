@@ -145,39 +145,43 @@ async def enqueue_prospect(prospect_id: str) -> Optional[str]:
     """
     from api.services.template_engine import compose_email
 
+    # ── Phase 1: Validate + guard checks (short session) ─────────
     async with async_session_factory() as db:
         prospect = await db.get(Prospect, prospect_id)
         if not prospect:
             return None
 
+        biz_name = prospect.business_name
+        biz_type = prospect.business_type or "default"
+        p_id = prospect.id
+
         # Guard: don't re-enqueue
         if prospect.status in ("contacted", "follow_up_1", "follow_up_2",
                                 "follow_up_3", "replied", "meeting_booked",
                                 "promoted", "dead", "do_not_contact"):
-            logger.info("Skipping %s — already in state %s", prospect.business_name, prospect.status)
+            logger.info("Skipping %s — already in state %s", biz_name, prospect.status)
             return None
 
         if not prospect.owner_email:
-            logger.warning("Cannot enqueue %s — no email", prospect.business_name)
+            logger.warning("Cannot enqueue %s — no email", biz_name)
             return None
 
         # Guard: skip prospects where email was actively verified as invalid
-        # (email_verified=False + mx_provider set means verification ran and failed)
         if prospect.email_verified is False and prospect.mx_provider is not None:
-            logger.info("Skipping %s — email verified as invalid, marking dead", prospect.business_name)
+            logger.info("Skipping %s — email verified as invalid, marking dead", biz_name)
             prospect.status = "dead"
             await db.commit()
             return None
 
         # Guard: block registrar/platform/chain emails
         if _is_blocked_email(prospect.owner_email):
-            logger.warning("Blocked %s — bad email domain: %s", prospect.business_name, prospect.owner_email)
+            logger.warning("Blocked %s — bad email domain: %s", biz_name, prospect.owner_email)
             prospect.status = "dead"
             await db.commit()
             return None
 
-        if _is_blocked_business(prospect.business_name):
-            logger.warning("Blocked %s — chain/non-local business", prospect.business_name)
+        if _is_blocked_business(biz_name):
+            logger.warning("Blocked %s — chain/non-local business", biz_name)
             prospect.status = "dead"
             await db.commit()
             return None
@@ -185,31 +189,35 @@ async def enqueue_prospect(prospect_id: str) -> Optional[str]:
         # Guard: prevent duplicate step-1 emails
         existing = await db.execute(
             select(OutreachEmail.id).where(
-                OutreachEmail.prospect_id == prospect.id,
+                OutreachEmail.prospect_id == p_id,
                 OutreachEmail.sequence_step == 1,
             ).limit(1)
         )
         if existing.first():
-            logger.info("Skipping %s — step 1 email already exists", prospect.business_name)
+            logger.info("Skipping %s — step 1 email already exists", biz_name)
             if prospect.status != "queued":
                 prospect.status = "queued"
                 await db.commit()
             return None
 
-        # Compose step 1
-        composed = await compose_email(str(prospect.id), sequence_step=1)
-        if not composed:
-            logger.error("Failed to compose email for %s", prospect.business_name)
+    # ── Phase 2: Compose email (opens its own session internally) ─
+    composed = await compose_email(str(prospect_id), sequence_step=1)
+    if not composed:
+        logger.error("Failed to compose email for %s", biz_name)
+        return None
+
+    # ── Phase 3: Create email record + update status (short session)
+    send_time = get_next_send_time(biz_type)
+    tracking_id = str(uuid4())
+
+    async with async_session_factory() as db:
+        prospect = await db.get(Prospect, prospect_id)
+        if not prospect:
             return None
 
-        # Schedule based on industry
-        send_time = get_next_send_time(prospect.business_type or "default")
-
-        # Create email record
-        tracking_id = str(uuid4())
         email = OutreachEmail(
             id=uuid4(),
-            prospect_id=prospect.id,
+            prospect_id=p_id,
             sequence_step=1,
             subject=composed["subject"],
             body_html=composed["body_html"],
@@ -222,13 +230,12 @@ async def enqueue_prospect(prospect_id: str) -> Optional[str]:
         )
         db.add(email)
 
-        # Update prospect status — stays queued until operator approves
         prospect.status = "queued"
         await db.commit()
 
         logger.info(
             "Enqueued %s step 1 → scheduled for %s",
-            prospect.business_name,
+            biz_name,
             send_time.isoformat(),
         )
         return str(email.id)
@@ -247,40 +254,51 @@ async def schedule_next_step(prospect_id: str, current_step: int) -> Optional[st
 
     delay_days = STEP_DELAYS.get(next_step, 3)
 
+    # ── Phase 1: Check exit conditions (short session) ───────────
     async with async_session_factory() as db:
         prospect = await db.get(Prospect, prospect_id)
         if not prospect:
             return None
 
+        biz_name = prospect.business_name
+        biz_type = prospect.business_type or "default"
+        p_id = prospect.id
+
         # Contractors only get 3 steps (intro/followup/breakup) — no step 4-5
         if prospect.source == "contractor_registry" and next_step > 3:
-            logger.info("Contractor sequence complete for %s (3 steps)", prospect.business_name)
+            logger.info("Contractor sequence complete for %s (3 steps)", biz_name)
             return None
 
         # Check exit conditions (§8.3)
         if prospect.status in ("replied", "meeting_booked", "promoted",
                                 "dead", "do_not_contact", "manual_handling"):
             logger.info("Not scheduling step %d for %s — status: %s",
-                        next_step, prospect.business_name, prospect.status)
+                        next_step, biz_name, prospect.status)
             return None
 
         # Step 5 (resurrection) — only if they opened any email
         if next_step == 5 and prospect.emails_opened == 0:
-            logger.info("Skipping resurrection for %s — never opened", prospect.business_name)
+            logger.info("Skipping resurrection for %s — never opened", biz_name)
             return None
 
-        composed = await compose_email(str(prospect.id), sequence_step=next_step)
-        if not composed:
+    # ── Phase 2: Compose email (opens its own session internally) ─
+    composed = await compose_email(str(prospect_id), sequence_step=next_step)
+    if not composed:
+        return None
+
+    # ── Phase 3: Create email record + update status (short session)
+    after = datetime.now(timezone.utc) + timedelta(days=delay_days)
+    send_time = get_next_send_time(biz_type, after=after)
+    tracking_id = str(uuid4())
+
+    async with async_session_factory() as db:
+        prospect = await db.get(Prospect, prospect_id)
+        if not prospect:
             return None
 
-        # Schedule
-        after = datetime.now(timezone.utc) + timedelta(days=delay_days)
-        send_time = get_next_send_time(prospect.business_type or "default", after=after)
-
-        tracking_id = str(uuid4())
         email = OutreachEmail(
             id=uuid4(),
-            prospect_id=prospect.id,
+            prospect_id=p_id,
             sequence_step=next_step,
             subject=composed["subject"],
             body_html=composed["body_html"],
@@ -300,7 +318,7 @@ async def schedule_next_step(prospect_id: str, current_step: int) -> Optional[st
 
         logger.info(
             "Scheduled %s step %d → %s",
-            prospect.business_name,
+            biz_name,
             next_step,
             send_time.isoformat(),
         )
@@ -317,6 +335,7 @@ async def send_email_record(email_id: str) -> bool:
     from api.services.firebase_summarizer import _safe_set
     from api.services.email_tracker import inject_tracking
 
+    # ── Phase 1: Read email + prospect data (short session) ──────
     async with async_session_factory() as db:
         email = await db.get(OutreachEmail, email_id)
         if not email:
@@ -329,100 +348,110 @@ async def send_email_record(email_id: str) -> bool:
             await db.commit()
             return False
 
-        # Inject tracking pixel + click tracking
-        tracked_html = inject_tracking(
-            email.body_html,
-            email.tracking_id,
-        )
+        # Snapshot fields for SMTP send
+        to_email = prospect.owner_email
+        subject = email.subject
+        body_html = email.body_html
+        tracking_id = email.tracking_id
+        prospect_id = str(prospect.id)
+        biz_name = prospect.business_name
+        seq_step = email.sequence_step
+        prospect_status = prospect.status
 
+    # Inject tracking pixel + click tracking
+    tracked_html = inject_tracking(body_html, tracking_id)
+
+    # ── Phase 2: SMTP send (no DB session held) ─────────────────
+    try:
         try:
-            # Try SMTP pool first (multi-provider), fall back to direct Gmail
-            try:
-                from api.services.smtp_pool import send_via_pool
-                result = await send_via_pool(
-                    to=prospect.owner_email,
-                    subject=email.subject,
-                    body_html=tracked_html,
-                    reply_to=settings.smtp_email,
-                )
-                # Track which provider was used
-                if isinstance(result, dict) and result.get("provider_id"):
-                    email.smtp_provider_id = result["provider_id"]
-            except Exception:
-                # Pool not configured or import error — fall back to direct Gmail
-                result = await smtp_send(
-                    to=prospect.owner_email,
-                    subject=email.subject,
-                    body_html=tracked_html,
-                    reply_to=settings.smtp_email,
-                )
-
-            # ── Check SMTP result (email_service returns dict, never raises) ──
-            if isinstance(result, dict) and not result.get("success"):
-                if result.get("limit_exceeded"):
-                    # Gmail daily limit hit — DON'T mark email as failed,
-                    # leave it approved so it retries next cycle
-                    logger.error("🚫 Gmail limit exceeded sending to %s — halting queue",
-                                 prospect.business_name)
-                    return "limit_exceeded"
-                elif result.get("bounce"):
-                    # Hard bounce — recipient doesn't exist
-                    logger.warning("Bounce for %s (%s): %s",
-                                   prospect.business_name, prospect.owner_email,
-                                   result.get("message", ""))
-                    email.status = "bounced"
-                    email.error_message = result.get("message", "Bounced")[:500]
-                    await db.commit()
-                    # Use handle_bounce to cancel future emails & mark dead
-                    await handle_bounce(str(email.id))
-                    return False
-                else:
-                    # Generic send failure (auth, network, etc.)
-                    email.status = "failed"
-                    email.error_message = result.get("message", "SMTP error")[:500]
-                    await db.commit()
-                    logger.error("Send failed for %s: %s",
-                                 prospect.business_name, result.get("message"))
-                    return False
-
-            email.status = "sent"
-            email.sent_at = datetime.now(timezone.utc)
-            email.message_id = result.get("message_id") if isinstance(result, dict) else None
-
-            # Update prospect tracking
-            prospect.emails_sent = (prospect.emails_sent or 0) + 1
-            prospect.last_email_at = email.sent_at
-            if prospect.status == "queued":
-                prospect.status = "contacted"
-
-            await db.commit()
-
-            # Notify
-            await send_message(
-                f"📧 Sent to *{prospect.business_name}*\n"
-                f"📋 Step {email.sequence_step}: {email.subject[:50]}...\n"
-                f"📬 To: {prospect.owner_email}"
+            from api.services.smtp_pool import send_via_pool
+            result = await send_via_pool(
+                to=to_email,
+                subject=subject,
+                body_html=tracked_html,
+                reply_to=settings.smtp_email,
+            )
+        except Exception:
+            result = await smtp_send(
+                to=to_email,
+                subject=subject,
+                body_html=tracked_html,
+                reply_to=settings.smtp_email,
             )
 
-            await _safe_set("outreach/stats/last_send", {
-                "name": prospect.business_name,
-                "step": email.sequence_step,
-                "ts": int(_time.time()),
-            })
+        # ── Phase 3: Write result back (short session) ───────────────
+        if isinstance(result, dict) and not result.get("success"):
+            if result.get("limit_exceeded"):
+                logger.error("🚫 Gmail limit exceeded sending to %s — halting queue", biz_name)
+                return "limit_exceeded"
+            elif result.get("bounce"):
+                logger.warning("Bounce for %s (%s): %s", biz_name, to_email, result.get("message", ""))
+                async with async_session_factory() as db:
+                    email = await db.get(OutreachEmail, email_id)
+                    if email:
+                        email.status = "bounced"
+                        email.error_message = result.get("message", "Bounced")[:500]
+                        await db.commit()
+                await handle_bounce(email_id)
+                return False
+            else:
+                async with async_session_factory() as db:
+                    email = await db.get(OutreachEmail, email_id)
+                    if email:
+                        email.status = "failed"
+                        email.error_message = result.get("message", "SMTP error")[:500]
+                        await db.commit()
+                logger.error("Send failed for %s: %s", biz_name, result.get("message"))
+                return False
 
-            # Schedule next step
-            await schedule_next_step(str(prospect.id), email.sequence_step)
+        # Success — update email + prospect
+        smtp_provider_id = result.get("provider_id") if isinstance(result, dict) else None
+        message_id = result.get("message_id") if isinstance(result, dict) else None
+        sent_at = datetime.now(timezone.utc)
 
-            logger.info("Sent email %s to %s", email_id, prospect.owner_email)
-            return True
-
-        except Exception as e:
-            email.status = "failed"
-            email.error_message = str(e)[:500]
+        async with async_session_factory() as db:
+            email = await db.get(OutreachEmail, email_id)
+            prospect = await db.get(Prospect, prospect_id)
+            if email:
+                email.status = "sent"
+                email.sent_at = sent_at
+                email.message_id = message_id
+                if smtp_provider_id:
+                    email.smtp_provider_id = smtp_provider_id
+            if prospect:
+                prospect.emails_sent = (prospect.emails_sent or 0) + 1
+                prospect.last_email_at = sent_at
+                if prospect.status == "queued":
+                    prospect.status = "contacted"
             await db.commit()
 
-            logger.error("Send failed for %s: %s", prospect.business_name, e)
-            return False
+        # ── Phase 4: Notifications (no session held) ─────────────────
+        await send_message(
+            f"📧 Sent to *{biz_name}*\n"
+            f"📋 Step {seq_step}: {subject[:50]}...\n"
+            f"📬 To: {to_email}"
+        )
+
+        await _safe_set("outreach/stats/last_send", {
+            "name": biz_name,
+            "step": seq_step,
+            "ts": int(_time.time()),
+        })
+
+        await schedule_next_step(prospect_id, seq_step)
+
+        logger.info("Sent email %s to %s", email_id, to_email)
+        return True
+
+    except Exception as e:
+        async with async_session_factory() as db:
+            email = await db.get(OutreachEmail, email_id)
+            if email:
+                email.status = "failed"
+                email.error_message = str(e)[:500]
+                await db.commit()
+        logger.error("Send failed for %s: %s", biz_name, e)
+        return False
 
 
 # ─── Batch Sending (Main Scheduler Entry Point) ──────────────────────
@@ -597,6 +626,8 @@ async def handle_bounce(email_id: str):
     """
     from api.services.telegram_outreach import send_message
 
+    notify_info = None  # collect info for Telegram outside session
+
     async with async_session_factory() as db:
         email = await db.get(OutreachEmail, email_id)
         if not email:
@@ -618,13 +649,16 @@ async def handle_bounce(email_id: str):
 
             prospect.status = "dead"
             prospect.notes = (prospect.notes or "") + f"\nBounced: {email.subject}"
-
-            await send_message(
-                f"📬 *Bounce:* {prospect.owner_email}\n"
-                f"📋 {prospect.business_name} — marked dead"
-            )
+            notify_info = (prospect.owner_email, prospect.business_name)
 
         await db.commit()
+
+    # Telegram outside session
+    if notify_info:
+        await send_message(
+            f"📬 *Bounce:* {notify_info[0]}\n"
+            f"📋 {notify_info[1]} — marked dead"
+        )
 
 
 async def handle_unsubscribe(prospect_id: str):

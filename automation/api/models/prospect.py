@@ -57,7 +57,7 @@ class GeoRing(Base):
     created_at = Column(DateTime(timezone=True), default=_utcnow)
 
     # Relationships
-    prospects = relationship("Prospect", back_populates="geo_ring", lazy="selectin")
+    prospects = relationship("Prospect", back_populates="geo_ring", lazy="raise")
 
     def to_dict(self):
         return {
@@ -216,9 +216,9 @@ class Prospect(Base):
 
     # Relationships
     geo_ring = relationship("GeoRing", back_populates="prospects")
-    audits = relationship("WebsiteAudit", back_populates="prospect", lazy="selectin", cascade="all, delete-orphan")
-    emails = relationship("OutreachEmail", back_populates="prospect", lazy="selectin", cascade="all, delete-orphan")
-    activities = relationship("ProspectActivity", back_populates="prospect", lazy="selectin", cascade="all, delete-orphan", order_by="ProspectActivity.created_at.desc()")
+    audits = relationship("WebsiteAudit", back_populates="prospect", lazy="raise", cascade="all, delete-orphan")
+    emails = relationship("OutreachEmail", back_populates="prospect", lazy="raise", cascade="all, delete-orphan")
+    activities = relationship("ProspectActivity", back_populates="prospect", lazy="raise", cascade="all, delete-orphan", order_by="ProspectActivity.created_at.desc()")
 
     def to_dict(self, brief=False):
         """Convert to dict. brief=True for lightweight list views."""
