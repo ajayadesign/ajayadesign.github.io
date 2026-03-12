@@ -10,6 +10,7 @@ Uses the same SMTP_EMAIL / SMTP_APP_PASSWORD credentials (Gmail
 app passwords work for both SMTP and IMAP).
 """
 
+import asyncio
 import email
 import email.policy
 import imaplib
@@ -163,6 +164,73 @@ def _extract_bounced_emails(msg) -> list[str]:
     return list(bounced)
 
 
+def _sync_scan_bounces() -> list[dict]:
+    """
+    Blocking IMAP scan for bounces — runs in a thread.
+    Returns list of {addr, subject} dicts.
+    """
+    from datetime import timedelta as _td
+
+    conn = _connect_imap()
+    try:
+        conn.select("INBOX")
+        since_date = (datetime.now() - _td(days=7)).strftime("%d-%b-%Y")
+        search_queries = [
+            f'(FROM "mailer-daemon" SINCE {since_date})',
+            f'(FROM "postmaster" SINCE {since_date})',
+            f'(SUBJECT "Delivery Status Notification" SINCE {since_date})',
+            f'(SUBJECT "undeliverable" SINCE {since_date})',
+            f'(SUBJECT "Mail delivery failed" SINCE {since_date})',
+            f'(SUBJECT "delivery failure" SINCE {since_date})',
+        ]
+
+        all_msg_ids = set()
+        for query in search_queries:
+            try:
+                status, data = conn.search(None, query)
+                if status == "OK" and data[0]:
+                    all_msg_ids.update(data[0].split())
+            except Exception:
+                pass
+
+        hits = []
+        for msg_id in all_msg_ids:
+            try:
+                status, msg_data = conn.fetch(msg_id, "(RFC822)")
+                if status != "OK" or not msg_data[0]:
+                    continue
+                raw = msg_data[0][1]
+                msg = email.message_from_bytes(raw, policy=email.policy.default)
+                subject = msg.get("Subject", "")
+                from_addr = msg.get("From", "")
+
+                is_bounce = False
+                if any(s.lower() in from_addr.lower() for s in BOUNCE_SENDERS):
+                    is_bounce = True
+                if _is_bounce_subject(subject):
+                    is_bounce = True
+                if not is_bounce:
+                    continue
+
+                addrs = _extract_bounced_emails(msg)
+                for addr in addrs:
+                    hits.append({"addr": addr, "subject": subject})
+
+                conn.store(msg_id, "+FLAGS", "\\Seen")
+            except Exception:
+                pass
+
+        conn.close()
+        conn.logout()
+        return hits
+    except Exception:
+        try:
+            conn.logout()
+        except Exception:
+            pass
+        raise
+
+
 async def check_bounces() -> dict:
     """
     Main entry point: scan Gmail inbox for bounce notifications,
@@ -179,155 +247,79 @@ async def check_bounces() -> dict:
         "details": [],
     }
 
+    # Phase 1: All IMAP work in a thread (no event loop blocking)
     try:
-        conn = _connect_imap()
+        hits = await asyncio.to_thread(_sync_scan_bounces)
     except Exception as e:
-        logger.error("IMAP connect failed: %s", e)
-        result["errors"].append(f"IMAP connect failed: {e}")
+        logger.error("IMAP bounce scan failed: %s", e)
+        result["errors"].append(f"IMAP scan failed: {e}")
         return result
 
-    try:
-        conn.select("INBOX")
+    if not hits:
+        logger.info("Bounce check: no new bounce notifications found")
+        return result
 
-        # Search for bounce-like emails from the last 7 days
-        # Include both read and unread — we track which emails we've already
-        # processed by checking the DB status (already_bounced).
-        from datetime import timedelta as _td
-        since_date = (datetime.now() - _td(days=7)).strftime("%d-%b-%Y")
-        search_queries = [
-            f'(FROM "mailer-daemon" SINCE {since_date})',
-            f'(FROM "postmaster" SINCE {since_date})',
-            f'(SUBJECT "Delivery Status Notification" SINCE {since_date})',
-            f'(SUBJECT "undeliverable" SINCE {since_date})',
-            f'(SUBJECT "Mail delivery failed" SINCE {since_date})',
-            f'(SUBJECT "delivery failure" SINCE {since_date})',
-        ]
+    logger.info("Bounce check: found %d potential bounced addresses", len(hits))
 
-        all_msg_ids = set()
-        for query in search_queries:
-            try:
-                status, data = conn.search(None, query)
-                if status == "OK" and data[0]:
-                    ids = data[0].split()
-                    all_msg_ids.update(ids)
-            except Exception as e:
-                logger.debug("IMAP search '%s' failed: %s", query, e)
+    # Phase 2: Process results with async DB
+    from api.services.cadence_engine import handle_bounce
 
-        if not all_msg_ids:
-            logger.info("Bounce check: no new bounce notifications found")
-            conn.close()
-            conn.logout()
-            return result
-
-        logger.info("Bounce check: found %d potential bounce messages", len(all_msg_ids))
-
-        from api.services.cadence_engine import handle_bounce
-
-        for msg_id in all_msg_ids:
-            result["checked"] += 1
-            try:
-                status, msg_data = conn.fetch(msg_id, "(RFC822)")
-                if status != "OK" or not msg_data[0]:
-                    continue
-
-                raw = msg_data[0][1]
-                msg = email.message_from_bytes(raw, policy=email.policy.default)
-
-                subject = msg.get("Subject", "")
-                from_addr = msg.get("From", "")
-
-                # Verify it's actually a bounce
-                is_bounce = False
-                from_lower = from_addr.lower()
-                if any(s.lower() in from_lower for s in BOUNCE_SENDERS):
-                    is_bounce = True
-                if _is_bounce_subject(subject):
-                    is_bounce = True
-
-                if not is_bounce:
-                    continue
-
-                # Extract bounced recipient addresses
-                bounced_addrs = _extract_bounced_emails(msg)
-                if not bounced_addrs:
-                    logger.debug(
-                        "Bounce msg %s: couldn't extract recipient from '%s'",
-                        msg_id, subject,
-                    )
-                    continue
-
-                for addr in bounced_addrs:
-                    # Use a short-lived session per address to avoid holding connections
-                    async with async_session_factory() as db:
-                        # Find matching sent email in DB
-                        email_row = (
-                            await db.execute(
-                                select(OutreachEmail)
-                                .join(Prospect)
-                                .where(
-                                    and_(
-                                        Prospect.owner_email == addr,
-                                        OutreachEmail.status == "sent",
-                                    )
-                                )
-                                .order_by(OutreachEmail.sent_at.desc())
-                                .limit(1)
-                            )
-                        ).scalar_one_or_none()
-
-                        if not email_row:
-                            logger.debug("Bounce for %s — no matching sent email found", addr)
-                            result["not_found"] += 1
-                            continue
-
-                        if email_row.status == "bounced":
-                            result["already_bounced"] += 1
-                            continue
-
-                        # Mark as bounced
-                        email_row.status = "bounced"
-                        email_row.error_message = (
-                            f"Async bounce detected via IMAP: {subject}"
-                        )[:500]
-                        await db.commit()
-
-                    # Call handle_bounce outside the session to avoid nesting
-                    try:
-                        await handle_bounce(str(email_row.id))
-                    except Exception as e:
-                        logger.error("handle_bounce failed for %s: %s", email_row.id, e)
-
-                    async with async_session_factory() as db:
-                        prospect = await db.get(Prospect, email_row.prospect_id)
-                    biz_name = prospect.business_name if prospect else "Unknown"
-                    result["bounced"] += 1
-                    result["details"].append({
-                        "email": addr,
-                        "business": biz_name,
-                        "email_id": str(email_row.id),
-                    })
-                    logger.info(
-                        "📬 Bounce detected: %s (%s) — marked bounced",
-                        addr, biz_name,
-                    )
-
-                # Mark the bounce notification as read
-                conn.store(msg_id, "+FLAGS", "\\Seen")
-
-            except Exception as e:
-                logger.error("Error processing bounce msg %s: %s", msg_id, e)
-                result["errors"].append(str(e))
-
-        conn.close()
-        conn.logout()
-
-    except Exception as e:
-        logger.error("Bounce check error: %s", e)
-        result["errors"].append(str(e))
+    for hit in hits:
+        addr, subject = hit["addr"], hit["subject"]
+        result["checked"] += 1
         try:
-            conn.logout()
-        except Exception:
-            pass
+            async with async_session_factory() as db:
+                email_row = (
+                    await db.execute(
+                        select(OutreachEmail)
+                        .join(Prospect)
+                        .where(
+                            and_(
+                                Prospect.owner_email == addr,
+                                OutreachEmail.status == "sent",
+                            )
+                        )
+                        .order_by(OutreachEmail.sent_at.desc())
+                        .limit(1)
+                    )
+                ).scalar_one_or_none()
+
+                if not email_row:
+                    logger.debug("Bounce for %s — no matching sent email found", addr)
+                    result["not_found"] += 1
+                    continue
+
+                if email_row.status == "bounced":
+                    result["already_bounced"] += 1
+                    continue
+
+                email_row.status = "bounced"
+                email_row.error_message = (
+                    f"Async bounce detected via IMAP: {subject}"
+                )[:500]
+                email_id = str(email_row.id)
+                prospect_id = email_row.prospect_id
+                await db.commit()
+
+            try:
+                await handle_bounce(email_id)
+            except Exception as e:
+                logger.error("handle_bounce failed for %s: %s", email_id, e)
+
+            async with async_session_factory() as db:
+                prospect = await db.get(Prospect, prospect_id)
+            biz_name = prospect.business_name if prospect else "Unknown"
+            result["bounced"] += 1
+            result["details"].append({
+                "email": addr,
+                "business": biz_name,
+                "email_id": email_id,
+            })
+            logger.info("📬 Bounce detected: %s (%s) — marked bounced", addr, biz_name)
+
+        except Exception as e:
+            logger.error("Error processing bounce for %s: %s", addr, e)
+            result["errors"].append(str(e))
 
     logger.info(
         "Bounce check complete: checked=%d bounced=%d already=%d not_found=%d",
@@ -340,6 +332,34 @@ async def check_bounces() -> dict:
 # ═══════════════════════════════════════════════════════════════════
 # Reply Detection — scan inbox for replies from prospects
 # ═══════════════════════════════════════════════════════════════════
+
+def _sync_scan_replies(addrs_to_check: list[str], since_date: str) -> list[str]:
+    """
+    Blocking IMAP scan for replies — runs in a thread.
+    Returns list of email addresses that have replied.
+    """
+    conn = _connect_imap()
+    try:
+        conn.select("INBOX")
+        replied = []
+        for addr in addrs_to_check:
+            try:
+                query = f'(FROM "{addr}" SINCE {since_date})'
+                status_code, data = conn.search(None, query)
+                if status_code == "OK" and data[0] and data[0].split():
+                    replied.append(addr)
+            except Exception:
+                pass
+        conn.close()
+        conn.logout()
+        return replied
+    except Exception:
+        try:
+            conn.logout()
+        except Exception:
+            pass
+        raise
+
 
 async def check_replies() -> dict:
     """
@@ -357,145 +377,124 @@ async def check_replies() -> dict:
         "errors": [],
     }
 
-    try:
-        conn = _connect_imap()
-    except Exception as e:
-        logger.error("IMAP connect failed for reply check: %s", e)
-        result["errors"].append(f"IMAP connect failed: {e}")
+    # Phase 1: Get prospect map from DB
+    async with async_session_factory() as db:
+        sent_r = await db.execute(
+            select(Prospect.owner_email, Prospect.id, Prospect.business_name, Prospect.status)
+            .join(OutreachEmail)
+            .where(OutreachEmail.status == "sent")
+            .distinct()
+        )
+        prospect_map = {}
+        for row in sent_r.fetchall():
+            addr = (row[0] or "").lower().strip()
+            if addr:
+                prospect_map[addr] = {
+                    "id": str(row[1]),
+                    "name": row[2],
+                    "status": row[3],
+                }
+
+    if not prospect_map:
         return result
 
+    # Filter to only addresses worth checking
+    addrs_to_check = [
+        addr for addr, info in prospect_map.items()
+        if info["status"] not in (
+            "manual_handling", "replied", "meeting_booked",
+            "promoted", "dead", "do_not_contact",
+        )
+    ]
+    if not addrs_to_check:
+        return result
+
+    # Phase 2: All IMAP work in a thread (no event loop blocking)
+    from datetime import timedelta as _td
+    since_date = (datetime.now() - _td(days=14)).strftime("%d-%b-%Y")
+
     try:
-        conn.select("INBOX")
+        replied_addrs = await asyncio.to_thread(_sync_scan_replies, addrs_to_check, since_date)
+    except Exception as e:
+        logger.error("IMAP reply scan failed: %s", e)
+        result["errors"].append(f"IMAP scan failed: {e}")
+        return result
 
-        # Get all prospect emails we've sent to
-        from api.database import async_session_factory
-        async with async_session_factory() as db:
-            sent_r = await db.execute(
-                select(Prospect.owner_email, Prospect.id, Prospect.business_name, Prospect.status)
-                .join(OutreachEmail)
-                .where(OutreachEmail.status == "sent")
-                .distinct()
+    # Phase 3: Process replies with async DB
+    for addr in replied_addrs:
+        info = prospect_map.get(addr)
+        if not info:
+            continue
+
+        result["checked"] += 1
+
+        try:
+            async with async_session_factory() as db:
+                prospect = await db.get(Prospect, info["id"])
+                if not prospect:
+                    continue
+
+                if prospect.status == "manual_handling":
+                    result["already_handled"] += 1
+                    continue
+
+                old_status = prospect.status
+                prospect.status = "manual_handling"
+                prospect.notes = (prospect.notes or "") + (
+                    f"\n📩 Reply detected via IMAP — auto-set to manual_handling (was {old_status})"
+                )
+
+                latest_email_r = await db.execute(
+                    select(OutreachEmail)
+                    .where(
+                        OutreachEmail.prospect_id == prospect.id,
+                        OutreachEmail.status == "sent",
+                    )
+                    .order_by(OutreachEmail.sent_at.desc())
+                    .limit(1)
+                )
+                latest_email = latest_email_r.scalar_one_or_none()
+                if latest_email:
+                    latest_email.replied_at = datetime.now(timezone.utc)
+
+                pending_r = await db.execute(
+                    select(OutreachEmail).where(
+                        OutreachEmail.prospect_id == prospect.id,
+                        OutreachEmail.status.in_(["pending_approval", "approved", "scheduled", "draft"]),
+                    )
+                )
+                cancelled = 0
+                for e in pending_r.scalars().all():
+                    e.status = "cancelled"
+                    e.error_message = "Reply detected — manual handling"
+                    cancelled += 1
+
+                await db.commit()
+
+            result["replies_found"] += 1
+            result["details"].append({
+                "email": addr,
+                "business": info["name"],
+                "prospect_id": info["id"],
+                "emails_cancelled": cancelled,
+            })
+            logger.info(
+                "📩 Reply from %s (%s) — set to manual_handling, %d emails cancelled",
+                addr, info["name"], cancelled,
             )
-            prospect_map = {}
-            for row in sent_r.fetchall():
-                addr = (row[0] or "").lower().strip()
-                if addr:
-                    prospect_map[addr] = {
-                        "id": str(row[1]),
-                        "name": row[2],
-                        "status": row[3],
-                    }
-
-        if not prospect_map:
-            conn.close()
-            conn.logout()
-            return result
-
-        # Search for recent replies from prospect email addresses
-        from datetime import timedelta as _td
-        since_date = (datetime.now() - _td(days=14)).strftime("%d-%b-%Y")
-
-        for addr, info in prospect_map.items():
-            # Skip if already in a terminal/manual state
-            if info["status"] in ("manual_handling", "replied", "meeting_booked",
-                                   "promoted", "dead", "do_not_contact"):
-                continue
 
             try:
-                query = f'(FROM "{addr}" SINCE {since_date})'
-                status_code, data = conn.search(None, query)
-                if status_code != "OK" or not data[0]:
-                    continue
+                from api.services.telegram_outreach import send_message
+                await send_message(
+                    f"📩 *Reply detected:* {info['name']}\n"
+                    f"📧 From: {addr}\n"
+                    f"🤝 Auto-set to manual handling — {cancelled} emails cancelled"
+                )
+            except Exception:
+                pass
 
-                msg_ids = data[0].split()
-                if not msg_ids:
-                    continue
-
-                result["checked"] += 1
-
-                # Found a reply from this prospect!
-                async with async_session_factory() as db:
-                    prospect = await db.get(Prospect, info["id"])
-                    if not prospect:
-                        continue
-
-                    if prospect.status == "manual_handling":
-                        result["already_handled"] += 1
-                        continue
-
-                    # Mark as manual_handling
-                    old_status = prospect.status
-                    prospect.status = "manual_handling"
-                    prospect.notes = (prospect.notes or "") + (
-                        f"\n📩 Reply detected via IMAP — auto-set to manual_handling (was {old_status})"
-                    )
-
-                    # Update the latest sent email's replied_at
-                    latest_email_r = await db.execute(
-                        select(OutreachEmail)
-                        .where(
-                            OutreachEmail.prospect_id == prospect.id,
-                            OutreachEmail.status == "sent",
-                        )
-                        .order_by(OutreachEmail.sent_at.desc())
-                        .limit(1)
-                    )
-                    latest_email = latest_email_r.scalar_one_or_none()
-                    if latest_email:
-                        latest_email.replied_at = datetime.now(timezone.utc)
-
-                    # Cancel all pending automated emails
-                    pending_r = await db.execute(
-                        select(OutreachEmail).where(
-                            OutreachEmail.prospect_id == prospect.id,
-                            OutreachEmail.status.in_(["pending_approval", "approved", "scheduled", "draft"]),
-                        )
-                    )
-                    cancelled = 0
-                    for e in pending_r.scalars().all():
-                        e.status = "cancelled"
-                        e.error_message = "Reply detected — manual handling"
-                        cancelled += 1
-
-                    await db.commit()
-
-                    result["replies_found"] += 1
-                    result["details"].append({
-                        "email": addr,
-                        "business": info["name"],
-                        "prospect_id": info["id"],
-                        "emails_cancelled": cancelled,
-                    })
-
-                    logger.info(
-                        "📩 Reply from %s (%s) — set to manual_handling, %d emails cancelled",
-                        addr, info["name"], cancelled,
-                    )
-
-                # Telegram notification — outside DB session
-                try:
-                    from api.services.telegram_outreach import send_message
-                    await send_message(
-                        f"📩 *Reply detected:* {info['name']}\n"
-                        f"📧 From: {addr}\n"
-                        f"🤝 Auto-set to manual handling — {cancelled} emails cancelled"
-                    )
-                except Exception:
-                    pass
-
-            except Exception as e:
-                logger.debug("Reply search for %s failed: %s", addr, e)
-
-        conn.close()
-        conn.logout()
-
-    except Exception as e:
-        logger.error("Reply check error: %s", e)
-        result["errors"].append(str(e))
-        try:
-            conn.logout()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("Reply processing for %s failed: %s", addr, e)
 
     if result["replies_found"] > 0:
         logger.info(
