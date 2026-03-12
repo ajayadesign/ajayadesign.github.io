@@ -548,160 +548,168 @@ async def recon_prospect(prospect_id: str) -> Optional[dict]:
     from api.services.firebase_summarizer import _safe_set
     import time as _time
 
+    # ── Phase 1: Read prospect data (short session) ──────────────
     async with async_session_factory() as db:
         prospect = await db.get(Prospect, prospect_id)
         if not prospect:
             return None
 
+        # Snapshot fields needed during I/O phase
+        biz_name = prospect.business_name
+        website_url = prospect.website_url
+        owner_name = prospect.owner_name
+        phone = prospect.phone
+        priority_score = prospect.priority_score or 0
+        status = prospect.status
+
         domain = None
-        if prospect.website_url:
-            parsed = urlparse(prospect.website_url)
+        if website_url:
+            parsed = urlparse(website_url)
             domain = parsed.netloc.replace("www.", "")
 
-        pid = str(prospect_id)
-        result = {
-            "prospect_id": pid,
-            "owner_name": None,
-            "owner_email": None,
-            "email_source": None,
-            "email_verified": False,
-            "email_score": 0,
-            "linkedin": None,
-            "phone": None,
-        }
+    # ── Phase 2: All network I/O (no DB session held) ──────────
+    pid = str(prospect_id)
+    result = {
+        "prospect_id": pid,
+        "owner_name": None,
+        "owner_email": None,
+        "email_source": None,
+        "email_verified": False,
+        "email_score": 0,
+        "linkedin": None,
+        "phone": None,
+    }
 
-        logger.info("Recon: %s (%s)", prospect.business_name, domain or "no domain")
+    logger.info("Recon: %s (%s)", biz_name, domain or "no domain")
 
-        # ─── Step 1: Website Scrape ────────────────────────────────
-        if prospect.website_url:
-            findings = await scrape_website_for_contacts(prospect.website_url)
+    # ─── Step 1: Website Scrape ────────────────────────────────
+    if website_url:
+        findings = await scrape_website_for_contacts(website_url)
 
-            # Best name
-            if findings["names"] and not prospect.owner_name:
-                result["owner_name"] = findings["names"][0]
+        # Best name
+        if findings["names"] and not owner_name:
+            result["owner_name"] = findings["names"][0]
 
-            # LinkedIn
-            if findings["linkedin"]:
-                result["linkedin"] = findings["linkedin"][0]
+        # LinkedIn
+        if findings["linkedin"]:
+            result["linkedin"] = findings["linkedin"][0]
 
-            # Phone
-            if findings["phones"] and not prospect.phone:
-                result["phone"] = findings["phones"][0]
+        # Phone
+        if findings["phones"] and not phone:
+            result["phone"] = findings["phones"][0]
 
-            # Prioritize personal emails over role emails
-            personal = [e for e in findings["emails"] if not is_role_email(e)]
-            role = [e for e in findings["emails"] if is_role_email(e)]
+        # Prioritize personal emails over role emails
+        personal = [e for e in findings["emails"] if not is_role_email(e)]
+        role = [e for e in findings["emails"] if is_role_email(e)]
 
-            for email in personal + role:
-                verification = await verify_email(email)
-                if verification["score"] >= 50:
-                    result["owner_email"] = email
-                    result["email_source"] = "website_scrape"
-                    result["email_verified"] = verification["smtp_valid"]
-                    result["email_score"] = verification["score"]
-                    break
+        for email in personal + role:
+            verification = await verify_email(email)
+            if verification["score"] >= 50:
+                result["owner_email"] = email
+                result["email_source"] = "website_scrape"
+                result["email_verified"] = verification["smtp_valid"]
+                result["email_score"] = verification["score"]
+                break
 
-        # ─── Step 2: WHOIS ─────────────────────────────────────────
-        if not result["owner_email"] and domain:
-            whois_data = await lookup_whois(domain)
-            if whois_data.get("registrant_name") and not result["owner_name"]:
-                result["owner_name"] = whois_data["registrant_name"]
-            if whois_data.get("registrant_email"):
-                verification = await verify_email(whois_data["registrant_email"])
-                if verification["score"] >= 50:
-                    result["owner_email"] = whois_data["registrant_email"]
-                    result["email_source"] = "whois"
-                    result["email_verified"] = verification["smtp_valid"]
-                    result["email_score"] = verification["score"]
+    # ─── Step 2: WHOIS ─────────────────────────────────────────
+    if not result["owner_email"] and domain:
+        whois_data = await lookup_whois(domain)
+        if whois_data.get("registrant_name") and not result["owner_name"]:
+            result["owner_name"] = whois_data["registrant_name"]
+        if whois_data.get("registrant_email"):
+            verification = await verify_email(whois_data["registrant_email"])
+            if verification["score"] >= 50:
+                result["owner_email"] = whois_data["registrant_email"]
+                result["email_source"] = "whois"
+                result["email_verified"] = verification["smtp_valid"]
+                result["email_score"] = verification["score"]
 
-        # ─── Step 3: Hunter.io Domain Search ───────────────────────
-        # Gate: only use Hunter.io for high-value local prospects (free tier is limited)
-        _is_chain = _is_known_chain(domain)
-        _high_value = (prospect.priority_score or 0) >= 35
-        _use_hunter = not _is_chain and _high_value
+    # ─── Step 3: Hunter.io Domain Search ───────────────────────
+    _is_chain = _is_known_chain(domain)
+    _high_value = priority_score >= 35
+    _use_hunter = not _is_chain and _high_value
 
-        if not result["owner_email"] and domain and _use_hunter:
-            hunter_data = await hunter_domain_search(domain)
-        elif not result["owner_email"] and domain and not _use_hunter:
-            reason = "chain" if _is_chain else f"low priority ({prospect.priority_score or 0})"
-            logger.info("Hunter.io skipped for %s — %s", domain, reason)
-            hunter_data = {"emails": [], "organization": None}
-        else:
-            hunter_data = {"emails": [], "organization": None}
+    if not result["owner_email"] and domain and _use_hunter:
+        hunter_data = await hunter_domain_search(domain)
+    elif not result["owner_email"] and domain and not _use_hunter:
+        reason = "chain" if _is_chain else f"low priority ({priority_score})"
+        logger.info("Hunter.io skipped for %s — %s", domain, reason)
+        hunter_data = {"emails": [], "organization": None}
+    else:
+        hunter_data = {"emails": [], "organization": None}
 
-            # Extract org name if we don't have an owner name yet
-            if hunter_data.get("organization") and not result["owner_name"]:
-                pass  # org name ≠ person name, skip
+        if hunter_data.get("organization") and not result["owner_name"]:
+            pass
 
-            for h_email in hunter_data.get("emails", []):
-                email_addr = h_email["email"]
-                # Skip generic/role emails if we can — prefer personal
-                if h_email.get("type") == "generic" and is_role_email(email_addr):
-                    continue
+        for h_email in hunter_data.get("emails", []):
+            email_addr = h_email["email"]
+            if h_email.get("type") == "generic" and is_role_email(email_addr):
+                continue
 
-                # Hunter confidence ≥ 70 is good enough, verify via SMTP if we can
-                if h_email.get("confidence", 0) >= 50:
-                    verification = await verify_email(email_addr)
-                    if verification["score"] >= 50 or h_email["confidence"] >= 80:
-                        result["owner_email"] = email_addr
-                        result["email_source"] = "hunter.io"
-                        result["email_verified"] = verification["smtp_valid"]
-                        result["email_score"] = max(verification["score"], h_email["confidence"])
-
-                        # Bonus: hunter gives us name + title
-                        if h_email.get("first_name") and not result["owner_name"]:
-                            name_parts = [h_email["first_name"]]
-                            if h_email.get("last_name"):
-                                name_parts.append(h_email["last_name"])
-                            result["owner_name"] = " ".join(name_parts)
-
-                        logger.info("Hunter.io hit: %s → %s (confidence=%d)",
-                                    domain, email_addr, h_email["confidence"])
-                        break
-                await asyncio.sleep(0.3)
-
-            # Fallback: accept even generic Hunter emails if nothing better
-            if not result["owner_email"] and hunter_data.get("emails"):
-                best = hunter_data["emails"][0]  # already sorted by type+confidence
-                if best["confidence"] >= 60:
-                    result["owner_email"] = best["email"]
+            if h_email.get("confidence", 0) >= 50:
+                verification = await verify_email(email_addr)
+                if verification["score"] >= 50 or h_email["confidence"] >= 80:
+                    result["owner_email"] = email_addr
                     result["email_source"] = "hunter.io"
-                    result["email_verified"] = False
-                    result["email_score"] = best["confidence"]
-                    if best.get("first_name") and not result["owner_name"]:
-                        result["owner_name"] = f"{best['first_name']} {best.get('last_name', '')}".strip()
+                    result["email_verified"] = verification["smtp_valid"]
+                    result["email_score"] = max(verification["score"], h_email["confidence"])
 
-        # ─── Step 4: Pattern Guess + SMTP Verify ──────────────────
-        if not result["owner_email"] and domain:
-            name = result["owner_name"] or prospect.owner_name
-            guesses = generate_email_guesses(name, domain) if name else [
-                f"info@{domain}", f"contact@{domain}", f"hello@{domain}",
-            ]
+                    if h_email.get("first_name") and not result["owner_name"]:
+                        name_parts = [h_email["first_name"]]
+                        if h_email.get("last_name"):
+                            name_parts.append(h_email["last_name"])
+                        result["owner_name"] = " ".join(name_parts)
 
-            for email in guesses:
-                verification = await verify_email(email)
-                if verification["smtp_valid"]:
-                    result["owner_email"] = email
-                    result["email_source"] = "pattern_guess"
-                    result["email_verified"] = True
-                    result["email_score"] = verification["score"]
+                    logger.info("Hunter.io hit: %s → %s (confidence=%d)",
+                                domain, email_addr, h_email["confidence"])
                     break
-                elif verification["score"] >= 50:
-                    result["owner_email"] = email
-                    result["email_source"] = "pattern_guess"
-                    result["email_verified"] = False
-                    result["email_score"] = verification["score"]
-                    # Don't break — keep looking for verified
-                await asyncio.sleep(0.5)  # Rate limit SMTP checks
+            await asyncio.sleep(0.3)
 
-        # ─── Step 5: Fallback ─────────────────────────────────────
-        if not result["owner_email"] and domain:
-            result["owner_email"] = f"info@{domain}"
-            result["email_source"] = "fallback"
-            result["email_verified"] = False
-            result["email_score"] = 20
+        if not result["owner_email"] and hunter_data.get("emails"):
+            best = hunter_data["emails"][0]
+            if best["confidence"] >= 60:
+                result["owner_email"] = best["email"]
+                result["email_source"] = "hunter.io"
+                result["email_verified"] = False
+                result["email_score"] = best["confidence"]
+                if best.get("first_name") and not result["owner_name"]:
+                    result["owner_name"] = f"{best['first_name']} {best.get('last_name', '')}".strip()
 
-        # ─── Update Prospect ──────────────────────────────────────
+    # ─── Step 4: Pattern Guess + SMTP Verify ──────────────────
+    if not result["owner_email"] and domain:
+        name = result["owner_name"] or owner_name
+        guesses = generate_email_guesses(name, domain) if name else [
+            f"info@{domain}", f"contact@{domain}", f"hello@{domain}",
+        ]
+
+        for email in guesses:
+            verification = await verify_email(email)
+            if verification["smtp_valid"]:
+                result["owner_email"] = email
+                result["email_source"] = "pattern_guess"
+                result["email_verified"] = True
+                result["email_score"] = verification["score"]
+                break
+            elif verification["score"] >= 50:
+                result["owner_email"] = email
+                result["email_source"] = "pattern_guess"
+                result["email_verified"] = False
+                result["email_score"] = verification["score"]
+            await asyncio.sleep(0.5)
+
+    # ─── Step 5: Fallback ─────────────────────────────────────
+    if not result["owner_email"] and domain:
+        result["owner_email"] = f"info@{domain}"
+        result["email_source"] = "fallback"
+        result["email_verified"] = False
+        result["email_score"] = 20
+
+    # ── Phase 3: Write results back (short session) ──────────────
+    async with async_session_factory() as db:
+        prospect = await db.get(Prospect, prospect_id)
+        if not prospect:
+            return result
+
         if result["owner_name"]:
             prospect.owner_name = result["owner_name"]
         if result["owner_email"]:
@@ -713,35 +721,34 @@ async def recon_prospect(prospect_id: str) -> Optional[dict]:
         if result["phone"] and not prospect.phone:
             prospect.phone = result["phone"]
 
-        # Move to "enriched" status
         if prospect.status == "audited":
             prospect.status = "enriched"
 
         await db.commit()
 
-        # Notifications
-        if result["owner_email"]:
-            await notify_recon(
-                prospect.business_name,
-                result["owner_email"],
-                result["email_source"],
-                result["email_verified"],
-            )
-            await _safe_set(f"outreach/stats/last_recon", {
-                "name": prospect.business_name,
-                "email": result["owner_email"],
-                "verified": result["email_verified"],
-                "ts": int(_time.time()),
-            })
-
-        logger.info(
-            "Recon done: %s → %s (%s, verified=%s)",
-            prospect.business_name,
+    # ── Phase 4: Notifications (no session held) ─────────────────
+    if result["owner_email"]:
+        await notify_recon(
+            biz_name,
             result["owner_email"],
             result["email_source"],
             result["email_verified"],
         )
-        return result
+        await _safe_set(f"outreach/stats/last_recon", {
+            "name": biz_name,
+            "email": result["owner_email"],
+            "verified": result["email_verified"],
+            "ts": int(_time.time()),
+        })
+
+    logger.info(
+        "Recon done: %s → %s (%s, verified=%s)",
+        biz_name,
+        result["owner_email"],
+        result["email_source"],
+        result["email_verified"],
+    )
+    return result
 
 
 async def batch_recon_prospects(limit: int = 10) -> int:

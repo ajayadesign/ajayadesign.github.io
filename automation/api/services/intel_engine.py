@@ -729,36 +729,46 @@ async def audit_prospect(prospect_id: str, db: Optional[AsyncSession] = None) ->
     from api.services.crawl_engine import calculate_priority_score
     import time as _time
 
-    own_session = db is None
-    if own_session:
-        session_ctx = async_session_factory()
-        db = await session_ctx.__aenter__()
-
-    try:
-        prospect = await db.get(Prospect, prospect_id)
+    # ── Phase 1: Read prospect data (short session) ──────────────
+    async with async_session_factory() as read_db:
+        prospect = await read_db.get(Prospect, prospect_id)
         if not prospect or not prospect.website_url:
             logger.warning("Prospect %s has no website URL — skipping audit", prospect_id)
             return None
 
         url = prospect.website_url
         pid = str(prospect_id)
-        logger.info("Auditing %s (%s)", prospect.business_name, url)
+        biz_name = prospect.business_name
+        google_rating = prospect.google_rating
+        google_reviews = prospect.google_reviews
+        distance_miles = prospect.distance_miles
+        business_type = prospect.business_type
+        owner_email = prospect.owner_email
+        email_verified = prospect.email_verified
+        owner_name = prospect.owner_name
+        tags = list(prospect.tags or [])
 
+    logger.info("Auditing %s (%s)", biz_name, url)
+
+    try:
+        # ── Phase 2: All network I/O (no DB session held) ────────────
         # 1. Fetch page
         html, headers, status_code, load_time_ms = await fetch_page(url)
         if not html:
-            # Track fetch attempts via tags
-            attempts = (prospect.tags or []).count('audit_fail') + 1
-            prospect.tags = (prospect.tags or []) + ['audit_fail']
-            if attempts >= 3:
-                # Give up auditing — route through recon with website_down template
-                logger.warning("Could not fetch %s after %d attempts — routing to recon", url, attempts)
-                prospect.notes = f"Website unreachable ({url}) — skipped audit"
-                prospect.status = "discovered"  # stays discovered, recon path picks it up via notes
-            else:
-                logger.info("Fetch failed for %s (attempt %d/3) — will retry next cycle", url, attempts)
-            prospect.updated_at = datetime.now(timezone.utc)
-            await db.commit()
+            # Track fetch attempts via tags — needs short write session
+            async with async_session_factory() as write_db:
+                prospect = await write_db.get(Prospect, prospect_id)
+                if prospect:
+                    attempts = (prospect.tags or []).count('audit_fail') + 1
+                    prospect.tags = (prospect.tags or []) + ['audit_fail']
+                    if attempts >= 3:
+                        logger.warning("Could not fetch %s after %d attempts — routing to recon", url, attempts)
+                        prospect.notes = f"Website unreachable ({url}) — skipped audit"
+                        prospect.status = "discovered"
+                    else:
+                        logger.info("Fetch failed for %s (attempt %d/3) — will retry next cycle", url, attempts)
+                    prospect.updated_at = datetime.now(timezone.utc)
+                    await write_db.commit()
             return None
 
         # 2. Lighthouse (if available)
@@ -786,100 +796,100 @@ async def audit_prospect(prospect_id: str, db: Optional[AsyncSession] = None) ->
         # 9. Composite score
         scores = compute_composite_score(lighthouse, design, seo_signals, security)
 
-        # Create audit record
-        audit = WebsiteAudit(
-            id=uuid4(),
-            prospect_id=prospect.id,
-            url=url,
-            # Lighthouse
-            perf_score=lighthouse.get("performance") or scores["speed"],
-            a11y_score=lighthouse.get("accessibility") or scores["accessibility"],
-            bp_score=lighthouse.get("best_practices") or scores["best_practices"],
-            seo_score=lighthouse.get("seo") or scores["seo"],
-            # Speed
-            fcp_ms=lighthouse.get("fcp_ms"),
-            lcp_ms=lighthouse.get("lcp_ms") or int(load_time_ms),
-            cls=lighthouse.get("cls"),
-            tbt_ms=lighthouse.get("tbt_ms"),
-            ttfb_ms=lighthouse.get("ttfb_ms"),
-            page_size_kb=lighthouse.get("page_size_kb"),
-            request_count=lighthouse.get("request_count"),
-            # SEO
-            has_title=seo_signals.get("has_title", False),
-            has_meta_desc=seo_signals.get("has_meta_desc", False),
-            has_h1=seo_signals.get("has_h1", False),
-            has_og_tags=seo_signals.get("has_og_tags", False),
-            has_schema=seo_signals.get("has_schema", False),
-            has_sitemap=seo_signals.get("has_sitemap", False),
-            mobile_friendly=scores["mobile"] > 50,
-            # Tech
-            tech_stack=tech_stack,
-            cms_platform=cms,
-            # Design
-            design_era=design["era"],
-            design_sins=design["sins"],
-            # Security
-            ssl_valid=security["ssl_valid"],
-            ssl_grade=security["ssl_grade"],
-            security_headers=security["security_headers"],
-            # Screenshots
-            desktop_screenshot=screenshots.get("desktop_screenshot"),
-            mobile_screenshot=screenshots.get("mobile_screenshot"),
-            # Raw data
-            lighthouse_json_path=lighthouse.get("lighthouse_json_path"),
-            # Page signals
-            page_signals=page_signals,
-        )
-        db.add(audit)
+        # ── Phase 3: Write results back (short session) ──────────────
+        async with async_session_factory() as write_db:
+            prospect = await write_db.get(Prospect, prospect_id)
+            if not prospect:
+                return None
 
-        # Update prospect scores
-        prospect.score_speed = scores["speed"]
-        prospect.score_seo = scores["seo"]
-        prospect.score_design = scores["design"]
-        prospect.score_security = scores["security"]
-        prospect.score_mobile = scores["mobile"]
-        prospect.score_overall = scores["composite"]
-        prospect.score_a11y = scores["accessibility"]
-        prospect.status = "audited"
-        prospect.website_platform = cms
-        prospect.audit_date = datetime.now(timezone.utc)
-        prospect.screenshot_desktop = screenshots.get("desktop_screenshot")
-        prospect.screenshot_mobile = screenshots.get("mobile_screenshot")
+            # Create audit record
+            audit = WebsiteAudit(
+                id=uuid4(),
+                prospect_id=prospect.id,
+                url=url,
+                # Lighthouse
+                perf_score=lighthouse.get("performance") or scores["speed"],
+                a11y_score=lighthouse.get("accessibility") or scores["accessibility"],
+                bp_score=lighthouse.get("best_practices") or scores["best_practices"],
+                seo_score=lighthouse.get("seo") or scores["seo"],
+                # Speed
+                fcp_ms=lighthouse.get("fcp_ms"),
+                lcp_ms=lighthouse.get("lcp_ms") or int(load_time_ms),
+                cls=lighthouse.get("cls"),
+                tbt_ms=lighthouse.get("tbt_ms"),
+                ttfb_ms=lighthouse.get("ttfb_ms"),
+                page_size_kb=lighthouse.get("page_size_kb"),
+                request_count=lighthouse.get("request_count"),
+                # SEO
+                has_title=seo_signals.get("has_title", False),
+                has_meta_desc=seo_signals.get("has_meta_desc", False),
+                has_h1=seo_signals.get("has_h1", False),
+                has_og_tags=seo_signals.get("has_og_tags", False),
+                has_schema=seo_signals.get("has_schema", False),
+                has_sitemap=seo_signals.get("has_sitemap", False),
+                mobile_friendly=scores["mobile"] > 50,
+                # Tech
+                tech_stack=tech_stack,
+                cms_platform=cms,
+                # Design
+                design_era=design["era"],
+                design_sins=design["sins"],
+                # Security
+                ssl_valid=security["ssl_valid"],
+                ssl_grade=security["ssl_grade"],
+                security_headers=security["security_headers"],
+                # Screenshots
+                desktop_screenshot=screenshots.get("desktop_screenshot"),
+                mobile_screenshot=screenshots.get("mobile_screenshot"),
+                # Raw data
+                lighthouse_json_path=lighthouse.get("lighthouse_json_path"),
+                # Page signals
+                page_signals=page_signals,
+            )
+            write_db.add(audit)
 
-        # Promote page signals to prospect columns for fast querying
-        prospect.has_booking = page_signals.get("has_booking", False)
-        prospect.has_online_ordering = page_signals.get("has_online_ordering", False)
-        prospect.has_contact_form = page_signals.get("has_contact_form", False)
-        prospect.has_analytics = page_signals.get("has_analytics", False)
-        prospect.has_email_capture = page_signals.get("has_email_capture", False)
-        prospect.has_live_chat = page_signals.get("has_live_chat", False)
-        prospect.has_privacy_policy = page_signals.get("has_privacy_policy", False)
-        prospect.has_ada_widget = page_signals.get("has_ada_widget", False)
+            # Update prospect scores
+            prospect.score_speed = scores["speed"]
+            prospect.score_seo = scores["seo"]
+            prospect.score_design = scores["design"]
+            prospect.score_security = scores["security"]
+            prospect.score_mobile = scores["mobile"]
+            prospect.score_overall = scores["composite"]
+            prospect.score_a11y = scores["accessibility"]
+            prospect.status = "audited"
+            prospect.website_platform = cms
+            prospect.audit_date = datetime.now(timezone.utc)
+            prospect.screenshot_desktop = screenshots.get("desktop_screenshot")
+            prospect.screenshot_mobile = screenshots.get("mobile_screenshot")
 
-        # Recalculate priority
-        prospect.priority_score = calculate_priority_score(
-            score_overall=scores["composite"],
-            google_rating=float(prospect.google_rating) if prospect.google_rating else None,
-            google_reviews=prospect.google_reviews,
-            distance_miles=float(prospect.distance_miles) if prospect.distance_miles else None,
-            business_type=prospect.business_type,
-            has_email=bool(prospect.owner_email),
-            email_verified=prospect.email_verified or False,
-            has_owner_name=bool(prospect.owner_name),
-        )
+            # Promote page signals to prospect columns for fast querying
+            prospect.has_booking = page_signals.get("has_booking", False)
+            prospect.has_online_ordering = page_signals.get("has_online_ordering", False)
+            prospect.has_contact_form = page_signals.get("has_contact_form", False)
+            prospect.has_analytics = page_signals.get("has_analytics", False)
+            prospect.has_email_capture = page_signals.get("has_email_capture", False)
+            prospect.has_live_chat = page_signals.get("has_live_chat", False)
+            prospect.has_privacy_policy = page_signals.get("has_privacy_policy", False)
+            prospect.has_ada_widget = page_signals.get("has_ada_widget", False)
 
-        await db.commit()
+            # Recalculate priority
+            prospect.priority_score = calculate_priority_score(
+                score_overall=scores["composite"],
+                google_rating=float(prospect.google_rating) if prospect.google_rating else None,
+                google_reviews=prospect.google_reviews,
+                distance_miles=float(prospect.distance_miles) if prospect.distance_miles else None,
+                business_type=prospect.business_type,
+                has_email=bool(prospect.owner_email),
+                email_verified=prospect.email_verified or False,
+                has_owner_name=bool(prospect.owner_name),
+            )
 
-        # Notify
-        await notify_audit(
-            prospect.business_name,
-            scores["composite"],
-            prospect.website_url,
-        )
+            await write_db.commit()
 
-        # Push to Firebase activity
+        # ── Phase 4: Notifications (no session held) ─────────────────
+        await notify_audit(biz_name, scores["composite"], url)
         await _safe_set(f"outreach/stats/last_audit", {
-            "name": prospect.business_name,
+            "name": biz_name,
             "score": scores["composite"],
             "ts": int(_time.time()),
         })
@@ -896,16 +906,12 @@ async def audit_prospect(prospect_id: str, db: Optional[AsyncSession] = None) ->
             "page_signals": page_signals,
         }
 
-        logger.info("Audit complete: %s → %d/100", prospect.business_name, scores["composite"])
+        logger.info("Audit complete: %s → %d/100", biz_name, scores["composite"])
         return result
 
     except Exception as e:
         logger.exception("Audit failed for prospect %s: %s", prospect_id, e)
         return None
-
-    finally:
-        if own_session:
-            await session_ctx.__aexit__(None, None, None)
 
 
 async def batch_audit_prospects(limit: int = 10) -> int:

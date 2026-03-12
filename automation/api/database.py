@@ -19,6 +19,7 @@ engine = create_async_engine(
             "max_overflow": 20,
             "pool_pre_ping": True,       # test connections before use (survives sleep/wake)
             "pool_recycle": 300,          # recycle connections every 5 min to avoid stale FDs
+            "pool_timeout": 10,           # fail fast instead of hanging when pool is starved
         }
     ),
 )

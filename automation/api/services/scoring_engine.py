@@ -16,6 +16,8 @@ import logging
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
+from sqlalchemy.orm import selectinload
+
 from api.database import async_session_factory
 from api.models.prospect import Prospect, WebsiteAudit
 
@@ -420,7 +422,7 @@ async def score_prospect(prospect_id: str) -> Optional[dict]:
     Called by pipeline worker after enrichment.
     """
     async with async_session_factory() as db:
-        prospect = await db.get(Prospect, prospect_id)
+        prospect = await db.get(Prospect, prospect_id, options=[selectinload(Prospect.audits)])
         if not prospect:
             logger.warning("Prospect %s not found for scoring", prospect_id)
             return None

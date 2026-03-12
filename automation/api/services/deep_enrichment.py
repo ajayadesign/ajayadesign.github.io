@@ -520,8 +520,11 @@ async def deep_enrich_prospect(prospect_id: str) -> dict:
 
     Returns the merged enrichment dict.
     """
+    from sqlalchemy.orm import selectinload
+
+    # ── Phase 1: Read prospect data + mark enriching (short session) ──
     async with async_session_factory() as db:
-        prospect = await db.get(Prospect, prospect_id)
+        prospect = await db.get(Prospect, prospect_id, options=[selectinload(Prospect.audits)])
         if not prospect:
             logger.warning("Prospect %s not found for enrichment", prospect_id)
             return {}
@@ -531,14 +534,14 @@ async def deep_enrich_prospect(prospect_id: str) -> dict:
         prospect.updated_at = datetime.now(timezone.utc)
         await db.commit()
 
+        # Snapshot fields needed during I/O phase
+        biz_name = prospect.business_name
+        website_url = prospect.website_url
+        google_place_id = prospect.google_place_id
+        city = prospect.city
+        state = prospect.state or "TX"
+        business_type = prospect.business_type or ""
         enrichment: dict = dict(prospect.enrichment or {})
-
-        # Extract domain from website URL
-        domain = ""
-        if prospect.website_url:
-            match = re.search(r'https?://(?:www\.)?([^/]+)', prospect.website_url)
-            if match:
-                domain = match.group(1)
 
         # Get existing page signals from latest audit
         page_signals = {}
@@ -546,96 +549,112 @@ async def deep_enrich_prospect(prospect_id: str) -> dict:
             latest_audit = sorted(prospect.audits, key=lambda a: a.audited_at or datetime.min, reverse=True)[0]
             page_signals = latest_audit.page_signals or {}
 
-        try:
-            # 1. GBP deep enrichment
-            if prospect.google_place_id:
-                logger.info("Enriching GBP: %s", prospect.business_name)
-                gbp_data = await enrich_gbp(prospect.google_place_id)
-                enrichment["gbp"] = gbp_data
-                # Promote key fields
-                prospect.gbp_photos_count = gbp_data.get("gbp_photos_count")
-                prospect.review_response_rate = gbp_data.get("gbp_review_response_rate")
-                prospect.review_velocity = gbp_data.get("gbp_review_velocity")
-                await asyncio.sleep(_DELAY_BETWEEN_STEPS)
+    # ── Phase 2: All network I/O (no DB session held) ────────────
+    domain = ""
+    if website_url:
+        match = re.search(r'https?://(?:www\.)?([^/]+)', website_url)
+        if match:
+            domain = match.group(1)
 
-            # 2. DNS intelligence
-            if domain:
-                logger.info("Enriching DNS: %s", domain)
-                dns_data = await enrich_dns(domain)
-                enrichment["dns"] = dns_data
-                # Promote
-                prospect.mx_provider = dns_data.get("mx_provider")
-                prospect.has_spf = dns_data.get("has_spf")
-                prospect.has_dmarc = dns_data.get("has_dmarc")
-                await asyncio.sleep(_DELAY_BETWEEN_STEPS)
+    updates = {}  # column_name → value to set on prospect
 
-            # 3. Social media scan
-            logger.info("Enriching Social: %s", prospect.business_name)
-            social_data = await enrich_social(
-                business_name=prospect.business_name,
-                website_url=prospect.website_url or "",
-                city=prospect.city,
-                existing_signals=page_signals,
-            )
-            enrichment["social"] = social_data
-            prospect.social_score = social_data.get("social_score")
-            has_any_social = any(
-                v.get("exists") for k, v in social_data.items()
-                if isinstance(v, dict) and "exists" in v
-            )
-            prospect.has_social = has_any_social
+    try:
+        # 1. GBP deep enrichment
+        if google_place_id:
+            logger.info("Enriching GBP: %s", biz_name)
+            gbp_data = await enrich_gbp(google_place_id)
+            enrichment["gbp"] = gbp_data
+            updates["gbp_photos_count"] = gbp_data.get("gbp_photos_count")
+            updates["review_response_rate"] = gbp_data.get("gbp_review_response_rate")
+            updates["review_velocity"] = gbp_data.get("gbp_review_velocity")
             await asyncio.sleep(_DELAY_BETWEEN_STEPS)
 
-            # 4. Public records
-            logger.info("Enriching Records: %s", prospect.business_name)
-            records_data = await enrich_public_records(
-                business_name=prospect.business_name,
-                state=prospect.state or "TX",
-                city=prospect.city,
-                business_type=prospect.business_type or "",
-            )
-            enrichment["records"] = records_data
-            prospect.entity_type = records_data.get("sos_entity_type")
-            if records_data.get("sos_formation_date"):
-                try:
-                    prospect.formation_date = datetime.strptime(
-                        records_data["sos_formation_date"], "%m/%d/%Y"
-                    ).replace(tzinfo=timezone.utc)
-                except (ValueError, TypeError):
-                    pass
+        # 2. DNS intelligence
+        if domain:
+            logger.info("Enriching DNS: %s", domain)
+            dns_data = await enrich_dns(domain)
+            enrichment["dns"] = dns_data
+            updates["mx_provider"] = dns_data.get("mx_provider")
+            updates["has_spf"] = dns_data.get("has_spf")
+            updates["has_dmarc"] = dns_data.get("has_dmarc")
             await asyncio.sleep(_DELAY_BETWEEN_STEPS)
 
-            # 5. Ads & hiring
-            logger.info("Enriching Ads/Hiring: %s", prospect.business_name)
-            ads_data = await enrich_ads_and_hiring(
-                business_name=prospect.business_name,
-                website_url=prospect.website_url or "",
-                city=prospect.city,
-            )
-            enrichment["ads_hiring"] = ads_data
-            prospect.is_hiring = ads_data.get("is_hiring", False)
-            prospect.hiring_roles = ads_data.get("hiring_roles")
-            prospect.runs_ads = ads_data.get("runs_meta_ads", False) or ads_data.get("runs_google_ads", False)
-            prospect.ad_platforms = ads_data.get("ad_platforms")
+        # 3. Social media scan
+        logger.info("Enriching Social: %s", biz_name)
+        social_data = await enrich_social(
+            business_name=biz_name,
+            website_url=website_url or "",
+            city=city,
+            existing_signals=page_signals,
+        )
+        enrichment["social"] = social_data
+        updates["social_score"] = social_data.get("social_score")
+        has_any_social = any(
+            v.get("exists") for k, v in social_data.items()
+            if isinstance(v, dict) and "exists" in v
+        )
+        updates["has_social"] = has_any_social
+        await asyncio.sleep(_DELAY_BETWEEN_STEPS)
 
-            # ── Finalize ──
-            enrichment["enriched_at"] = datetime.now(timezone.utc).isoformat()
+        # 4. Public records
+        logger.info("Enriching Records: %s", biz_name)
+        records_data = await enrich_public_records(
+            business_name=biz_name,
+            state=state,
+            city=city,
+            business_type=business_type,
+        )
+        enrichment["records"] = records_data
+        updates["entity_type"] = records_data.get("sos_entity_type")
+        if records_data.get("sos_formation_date"):
+            try:
+                updates["formation_date"] = datetime.strptime(
+                    records_data["sos_formation_date"], "%m/%d/%Y"
+                ).replace(tzinfo=timezone.utc)
+            except (ValueError, TypeError):
+                pass
+        await asyncio.sleep(_DELAY_BETWEEN_STEPS)
+
+        # 5. Ads & hiring
+        logger.info("Enriching Ads/Hiring: %s", biz_name)
+        ads_data = await enrich_ads_and_hiring(
+            business_name=biz_name,
+            website_url=website_url or "",
+            city=city,
+        )
+        enrichment["ads_hiring"] = ads_data
+        updates["is_hiring"] = ads_data.get("is_hiring", False)
+        updates["hiring_roles"] = ads_data.get("hiring_roles")
+        updates["runs_ads"] = ads_data.get("runs_meta_ads", False) or ads_data.get("runs_google_ads", False)
+        updates["ad_platforms"] = ads_data.get("ad_platforms")
+
+        # ── Phase 3: Write results back (short session) ──────────────
+        enrichment["enriched_at"] = datetime.now(timezone.utc).isoformat()
+        async with async_session_factory() as db:
+            prospect = await db.get(Prospect, prospect_id)
+            if not prospect:
+                return enrichment
             prospect.enrichment = enrichment
             prospect.enriched_at = datetime.now(timezone.utc)
             prospect.status = "enriched"
             prospect.updated_at = datetime.now(timezone.utc)
-
+            for col, val in updates.items():
+                setattr(prospect, col, val)
             await db.commit()
-            logger.info("Deep enrichment complete: %s", prospect.business_name)
-            return enrichment
 
-        except Exception as e:
-            logger.exception("Deep enrichment failed for %s: %s", prospect.business_name, e)
-            # Reset to audited so it can be retried
-            prospect.status = "audited"
-            prospect.updated_at = datetime.now(timezone.utc)
-            await db.commit()
-            return {}
+        logger.info("Deep enrichment complete: %s", biz_name)
+        return enrichment
+
+    except Exception as e:
+        logger.exception("Deep enrichment failed for %s: %s", biz_name, e)
+        # Reset to audited so it can be retried
+        async with async_session_factory() as db:
+            prospect = await db.get(Prospect, prospect_id)
+            if prospect:
+                prospect.status = "audited"
+                prospect.updated_at = datetime.now(timezone.utc)
+                await db.commit()
+        return {}
 
 
 async def backfill_enrich_prospect(prospect_id: str) -> dict:
@@ -646,21 +665,24 @@ async def backfill_enrich_prospect(prospect_id: str) -> dict:
     Use for prospects that are already in enriched / queued / contacted / replied
     states — they keep their status, but gain enrichment data + wp_score inputs.
     """
+    from sqlalchemy.orm import selectinload
+
+    # ── Phase 1: Read prospect data (short session) ──────────────
     async with async_session_factory() as db:
-        prospect = await db.get(Prospect, prospect_id)
+        prospect = await db.get(Prospect, prospect_id, options=[selectinload(Prospect.audits)])
         if not prospect:
             logger.warning("Backfill: prospect %s not found", prospect_id)
             return {}
 
+        # Snapshot fields needed during I/O phase
         original_status = prospect.status
+        biz_name = prospect.business_name
+        website_url = prospect.website_url
+        google_place_id = prospect.google_place_id
+        city = prospect.city
+        state = prospect.state or "TX"
+        business_type = prospect.business_type or ""
         enrichment: dict = dict(prospect.enrichment or {})
-
-        # Extract domain
-        domain = ""
-        if prospect.website_url:
-            match = re.search(r'https?://(?:www\.)?([^/]+)', prospect.website_url)
-            if match:
-                domain = match.group(1)
 
         # Get page signals from latest audit
         page_signals = {}
@@ -672,101 +694,115 @@ async def backfill_enrich_prospect(prospect_id: str) -> dict:
             )[0]
             page_signals = latest_audit.page_signals or {}
 
-        try:
-            # 1. GBP
-            if prospect.google_place_id and "gbp" not in enrichment:
-                logger.info("Backfill GBP: %s", prospect.business_name)
-                gbp_data = await enrich_gbp(prospect.google_place_id)
-                enrichment["gbp"] = gbp_data
-                prospect.gbp_photos_count = gbp_data.get("gbp_photos_count")
-                prospect.review_response_rate = gbp_data.get("gbp_review_response_rate")
-                prospect.review_velocity = gbp_data.get("gbp_review_velocity")
-                await asyncio.sleep(_DELAY_BETWEEN_STEPS)
+    # ── Phase 2: All network I/O (no DB session held) ────────────
+    domain = ""
+    if website_url:
+        match = re.search(r'https?://(?:www\.)?([^/]+)', website_url)
+        if match:
+            domain = match.group(1)
 
-            # 2. DNS
-            if domain and "dns" not in enrichment:
-                logger.info("Backfill DNS: %s", domain)
-                dns_data = await enrich_dns(domain)
-                enrichment["dns"] = dns_data
-                prospect.mx_provider = dns_data.get("mx_provider")
-                prospect.has_spf = dns_data.get("has_spf")
-                prospect.has_dmarc = dns_data.get("has_dmarc")
-                await asyncio.sleep(_DELAY_BETWEEN_STEPS)
+    updates = {}  # column_name → value to set on prospect
 
-            # 3. Social
-            if "social" not in enrichment:
-                logger.info("Backfill Social: %s", prospect.business_name)
-                social_data = await enrich_social(
-                    business_name=prospect.business_name,
-                    website_url=prospect.website_url or "",
-                    city=prospect.city,
-                    existing_signals=page_signals,
-                )
-                enrichment["social"] = social_data
-                prospect.social_score = social_data.get("social_score")
-                has_any_social = any(
-                    v.get("exists") for k, v in social_data.items()
-                    if isinstance(v, dict) and "exists" in v
-                )
-                prospect.has_social = has_any_social
-                await asyncio.sleep(_DELAY_BETWEEN_STEPS)
+    try:
+        # 1. GBP
+        if google_place_id and "gbp" not in enrichment:
+            logger.info("Backfill GBP: %s", biz_name)
+            gbp_data = await enrich_gbp(google_place_id)
+            enrichment["gbp"] = gbp_data
+            updates["gbp_photos_count"] = gbp_data.get("gbp_photos_count")
+            updates["review_response_rate"] = gbp_data.get("gbp_review_response_rate")
+            updates["review_velocity"] = gbp_data.get("gbp_review_velocity")
+            await asyncio.sleep(_DELAY_BETWEEN_STEPS)
 
-            # 4. Public records
-            if "records" not in enrichment:
-                logger.info("Backfill Records: %s", prospect.business_name)
-                records_data = await enrich_public_records(
-                    business_name=prospect.business_name,
-                    state=prospect.state or "TX",
-                    city=prospect.city,
-                    business_type=prospect.business_type or "",
-                )
-                enrichment["records"] = records_data
-                prospect.entity_type = records_data.get("sos_entity_type")
-                if records_data.get("sos_formation_date"):
-                    try:
-                        prospect.formation_date = datetime.strptime(
-                            records_data["sos_formation_date"], "%m/%d/%Y"
-                        ).replace(tzinfo=timezone.utc)
-                    except (ValueError, TypeError):
-                        pass
-                await asyncio.sleep(_DELAY_BETWEEN_STEPS)
+        # 2. DNS
+        if domain and "dns" not in enrichment:
+            logger.info("Backfill DNS: %s", domain)
+            dns_data = await enrich_dns(domain)
+            enrichment["dns"] = dns_data
+            updates["mx_provider"] = dns_data.get("mx_provider")
+            updates["has_spf"] = dns_data.get("has_spf")
+            updates["has_dmarc"] = dns_data.get("has_dmarc")
+            await asyncio.sleep(_DELAY_BETWEEN_STEPS)
 
-            # 5. Ads & hiring
-            if "ads_hiring" not in enrichment:
-                logger.info("Backfill Ads/Hiring: %s", prospect.business_name)
-                ads_data = await enrich_ads_and_hiring(
-                    business_name=prospect.business_name,
-                    website_url=prospect.website_url or "",
-                    city=prospect.city,
-                )
-                enrichment["ads_hiring"] = ads_data
-                prospect.is_hiring = ads_data.get("is_hiring", False)
-                prospect.hiring_roles = ads_data.get("hiring_roles")
-                prospect.runs_ads = (
-                    ads_data.get("runs_meta_ads", False)
-                    or ads_data.get("runs_google_ads", False)
-                )
-                prospect.ad_platforms = ads_data.get("ad_platforms")
+        # 3. Social
+        if "social" not in enrichment:
+            logger.info("Backfill Social: %s", biz_name)
+            social_data = await enrich_social(
+                business_name=biz_name,
+                website_url=website_url or "",
+                city=city,
+                existing_signals=page_signals,
+            )
+            enrichment["social"] = social_data
+            updates["social_score"] = social_data.get("social_score")
+            has_any_social = any(
+                v.get("exists") for k, v in social_data.items()
+                if isinstance(v, dict) and "exists" in v
+            )
+            updates["has_social"] = has_any_social
+            await asyncio.sleep(_DELAY_BETWEEN_STEPS)
 
-            # ── Finalize (preserve original status) ──
-            enrichment["enriched_at"] = datetime.now(timezone.utc).isoformat()
-            enrichment["backfill"] = True
+        # 4. Public records
+        if "records" not in enrichment:
+            logger.info("Backfill Records: %s", biz_name)
+            records_data = await enrich_public_records(
+                business_name=biz_name,
+                state=state,
+                city=city,
+                business_type=business_type,
+            )
+            enrichment["records"] = records_data
+            updates["entity_type"] = records_data.get("sos_entity_type")
+            if records_data.get("sos_formation_date"):
+                try:
+                    updates["formation_date"] = datetime.strptime(
+                        records_data["sos_formation_date"], "%m/%d/%Y"
+                    ).replace(tzinfo=timezone.utc)
+                except (ValueError, TypeError):
+                    pass
+            await asyncio.sleep(_DELAY_BETWEEN_STEPS)
+
+        # 5. Ads & hiring
+        if "ads_hiring" not in enrichment:
+            logger.info("Backfill Ads/Hiring: %s", biz_name)
+            ads_data = await enrich_ads_and_hiring(
+                business_name=biz_name,
+                website_url=website_url or "",
+                city=city,
+            )
+            enrichment["ads_hiring"] = ads_data
+            updates["is_hiring"] = ads_data.get("is_hiring", False)
+            updates["hiring_roles"] = ads_data.get("hiring_roles")
+            updates["runs_ads"] = (
+                ads_data.get("runs_meta_ads", False)
+                or ads_data.get("runs_google_ads", False)
+            )
+            updates["ad_platforms"] = ads_data.get("ad_platforms")
+
+        # ── Phase 3: Write results back (short session) ──────────────
+        enrichment["enriched_at"] = datetime.now(timezone.utc).isoformat()
+        enrichment["backfill"] = True
+        async with async_session_factory() as db:
+            prospect = await db.get(Prospect, prospect_id)
+            if not prospect:
+                return enrichment
             prospect.enrichment = enrichment
             prospect.enriched_at = datetime.now(timezone.utc)
             # Do NOT change status — keep queued/contacted/etc as-is
             prospect.updated_at = datetime.now(timezone.utc)
-
+            for col, val in updates.items():
+                setattr(prospect, col, val)
             await db.commit()
-            logger.info(
-                "Backfill enrichment complete: %s (status kept as %s)",
-                prospect.business_name, original_status,
-            )
-            return enrichment
 
-        except Exception as e:
-            logger.exception(
-                "Backfill enrichment failed for %s: %s",
-                prospect.business_name, e,
-            )
-            await db.rollback()
-            return {}
+        logger.info(
+            "Backfill enrichment complete: %s (status kept as %s)",
+            biz_name, original_status,
+        )
+        return enrichment
+
+    except Exception as e:
+        logger.exception(
+            "Backfill enrichment failed for %s: %s",
+            biz_name, e,
+        )
+        return {}
