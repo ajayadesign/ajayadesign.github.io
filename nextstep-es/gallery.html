@@ -1,0 +1,286 @@
+<!--
+================================================================================
+  PROPRIETARY & CONFIDENTIAL — DO NOT COPY, DISTRIBUTE, OR REUSE
+  © 2024–2026 AjayaDesign (https://ajayadesign.github.io). All rights reserved.
+  Owner: AjayaDesign | Licensee: Next Step Estate Sales (demo use only).
+  Fingerprint: AJAYA-NXTS-2026-D3M0-ES4L
+================================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery | Next Step Estate Sales — Recent Estate Sales & Events</title>
+  <meta name="description" content="Browse photos from our recent estate sales in Rancho Cucamonga and the Inland Empire. See how we stage, display, and run professional estate sales.">
+  <meta name="keywords" content="estate sale photos, estate sale gallery, Rancho Cucamonga estate sales, Inland Empire estate liquidation gallery">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://ajayadesign.github.io/nextstep-es/gallery.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Gallery | Next Step Estate Sales">
+  <meta property="og:description" content="Photos from recent professional estate sales in the Inland Empire, California.">
+  <meta property="og:url" content="https://ajayadesign.github.io/nextstep-es/gallery.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .gallery-filter { display:flex; flex-wrap:wrap; gap:.75rem; justify-content:center; margin-bottom:2.5rem; }
+    .filter-btn { padding:.625rem 1.25rem; border-radius:999px; border:2px solid var(--color-border); background:transparent; font-family:inherit; font-weight:600; font-size:.875rem; color:var(--color-text); cursor:pointer; transition:all .3s; }
+    .filter-btn:hover, .filter-btn.active { background:var(--color-primary); color:#fff; border-color:var(--color-primary); }
+    .gallery-masonry { columns:3; column-gap:1rem; }
+    .gallery-item { break-inside:avoid; margin-bottom:1rem; border-radius:12px; overflow:hidden; position:relative; cursor:pointer; }
+    .gallery-item img { width:100%; display:block; transition:transform .4s; }
+    .gallery-item:hover img { transform:scale(1.05); }
+    .gallery-item .overlay { position:absolute; inset:0; background:linear-gradient(transparent 50%,rgba(0,0,0,.7)); opacity:0; transition:opacity .3s; display:flex; align-items:flex-end; padding:1.25rem; }
+    .gallery-item:hover .overlay { opacity:1; }
+    .overlay span { color:#fff; font-weight:600; font-size:.875rem; }
+    @media(max-width:768px){ .gallery-masonry{columns:2;} }
+    @media(max-width:480px){ .gallery-masonry{columns:1;} }
+    .lightbox { position:fixed; inset:0; background:rgba(0,0,0,.92); z-index:10000; display:none; align-items:center; justify-content:center; padding:2rem; }
+    .lightbox.open { display:flex; }
+    .lightbox img { max-width:90vw; max-height:85vh; border-radius:12px; box-shadow:0 8px 40px rgba(0,0,0,.5); }
+    .lightbox-close { position:absolute; top:1.5rem; right:2rem; color:#fff; font-size:2rem; background:none; border:none; cursor:pointer; z-index:10001; }
+    .lightbox-nav { position:absolute; top:50%; transform:translateY(-50%); color:#fff; font-size:2.5rem; background:rgba(255,255,255,.15); border:none; border-radius:50%; width:48px; height:48px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+    .lightbox-nav.prev { left:1.5rem; }
+    .lightbox-nav.next { right:1.5rem; }
+  </style>
+</head>
+<body>
+  <!-- AjayaDesign Fingerprint: AJAYA-NXTS-2026-D3M0-ES4L -->
+
+  <!-- Navigation -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand" aria-label="Next Step Estate Sales Home">
+        <div class="logo-icon" aria-hidden="true">NS</div>
+        <span>Next Step</span>
+      </a>
+      <div class="nav-links" id="nav-links" role="menubar">
+        <a href="index.html" role="menuitem">Home</a>
+        <a href="services.html" role="menuitem">Services</a>
+        <a href="gallery.html" role="menuitem" class="active">Gallery</a>
+        <a href="about.html" role="menuitem">About</a>
+        <a href="faq.html" role="menuitem">FAQ</a>
+        <a href="contact.html" role="menuitem" class="nav-cta">Contact Us</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a> <span aria-hidden="true">/</span> <span>Gallery</span>
+      </nav>
+      <h1>Estate Sale Gallery</h1>
+      <p>Browse photos from our recent estate sales and events throughout the Inland Empire.</p>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="section" aria-label="Photo gallery">
+    <div class="container">
+      <div class="gallery-filter fade-in" role="tablist" aria-label="Filter gallery photos">
+        <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true">All Photos</button>
+        <button class="filter-btn" data-filter="staging" role="tab">Staging</button>
+        <button class="filter-btn" data-filter="items" role="tab">Featured Items</button>
+        <button class="filter-btn" data-filter="events" role="tab">Sale Events</button>
+      </div>
+      <div class="gallery-masonry fade-in">
+        <div class="gallery-item" data-category="staging">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15943.jpg/:/rs=w:600,h:400" alt="Professional estate sale setup with organized tables" width="600" height="400" loading="lazy">
+          <div class="overlay"><span>Professional Staging</span></div>
+        </div>
+        <div class="gallery-item" data-category="items">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15983.jpg/:/rs=w:600,h:800" alt="Vintage collectibles on display" width="600" height="800" loading="lazy">
+          <div class="overlay"><span>Vintage Collectibles</span></div>
+        </div>
+        <div class="gallery-item" data-category="staging">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15981.jpg/:/rs=w:600,h:400" alt="Organized display tables in living room" width="600" height="400" loading="lazy">
+          <div class="overlay"><span>Living Room Setup</span></div>
+        </div>
+        <div class="gallery-item" data-category="items">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15964.jpg/:/rs=w:600,h:600" alt="Kitchen items and cookware for sale" width="600" height="600" loading="lazy">
+          <div class="overlay"><span>Kitchen Collection</span></div>
+        </div>
+        <div class="gallery-item" data-category="events">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15977.jpg/:/rs=w:600,h:400" alt="Estate sale event with shoppers" width="600" height="400" loading="lazy">
+          <div class="overlay"><span>Sale Day Event</span></div>
+        </div>
+        <div class="gallery-item" data-category="items">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15979.jpg/:/rs=w:600,h:800" alt="Furniture pieces in excellent condition" width="600" height="800" loading="lazy">
+          <div class="overlay"><span>Quality Furniture</span></div>
+        </div>
+        <div class="gallery-item" data-category="staging">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15956.jpg/:/rs=w:600,h:400" alt="Garage staging area with organized items" width="600" height="400" loading="lazy">
+          <div class="overlay"><span>Garage Staging</span></div>
+        </div>
+        <div class="gallery-item" data-category="items">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15963.jpg/:/rs=w:600,h:600" alt="Decorative items and home goods" width="600" height="600" loading="lazy">
+          <div class="overlay"><span>Home Décor</span></div>
+        </div>
+        <div class="gallery-item" data-category="events">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15958.jpg/:/rs=w:600,h:400" alt="Crowd browsing weekend estate sale" width="600" height="400" loading="lazy">
+          <div class="overlay"><span>Weekend Sale</span></div>
+        </div>
+        <div class="gallery-item" data-category="items">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15973.jpg/:/rs=w:600,h:800" alt="Artwork and framed prints" width="600" height="800" loading="lazy">
+          <div class="overlay"><span>Artwork & Prints</span></div>
+        </div>
+        <div class="gallery-item" data-category="staging">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15949.jpg/:/rs=w:600,h:400" alt="Bedroom with staging for estate sale" width="600" height="400" loading="lazy">
+          <div class="overlay"><span>Bedroom Display</span></div>
+        </div>
+        <div class="gallery-item" data-category="events">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15933.jpg/:/rs=w:600,h:400" alt="Sign directing visitors to estate sale" width="600" height="400" loading="lazy">
+          <div class="overlay"><span>Sale Signage</span></div>
+        </div>
+        <div class="gallery-item" data-category="items">
+          <img src="https://img1.wsimg.com/isteam/ip/0ca9e39e-8457-477f-b4ef-5be8195f987d/15974.jpg/:/rs=w:600,h:600" alt="Electronics and tools on display" width="600" height="600" loading="lazy">
+          <div class="overlay"><span>Electronics & Tools</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" style="padding-top:0;">
+    <div class="container">
+      <div class="cta-banner fade-in">
+        <h2>Planning an Estate Sale?</h2>
+        <p>We'd love to help you achieve the best results. Get in touch for a free, no-obligation consultation.</p>
+        <div class="cta-actions">
+          <a href="contact.html" class="btn btn-primary btn-lg">Schedule a Consultation</a>
+          <a href="services.html" class="btn btn-outline btn-lg" style="color:#fff;border-color:rgba(255,255,255,0.3);">View Our Services</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-brand" aria-label="Next Step Estate Sales Home">
+            <div class="logo-icon" aria-hidden="true">NS</div>
+            <span style="color:#fff;">Next Step</span>
+          </a>
+          <p>Professional estate sales, junk hauling, and downsizing services in Rancho Cucamonga and the Inland Empire, California.</p>
+          <div class="footer-social">
+            <a href="https://www.facebook.com/114678077058864" aria-label="Facebook" target="_blank" rel="noopener noreferrer">📘</a>
+            <a href="https://www.instagram.com/nextstepes" aria-label="Instagram" target="_blank" rel="noopener noreferrer">📸</a>
+          </div>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Services</h4>
+          <ul class="footer-links">
+            <li><a href="services.html#estate-sales">Estate Sales</a></li>
+            <li><a href="services.html#junk-hauling">Junk Hauling</a></li>
+            <li><a href="services.html#downsizing">Downsizing</a></li>
+            <li><a href="services.html#organization">Organization</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul class="footer-links">
+            <li>📞 <a href="tel:9095192353">(909) 519-2353</a></li>
+            <li>📍 Rancho Cucamonga, CA</li>
+            <li>📧 <a href="contact.html">Send a Message</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Next Step Estate Sales. All rights reserved.</p>
+        <p>Property of <a href="https://ajayadesign.github.io" target="_blank" rel="noopener noreferrer">AjayaDesign</a> — Demo Purpose Only</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="ajaya-watermark" role="contentinfo">
+    🎨 Demo by <a href="https://ajayadesign.github.io" target="_blank" rel="noopener noreferrer">AjayaDesign</a> — Property of AjayaDesign, for demo purpose only.
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-label="Image lightbox viewer">
+    <button class="lightbox-close" aria-label="Close lightbox">&times;</button>
+    <button class="lightbox-nav prev" aria-label="Previous image">&#8249;</button>
+    <img src="" alt="" id="lightbox-img">
+    <button class="lightbox-nav next" aria-label="Next image">&#8250;</button>
+  </div>
+
+  <button class="back-to-top" aria-label="Back to top">↑</button>
+  <script src="js/main.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Gallery Filter
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const items = document.querySelectorAll('.gallery-item');
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+          btn.classList.add('active');
+          btn.setAttribute('aria-selected','true');
+          const f = btn.dataset.filter;
+          items.forEach(item => {
+            item.style.display = (f === 'all' || item.dataset.category === f) ? '' : 'none';
+          });
+        });
+      });
+
+      // Lightbox
+      const lightbox = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lightbox-img');
+      let current = 0;
+      const getVisible = () => [...items].filter(i => i.style.display !== 'none');
+
+      items.forEach(item => {
+        item.addEventListener('click', () => {
+          const visible = getVisible();
+          current = visible.indexOf(item);
+          const img = item.querySelector('img');
+          lbImg.src = img.src.replace('rs=w:600','rs=w:1200');
+          lbImg.alt = img.alt;
+          lightbox.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        });
+      });
+
+      const closeLb = () => { lightbox.classList.remove('open'); document.body.style.overflow = ''; };
+      lightbox.querySelector('.lightbox-close').addEventListener('click', closeLb);
+      lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLb(); });
+
+      const navigate = dir => {
+        const visible = getVisible();
+        current = (current + dir + visible.length) % visible.length;
+        const img = visible[current].querySelector('img');
+        lbImg.src = img.src.replace('rs=w:600','rs=w:1200');
+        lbImg.alt = img.alt;
+      };
+      lightbox.querySelector('.prev').addEventListener('click', e => { e.stopPropagation(); navigate(-1); });
+      lightbox.querySelector('.next').addEventListener('click', e => { e.stopPropagation(); navigate(1); });
+      document.addEventListener('keydown', e => {
+        if (!lightbox.classList.contains('open')) return;
+        if (e.key === 'Escape') closeLb();
+        if (e.key === 'ArrowLeft') navigate(-1);
+        if (e.key === 'ArrowRight') navigate(1);
+      });
+    });
+  </script>
+</body>
+</html>
