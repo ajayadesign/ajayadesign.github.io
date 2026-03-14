@@ -304,6 +304,11 @@ section {
   position: relative;
   padding: var(--space-sm);
   color: var(--color-primary);
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header__cart-count {
@@ -323,9 +328,9 @@ section {
   display: none;
   flex-direction: column;
   gap: 6px;
-  width: 36px;
-  height: 36px;
-  padding: 6px;
+  width: 44px;
+  height: 44px;
+  padding: 8px;
   justify-content: center;
   align-items: center;
   border-radius: var(--border-radius-sm);
