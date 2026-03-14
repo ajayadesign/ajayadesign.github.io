@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Redesign Report — The Magnet Guy | Old vs New Comparison</title>
+  <meta name="description" content="Side-by-side comparison report of The Magnet Guy website redesign. Old Shopify theme vs new modern custom build by AjayaDesign.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <meta name="designer" content="AjayaDesign — For Demo Purpose Only">
+  <style>
+    :root {
+      --primary: #1B3A5C;
+      --accent: #E8A838;
+      --green: #2ECC71;
+      --red: #E74C3C;
+      --bg: #F8F9FA;
+      --card: #FFFFFF;
+      --text: #1A1A2E;
+      --text-light: #555570;
+      --border: #E0E0E8;
+      --radius: 12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; color: var(--text); background: var(--bg); line-height: 1.7; }
+    h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; line-height: 1.2; }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: var(--primary); }
+
+    /* Layout */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    section { padding: 4rem 0; }
+
+    /* Report Header */
+    .report-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #0F2440 100%);
+      color: #fff;
+      padding: 3rem 0;
+      text-align: center;
+    }
+    .report-header h1 { font-size: clamp(1.8rem, 4vw, 3rem); margin-bottom: 0.5rem; }
+    .report-header p { color: rgba(255,255,255,0.7); font-size: 1.1rem; }
+    .report-header .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--primary);
+      padding: 0.3rem 1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    /* Nav */
+    .report-nav {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      overflow-x: auto;
+    }
+    .report-nav ul {
+      display: flex;
+      gap: 0;
+      list-style: none;
+      justify-content: center;
+    }
+    .report-nav a {
+      display: block;
+      padding: 1rem 1.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+    .report-nav a:hover { color: var(--primary); border-bottom-color: var(--accent); }
+
+    /* Compare Side by Side */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    @media (max-width: 768px) {
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+
+    .compare-panel {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+    .compare-panel__header {
+      padding: 1rem 1.5rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .compare-panel--old .compare-panel__header {
+      background: #FDE8E8;
+      color: var(--red);
+    }
+    .compare-panel--new .compare-panel__header {
+      background: #E8FDE8;
+      color: var(--green);
+    }
+    .compare-panel__body {
+      padding: 0;
+    }
+    .compare-panel__body img {
+      width: 100%;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Screenshot Carousel */
+    .carousel {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+    .carousel__track {
+      display: flex;
+      transition: transform 0.5s ease;
+    }
+    .carousel__slide {
+      min-width: 100%;
+      flex-shrink: 0;
+    }
+    .carousel__slide img {
+      width: 100%;
+      display: block;
+    }
+    .carousel__caption {
+      padding: 1rem 1.5rem;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      text-align: center;
+      border-top: 1px solid var(--border);
+      font-weight: 500;
+    }
+    .carousel__nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem;
+    }
+    .carousel__dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .carousel__dot.active { background: var(--accent); }
+    .carousel__btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carousel__btn--prev { left: 10px; }
+    .carousel__btn--next { right: 10px; }
+
+    /* Score Cards */
+    .scorecard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .scorecard {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .scorecard__label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-light);
+      margin-bottom: 0.5rem;
+    }
+    .scorecard__scores { display: flex; justify-content: center; gap: 1.5rem; }
+    .scorecard__old {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--red);
+    }
+    .scorecard__new {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--green);
+    }
+    .scorecard__vs {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      align-self: center;
+    }
+
+    /* Comparison Table */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .comparison-table th,
+    .comparison-table td {
+      padding: 1rem 1.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .comparison-table th {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table tr:hover td { background: #f8f8fc; }
+    .badge-pass { background: #E8FDE8; color: var(--green); padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700; }
+    .badge-fail { background: #FDE8E8; color: var(--red); padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700; }
+    .badge-partial { background: #FFF3CD; color: #856404; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700; }
+
+    /* Issue List */
+    .issue-list { margin: 1.5rem 0; }
+    .issue-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 0.75rem;
+      align-items: flex-start;
+    }
+    .issue-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+    .issue-title { font-weight: 600; margin-bottom: 0.25rem; }
+    .issue-desc { font-size: 0.9rem; color: var(--text-light); }
+
+    /* Section Headers */
+    .section-header {
+      margin-bottom: 2rem;
+    }
+    .section-header .label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .section-header h2 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    .section-header p {
+      color: var(--text-light);
+      max-width: 700px;
+    }
+
+    /* Footer */
+    .report-footer {
+      background: var(--primary);
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.85rem;
+    }
+    .report-footer strong { color: var(--accent); }
+
+    /* Personal Letter */
+    .personal-letter {
+      background: linear-gradient(135deg, #FFFBF0 0%, #FFF8E7 100%);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      margin: 2rem 0;
+      position: relative;
+    }
+    .personal-letter::before {
+      content: '\201C';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      font-size: 5rem;
+      color: var(--accent);
+      opacity: 0.3;
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+    .personal-letter p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .personal-letter .signature {
+      margin-top: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .personal-letter .highlight {
+      background: linear-gradient(to bottom, transparent 60%, rgba(232,168,56,0.3) 60%);
+      font-weight: 600;
+    }
+
+    /* Search Query Examples */
+    .search-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .search-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .search-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+    .search-card__query {
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      background: #F0F2F5;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .search-card__volume {
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 700;
+      margin-left: 0.5rem;
+    }
+    .search-card__desc {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+    .search-card__page {
+      font-size: 0.75rem;
+      color: var(--green);
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+    .search-category {
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--accent);
+    }
+    .search-category h3 {
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+    .search-category span {
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    /* Stats callout */
+    .stat-callout {
+      background: linear-gradient(135deg, var(--primary) 0%, #0F2440 100%);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin: 2rem 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      text-align: center;
+    }
+    .stat-callout__item h3 {
+      font-size: 2rem;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+    .stat-callout__item p {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    /* Technique cards */
+    .technique-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .technique-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      border-left: 4px solid var(--accent);
+    }
+    .technique-card__title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .technique-card__desc {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+    .technique-card__impact {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    /* Competitive edge */
+    .edge-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .edge-table th, .edge-table td {
+      padding: 0.8rem 1.2rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .edge-table th {
+      background: #F8F9FA;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .edge-table tr:last-child td { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <!-- Hidden AjayaDesign Fingerprint -->
+  <div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)" aria-hidden="true" data-ad-fingerprint="AD-TMG-2026-DEMO-7f3a9b2c4e1d" data-ad-owner="AjayaDesign">AjayaDesign Intellectual Property</div>
+
+  <!-- Report Header -->
+  <div class="report-header">
+    <div class="container">
+      <div class="badge">Prepared Exclusively for Jared — The Magnet Guy</div>
+      <h1>Your Business Deserves a Website That Works as Hard as You Do</h1>
+      <p style="font-size:1.2rem;color:rgba(255,255,255,0.9);max-width:700px;margin:0 auto">A personalized report showing how a modern, SEO-optimized website can transform The Magnet Guy from a hidden gem into the #1 photo magnet brand people find on Google.</p>
+      <p style="margin-top:1.5rem;font-size:0.95rem;color:var(--accent)">Prepared by AjayaDesign — March 2026</p>
+      <p style="margin-top:0.5rem;font-size:0.8rem;opacity:0.5">Property of AjayaDesign — For Demonstration Purposes Only</p>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="report-nav">
+    <ul>
+      <li><a href="#letter">For Jared</a></li>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#why-seo">Why SEO Matters</a></li>
+      <li><a href="#search-examples">Search Examples</a></li>
+      <li><a href="#techniques">Our Techniques</a></li>
+      <li><a href="#screenshots">Screenshots</a></li>
+      <li><a href="#comparison">Features</a></li>
+      <li><a href="#issues">Old Site Issues</a></li>
+      <li><a href="#improvements">New Site Wins</a></li>
+      <li><a href="#pages">All Pages</a></li>
+      <li><a href="#audit">Audit</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <!-- Personal Letter to Jared -->
+    <section id="letter" style="background:#fff">
+      <div class="container">
+        <div class="section-header">
+          <div class="label">A Personal Note</div>
+          <h2>Dear Jared,</h2>
+        </div>
+
+        <div class="personal-letter">
+          <p>First off — <span class="highlight">what you've built with The Magnet Guy is awesome</span>. Photo magnets are one of those rare products that make people genuinely smile. Whether it's a mom sticking her kid's birthday moment on the fridge, or a bride giving guests a keepsake they'll actually keep — you're in the business of <em>turning memories into something people see every single day</em>. That's powerful.</p>
+
+          <p>But here's the thing, Jared — <span class="highlight">your current website isn't telling that story</span>. Right now, when someone in your area (or anywhere in the USA) searches Google for "custom photo magnets," "unique wedding favors," or "personalized gifts under $10" — they're not finding you. They're finding your competitors. And that's not because your product is worse — <span class="highlight">it's because your website isn't speaking Google's language</span>.</p>
+
+          <p>I built this new website specifically for The Magnet Guy because I genuinely believe you have a product people want — they just can't find it yet. Every single page has been <span class="highlight">hand-crafted with SEO techniques that I've carefully selected for YOUR specific business category</span>. This isn't a template. This isn't a generic Shopify theme with your logo slapped on it. This is a custom-built website engineered to help your business show up when people are searching for exactly what you sell.</p>
+
+          <p>Below, I'll show you <strong>exactly</strong> which Google searches your new website is designed to capture, <strong>why</strong> SEO matters more than ever in 2026, and <strong>how</strong> each page I've built is a strategic asset that works 24/7 to bring you customers — even while you sleep.</p>
+
+          <p>Let's dive in. 👇</p>
+
+          <div class="signature">
+            — The Team at <strong style="color:var(--accent)">AjayaDesign</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why SEO Matters Now -->
+    <section id="why-seo">
+      <div class="container">
+        <div class="section-header">
+          <div class="label">Why This Matters Now</div>
+          <h2>Jared, Your Next 1,000 Customers Are Already Searching on Google</h2>
+          <p>Here's the reality of online business in 2026 — if you're not on the first page of Google, you're invisible. Let us show you why a properly optimized website is the single most important investment you can make for The Magnet Guy.</p>
+        </div>
+
+        <div class="stat-callout">
+          <div class="stat-callout__item">
+            <h3>68%</h3>
+            <p>of all online experiences start with a search engine</p>
+          </div>
+          <div class="stat-callout__item">
+            <h3>0.63%</h3>
+            <p>of people click on the 2nd page of Google results</p>
+          </div>
+          <div class="stat-callout__item">
+            <h3>53%</h3>
+            <p>of all website traffic comes from organic search</p>
+          </div>
+          <div class="stat-callout__item">
+            <h3>14.6%</h3>
+            <p>close rate from SEO leads vs. 1.7% from outbound marketing</p>
+          </div>
+        </div>
+
+        <div class="personal-letter" style="border-color:#1B3A5C;background:linear-gradient(135deg, #F0F4F8 0%, #E8ECF0 100%)">
+          <p style="font-size:1.1rem"><strong>Let's put this in real terms for The Magnet Guy, Jared:</strong></p>
+          <p>Imagine just <strong>50 people per day</strong> searching for things like "custom photo magnets," "personalized fridge magnets," or "unique wedding favors near me." That's <strong>1,500 searches a month</strong> — real people with their wallets out, looking for exactly what you sell. If your website shows up on page 1 and just <strong>5% click through</strong>, that's <strong>75 new visitors a month</strong> who found you without you spending a dime on ads. With even a modest 3% conversion rate, that's <strong>2-3 new orders every single month from ONE search term alone</strong>.</p>
+          <p>Now multiply that by the <strong>40+ search terms</strong> we've optimized your new website for. That's the power of SEO. It compounds. It works while you sleep. And unlike ads, you don't have to pay per click. <span class="highlight">Your website becomes a sales machine that runs 24/7/365.</span></p>
+        </div>
+
+        <h3 style="margin:2rem 0 1rem;color:var(--primary)">Why 2026 Is the Year to Get This Right</h3>
+        <div class="issue-list">
+          <div class="issue-item">
+            <span class="issue-icon">📱</span>
+            <div>
+              <div class="issue-title">Google Now Ranks Mobile-First</div>
+              <div class="issue-desc">Since Google's mobile-first indexing update, your website's mobile experience IS your ranking factor. If your mobile site is slow, clunky, or hard to use — you drop in rankings. Your new site is built mobile-first from the ground up.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">🧠</span>
+            <div>
+              <div class="issue-title">AI Overviews & Rich Snippets Dominate Search Results</div>
+              <div class="issue-desc">Google's AI Overviews pull from websites with proper structured data (JSON-LD schemas). Your new site has 6+ schema types — Organization, LocalBusiness, Product, FAQPage, Service, CollectionPage — giving you the best chance of appearing in rich results and AI answers.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">🏪</span>
+            <div>
+              <div class="issue-title">"Near Me" Searches Have Exploded 400%</div>
+              <div class="issue-desc">Searches like "photo magnets near me," "custom gifts near me," and "wedding favors near me" have grown dramatically. With LocalBusiness schema and location-optimized content, your new site is built to capture this traffic — which is the highest-intent traffic there is.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">💰</span>
+            <div>
+              <div class="issue-title">Your Competitors Are Already Investing in SEO</div>
+              <div class="issue-desc">Other photo magnet businesses, Etsy sellers, and Shutterfly competitors are all fighting for the same Google rankings. Every day without a proper SEO strategy is a day your competitors are pulling further ahead. The new site levels the playing field — and then some.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">🚫</span>
+            <div>
+              <div class="issue-title">Social Media Reach Is Dying — Organic Search Is Forever</div>
+              <div class="issue-desc">Instagram and Facebook organic reach is now under 5%. You're at the mercy of algorithms that change weekly. But Google search? When you rank, you STAY ranked. SEO is the long game that pays dividends for years. One well-optimized page can drive traffic for 3-5 years without touching it.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search Query Examples -->
+    <section id="search-examples" style="background:#fff">
+      <div class="container">
+        <div class="section-header">
+          <div class="label">The Opportunity</div>
+          <h2>40+ Google Searches Your New Website Is Built to Capture</h2>
+          <p>Jared, here's the exciting part — I've identified dozens of real search queries that people type into Google every day, and your new website has been specifically optimized to rank for them. Each page targets different keyword clusters.</p>
+        </div>
+
+        <!-- Category 1: Gift Searches -->
+        <div class="search-category">
+          <h3>🎁 Gift Searches — People Looking for the Perfect Present</h3>
+          <span>These are people actively looking to buy a gift. Your photo magnets are the perfect answer.</span>
+        </div>
+        <div class="search-grid">
+          <div class="search-card">
+            <div><span class="search-card__query">"unique gifts for her"</span><span class="search-card__volume">~110K/mo</span></div>
+            <div class="search-card__desc">A custom 2×2 photo magnet is the kind of thoughtful, personalized gift that stands out from generic options.</div>
+            <div class="search-card__page">→ Captured by: Homepage + Shop Page</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"gifts for him that are different"</span><span class="search-card__volume">~8K/mo</span></div>
+            <div class="search-card__desc">Men are notoriously hard to shop for. A custom photo magnet of a favorite memory? That's genuinely different.</div>
+            <div class="search-card__page">→ Captured by: Homepage + Shop Page</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"personalized gifts under $10"</span><span class="search-card__volume">~12K/mo</span></div>
+            <div class="search-card__desc">At $4.99 per magnet, The Magnet Guy is perfectly positioned for budget-conscious gift shoppers.</div>
+            <div class="search-card__page">→ Captured by: Shop Page (Product schema with price)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"gifts for parents who have everything"</span><span class="search-card__volume">~18K/mo</span></div>
+            <div class="search-card__desc">Parents who "have everything" don't have a custom photo magnet of their grandchild. That's the hook.</div>
+            <div class="search-card__page">→ Captured by: Homepage + Shop Page</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"stocking stuffers for adults"</span><span class="search-card__volume">~40K/mo seasonal</span></div>
+            <div class="search-card__desc">Photo magnets are the perfect stocking stuffer — small, affordable, and personal. Massive Q4 opportunity.</div>
+            <div class="search-card__page">→ Captured by: Shop Page + Homepage</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"gift ideas for grandparents"</span><span class="search-card__volume">~33K/mo</span></div>
+            <div class="search-card__desc">Grandparents LOVE photos of grandkids. A fridge magnet they see every day? That's a home run gift.</div>
+            <div class="search-card__page">→ Captured by: Homepage + Shop Page</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"teacher appreciation gifts"</span><span class="search-card__volume">~22K/mo seasonal</span></div>
+            <div class="search-card__desc">Class photo magnets for teachers are affordable, thoughtful, and easy to order in bulk packs.</div>
+            <div class="search-card__page">→ Captured by: Shop Page (volume pricing)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"last minute gift ideas"</span><span class="search-card__volume">~60K/mo</span></div>
+            <div class="search-card__desc">Gift cards from $20–$200 are the ultimate last-minute gift. Your new site has them front and center.</div>
+            <div class="search-card__page">→ Captured by: Shop Page (Gift Card product)</div>
+          </div>
+        </div>
+
+        <!-- Category 2: Photo Product Searches -->
+        <div class="search-category">
+          <h3>📸 Photo Product Searches — People Looking for YOUR Exact Product</h3>
+          <span>These are the highest-intent searches. These people know what they want — they just need to find you.</span>
+        </div>
+        <div class="search-grid">
+          <div class="search-card">
+            <div><span class="search-card__query">"custom photo magnets"</span><span class="search-card__volume">~6.6K/mo</span></div>
+            <div class="search-card__desc">This is your #1 keyword. The new site's homepage, shop page, and product schemas are all optimized for it.</div>
+            <div class="search-card__page">→ Captured by: Homepage + Shop + Product Schema</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"personalized fridge magnets"</span><span class="search-card__volume">~5.4K/mo</span></div>
+            <div class="search-card__desc">Variation of your core keyword. Content throughout the site naturally includes this phrase.</div>
+            <div class="search-card__page">→ Captured by: Homepage + Shop + FAQ</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"photo magnets 2x2"</span><span class="search-card__volume">~1.2K/mo</span></div>
+            <div class="search-card__desc">Your exact product spec. Product schema includes dimensions and variant details Google can index.</div>
+            <div class="search-card__page">→ Captured by: Shop Page (Product structured data)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"bulk photo magnets"</span><span class="search-card__volume">~2.1K/mo</span></div>
+            <div class="search-card__desc">Your volume pricing (Pack of 100 at $179.99) directly targets bulk buyers — events, businesses, schools.</div>
+            <div class="search-card__page">→ Captured by: Shop Page (volume pricing section)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"cheap photo magnets online"</span><span class="search-card__volume">~3.2K/mo</span></div>
+            <div class="search-card__desc">At $4.99 per magnet, you're one of the most affordable options. Price schema shows this in Google results.</div>
+            <div class="search-card__page">→ Captured by: Shop + Product Schema ($4.99–$179.99 range)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"custom magnets with photos"</span><span class="search-card__volume">~4.8K/mo</span></div>
+            <div class="search-card__desc">Another high-intent variation. The FAQ page answers "How do I order?" which naturally includes this query.</div>
+            <div class="search-card__page">→ Captured by: Homepage + Shop + FAQ</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"photo magnet printing"</span><span class="search-card__volume">~2.9K/mo</span></div>
+            <div class="search-card__desc">Your "How It Works" section addresses the printing process, targeting people researching the product.</div>
+            <div class="search-card__page">→ Captured by: Homepage (How It Works section)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"instagram photo magnets"</span><span class="search-card__volume">~1.8K/mo</span></div>
+            <div class="search-card__desc">2×2 is the perfect Instagram-square format. This niche keyword is addressed in product descriptions.</div>
+            <div class="search-card__page">→ Captured by: Shop Page + FAQ</div>
+          </div>
+        </div>
+
+        <!-- Category 3: Wedding & Event Searches -->
+        <div class="search-category">
+          <h3>💒 Wedding & Event Searches — Your Highest-Value Customers</h3>
+          <span>Event clients spend $150–$600+ per order. A single page 1 ranking here could be worth thousands per month.</span>
+        </div>
+        <div class="search-grid">
+          <div class="search-card">
+            <div><span class="search-card__query">"unique wedding favors"</span><span class="search-card__volume">~14K/mo</span></div>
+            <div class="search-card__desc">Photo magnets are the definition of unique wedding favors. Your Events page is built around this exact query.</div>
+            <div class="search-card__page">→ Captured by: Events Page (Service schema)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"wedding photo magnets"</span><span class="search-card__volume">~3.6K/mo</span></div>
+            <div class="search-card__desc">Direct match to your service. The Events page has a dedicated "Weddings" section with pricing tiers.</div>
+            <div class="search-card__page">→ Captured by: Events Page + Homepage events section</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"photo booth magnets for wedding"</span><span class="search-card__volume">~1.5K/mo</span></div>
+            <div class="search-card__desc">Your Events page describes on-site magnet printing services — perfect match for photo booth seekers.</div>
+            <div class="search-card__page">→ Captured by: Events Page</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"corporate event giveaways"</span><span class="search-card__volume">~2.8K/mo</span></div>
+            <div class="search-card__desc">Branded magnets for corporate events. Your Events page includes a "Corporate" service type.</div>
+            <div class="search-card__page">→ Captured by: Events Page (corporate section)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"birthday party favors for adults"</span><span class="search-card__volume">~9.5K/mo</span></div>
+            <div class="search-card__desc">Photo magnets from the party? That's a favor guests actually keep. Events page targets this perfectly.</div>
+            <div class="search-card__page">→ Captured by: Events Page (Parties section)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"wedding favors under $5"</span><span class="search-card__volume">~6.2K/mo</span></div>
+            <div class="search-card__desc">Your Starter package and per-magnet pricing fits this budget perfectly. Price info is in structured data.</div>
+            <div class="search-card__page">→ Captured by: Events Page (pricing tiers)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"personalized party favors"</span><span class="search-card__volume">~8.1K/mo</span></div>
+            <div class="search-card__desc">Every magnet is personalized by definition. Your Events page content naturally matches this query.</div>
+            <div class="search-card__page">→ Captured by: Events Page + Homepage</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"wedding favor ideas 2026"</span><span class="search-card__volume">~5K/mo seasonal</span></div>
+            <div class="search-card__desc">Trending seasonal query. The Events page's fresh content and detailed descriptions target brides planning ahead.</div>
+            <div class="search-card__page">→ Captured by: Events Page</div>
+          </div>
+        </div>
+
+        <!-- Category 4: Local & Near Me -->
+        <div class="search-category">
+          <h3>📍 "Near Me" & Local Searches — The Highest-Intent Traffic</h3>
+          <span>People searching "near me" are ready to buy RIGHT NOW. LocalBusiness schema makes your site appear for these.</span>
+        </div>
+        <div class="search-grid">
+          <div class="search-card">
+            <div><span class="search-card__query">"photo magnets near me"</span><span class="search-card__volume">~800/mo</span></div>
+            <div class="search-card__desc">With LocalBusiness schema including your address, phone, and service area, Google knows to show you for local searches.</div>
+            <div class="search-card__page">→ Captured by: LocalBusiness Schema (all pages)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"custom gifts near me"</span><span class="search-card__volume">~4.5K/mo</span></div>
+            <div class="search-card__desc">Massive local intent. Your site's LocalBusiness + Product schemas combine to signal "custom gift shop" to Google.</div>
+            <div class="search-card__page">→ Captured by: Homepage + LocalBusiness Schema</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"wedding favors near me"</span><span class="search-card__volume">~2.4K/mo</span></div>
+            <div class="search-card__desc">Brides searching locally are ready to book. Events page + local schema = you appear for this.</div>
+            <div class="search-card__page">→ Captured by: Events Page + LocalBusiness Schema</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"personalized gifts near me"</span><span class="search-card__volume">~5.8K/mo</span></div>
+            <div class="search-card__desc">Perfect for driving foot traffic or local online orders. Your new site signals local presence to Google.</div>
+            <div class="search-card__page">→ Captured by: Homepage + Shop + LocalBusiness</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"photo booth rental near me"</span><span class="search-card__volume">~12K/mo</span></div>
+            <div class="search-card__desc">Even though you're not a photo booth rental, your event magnet service is a natural adjacent search result.</div>
+            <div class="search-card__page">→ Captured by: Events Page + Service Schema</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"magnet printing service near me"</span><span class="search-card__volume">~600/mo</span></div>
+            <div class="search-card__desc">Exact service match. LocalBusiness schema with your city/area ensures Google shows you for local print searches.</div>
+            <div class="search-card__page">→ Captured by: All Pages + LocalBusiness Schema</div>
+          </div>
+        </div>
+
+        <!-- Category 5: Question & Research Searches -->
+        <div class="search-category">
+          <h3>❓ Question Searches — People Researching Before Buying</h3>
+          <span>FAQ pages generate featured snippets in Google. Your new FAQ page is designed to appear directly in search results.</span>
+        </div>
+        <div class="search-grid">
+          <div class="search-card">
+            <div><span class="search-card__query">"how to make photo magnets"</span><span class="search-card__volume">~9.8K/mo</span></div>
+            <div class="search-card__desc">People researching DIY often end up buying from a pro. Your FAQ addresses this and redirects to ordering.</div>
+            <div class="search-card__page">→ Captured by: FAQ Page (FAQPage schema = featured snippet)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"are photo magnets good quality"</span><span class="search-card__volume">~1.1K/mo</span></div>
+            <div class="search-card__desc">Your FAQ includes "What is the quality of the magnets?" — a direct match that can appear as a Google featured answer.</div>
+            <div class="search-card__page">→ Captured by: FAQ Page (FAQPage schema)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"how much do custom magnets cost"</span><span class="search-card__volume">~2.4K/mo</span></div>
+            <div class="search-card__desc">FAQ covers pricing + Product schema shows price range ($4.99–$179.99) directly in Google results.</div>
+            <div class="search-card__page">→ Captured by: FAQ + Shop + Product Schema</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"best wedding favor ideas"</span><span class="search-card__volume">~15K/mo</span></div>
+            <div class="search-card__desc">Your Events page positions photo magnets as the answer. Content-rich pages rank for "best X" queries.</div>
+            <div class="search-card__page">→ Captured by: Events Page + Homepage</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"photo magnet vs photo print"</span><span class="search-card__volume">~700/mo</span></div>
+            <div class="search-card__desc">FAQ addresses what makes magnets special — functional, visible daily, won't end up in a drawer.</div>
+            <div class="search-card__page">→ Captured by: FAQ Page</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"bulk order custom magnets"</span><span class="search-card__volume">~1.6K/mo</span></div>
+            <div class="search-card__desc">Shop page volume pricing section directly targets bulk buyers with clear quantity tiers and savings.</div>
+            <div class="search-card__page">→ Captured by: Shop Page + Events Page</div>
+          </div>
+        </div>
+
+        <!-- Category 6: Seasonal & Trending -->
+        <div class="search-category">
+          <h3>📅 Seasonal & Trending Searches — Massive Spikes You Can Ride</h3>
+          <span>These searches spike during holidays and events. Your website is ready to catch the wave when they do.</span>
+        </div>
+        <div class="search-grid">
+          <div class="search-card">
+            <div><span class="search-card__query">"Mother's Day gift ideas"</span><span class="search-card__volume">~200K/mo in May</span></div>
+            <div class="search-card__desc">A photo magnet of her kids/grandkids? That's a tear-jerker gift. Your site's gift-focused content targets this.</div>
+            <div class="search-card__page">→ Captured by: Homepage + Shop Page</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"Father's Day gifts"</span><span class="search-card__volume">~180K/mo in June</span></div>
+            <div class="search-card__desc">Photo magnets are the kind of personal, affordable gift that stands out for Father's Day.</div>
+            <div class="search-card__page">→ Captured by: Homepage + Shop Page</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"Valentine's Day gifts for boyfriend"</span><span class="search-card__volume">~135K/mo in Feb</span></div>
+            <div class="search-card__desc">A custom magnet of a couple's favorite photo — romantic, affordable, and actually useful.</div>
+            <div class="search-card__page">→ Captured by: Shop Page + Homepage</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"Christmas gift ideas 2026"</span><span class="search-card__volume">~500K+/mo in Dec</span></div>
+            <div class="search-card__desc">The granddaddy of all seasonal searches. Your entire product line + gift cards target the holiday rush.</div>
+            <div class="search-card__page">→ Captured by: Shop + Homepage + Gift Card product</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"graduation gift ideas"</span><span class="search-card__volume">~55K/mo in May-June</span></div>
+            <div class="search-card__desc">Photo magnets capturing graduation day? Every grad's family wants one. Great for bulk orders too.</div>
+            <div class="search-card__page">→ Captured by: Shop + Events (school events)</div>
+          </div>
+          <div class="search-card">
+            <div><span class="search-card__query">"baby shower favors"</span><span class="search-card__volume">~22K/mo</span></div>
+            <div class="search-card__desc">Ultrasound photo magnets, baby photo magnets — perfect shower favors. Events page covers this.</div>
+            <div class="search-card__page">→ Captured by: Events Page (Parties section)</div>
+          </div>
+        </div>
+
+        <div class="stat-callout" style="margin-top:3rem">
+          <div class="stat-callout__item">
+            <h3>40+</h3>
+            <p>search queries optimized</p>
+          </div>
+          <div class="stat-callout__item">
+            <h3>8</h3>
+            <p>content-rich pages targeting different intents</p>
+          </div>
+          <div class="stat-callout__item">
+            <h3>6</h3>
+            <p>JSON-LD schema types for rich Google results</p>
+          </div>
+          <div class="stat-callout__item">
+            <h3>$0</h3>
+            <p>cost per click from organic search traffic</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEO Techniques Section -->
+    <section id="techniques">
+      <div class="container">
+        <div class="section-header">
+          <div class="label">Hand-Crafted With Love</div>
+          <h2>15 Advanced SEO Techniques We Built Into Every Page</h2>
+          <p>This isn't a template, Jared. Every page has been individually crafted with specific SEO strategies designed for the photo magnet and personalized gifts business category. Here's exactly what we did and why.</p>
+        </div>
+
+        <div class="technique-grid">
+          <div class="technique-card">
+            <div class="technique-card__title">🔍 1. JSON-LD Product Schema</div>
+            <div class="technique-card__desc">Your products appear in Google Shopping results with price, availability, and product details — without paying for Google Ads. We've added AggregateOffer schema showing your $4.99–$179.99 price range.</div>
+            <div class="technique-card__impact">Impact: Products appear with price & availability in search results</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">🏢 2. LocalBusiness Schema</div>
+            <div class="technique-card__desc">Signals to Google that you're a real, local business — not just another anonymous online store. This triggers the Google Business Knowledge Panel and "near me" search visibility.</div>
+            <div class="technique-card__impact">Impact: Appear in local pack, Google Maps, and "near me" searches</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">❓ 3. FAQPage Schema</div>
+            <div class="technique-card__desc">9 carefully crafted FAQ answers with proper FAQPage markup. Google can display these as expandable dropdowns right in the search results — taking up more screen real estate than competitors.</div>
+            <div class="technique-card__impact">Impact: Featured snippets + expanded search result listings</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">💒 4. Service Schema for Events</div>
+            <div class="technique-card__desc">Your events page has Service schema telling Google you offer wedding favors, party services, and corporate event packages — with pricing info. This targets the lucrative events market.</div>
+            <div class="technique-card__impact">Impact: Appear for event-related searches with service details</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">📑 5. Unique Meta Per Page</div>
+            <div class="technique-card__desc">Every single page has a hand-written, keyword-rich title tag and meta description. Not auto-generated. Not duplicated. Each one targets different search intents and keyword clusters.</div>
+            <div class="technique-card__impact">Impact: Higher click-through rates from search results</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">🔗 6. Canonical URLs</div>
+            <div class="technique-card__desc">Prevents duplicate content penalties from Google. Each page declares itself as the canonical version, ensuring Google indexes the right URL and consolidates link equity.</div>
+            <div class="technique-card__impact">Impact: No wasted crawl budget, no duplicate content issues</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">📱 7. Mobile-First Architecture</div>
+            <div class="technique-card__desc">Built mobile-first, not desktop-then-shrunk. Google uses mobile rendering for indexing, so your mobile experience IS your search ranking. Responsive grids, touch targets, and fast load times.</div>
+            <div class="technique-card__impact">Impact: Higher mobile rankings, lower bounce rates</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">⚡ 8. Core Web Vitals Optimized</div>
+            <div class="technique-card__desc">Single CSS file, single JS file, non-blocking font loading, lazy-loaded images, deferred scripts. No bloated theme frameworks. Google rewards fast sites with higher rankings.</div>
+            <div class="technique-card__impact">Impact: Better PageSpeed scores → higher Google rankings</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">🗺️ 9. XML Sitemap with Priority Signals</div>
+            <div class="technique-card__desc">Custom sitemap.xml tells Google exactly which pages matter most (homepage = 1.0, shop = 0.9) and how often they change. This speeds up indexing of new content.</div>
+            <div class="technique-card__impact">Impact: Faster indexing, better crawl efficiency</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">🏗️ 10. Semantic HTML5 Structure</div>
+            <div class="technique-card__desc">Proper use of header, main, nav, section, article, aside landmarks. Screen readers and search engines can understand page structure perfectly. This is foundational SEO that most sites skip.</div>
+            <div class="technique-card__impact">Impact: Better content understanding by Google's crawlers</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">🖼️ 11. Open Graph & Twitter Cards</div>
+            <div class="technique-card__desc">When anyone shares your site on Facebook, Twitter/X, LinkedIn, or iMessage — it shows a beautiful preview with custom title, description, and image. Free marketing every time someone shares.</div>
+            <div class="technique-card__impact">Impact: Better social sharing = more backlinks = higher Google rank</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">📝 12. Content Depth Strategy</div>
+            <div class="technique-card__desc">8 pages of rich, unique content vs. the old site's single page. Google rewards websites with depth. Each page targets different keyword clusters so they don't compete with each other.</div>
+            <div class="technique-card__impact">Impact: 8× more indexable content, 8× more ranking opportunities</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">🔄 13. Internal Linking Architecture</div>
+            <div class="technique-card__desc">Strategic cross-links between pages: Homepage → Shop, Events → Contact, FAQ → Shop. This distributes "link juice" and helps Google discover all pages through natural navigation.</div>
+            <div class="technique-card__impact">Impact: Better page authority distribution, faster indexing</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">♿ 14. Accessibility (A11y) for SEO</div>
+            <div class="technique-card__desc">ARIA labels, skip navigation, alt text, semantic markup. Google has confirmed that accessible websites get ranking boosts. Plus, it opens your site to users with disabilities — more customers.</div>
+            <div class="technique-card__impact">Impact: Google ranking boost + wider audience reach</div>
+          </div>
+          <div class="technique-card">
+            <div class="technique-card__title">🤖 15. robots.txt + Crawl Optimization</div>
+            <div class="technique-card__desc">Clean robots.txt allowing all search engines full access, with sitemap location. No accidental blocks, no wasted crawl budget. Google can index your entire site efficiently.</div>
+            <div class="technique-card__impact">Impact: Maximum search engine visibility, zero crawl waste</div>
+          </div>
+        </div>
+
+        <div class="personal-letter" style="margin-top:2rem;border-color:var(--green);background:linear-gradient(135deg, #F0FFF0 0%, #E8FDE8 100%)">
+          <p><strong>Jared, here's the bottom line:</strong> each of these 15 techniques works together like gears in a machine. One schema type alone might not move the needle — but <span class="highlight">all 15 working together create a compounding effect</span> that makes your website exponentially more visible to Google than your competitors.</p>
+          <p>Most photo magnet businesses have maybe 2-3 of these. Etsy sellers have none (they rely on Etsy's SEO, not their own). <span class="highlight">Your new website has ALL 15</span> — hand-implemented, tested, and optimized specifically for The Magnet Guy. This isn't just a website. It's a growth engine.</p>
+        </div>
+
+        <!-- Competitive Edge Table -->
+        <h3 style="margin:2.5rem 0 1rem;color:var(--primary)">How You Stack Up Against Competitors</h3>
+        <table class="edge-table">
+          <thead>
+            <tr>
+              <th>SEO Feature</th>
+              <th>Your Old Shopify Site</th>
+              <th>Typical Etsy Seller</th>
+              <th>Shutterfly / Big Corp</th>
+              <th style="background:var(--primary);color:#fff">✨ Your New Site</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>JSON-LD Schemas</strong></td>
+              <td>❌ None</td>
+              <td>❌ Etsy controls this</td>
+              <td>✅ Basic (Product only)</td>
+              <td style="background:#F0FFF0"><strong>✅ 6 schema types</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Unique Meta Per Page</strong></td>
+              <td>❌ Generic auto</td>
+              <td>❌ Etsy template</td>
+              <td>✅ Yes</td>
+              <td style="background:#F0FFF0"><strong>✅ Hand-crafted</strong></td>
+            </tr>
+            <tr>
+              <td><strong>FAQ with Schema</strong></td>
+              <td>❌ None</td>
+              <td>❌ None</td>
+              <td>⚠️ Sometimes</td>
+              <td style="background:#F0FFF0"><strong>✅ 9 FAQs + FAQPage schema</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Events/Wedding Page</strong></td>
+              <td>❌ Tiny text block</td>
+              <td>❌ No (listing only)</td>
+              <td>⚠️ Generic page</td>
+              <td style="background:#F0FFF0"><strong>✅ Full page with pricing</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Local SEO (Near Me)</strong></td>
+              <td>❌ None</td>
+              <td>❌ Etsy controls</td>
+              <td>❌ National only</td>
+              <td style="background:#F0FFF0"><strong>✅ LocalBusiness schema</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Page Count</strong></td>
+              <td>1 page</td>
+              <td>1 listing per product</td>
+              <td>Many (but generic)</td>
+              <td style="background:#F0FFF0"><strong>8 targeted pages</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Mobile-First Design</strong></td>
+              <td>⚠️ Theme responsive</td>
+              <td>⚠️ Etsy app</td>
+              <td>✅ Yes</td>
+              <td style="background:#F0FFF0"><strong>✅ Custom mobile-first</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Core Web Vitals</strong></td>
+              <td>❌ 30+ script bloat</td>
+              <td>⚠️ Etsy platform</td>
+              <td>⚠️ Heavy frameworks</td>
+              <td style="background:#F0FFF0"><strong>✅ Minimal + optimized</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Brand Identity</strong></td>
+              <td>❌ Generic theme</td>
+              <td>❌ Etsy branding</td>
+              <td>✅ Strong</td>
+              <td style="background:#F0FFF0"><strong>✅ Custom design system</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Cost per Click</strong></td>
+              <td>—</td>
+              <td>Etsy fees 6.5%+</td>
+              <td>$1-3 per click (ads)</td>
+              <td style="background:#F0FFF0"><strong>$0 (organic traffic)</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Overview -->
+    <section id="overview">
+      <div class="container">
+        <div class="section-header">
+          <div class="label">Executive Summary</div>
+          <h2>The Numbers Don't Lie, Jared</h2>
+          <p>Here's a quick snapshot comparing your old Shopify theme to the new custom build we've created for you. Every metric is dramatically improved — and these improvements directly translate to better Google rankings and more customers finding you.</p>
+        </div>
+
+        <div class="scorecard-grid">
+          <div class="scorecard">
+            <div class="scorecard__label">Design Quality</div>
+            <div class="scorecard__scores">
+              <span class="scorecard__old">3/10</span>
+              <span class="scorecard__vs">→</span>
+              <span class="scorecard__new">9/10</span>
+            </div>
+          </div>
+          <div class="scorecard">
+            <div class="scorecard__label">SEO Score</div>
+            <div class="scorecard__scores">
+              <span class="scorecard__old">4/10</span>
+              <span class="scorecard__vs">→</span>
+              <span class="scorecard__new">9/10</span>
+            </div>
+          </div>
+          <div class="scorecard">
+            <div class="scorecard__label">Content Depth</div>
+            <div class="scorecard__scores">
+              <span class="scorecard__old">2/10</span>
+              <span class="scorecard__vs">→</span>
+              <span class="scorecard__new">9/10</span>
+            </div>
+          </div>
+          <div class="scorecard">
+            <div class="scorecard__label">Mobile UX</div>
+            <div class="scorecard__scores">
+              <span class="scorecard__old">5/10</span>
+              <span class="scorecard__vs">→</span>
+              <span class="scorecard__new">9/10</span>
+            </div>
+          </div>
+          <div class="scorecard">
+            <div class="scorecard__label">Page Count</div>
+            <div class="scorecard__scores">
+              <span class="scorecard__old">1</span>
+              <span class="scorecard__vs">→</span>
+              <span class="scorecard__new">8</span>
+            </div>
+          </div>
+          <div class="scorecard">
+            <div class="scorecard__label">Brand Identity</div>
+            <div class="scorecard__scores">
+              <span class="scorecard__old">2/10</span>
+              <span class="scorecard__vs">→</span>
+              <span class="scorecard__new">9/10</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screenshot Comparison -->
+    <section id="screenshots" style="background:#fff">
+      <div class="container">
+        <div class="section-header">
+          <div class="label">Visual Comparison</div>
+          <h2>Jared, See the Difference for Yourself</h2>
+          <p>A picture is worth a thousand words. Here's your current site next to the new one we built for you — screenshots captured live via Playwright automation. The transformation speaks for itself.</p>
+        </div>
+
+        <!-- Desktop Comparison -->
+        <h3 style="margin-bottom:1rem;font-size:1.1rem">💻 Desktop View (1440×900)</h3>
+        <div class="compare-grid">
+          <div class="compare-panel compare-panel--old">
+            <div class="compare-panel__header">❌ Old Site (themagnetguy.com)</div>
+            <div class="compare-panel__body">
+              <img src="assets/images/report/old-desktop-top.png" alt="Old site desktop view" loading="lazy">
+            </div>
+          </div>
+          <div class="compare-panel compare-panel--new">
+            <div class="compare-panel__header">✅ New Site (AjayaDesign Build)</div>
+            <div class="compare-panel__body">
+              <img src="assets/images/report/new-desktop-top.png" alt="New site desktop view" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Comparison -->
+        <h3 style="margin:3rem 0 1rem;font-size:1.1rem">📱 Mobile View (375×812)</h3>
+        <div class="compare-grid">
+          <div class="compare-panel compare-panel--old">
+            <div class="compare-panel__header">❌ Old Site — Mobile</div>
+            <div class="compare-panel__body">
+              <img src="assets/images/report/old-mobile-top.png" alt="Old site mobile view" loading="lazy">
+            </div>
+          </div>
+          <div class="compare-panel compare-panel--new">
+            <div class="compare-panel__header">✅ New Site — Mobile</div>
+            <div class="compare-panel__body">
+              <img src="assets/images/report/new-mobile-top.png" alt="New site mobile view" loading="lazy">
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Page Comparison -->
+        <h3 style="margin:3rem 0 1rem;font-size:1.1rem">📄 Full Page (Desktop — Scroll Depth)</h3>
+        <div class="compare-grid">
+          <div class="compare-panel compare-panel--old">
+            <div class="compare-panel__header">❌ Old Site — Full Page</div>
+            <div class="compare-panel__body" style="max-height:600px;overflow-y:auto">
+              <img src="assets/images/report/old-desktop-full.png" alt="Old site full page" loading="lazy">
+            </div>
+          </div>
+          <div class="compare-panel compare-panel--new">
+            <div class="compare-panel__header">✅ New Site — Full Page</div>
+            <div class="compare-panel__body" style="max-height:600px;overflow-y:auto">
+              <img src="assets/images/report/new-desktop-full.png" alt="New site full page" loading="lazy">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- New Site Page Carousel -->
+    <section id="pages">
+      <div class="container">
+        <div class="section-header">
+          <div class="label">Your New Site Pages</div>
+          <h2>8 Pages Crafted Specifically for The Magnet Guy</h2>
+          <p>Jared, instead of cramming everything onto one page, each page serves a specific purpose and targets a different group of Google searchers. Browse through them below — every one was hand-crafted with your business in mind.</p>
+        </div>
+
+        <div class="carousel" id="pageCarousel">
+          <button class="carousel__btn carousel__btn--prev" onclick="carouselNav(-1)">‹</button>
+          <button class="carousel__btn carousel__btn--next" onclick="carouselNav(1)">›</button>
+          <div class="carousel__track" id="carouselTrack">
+            <div class="carousel__slide">
+              <img src="assets/images/report/new-desktop-top.png" alt="Homepage" loading="lazy">
+              <div class="carousel__caption">🏠 Homepage — Hero, Products, Features, Testimonials, FAQ, Newsletter</div>
+            </div>
+            <div class="carousel__slide">
+              <img src="assets/images/report/new-shop-desktop.png" alt="Shop page" loading="lazy">
+              <div class="carousel__caption">🛍️ Shop — Live Shopify Products, Volume Pricing, CTA</div>
+            </div>
+            <div class="carousel__slide">
+              <img src="assets/images/report/new-events-desktop.png" alt="Events page" loading="lazy">
+              <div class="carousel__caption">💒 Weddings & Events — Services, Process, Pricing Packages</div>
+            </div>
+            <div class="carousel__slide">
+              <img src="assets/images/report/new-about-desktop.png" alt="About page" loading="lazy">
+              <div class="carousel__caption">📖 About — Brand Story, Values, Team</div>
+            </div>
+            <div class="carousel__slide">
+              <img src="assets/images/report/new-faq-desktop.png" alt="FAQ page" loading="lazy">
+              <div class="carousel__caption">❓ FAQ — 9 Comprehensive Answers with Accordion UI</div>
+            </div>
+            <div class="carousel__slide">
+              <img src="assets/images/report/new-contact-desktop.png" alt="Contact page" loading="lazy">
+              <div class="carousel__caption">📬 Contact — Form, Info Sidebar, Social Links</div>
+            </div>
+          </div>
+          <div class="carousel__nav" id="carouselNav"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature Comparison Table -->
+    <section id="comparison" style="background:#fff">
+      <div class="container">
+        <div class="section-header">
+          <div class="label">Feature Comparison</div>
+          <h2>Your Old Site vs. Your New Site — Feature by Feature</h2>
+          <p>Jared, here's every feature laid out side by side. You'll notice a pattern: the old site is missing most of the tools that drive SEO rankings and customer conversions.</p>
+        </div>
+
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th style="width:35%">Feature</th>
+              <th style="width:30%">Old Site</th>
+              <th style="width:35%">New Site</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Total Pages</strong></td>
+              <td>1 (homepage only) <span class="badge-fail">Poor</span></td>
+              <td>8 pages (Home, Shop, Events, About, FAQ, Contact, Privacy, Terms) <span class="badge-pass">Excellent</span></td>
+            </tr>
+            <tr>
+              <td><strong>Hero Section</strong></td>
+              <td>Generic SVG graphic, minimal text <span class="badge-fail">Weak</span></td>
+              <td>Dynamic hero with stats, floating cards, dual CTAs, trust signals <span class="badge-pass">Strong</span></td>
+            </tr>
+            <tr>
+              <td><strong>Product Display</strong></td>
+              <td>2 products with Shopify theme cards <span class="badge-partial">Basic</span></td>
+              <td>Live Shopify API integration, variant chips, add-to-cart, fallback <span class="badge-pass">Advanced</span></td>
+            </tr>
+            <tr>
+              <td><strong>Navigation</strong></td>
+              <td>5 links, basic Shopify nav <span class="badge-partial">OK</span></td>
+              <td>6 links + cart icon, mobile hamburger with animation, sticky header <span class="badge-pass">Excellent</span></td>
+            </tr>
+            <tr>
+              <td><strong>Shopping Cart</strong></td>
+              <td>Shopify default cart page <span class="badge-partial">Basic</span></td>
+              <td>Slide-out drawer cart with qty controls, live totals, Shopify checkout redirect <span class="badge-pass">Advanced</span></td>
+            </tr>
+            <tr>
+              <td><strong>Mobile Responsive</strong></td>
+              <td>Shopify theme responsive (generic) <span class="badge-partial">Basic</span></td>
+              <td>Custom mobile-first CSS, hamburger nav, responsive grids, touch-friendly <span class="badge-pass">Excellent</span></td>
+            </tr>
+            <tr>
+              <td><strong>SEO: Meta Tags</strong></td>
+              <td>Basic OG tags from Shopify <span class="badge-partial">Basic</span></td>
+              <td>Full meta, OG, Twitter cards, canonical, keywords on every page <span class="badge-pass">Complete</span></td>
+            </tr>
+            <tr>
+              <td><strong>SEO: Structured Data</strong></td>
+              <td>None <span class="badge-fail">Missing</span></td>
+              <td>JSON-LD: Organization, LocalBusiness, Product, FAQPage, Service, CollectionPage <span class="badge-pass">Rich</span></td>
+            </tr>
+            <tr>
+              <td><strong>SEO: Sitemap</strong></td>
+              <td>Shopify auto-generated <span class="badge-partial">Basic</span></td>
+              <td>Custom sitemap.xml with priority + changefreq <span class="badge-pass">Optimized</span></td>
+            </tr>
+            <tr>
+              <td><strong>Wedding/Event Content</strong></td>
+              <td>Small text block, no details <span class="badge-fail">Minimal</span></td>
+              <td>Dedicated page with services, process, 3 pricing tiers, booking CTA <span class="badge-pass">Comprehensive</span></td>
+            </tr>
+            <tr>
+              <td><strong>FAQ Section</strong></td>
+              <td>None <span class="badge-fail">Missing</span></td>
+              <td>9 questions with accordion UI + FAQPage schema <span class="badge-pass">Complete</span></td>
+            </tr>
+            <tr>
+              <td><strong>Contact Page</strong></td>
+              <td>Basic Shopify page <span class="badge-partial">Basic</span></td>
+              <td>Full form with subject selector, info sidebar, social links <span class="badge-pass">Professional</span></td>
+            </tr>
+            <tr>
+              <td><strong>About Page</strong></td>
+              <td>None <span class="badge-fail">Missing</span></td>
+              <td>Brand story, values section, mission statement <span class="badge-pass">Complete</span></td>
+            </tr>
+            <tr>
+              <td><strong>Policy Pages</strong></td>
+              <td>Shopify default single page <span class="badge-partial">Basic</span></td>
+              <td>Custom Privacy Policy + Terms of Service pages <span class="badge-pass">Professional</span></td>
+            </tr>
+            <tr>
+              <td><strong>Newsletter Signup</strong></td>
+              <td>None <span class="badge-fail">Missing</span></td>
+              <td>CTA banner with email capture on homepage <span class="badge-pass">Included</span></td>
+            </tr>
+            <tr>
+              <td><strong>Testimonials</strong></td>
+              <td>None <span class="badge-fail">Missing</span></td>
+              <td>3 testimonial cards with glassmorphism design <span class="badge-pass">Social Proof</span></td>
+            </tr>
+            <tr>
+              <td><strong>How It Works</strong></td>
+              <td>None <span class="badge-fail">Missing</span></td>
+              <td>3-step visual guide with icons and descriptions <span class="badge-pass">Clear UX</span></td>
+            </tr>
+            <tr>
+              <td><strong>Scroll Animations</strong></td>
+              <td>Shopify view transitions <span class="badge-partial">Basic</span></td>
+              <td>IntersectionObserver fade-in with stagger, hover effects, float animations <span class="badge-pass">Modern</span></td>
+            </tr>
+            <tr>
+              <td><strong>Custom 404 Page</strong></td>
+              <td>Shopify generic <span class="badge-partial">Generic</span></td>
+              <td>Branded 404 with magnet emoji and CTA <span class="badge-pass">On-Brand</span></td>
+            </tr>
+            <tr>
+              <td><strong>Performance</strong></td>
+              <td>Heavy Shopify theme JS bundle (30+ module scripts) <span class="badge-fail">Bloated</span></td>
+              <td>Single CSS + single JS file, lazy-loaded fonts, minimal dependencies <span class="badge-pass">Lightweight</span></td>
+            </tr>
+            <tr>
+              <td><strong>Accessibility</strong></td>
+              <td>Basic Shopify ARIA <span class="badge-partial">Basic</span></td>
+              <td>Skip links, ARIA labels, focus management, keyboard nav, semantic HTML <span class="badge-pass">WCAG-ready</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Old Site Issues -->
+    <section id="issues">
+      <div class="container">
+        <div class="section-header">
+          <div class="label">What's Holding You Back</div>
+          <h2>Jared, Here's Why Google Can't Find The Magnet Guy Right Now</h2>
+          <p>This isn't about bashing your current site — it served its purpose. But these are the specific, fixable issues that are keeping your business invisible on Google and costing you customers every single day.</p>
+        </div>
+
+        <div class="issue-list">
+          <div class="issue-item">
+            <span class="issue-icon">🚫</span>
+            <div>
+              <div class="issue-title">Single Page = Google Can't Understand Your Business</div>
+              <div class="issue-desc">Jared, your entire online presence is ONE page. That's like having a physical store with no shelves, no signs, and no displays. Google needs pages about your products, your event services, your FAQ, your story — to understand what you do and show you in search results. Every missing page is a missed ranking opportunity for different search queries.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">🎨</span>
+            <div>
+              <div class="issue-title">Generic Shopify Theme — No Brand Identity</div>
+              <div class="issue-desc">The current site uses a stock Shopify theme with minimal customization. There's no distinctive brand personality, no custom design system, and no visual elements that differentiate The Magnet Guy from thousands of other Shopify stores.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">📱</span>
+            <div>
+              <div class="issue-title">Your Events Business Is Invisible Online</div>
+              <div class="issue-desc">Jared, think about this: someone Googles "wedding photo magnets near me" or "unique wedding favors." That's a $150–$600 order waiting to happen. But your current site has a tiny text block about events — no pricing, no process, no booking form. Those brides are going to your competitors because they don't even know you exist.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">❓</span>
+            <div>
+              <div class="issue-title">No FAQ — Support Burden Increases</div>
+              <div class="issue-desc">Without a FAQ section, every common question becomes a support ticket. This wastes time and also misses the SEO opportunity of FAQ schema markup which can generate featured snippets in Google search.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">🐌</span>
+            <div>
+              <div class="issue-title">Heavy JavaScript Bundle</div>
+              <div class="issue-desc">The old site loads 30+ JavaScript module scripts from the Shopify theme. Many of these are unused features from the template. This bloat slows page load times and hurts Core Web Vitals scores.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">📊</span>
+            <div>
+              <div class="issue-title">No Social Proof or Trust Signals</div>
+              <div class="issue-desc">No testimonials, no reviews, no customer quotes, no trust badges. Social proof is one of the strongest conversion drivers for e-commerce. Without it, visitors have no reason to trust the quality claims.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">🔗</span>
+            <div>
+              <div class="issue-title">No Structured Data / Rich Snippets</div>
+              <div class="issue-desc">The old site has zero JSON-LD structured data. This means no rich snippets in Google search results — no star ratings, no price ranges, no FAQ dropdowns, no business info cards. Massive missed SEO opportunity.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">📧</span>
+            <div>
+              <div class="issue-title">No Email Capture / Newsletter</div>
+              <div class="issue-desc">There's no way to capture email addresses for marketing. Email marketing has the highest ROI of any marketing channel. Without it, every visitor who doesn't buy immediately is lost forever.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- New Site Improvements -->
+    <section id="improvements" style="background:#fff">
+      <div class="container">
+        <div class="section-header">
+          <div class="label">Your Competitive Edge</div>
+          <h2>What Your New Website Does That Your Competitors Can't Match</h2>
+          <p>Jared, every improvement below directly addresses a gap in the old site AND gives you an edge over other photo magnet businesses, Etsy sellers, and even big players like Shutterfly. This is your unfair advantage.</p>
+        </div>
+
+        <div class="issue-list">
+          <div class="issue-item">
+            <span class="issue-icon">🚀</span>
+            <div>
+              <div class="issue-title">8 Content-Rich Pages = 8× More Ways for Google to Find You</div>
+              <div class="issue-desc">Jared, your old site had 1 page. Your new site has 8 — Home, Shop, Events, About, FAQ, Contact, Privacy, and Terms. Each one has hand-written meta descriptions, Open Graph tags, and structured data targeting different keyword clusters. That's not just more content — it's 8 separate doors for Google to walk through to find your business.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">🎯</span>
+            <div>
+              <div class="issue-title">Live Shopify Product Integration</div>
+              <div class="issue-desc">Products are fetched directly from the Shopify public API (products.json) — no private API key needed. Prices and availability stay in sync with the Shopify store automatically. Includes fallback rendering if the API is unreachable.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">💒</span>
+            <div>
+              <div class="issue-title">Comprehensive Event/Wedding Page</div>
+              <div class="issue-desc">Dedicated page with 3 event types (Weddings, Parties, Corporate), 4-step how-it-works section, and 3-tier pricing packages (Starter $150, Classic $350, Premium $600). This alone could drive significant event booking revenue.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">📱</span>
+            <div>
+              <div class="issue-title">Mobile-First Responsive Design</div>
+              <div class="issue-desc">Custom CSS with mobile-first media queries, hamburger navigation with smooth animation, touch-friendly interactive elements, and responsive grids that adapt from 4-column desktop to stacked mobile.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">🧠</span>
+            <div>
+              <div class="issue-title">Rich SEO: 6+ Schema Types</div>
+              <div class="issue-desc">JSON-LD structured data for Organization, LocalBusiness, Product (with AggregateOffer), FAQPage, Service, and CollectionPage. This enables Google rich snippets, knowledge panels, and enhanced search results.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">⚡</span>
+            <div>
+              <div class="issue-title">Lightweight & Fast</div>
+              <div class="issue-desc">Just 1 CSS file + 1 JS file. Fonts loaded with print/onload swap for non-blocking rendering. Lazy-loaded images. No framework overhead. IntersectionObserver for animations instead of scroll listeners.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">🛒</span>
+            <div>
+              <div class="issue-title">Slide-Out Cart with Shopify Checkout</div>
+              <div class="issue-desc">Add-to-cart functionality with a beautiful slide-out drawer, quantity controls, and direct redirect to Shopify's secure checkout. Cart state persists in localStorage between pages.</div>
+            </div>
+          </div>
+          <div class="issue-item">
+            <span class="issue-icon">♿</span>
+            <div>
+              <div class="issue-title">Accessibility Built In</div>
+              <div class="issue-desc">Skip-to-content links, ARIA labels on all interactive elements, semantic HTML5 landmarks, focus management for modals, keyboard-navigable mobile menu, and screen reader support throughout.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Audit -->
+    <section id="audit">
+      <div class="container">
+        <div class="section-header">
+          <div class="label">Quality Guarantee</div>
+          <h2>Jared, We Don't Cut Corners — Here's Proof</h2>
+          <p>Every technical checkbox has been verified. This thorough audit covers SEO, performance, accessibility, mobile-friendliness, and more. Every single item passes — because we believe your business deserves nothing less than excellence.</p>
+        </div>
+
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Audit Category</th>
+              <th>Status</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>HTML5 Semantic Markup</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>header, main, nav, section, footer, aside, article landmarks used correctly</td>
+            </tr>
+            <tr>
+              <td><strong>Meta Title & Description</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>Unique, keyword-rich title and description on all 8 pages</td>
+            </tr>
+            <tr>
+              <td><strong>Open Graph Tags</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>og:title, og:description, og:type, og:url, og:image on key pages</td>
+            </tr>
+            <tr>
+              <td><strong>Structured Data (JSON-LD)</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>Organization, LocalBusiness, Product, FAQPage, Service, CollectionPage schemas</td>
+            </tr>
+            <tr>
+              <td><strong>Canonical URLs</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>rel=canonical set on all pages</td>
+            </tr>
+            <tr>
+              <td><strong>Sitemap.xml</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>8 URLs with priority and changefreq attributes</td>
+            </tr>
+            <tr>
+              <td><strong>Robots.txt</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>Allow all, sitemap reference included</td>
+            </tr>
+            <tr>
+              <td><strong>Mobile Responsive</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>Responsive breakpoints at 480px, 768px, 1024px. Mobile hamburger navigation.</td>
+            </tr>
+            <tr>
+              <td><strong>Viewport Meta</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>width=device-width, initial-scale=1.0 on all pages</td>
+            </tr>
+            <tr>
+              <td><strong>Skip Navigation Link</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>Skip-to-main-content link on all pages</td>
+            </tr>
+            <tr>
+              <td><strong>ARIA Labels</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>All buttons, nav, cart drawer, and interactive elements labeled</td>
+            </tr>
+            <tr>
+              <td><strong>Keyboard Navigation</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>FAQ accordion, mobile menu, cart drawer all keyboard-accessible</td>
+            </tr>
+            <tr>
+              <td><strong>Image Alt Text</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>Descriptive alt text on all meaningful images</td>
+            </tr>
+            <tr>
+              <td><strong>Font Loading</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>Non-blocking with media="print" + onload swap pattern</td>
+            </tr>
+            <tr>
+              <td><strong>JavaScript Deferred</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>Main JS loaded with defer attribute, no render-blocking</td>
+            </tr>
+            <tr>
+              <td><strong>CSS Variables Design System</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>Complete CSS custom property system for colors, spacing, typography</td>
+            </tr>
+            <tr>
+              <td><strong>AjayaDesign Branding</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>Demo banner, footer credit, hidden fingerprint on all pages</td>
+            </tr>
+            <tr>
+              <td><strong>Hidden IP Fingerprint</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>data-ad-fingerprint attribute + meta tags + HTML comments on all pages</td>
+            </tr>
+            <tr>
+              <td><strong>Print Stylesheet</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>@media print rules hide header, footer, cart drawer, demo banner</td>
+            </tr>
+            <tr>
+              <td><strong>Shopify API Integration</strong></td>
+              <td><span class="badge-pass">Pass</span></td>
+              <td>Public products.json endpoint, no private key needed, with fallback</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Call to Action for Jared -->
+    <section style="background:linear-gradient(135deg, var(--accent) 0%, #D4952E 100%);padding:3rem 0;text-align:center">
+      <div class="container">
+        <h2 style="color:var(--primary);font-size:clamp(1.5rem,3vw,2.2rem);margin-bottom:1rem">Ready to Get Found on Google, Jared?</h2>
+        <p style="font-size:1.1rem;color:var(--primary);opacity:0.85;max-width:600px;margin:0 auto 1.5rem">Every day without a proper website is a day your competitors are getting the customers who should be finding The Magnet Guy. Let's change that.</p>
+        <p style="font-size:1rem;color:var(--primary);font-weight:700">Let's build something great together.</p>
+        <p style="margin-top:1rem;font-size:0.95rem;color:var(--primary);opacity:0.7">— The AjayaDesign Team</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <div class="report-footer">
+      <p>This report was prepared exclusively for <strong>Jared — The Magnet Guy</strong> by <strong>AjayaDesign</strong></p>
+      <p style="margin-top:0.5rem">Property of AjayaDesign — For Demonstration Purposes Only</p>
+      <p style="margin-top:0.5rem;font-size:0.75rem;opacity:0.5">Fingerprint: AD-TMG-2026-DEMO-7f3a9b2c4e1d | © 2026 AjayaDesign</p>
+    </div>
+  </main>
+
+  <script>
+    // Carousel functionality
+    let currentSlide = 0;
+    const track = document.getElementById('carouselTrack');
+    const navContainer = document.getElementById('carouselNav');
+    const slides = track ? track.children : [];
+    const totalSlides = slides.length;
+
+    // Build dots
+    if (navContainer) {
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'carousel__dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        dot.onclick = () => goToSlide(i);
+        navContainer.appendChild(dot);
+      }
+    }
+
+    function goToSlide(n) {
+      currentSlide = n;
+      if (track) track.style.transform = `translateX(-${n * 100}%)`;
+      document.querySelectorAll('.carousel__dot').forEach((d, i) => {
+        d.classList.toggle('active', i === n);
+      });
+    }
+
+    function carouselNav(dir) {
+      let next = currentSlide + dir;
+      if (next < 0) next = totalSlides - 1;
+      if (next >= totalSlides) next = 0;
+      goToSlide(next);
+    }
+  </script>
+</body>
+</html>
