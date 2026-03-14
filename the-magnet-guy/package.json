@@ -4,10 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx playwright test",
+    "test:pages": "npx playwright test tests/pages.spec.js",
+    "test:a11y": "npx playwright test tests/accessibility.spec.js",
+    "test:mobile": "npx playwright test tests/mobile.spec.js --project=mobile-iphone --project=mobile-android",
+    "test:desktop": "npx playwright test --project=desktop-chrome",
+    "test:report": "npx playwright show-report"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@playwright/test": "^1.58.2"
+  }
 }
