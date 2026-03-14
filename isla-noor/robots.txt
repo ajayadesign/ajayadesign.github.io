@@ -1,0 +1,14 @@
+# Isla Noor Accessories — robots.txt
+# Built by AjayaDesign
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://ajayadesign.github.io/isla-noor/sitemap.xml
+
+# Block internal tooling files
+Disallow: /audit.js
+Disallow: /screenshot.js
+Disallow: /_products.json
+Disallow: /_collections.json

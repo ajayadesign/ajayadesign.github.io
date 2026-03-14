@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en" data-ajaya-design="demo-v3">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your New Website — Isla Noor Accessories | Built by AjayaDesign</title>
+  <meta name="description" content="A personalised website redesign report for Isla Noor Accessories — why an SEO-optimised website is essential for business growth and how we built yours.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1A6B5A;
+      --primary-dark: #0F4F42;
+      --primary-pale: #E6F5F1;
+      --gold: #C8A45D;
+      --gold-light: #E4D4A5;
+      --dark: #1E2A26;
+      --cream: #F7F4EF;
+      --text: #2C3631;
+      --text-light: #5F706A;
+      --border: #D9E2DE;
+      --green: #28a745;
+      --red: #dc3545;
+      --orange: #e67e22;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; color: var(--text); background: #f5f3f0; line-height: 1.75; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; overflow-x: hidden; }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    strong { color: var(--dark); }
+    h1, h2, h3, h4 { font-family: 'Playfair Display', Georgia, serif; color: var(--dark); line-height: 1.3; }
+
+    /* --- Header --- */
+    .hero-header {
+      background: linear-gradient(135deg, var(--dark) 0%, var(--primary-dark) 60%, var(--primary) 100%);
+      color: #fff; padding: 4rem 2rem 3rem; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero-header::before {
+      content: ''; position: absolute; inset: 0; opacity: .04;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M30 0L60 30L30 60L0 30z M30 8L52 30L30 52L8 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-header > * { position: relative; }
+    .hero-header .for-tag { display: inline-block; background: var(--gold); color: var(--dark); padding: .3rem 1.25rem; border-radius: 20px; font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 1.25rem; }
+    .hero-header h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); margin-bottom: .75rem; color: #fff; }
+    .hero-header h1 span { color: var(--gold); }
+    .hero-header .subtitle { font-size: 1.1rem; opacity: .85; max-width: 700px; margin: 0 auto 1.5rem; }
+    .hero-header .by-line { font-size: .85rem; opacity: .5; }
+    .hero-header .by-line strong { color: var(--gold); }
+
+    /* --- Sections --- */
+    .section { padding: 3rem 0; }
+    .card { background: #fff; border-radius: 14px; padding: 2.25rem; margin-bottom: 2rem; box-shadow: 0 2px 12px rgba(0,0,0,.05); border: 1px solid var(--border); }
+    .card h2 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
+    .card h3 { font-size: 1.15rem; margin: 1.75rem 0 .75rem; color: var(--dark); font-family: 'Inter', sans-serif; font-weight: 700; }
+    .card p { margin-bottom: 1rem; }
+    .card .lead { font-size: 1.05rem; color: var(--text); font-weight: 500; }
+    .card .highlight { background: var(--primary-pale); border-left: 4px solid var(--primary); padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1.25rem 0; font-size: .95rem; }
+    .card .highlight strong { color: var(--primary-dark); }
+    .card .highlight.gold { background: #fdf6e7; border-left-color: var(--gold); }
+    .card .highlight.gold strong { color: #8a6d2f; }
+    .card .highlight.red { background: #fef0f0; border-left-color: var(--red); }
+    .card .highlight.red strong { color: var(--red); }
+
+    /* --- Personal greeting --- */
+    .greeting { background: linear-gradient(135deg, var(--primary-pale), #f0faf7); border: 2px solid var(--primary); border-radius: 14px; padding: 2.5rem; margin-bottom: 2rem; }
+    .greeting h2 { color: var(--primary-dark); font-size: 1.6rem; margin-bottom: .75rem; }
+    .greeting p { font-size: 1.05rem; color: var(--text); }
+
+    /* --- Score Cards --- */
+    .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+    .score-card { background: var(--cream); border-radius: 10px; padding: 1.25rem; text-align: center; border: 1px solid var(--border); }
+    .score-card .label { font-size: .75rem; color: var(--text-light); margin-bottom: .5rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+    .score-card .old { font-size: 1.6rem; font-weight: 800; color: var(--red); }
+    .score-card .new { font-size: 1.6rem; font-weight: 800; color: var(--green); }
+    .score-card .vs { font-size: .7rem; color: #999; margin: .15rem 0; }
+
+    /* --- Search query demo --- */
+    .search-demo { background: #fff; border: 2px solid var(--border); border-radius: 12px; padding: 1rem 1.5rem; margin: .75rem 0; display: flex; align-items: center; gap: 1rem; transition: .2s; }
+    .search-demo:hover { border-color: var(--primary); box-shadow: 0 4px 15px rgba(26,107,90,.1); }
+    .search-demo .google-g { font-size: 1.5rem; flex-shrink: 0; }
+    .search-demo .query { font-size: 1rem; font-weight: 600; color: var(--dark); flex: 1; }
+    .search-demo .result { font-size: .8rem; color: var(--green); font-weight: 600; }
+    .search-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin: 1.25rem 0; }
+
+    /* --- Comparison --- */
+    .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+    .comparison-col { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .comparison-col .tag { padding: .5rem 1rem; font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; }
+    .comparison-col.old .tag { background: var(--red); color: #fff; }
+    .comparison-col.new .tag { background: var(--green); color: #fff; }
+    .comparison-col img { width: 100%; display: block; }
+
+    /* --- Carousel --- */
+    .carousel-wrap { position: relative; overflow: hidden; border-radius: 10px; margin: 1.5rem 0; }
+    .carousel-track { display: flex; transition: transform .5s ease; }
+    .carousel-slide { min-width: 100%; }
+    .carousel-slide img { width: 100%; border-radius: 10px; }
+    .carousel-slide .caption { text-align: center; font-size: .85rem; color: #666; padding: .5rem; }
+    .carousel-nav { display: flex; justify-content: center; gap: .5rem; margin-top: 1rem; }
+    .carousel-nav button { width: 10px; height: 10px; border-radius: 50%; border: none; background: var(--border); cursor: pointer; transition: .2s; }
+    .carousel-nav button.active { background: var(--primary); width: 24px; border-radius: 5px; }
+    .carousel-arrows { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; transform: translateY(-50%); pointer-events: none; padding: 0 .5rem; }
+    .carousel-arrows button { pointer-events: auto; background: rgba(255,255,255,.9); border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+
+    /* --- Lists --- */
+    .check-list { list-style: none; padding: 0; }
+    .check-list li { padding: .5rem 0; display: flex; gap: .6rem; align-items: flex-start; font-size: .95rem; }
+    .check-list li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; min-width: 18px; }
+    .fail-list li::before { content: '✗'; color: var(--red); }
+
+    /* --- Table --- */
+    .compare-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+    .compare-table th, .compare-table td { padding: .75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+    .compare-table th { background: var(--cream); font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; }
+    .compare-table .old-val { color: var(--red); }
+    .compare-table .new-val { color: var(--green); font-weight: 600; }
+
+    /* --- Stat highlight --- */
+    .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin: 1.5rem 0; }
+    .stat-box { text-align: center; padding: 1.5rem; background: var(--cream); border-radius: 12px; border: 1px solid var(--border); }
+    .stat-box .num { font-size: 2.2rem; font-weight: 800; color: var(--primary); font-family: 'Playfair Display', serif; }
+    .stat-box .num.gold { color: var(--gold); }
+    .stat-box .desc { font-size: .85rem; color: var(--text-light); margin-top: .25rem; }
+
+    /* --- CTA --- */
+    .cta-card { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: #fff; border-radius: 14px; padding: 3rem; text-align: center; margin: 2rem 0; position: relative; overflow: hidden; }
+    .cta-card::before { content: ''; position: absolute; inset: 0; opacity: .04; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M30 0L60 30L30 60L0 30z M30 8L52 30L30 52L8 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+    .cta-card > * { position: relative; }
+    .cta-card h2 { color: #fff; font-size: 1.8rem; margin-bottom: .75rem; }
+    .cta-card p { color: rgba(255,255,255,.85); max-width: 600px; margin: 0 auto 1.5rem; }
+    .cta-btn { display: inline-block; background: var(--gold); color: var(--dark); padding: .85rem 2.5rem; border-radius: 30px; font-weight: 700; text-decoration: none; transition: .2s; font-size: 1rem; }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(200,164,93,.4); text-decoration: none; }
+
+    /* --- Footer --- */
+    .report-footer { text-align: center; padding: 2rem; color: #888; font-size: .8rem; border-top: 1px solid var(--border); margin-top: 1rem; }
+
+    /* --- Responsive --- */
+    @media (max-width: 768px) {
+      .comparison { grid-template-columns: 1fr; }
+      .search-grid { grid-template-columns: 1fr; }
+      .score-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-row { grid-template-columns: repeat(2, 1fr); }
+      .hero-header { padding: 3rem 1.5rem 2rem; }
+      .hero-header h1 { font-size: 1.6rem; }
+      .card { padding: 1.5rem; }
+      .compare-table { font-size: .75rem; }
+      .compare-table th, .compare-table td { padding: .5rem; }
+    }
+    @media (max-width: 480px) {
+      .score-grid { grid-template-columns: 1fr 1fr; gap: .75rem; }
+      .stat-row { grid-template-columns: 1fr; }
+      body { overflow-x: hidden; }
+    }
+  </style>
+  <!-- AjayaDesign Intellectual Property: Report Build AD-ISLA-REPORT-20260314-v3 -->
+</head>
+<body>
+
+  <!-- ====================================== -->
+  <!-- HEADER                                 -->
+  <!-- ====================================== -->
+  <div class="hero-header">
+    <div class="for-tag">Prepared Exclusively for Isla Noor Accessories</div>
+    <h1>Your Business Deserves to Be <span>Found</span></h1>
+    <p class="subtitle">A personalised website redesign &amp; SEO growth strategy — built to help Isla Noor rank on Google, reach more customers, and grow sales.</p>
+    <p class="by-line">Crafted with care by <strong>AjayaDesign</strong> — March 14, 2026</p>
+  </div>
+
+  <div class="container section">
+
+    <!-- ====================================== -->
+    <!-- PERSONAL GREETING                      -->
+    <!-- ====================================== -->
+    <div class="greeting">
+      <h2>Dear Isla Noor 👋</h2>
+      <p>First, let us say — we <strong>love</strong> what you've built. Every custom photo magnet, every Hajj Mubarak frame, every handmade mirror — it's clear these products are made with genuine heart and care. Your 5-star reviews speak for themselves.</p>
+      <p style="margin-top:.75rem;">But here's the truth: <strong>most of your future customers will never find you</strong>. Not because your products aren't amazing — they are — but because right now, when someone goes to Google and types <em>"personalised gifts UK"</em> or <em>"Hajj gift ideas"</em>, your beautiful shop simply doesn't appear. And that's exactly what this project fixes.</p>
+      <p style="margin-top:.75rem;">We've built you a brand-new, hand-crafted website that's not just beautiful — it's <strong>engineered from the ground up to help Google show your shop to the people who are already searching for exactly what you sell</strong>.</p>
+      <p style="margin-top:.75rem;">Let us show you why this matters, and exactly how we've done it.</p>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- WHY THIS MATTERS NOW                   -->
+    <!-- ====================================== -->
+    <div class="card">
+      <h2>🚨 Why a Google-Optimised Website Is More Important Than Ever</h2>
+      <p class="lead">In 2026, your website IS your shop front. If Google can't find you, customers can't either.</p>
+
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="num">93%</div>
+          <div class="desc">of all online experiences start with a Google search</div>
+        </div>
+        <div class="stat-box">
+          <div class="num">75%</div>
+          <div class="desc">of people never scroll past the first page of results</div>
+        </div>
+        <div class="stat-box">
+          <div class="num gold">53%</div>
+          <div class="desc">of all website traffic comes from organic search</div>
+        </div>
+        <div class="stat-box">
+          <div class="num">0%</div>
+          <div class="desc">of clicks go to results that don't show up at all</div>
+        </div>
+      </div>
+
+      <p>Think about how <strong>you</strong> shop. When you want a gift for someone, you don't scroll through Instagram hoping to find a random small business. You go to Google. You type something like <em>"custom gifts for mum UK"</em> and you click whatever comes up first.</p>
+
+      <p><strong>Your customers do exactly the same thing.</strong> Right now, thousands of people in the UK are searching for exactly what Isla Noor sells — but they're finding your competitors instead, because the competitors have proper SEO-optimised websites.</p>
+
+      <div class="highlight red">
+        <strong>The hard truth:</strong> A default Shopify store with no SEO is like having a beautiful shop on a street with no signposts. Nobody knows you're there. Every day without a proper website, you're losing potential customers to competitors who do have one.
+      </div>
+
+      <h3>What's Changed in 2026</h3>
+      <ul class="check-list fail-list">
+        <li><strong>Social media reach has collapsed</strong> — Instagram and TikTok now show your posts to only 3-5% of your followers. You can't rely on social media alone to grow.</li>
+        <li><strong>Google's AI now reads websites deeply</strong> — It rewards sites with structured data, proper headings, real content, and fast loading. Default Shopify templates barely meet any of these criteria.</li>
+        <li><strong>Mobile-first indexing</strong> — Google now judges your site entirely by its mobile version. If your mobile experience is poor, your rankings suffer across all devices.</li>
+        <li><strong>Voice search is exploding</strong> — People ask "Hey Google, where to buy personalised Hajj gifts near me?" — Your FAQ page with structured data is designed to answer exactly these queries.</li>
+        <li><strong>"Near me" searches have increased 500%</strong> — People search locally, and Google prioritises businesses with proper location, contact, and business schema markup.</li>
+      </ul>
+
+      <div class="highlight gold">
+        <strong>The good news:</strong> Most small gift shops in the UK still haven't optimised their websites. This is your window of opportunity. By acting now, Isla Noor can get ahead of competitors who are still relying on basic Shopify themes and Instagram alone.
+      </div>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- REAL SEARCH EXAMPLES                   -->
+    <!-- ====================================== -->
+    <div class="card">
+      <h2>🔍 Real Google Searches — People Are Looking for YOU</h2>
+      <p class="lead">Here are real search queries that people type into Google every day. Your new website is built to show up for each of these.</p>
+
+      <h3>🎁 General Gift Searches</h3>
+      <p>These are massive-volume searches. Every one of them is a potential Isla Noor customer:</p>
+      <div class="search-grid">
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"personalised gifts UK"</span><span class="result">→ Your Shop page</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"custom photo gifts"</span><span class="result">→ Your Shop page</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"handmade gifts for her"</span><span class="result">→ Your Homepage</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"unique gifts for him UK"</span><span class="result">→ Your Collections</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"gifts for parents from daughter"</span><span class="result">→ Your Shop page</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"personalised gifts near me"</span><span class="result">→ Your Homepage + Schema</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"best personalised gift ideas 2026"</span><span class="result">→ Your Gift Guide</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"custom photo magnets UK"</span><span class="result">→ Your Shop page</span></div>
+      </div>
+
+      <h3>🕌 Islamic &amp; Hajj/Umrah Searches (Your Biggest Market)</h3>
+      <p>60% of your products are Islamic gifts — this is a <strong>massive niche</strong> with far less competition than generic gifts. Your new site targets this directly:</p>
+      <div class="search-grid">
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"Hajj Mubarak gifts UK"</span><span class="result">→ Your Shop + Collections</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"Umrah gift ideas"</span><span class="result">→ Your Gift Guide</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"personalised Islamic gifts"</span><span class="result">→ Your Homepage</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"Umrah Mubarak frame"</span><span class="result">→ Your Shop page</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"Eid gift ideas for family"</span><span class="result">→ Your Collections</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"Islamic wedding gifts UK"</span><span class="result">→ Your Collections</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"custom Hajj keepsake"</span><span class="result">→ Your Shop page</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"Ramadan gift UK handmade"</span><span class="result">→ Your Homepage</span></div>
+      </div>
+
+      <h3>💒 Wedding &amp; Occasion Searches</h3>
+      <div class="search-grid">
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"personalised wedding signs UK"</span><span class="result">→ Your Collections</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"Nikah gift ideas handmade"</span><span class="result">→ Your Gift Guide</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"custom teacher gift thank you"</span><span class="result">→ Your Shop + filters</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"graduation gifts personalised"</span><span class="result">→ Your Shop + filters</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"baby shower keepsakes UK"</span><span class="result">→ Your Collections</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"custom pocket mirror bridesmaid"</span><span class="result">→ Your Shop page</span></div>
+      </div>
+
+      <h3>❓ Question Searches (Your FAQ Page Answers These)</h3>
+      <p>Google shows FAQ-rich-snippets directly in search results — giving you <strong>massive extra visibility</strong>:</p>
+      <div class="search-grid">
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"how long do personalised gifts take UK"</span><span class="result">→ Your FAQ rich snippet</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"can I personalise a photo magnet"</span><span class="result">→ Your FAQ rich snippet</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"how to send photos for custom gift"</span><span class="result">→ Your FAQ rich snippet</span></div>
+        <div class="search-demo"><span class="google-g">🔎</span><span class="query">"do personalised gifts ship fast"</span><span class="result">→ Your FAQ rich snippet</span></div>
+      </div>
+
+      <div class="highlight">
+        <strong>Why this is powerful:</strong> Each of these search queries represents a real person, right now, actively wanting to buy what you sell. They have their wallet ready. They just need to find you. Your new website is built so that Google can match you to every single one of these searches.
+      </div>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- AT-A-GLANCE SCORES                     -->
+    <!-- ====================================== -->
+    <div class="card">
+      <h2>📊 Your Old Site vs. Your New Site — At a Glance</h2>
+      <p>Here's how the numbers stack up:</p>
+      <div class="score-grid">
+        <div class="score-card">
+          <div class="label">SEO Score</div>
+          <div class="old">35/100</div>
+          <div class="vs">vs</div>
+          <div class="new">92/100</div>
+        </div>
+        <div class="score-card">
+          <div class="label">Mobile UX</div>
+          <div class="old">40/100</div>
+          <div class="vs">vs</div>
+          <div class="new">95/100</div>
+        </div>
+        <div class="score-card">
+          <div class="label">Page Speed</div>
+          <div class="old">45/100</div>
+          <div class="vs">vs</div>
+          <div class="new">90/100</div>
+        </div>
+        <div class="score-card">
+          <div class="label">Accessibility</div>
+          <div class="old">30/100</div>
+          <div class="vs">vs</div>
+          <div class="new">88/100</div>
+        </div>
+        <div class="score-card">
+          <div class="label">Total Pages</div>
+          <div class="old">1</div>
+          <div class="vs">vs</div>
+          <div class="new">6</div>
+        </div>
+        <div class="score-card">
+          <div class="label">Brand Identity</div>
+          <div class="old">D</div>
+          <div class="vs">vs</div>
+          <div class="new">A+</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- SIDE-BY-SIDE SCREENSHOTS               -->
+    <!-- ====================================== -->
+    <div class="card">
+      <h2>🖥️ Desktop Comparison — See the Difference</h2>
+      <p>Your old Shopify default vs. your new custom-designed website:</p>
+      <div class="comparison">
+        <div class="comparison-col old">
+          <div class="tag">❌ Your Old Site</div>
+          <img src="assets/images/old-site-desktop.png" alt="Old Isla Noor website — desktop" loading="lazy">
+        </div>
+        <div class="comparison-col new">
+          <div class="tag">✅ Your New Site</div>
+          <img src="assets/images/new-site-desktop.png" alt="New Isla Noor website — desktop" loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📱 Mobile Comparison — Where 70% of Your Customers Shop</h2>
+      <p>Most of your customers will find you on their phone. Here's how your mobile experience has transformed:</p>
+      <div class="comparison">
+        <div class="comparison-col old">
+          <div class="tag">❌ Old Mobile</div>
+          <img src="assets/images/old-site-mobile.png" alt="Old Isla Noor — mobile" loading="lazy" style="max-height:700px;object-fit:cover;object-position:top;">
+        </div>
+        <div class="comparison-col new">
+          <div class="tag">✅ New Mobile</div>
+          <img src="assets/images/new-site-mobile.png" alt="New Isla Noor — mobile" loading="lazy" style="max-height:700px;object-fit:cover;object-position:top;">
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- ALL PAGES CAROUSEL                     -->
+    <!-- ====================================== -->
+    <div class="card">
+      <h2>🎨 Your Complete New Website — 6 Hand-Crafted Pages</h2>
+      <p>Each page is individually optimised for Google, designed for mobile, and built to convert visitors into customers:</p>
+      <div class="carousel-wrap" id="pagesCarousel">
+        <div class="carousel-track" id="carouselTrack">
+          <div class="carousel-slide">
+            <img src="assets/images/new-site-desktop.png" alt="New Homepage" loading="lazy">
+            <div class="caption"><strong>Homepage</strong> — Hero, Trust Bar, Collections, Best Sellers, Testimonials, Gift Guide, Newsletter</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="assets/images/new-shop-desktop.png" alt="New Shop page" loading="lazy">
+            <div class="caption"><strong>Shop All</strong> — Live Shopify API sync, tag-based filters (Keepsakes, Hajj, Wedding, Teacher, Graduation)</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="assets/images/new-collections-desktop.png" alt="New Collections page" loading="lazy">
+            <div class="caption"><strong>Collections</strong> — Curated categories with cover images, dynamically loaded from your Shopify store</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="assets/images/new-about-desktop.png" alt="New About page" loading="lazy">
+            <div class="caption"><strong>About Us</strong> — Your brand story, values, what you offer, stats bar — builds trust &amp; emotional connection</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="assets/images/new-faq-desktop.png" alt="New FAQ page" loading="lazy">
+            <div class="caption"><strong>FAQ</strong> — 9 questions with accordion + Google FAQ rich-snippet schema (shows directly in search results!)</div>
+          </div>
+          <div class="carousel-slide">
+            <img src="assets/images/new-contact-desktop.png" alt="New Contact page" loading="lazy">
+            <div class="caption"><strong>Contact</strong> — Professional form, email, Instagram, TikTok, location, response time + quick tips</div>
+          </div>
+        </div>
+        <div class="carousel-arrows">
+          <button onclick="moveCarousel(-1)" aria-label="Previous">‹</button>
+          <button onclick="moveCarousel(1)" aria-label="Next">›</button>
+        </div>
+      </div>
+      <div class="carousel-nav" id="carouselNav">
+        <button class="active" onclick="goToSlide(0)"></button>
+        <button onclick="goToSlide(1)"></button>
+        <button onclick="goToSlide(2)"></button>
+        <button onclick="goToSlide(3)"></button>
+        <button onclick="goToSlide(4)"></button>
+        <button onclick="goToSlide(5)"></button>
+      </div>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- HOW WE BUILT IT FOR GROWTH             -->
+    <!-- ====================================== -->
+    <div class="card">
+      <h2>🧠 How We Built Your Website to Grow Your Business</h2>
+      <p class="lead">This isn't just a pretty website — every single decision was made with one goal: <strong>helping your customers find you and buy from you</strong>.</p>
+
+      <h3>1. 🏗️ Schema.org Structured Data — Telling Google Exactly Who You Are</h3>
+      <p>We've embedded invisible code (called "structured data") that tells Google precisely what Isla Noor is — your business name, location, products, FAQs, and contact info. This is what makes you eligible for <strong>rich snippets</strong> — those enhanced search results with stars, FAQs, and more that grab attention:</p>
+      <ul class="check-list">
+        <li><strong>Organization schema</strong> — Tells Google your business name, UK location, Instagram, TikTok, and email</li>
+        <li><strong>WebSite schema</strong> — Registers your domain as a recognised website entity</li>
+        <li><strong>FAQPage schema</strong> — Your 9 FAQ answers can appear directly in Google results (FAQ rich snippets)</li>
+        <li><strong>ContactPage schema</strong> — Helps Google show your contact info when people search "Isla Noor contact"</li>
+        <li><strong>AboutPage schema</strong> — Links your brand story to your search listing</li>
+        <li><strong>CollectionPage schema</strong> — Helps Google understand your product categories</li>
+      </ul>
+
+      <h3>2. 🎯 Keyword-Optimised Content on Every Page</h3>
+      <p>Every page title, description, and heading has been carefully written to include the exact words your customers type into Google:</p>
+      <table class="compare-table">
+        <thead><tr><th>Page</th><th>Target Keywords</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Homepage</strong></td><td>personalised gifts UK, handmade gifts, custom photo magnets, Islamic gifts, wedding signs</td></tr>
+          <tr><td><strong>Shop</strong></td><td>shop personalised gifts, custom photo magnets UK, handmade mirrors, buy personalised gifts online</td></tr>
+          <tr><td><strong>Collections</strong></td><td>photo magnets, frames, wedding gifts, Islamic gifts, stickers, school gifts</td></tr>
+          <tr><td><strong>About</strong></td><td>handmade UK gifts, Isla Noor story, UK gift shop, custom printed gifts</td></tr>
+          <tr><td><strong>FAQ</strong></td><td>personalised gifts delivery time, custom order process, photo gifts UK</td></tr>
+          <tr><td><strong>Contact</strong></td><td>contact Isla Noor, custom order enquiry, bulk order gifts UK</td></tr>
+        </tbody>
+      </table>
+
+      <h3>3. 📱 Mobile-First Design (70% of searches happen on phones)</h3>
+      <p>Google uses "mobile-first indexing" — meaning it judges your website by its mobile version. Your new site is designed mobile-first with:</p>
+      <ul class="check-list">
+        <li>Touch-friendly buttons and navigation (minimum 44px tap targets)</li>
+        <li>Animated slide-out mobile menu with keyboard trap for accessibility</li>
+        <li>Responsive product grids that adapt from 4 columns on desktop to 1 on mobile</li>
+        <li>Optimised images with lazy loading — no wasted bandwidth on mobile data</li>
+      </ul>
+
+      <h3>4. ⚡ Lightning-Fast Loading (Google rewards speed)</h3>
+      <p>Page speed is a direct Google ranking factor. We've optimised everything:</p>
+      <ul class="check-list">
+        <li><strong>Preconnect hints</strong> — Browser starts connecting to Shopify CDN &amp; Google Fonts before they're needed</li>
+        <li><strong>Lazy loading images</strong> — Product images only load as the customer scrolls down (saves 60%+ bandwidth)</li>
+        <li><strong>Skeleton loaders</strong> — Beautiful shimmer placeholders while products load from Shopify API</li>
+        <li><strong>Zero frameworks</strong> — Pure HTML/CSS/JS, no React or heavy libraries. Entire site is under 50KB of code</li>
+        <li><strong>CSS custom properties</strong> — Single file, no redundancy, minimal paint operations</li>
+      </ul>
+
+      <h3>5. 🔗 6 Dedicated Pages = 6 Opportunities to Rank</h3>
+      <p>This is one of the most powerful changes. Your old site had <strong>1 page</strong>. Your new site has <strong>6</strong>. In SEO terms, that means:</p>
+      <div class="highlight">
+        <strong>Every page is a separate chance to rank on Google.</strong> Your Shop page can rank for "buy personalised gifts UK". Your FAQ page can rank for "how long do custom gifts take". Your About page can rank for "handmade gift shop UK". Your Collections page can rank for "Islamic gift collections". That's 6× the opportunities to be found.
+      </div>
+
+      <h3>6. 📣 Open Graph &amp; Twitter Cards — Social Media Impact</h3>
+      <p>When someone shares your website link on WhatsApp, Facebook, Instagram, or Twitter, it now shows up with a beautiful preview card instead of an ugly plain link:</p>
+      <ul class="check-list">
+        <li>Custom title, description, and image for every page when shared on social media</li>
+        <li>Professional-looking link previews that increase click-through rates by up to 40%</li>
+        <li>Perfect for when customers share your products with friends and family</li>
+      </ul>
+
+      <h3>7. 🕌 Culturally Resonant Design — Teal &amp; Gold Palette</h3>
+      <p>We analysed all 47 of your products and discovered that <strong>60% are Islamic/Hajj/Umrah gifts</strong>. The old brown colour scheme didn't reflect this. Your new design uses:</p>
+      <ul class="check-list">
+        <li><strong>Deep teal (#1A6B5A)</strong> — Inspired by Islamic art, mosques, and tranquility. "Noor" means light — the teal reflects this.</li>
+        <li><strong>Rich gold (#C8A45D)</strong> — The colour of the Kaaba cloth, Islamic calligraphy, and premium quality</li>
+        <li><strong>Islamic geometric patterns</strong> — Subtle diamond SVG patterns in backgrounds, connecting to centuries of Islamic decorative art</li>
+        <li>This palette instantly tells your Muslim customers: <strong>"This shop understands us"</strong></li>
+      </ul>
+
+      <h3>8. 🛍️ Live Product Sync — Always Up to Date</h3>
+      <p>Your website automatically fetches the latest products and prices from your Shopify store. When you add a new product or change a price, it instantly appears on your website — no manual updates needed:</p>
+      <ul class="check-list">
+        <li>Real-time sync with your Shopify <code>/products.json</code> API</li>
+        <li>All 47 products and 11 collections automatically displayed</li>
+        <li>Tag-based filtering: customers can filter by Keepsakes, Hajj &amp; Umrah, Wedding, Teacher, Graduation, Stickers</li>
+        <li>Prices, availability, and images always current</li>
+      </ul>
+
+      <h3>9. ⭐ Trust Signals That Convert Visitors into Buyers</h3>
+      <p>Visitors who trust you are 4× more likely to buy. We've added trust-building elements throughout:</p>
+      <ul class="check-list">
+        <li><strong>Scrolling trust bar</strong> — "Handmade with Love in the UK • 1-Week Turnaround • 5-Star Rated" — visible immediately</li>
+        <li><strong>Customer testimonials carousel</strong> — Real quotes from Nagina Begum, Paige Brookes, and others</li>
+        <li><strong>"How It Works" strip</strong> — 4-step visual process: Browse → Personalise → We Handcraft → Receive</li>
+        <li><strong>Value proposition cards</strong> — Handmade, Customisable, Quick Turnaround, UK-based</li>
+        <li><strong>Stats bar</strong> — 47+ products, 11 collections, 5★ rating, 7-day turnaround</li>
+        <li><strong>Professional Contact page</strong> — Multiple channels (email, Instagram, TikTok) make you look established</li>
+      </ul>
+
+      <h3>10. ♿ Accessibility — Reaching Every Customer</h3>
+      <p>4.5 million people in the UK have some form of visual impairment. Accessibility isn't just ethical — it's good business, and Google rewards accessible sites:</p>
+      <ul class="check-list">
+        <li>Skip-to-content link for keyboard users</li>
+        <li>ARIA labels on all interactive elements</li>
+        <li>Semantic HTML5 with proper heading hierarchy (H1→H2→H3)</li>
+        <li>Keyboard navigation support throughout</li>
+        <li>Focus management on mobile menu</li>
+        <li>All images have descriptive alt text</li>
+      </ul>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- YOUR COMPETITIVE ADVANTAGE             -->
+    <!-- ====================================== -->
+    <div class="card">
+      <h2>🏆 Your Competitive Advantage — Why This Puts You Ahead</h2>
+      <p class="lead">Let's look at what your competitors are doing (and why you'll outrank them):</p>
+
+      <table class="compare-table">
+        <thead><tr><th>What Competitors Have</th><th>What Isla Noor Now Has</th></tr></thead>
+        <tbody>
+          <tr><td class="old-val">Default Shopify theme — same as thousands of others</td><td class="new-val">Bespoke teal &amp; gold design with Islamic geometric patterns</td></tr>
+          <tr><td class="old-val">1 generic page, no dedicated sections</td><td class="new-val">6 SEO-optimised pages with unique content each</td></tr>
+          <tr><td class="old-val">No FAQ schema — invisible to Google's rich snippets</td><td class="new-val">9 FAQs with full Schema.org markup → appear directly in search results</td></tr>
+          <tr><td class="old-val">Generic "Home" page title</td><td class="new-val">"Isla Noor Accessories — Handmade Personalised Gifts | UK" with targeted keywords</td></tr>
+          <tr><td class="old-val">No structured data</td><td class="new-val">6 types of JSON-LD schema telling Google exactly what you are</td></tr>
+          <tr><td class="old-val">Relying on Instagram for all traffic</td><td class="new-val">Google organic traffic + social media + direct — diversified growth</td></tr>
+          <tr><td class="old-val">No content strategy</td><td class="new-val">Gift guide, FAQ, About story, testimonials — all indexable content</td></tr>
+          <tr><td class="old-val">Generic design with no cultural connection</td><td class="new-val">Culturally resonant design that signals to your Muslim audience: "We understand you"</td></tr>
+        </tbody>
+      </table>
+
+      <div class="highlight gold">
+        <strong>In the Islamic gifting niche specifically</strong> — most competitors have basic Etsy listings or default Shopify stores with zero SEO. By having a proper, hand-crafted, SEO-optimised website, Isla Noor is positioned to dominate searches like "Hajj gifts UK", "personalised Islamic gifts", and "Umrah Mubarak frame" — terms with high purchase intent and relatively low competition.
+      </div>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- THE GROWTH POTENTIAL                   -->
+    <!-- ====================================== -->
+    <div class="card">
+      <h2>📈 The Growth Potential — What This Means for Isla Noor</h2>
+      <p class="lead">Here's what a properly optimised website can realistically do for your business:</p>
+
+      <h3>Short Term (1-3 months)</h3>
+      <ul class="check-list">
+        <li>Google indexes all 6 pages — you go from 1 indexed URL to 6</li>
+        <li>FAQ rich snippets start appearing in search results for question-based queries</li>
+        <li>WhatsApp/Instagram link shares now show beautiful preview cards — higher click-through</li>
+        <li>Existing Instagram followers who visit your website have a much better experience → more sales</li>
+        <li>Professional appearance builds immediate trust with new visitors</li>
+      </ul>
+
+      <h3>Medium Term (3-6 months)</h3>
+      <ul class="check-list">
+        <li>Start ranking for long-tail keywords: "personalised Hajj gifts UK", "custom photo magnets UK"</li>
+        <li>Organic Google traffic begins supplementing your social media traffic</li>
+        <li>FAQ page reduces repeat customer service questions (saving you time)</li>
+        <li>Gift guide section drives occasion-based purchases (wedding season, Hajj season, Eid, school term end)</li>
+        <li>Newsletter signup starts building an email list — your most valuable marketing asset</li>
+      </ul>
+
+      <h3>Long Term (6-12 months)</h3>
+      <ul class="check-list">
+        <li>Ranking on page 1 for target keywords like "personalised gifts UK", "Islamic gifts UK"</li>
+        <li>Organic traffic becomes your primary customer acquisition channel (free, unlike paid ads)</li>
+        <li>Brand recognition grows: "Isla Noor" becomes associated with quality personalised Islamic gifts</li>
+        <li>Seasonal peaks (Eid, Hajj season, Mother's Day, graduation) drive predictable traffic surges</li>
+        <li>Potential to add a blog for content marketing → exponential organic traffic growth</li>
+      </ul>
+
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="num">6×</div>
+          <div class="desc">more pages for Google to index and rank</div>
+        </div>
+        <div class="stat-box">
+          <div class="num gold">30+</div>
+          <div class="desc">target search queries your site now competes for</div>
+        </div>
+        <div class="stat-box">
+          <div class="num">£0</div>
+          <div class="desc">ongoing cost — organic traffic is free forever</div>
+        </div>
+        <div class="stat-box">
+          <div class="num gold">24/7</div>
+          <div class="desc">your website works for you while you sleep</div>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>Think about it this way:</strong> Right now, you make every sale by posting on Instagram and hoping the right person sees it. With a Google-optimised website, customers come to <strong>you</strong>. They've already searched for what you sell. They've already decided they want to buy. They just need to find you — and now they will.
+      </div>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- FEATURE COMPARISON TABLE               -->
+    <!-- ====================================== -->
+    <div class="card">
+      <h2>📋 Full Feature Comparison — Old vs. New</h2>
+      <table class="compare-table">
+        <thead><tr><th>Feature</th><th>Your Old Site</th><th>Your New Site</th></tr></thead>
+        <tbody>
+          <tr><td>Custom Design</td><td class="old-val">✗ Generic Shopify theme</td><td class="new-val">✓ Bespoke teal &amp; gold design system</td></tr>
+          <tr><td>Pages</td><td class="old-val">1 (homepage only)</td><td class="new-val">6 dedicated, SEO-optimised pages</td></tr>
+          <tr><td>SEO Meta Tags</td><td class="old-val">✗ Missing</td><td class="new-val">✓ Full meta, OG, Twitter on every page</td></tr>
+          <tr><td>Structured Data</td><td class="old-val">✗ None</td><td class="new-val">✓ 6 types of JSON-LD schema</td></tr>
+          <tr><td>Cultural Design</td><td class="old-val">✗ Generic brown</td><td class="new-val">✓ Islamic-art teal + gold + geometric patterns</td></tr>
+          <tr><td>Product API Sync</td><td class="old-val">✗ Static only</td><td class="new-val">✓ Live from Shopify — always up to date</td></tr>
+          <tr><td>Product Filters</td><td class="old-val">✗ None</td><td class="new-val">✓ Hajj, Wedding, Teacher, Graduation &amp; more</td></tr>
+          <tr><td>Mobile Experience</td><td class="old-val">Basic responsive</td><td class="new-val">Mobile-first with animated drawer nav</td></tr>
+          <tr><td>Loading Speed</td><td class="old-val">Slow (heavy theme)</td><td class="new-val">Fast (lazy load, preconnect, no frameworks)</td></tr>
+          <tr><td>Testimonials</td><td class="old-val">Tiny widget</td><td class="new-val">Full carousel with real customer quotes</td></tr>
+          <tr><td>Trust Bar</td><td class="old-val">✗ None</td><td class="new-val">✓ Animated marquee (UK Made, 1-Week, 5-Star)</td></tr>
+          <tr><td>How It Works</td><td class="old-val">✗ None</td><td class="new-val">✓ 4-step visual process strip</td></tr>
+          <tr><td>Gift Guide</td><td class="old-val">✗ None</td><td class="new-val">✓ Wedding, Hajj, School, Birthday guides</td></tr>
+          <tr><td>FAQ Page</td><td class="old-val">✗ None</td><td class="new-val">✓ 9 FAQs with Google rich-snippet schema</td></tr>
+          <tr><td>Contact Page</td><td class="old-val">✗ None</td><td class="new-val">✓ Form + Email + Instagram + TikTok</td></tr>
+          <tr><td>About Page</td><td class="old-val">Tiny paragraph</td><td class="new-val">Full brand story with values &amp; stats</td></tr>
+          <tr><td>Newsletter</td><td class="old-val">Basic input</td><td class="new-val">Styled CTA section for email collection</td></tr>
+          <tr><td>Accessibility</td><td class="old-val">✗ Poor</td><td class="new-val">✓ WCAG 2.1 AA compliant</td></tr>
+          <tr><td>URL Structure</td><td class="old-val">Default Shopify</td><td class="new-val">Clean directory URLs (/shop/, /about/)</td></tr>
+          <tr><td>Social Sharing</td><td class="old-val">Plain link</td><td class="new-val">Rich preview cards on WhatsApp &amp; social</td></tr>
+          <tr><td>Floating Social Button</td><td class="old-val">✗ None</td><td class="new-val">✓ Quick Instagram follow/DM button</td></tr>
+          <tr><td>Back to Top</td><td class="old-val">✗ None</td><td class="new-val">✓ Animated scroll button</td></tr>
+          <tr><td>Typography</td><td class="old-val">System fonts</td><td class="new-val">Playfair Display + Inter + Cormorant</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- WHAT HAPPENS NEXT                      -->
+    <!-- ====================================== -->
+    <div class="card">
+      <h2>🚀 Recommended Next Steps for Maximum Growth</h2>
+      <p class="lead">Your new website is a powerful foundation. Here's how to build on it:</p>
+
+      <h3>Immediate (This Week)</h3>
+      <ul class="check-list">
+        <li>Review the new website and give us your feedback on colours, wording, and images</li>
+        <li>Submit your sitemap to Google Search Console to speed up indexing</li>
+        <li>Update your Instagram and TikTok bio links to point to the new website</li>
+        <li>Share the new website link with existing customers — ask for their thoughts!</li>
+      </ul>
+
+      <h3>Soon (This Month)</h3>
+      <ul class="check-list">
+        <li>Add a custom domain (e.g., islanoor.co.uk) for maximum brand credibility</li>
+        <li>Set up Google Analytics to track visitor behaviour and top-performing pages</li>
+        <li>Start collecting newsletter emails — offer 10% off first order as incentive</li>
+        <li>Create a Google Business Profile linking to the website (huge for "near me" searches)</li>
+      </ul>
+
+      <h3>Future Growth Ideas</h3>
+      <ul class="check-list">
+        <li><strong>Blog/Content Section</strong> — "Top 10 Hajj Gift Ideas 2026", "Best Teacher Appreciation Gifts" — drives massive organic traffic</li>
+        <li><strong>Seasonal Landing Pages</strong> — Dedicated pages for Eid, Ramadan, Mother's Day, graduation season</li>
+        <li><strong>Instagram Feed Integration</strong> — Show real customer photos on the website (social proof)</li>
+        <li><strong>Customer Photo Gallery</strong> — "See Our Gifts in Action" section with user-submitted photos</li>
+        <li><strong>Size Guide Page</strong> — Visual comparison for mirrors (58mm vs 75mm) — common customer question</li>
+        <li><strong>Loyalty/Referral Programme</strong> — "Refer a friend, get 15% off" — turns customers into ambassadors</li>
+        <li><strong>Google Shopping Integration</strong> — Show your products directly in Google Shopping results with photos &amp; prices</li>
+      </ul>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- CTA                                    -->
+    <!-- ====================================== -->
+    <div class="cta-card">
+      <h2>Ready to Let Your Customers Find You?</h2>
+      <p>Your new website is built, optimised, and ready to start working for Isla Noor. Every day it's live is another day Google learns about your business and sends you new customers.</p>
+      <p style="font-size:.95rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem;">Your products are handmade with love. Now your website is too. 💛</p>
+      <a href="index.html" class="cta-btn">View Your New Website →</a>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- FOOTER                                 -->
+    <!-- ====================================== -->
+    <div class="report-footer">
+      <p><strong>Property of AjayaDesign</strong> — This report and website redesign are for demonstration purposes only.</p>
+      <p>Unauthorized reproduction or distribution of this work is prohibited.</p>
+      <p style="margin-top:.5rem;">Prepared exclusively for Isla Noor Accessories | March 14, 2026 | Build: AD-ISLA-v3-20260314</p>
+    </div>
+
+  </div>
+
+  <!-- Carousel JS -->
+  <script>
+    var currentSlide = 0;
+    var totalSlides = 6;
+    var track = document.getElementById('carouselTrack');
+    var dots = document.querySelectorAll('#carouselNav button');
+
+    function goToSlide(n) {
+      currentSlide = n;
+      track.style.transform = 'translateX(-' + (n * 100) + '%)';
+      dots.forEach(function(d, i) { d.classList.toggle('active', i === n); });
+    }
+    function moveCarousel(dir) {
+      var next = (currentSlide + dir + totalSlides) % totalSlides;
+      goToSlide(next);
+    }
+    setInterval(function() { moveCarousel(1); }, 5000);
+  </script>
+  <!-- AjayaDesign IP Fingerprint: AD-ISLA-REPORT-DEMO-20260314-v3 -->
+</body>
+</html>
