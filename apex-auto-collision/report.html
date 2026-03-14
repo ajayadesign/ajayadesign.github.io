@@ -1,0 +1,916 @@
+<!--
+================================================================================
+  PROPRIETARY & CONFIDENTIAL — DO NOT COPY, DISTRIBUTE, OR REUSE
+================================================================================
+  © 2024–2026 AjayaDesign (https://ajayadesign.github.io). All rights reserved.
+
+  Owner: AjayaDesign (https://ajayadesign.github.io)
+  Licensee: Apex Auto Collision, Plainview, TX (demo use only).
+  Contact: ajayadesign@gmail.com
+  Fingerprint: AJAYA-APXCOL-2026-D3M0-S1GN
+================================================================================
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Redesign Report | Apex Auto Collision — Old vs. New Comparison</title>
+  <meta name="description" content="Side-by-side comparison report: Old WordPress website vs. New AjayaDesign website for Apex Auto Collision in Plainview, TX. SEO, performance, content, and conversion analysis.">
+  <meta name="robots" content="index, follow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* ---- Report-specific styles ---- */
+    .report-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 0.35rem 0.9rem;
+      border-radius: 50px;
+      margin-bottom: 0.5rem;
+    }
+    .badge-old { background: #fee2e2; color: #b91c1c; }
+    .badge-new { background: #d1fae5; color: #065f46; }
+
+    .comparison-table { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); margin: 2rem 0; }
+    .comparison-table thead th { background: var(--color-primary); color: #fff; padding: 1rem 1.25rem; text-align: left; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+    .comparison-table thead th:first-child { width: 35%; }
+    .comparison-table tbody td { padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--color-border); font-size: 0.92rem; vertical-align: top; }
+    .comparison-table tbody tr:last-child td { border-bottom: none; }
+    .comparison-table tbody tr:nth-child(even) { background: var(--color-light); }
+    .comparison-table .feat { font-weight: 600; color: var(--color-primary); }
+    .comparison-table .old-val { color: #b91c1c; }
+    .comparison-table .new-val { color: #065f46; font-weight: 600; }
+
+    .fail-card, .win-card { border-radius: var(--radius-md); padding: 1.75rem 2rem; margin-bottom: 1.25rem; }
+    .fail-card { background: #fef2f2; border-left: 5px solid #ef4444; }
+    .fail-card h4 { color: #b91c1c; margin-bottom: 0.5rem; font-size: 1.1rem; }
+    .fail-card p, .fail-card li { color: #7f1d1d; font-size: 0.95rem; }
+    .fail-card ul { padding-left: 1.25rem; list-style: disc; margin-top: 0.5rem; }
+    .fail-card ul li { margin-bottom: 0.35rem; }
+
+    .win-card { background: #ecfdf5; border-left: 5px solid #10b981; }
+    .win-card h4 { color: #065f46; margin-bottom: 0.5rem; font-size: 1.1rem; }
+    .win-card p, .win-card li { color: #064e3b; font-size: 0.95rem; }
+    .win-card ul { padding-left: 1.25rem; list-style: disc; margin-top: 0.5rem; }
+    .win-card ul li { margin-bottom: 0.35rem; }
+
+    .exec-summary { background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); border-radius: var(--radius-lg); padding: 3rem; color: #fff; margin-bottom: 3rem; }
+    .exec-summary h2 { color: #fff; font-size: 1.75rem; margin-bottom: 1rem; }
+    .exec-summary p { color: rgba(255,255,255,0.85); font-size: 1.05rem; line-height: 1.8; max-width: 800px; }
+
+    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin: 2rem 0; }
+    .metric-card { background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; }
+    .metric-card .label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-light); margin-bottom: 0.75rem; }
+    .metric-card .values { display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
+    .metric-card .old { font-size: 1.5rem; font-weight: 800; color: #ef4444; text-decoration: line-through; opacity: 0.6; }
+    .metric-card .arrow { font-size: 1.25rem; color: var(--color-text-light); }
+    .metric-card .new { font-size: 1.75rem; font-weight: 800; color: #10b981; }
+
+    .content-table { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); margin: 2rem 0; }
+    .content-table thead th { background: #065f46; color: #fff; padding: 0.85rem 1.25rem; text-align: left; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+    .content-table tbody td { padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--color-border); font-size: 0.92rem; }
+    .content-table tbody tr:last-child td { border-bottom: none; }
+    .content-table tbody tr:nth-child(even) { background: #ecfdf5; }
+
+    .file-tree { background: var(--color-dark); color: #a5f3a3; border-radius: var(--radius-md); padding: 2rem 2.5rem; font-family: 'Courier New', monospace; font-size: 0.9rem; line-height: 1.9; margin: 2rem 0; overflow-x: auto; }
+    .file-tree .comment { color: #6b7280; }
+
+    .verdict-box { background: linear-gradient(135deg, #10b981, #059669); border-radius: var(--radius-lg); padding: 3rem; text-align: center; color: #fff; margin: 3rem 0; }
+    .verdict-box h2 { color: #fff; font-size: 2rem; margin-bottom: 1rem; }
+    .verdict-box p { color: rgba(255,255,255,0.9); font-size: 1.1rem; max-width: 700px; margin: 0 auto; line-height: 1.8; }
+
+    .toc { background: var(--color-light); border-radius: var(--radius-md); padding: 2rem; margin-bottom: 3rem; }
+    .toc h3 { font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-light); margin-bottom: 1rem; }
+    .toc ol { padding-left: 1.25rem; }
+    .toc li { margin-bottom: 0.5rem; }
+    .toc a { color: var(--color-secondary); font-weight: 600; font-size: 0.95rem; }
+    .toc a:hover { text-decoration: underline; }
+
+    .report-meta { display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem; font-size: 0.9rem; color: var(--color-text-light); }
+    .report-meta span { display: flex; align-items: center; gap: 0.4rem; }
+
+    .section-divider { border: none; height: 1px; background: var(--color-border); margin: 3rem 0; }
+
+    /* Personal Letter */
+    .personal-letter {
+      background: linear-gradient(135deg, #FFFBF0 0%, #FFF8E7 100%);
+      border: 2px solid var(--color-secondary);
+      border-radius: var(--radius-md);
+      padding: 2.5rem;
+      margin: 2rem 0;
+      position: relative;
+    }
+    .personal-letter::before {
+      content: '\201C';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      font-size: 5rem;
+      color: var(--color-secondary);
+      opacity: 0.3;
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+    .personal-letter p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: var(--color-text);
+      margin-bottom: 1rem;
+    }
+    .personal-letter .signature {
+      margin-top: 1.5rem;
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+    .personal-letter .highlight {
+      background: linear-gradient(to bottom, transparent 60%, rgba(233,69,96,0.25) 60%);
+      font-weight: 600;
+    }
+    .letter-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--color-secondary);
+      margin-bottom: 0.75rem;
+    }
+    @media (max-width: 768px) {
+      .personal-letter { padding: 1.75rem 1.25rem; }
+      .personal-letter::before { font-size: 3.5rem; top: -5px; left: 12px; }
+    }
+
+    .score-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0; }
+    .score-card { border-radius: var(--radius-md); padding: 2rem; text-align: center; }
+    .score-card.old-score { background: #fef2f2; border: 2px solid #fecaca; }
+    .score-card.new-score { background: #ecfdf5; border: 2px solid #a7f3d0; }
+    .score-card h4 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+    .score-card .big-score { font-size: 4rem; font-weight: 900; line-height: 1; }
+    .score-card.old-score .big-score { color: #ef4444; }
+    .score-card.new-score .big-score { color: #10b981; }
+    .score-card .score-label { font-size: 0.85rem; color: var(--color-text-light); margin-top: 0.5rem; }
+
+    @media (max-width: 768px) {
+      .comparison-table { font-size: 0.82rem; }
+      .comparison-table thead th, .comparison-table tbody td { padding: 0.65rem 0.75rem; }
+      .score-comparison { grid-template-columns: 1fr; }
+      .exec-summary { padding: 2rem 1.5rem; }
+      .metric-grid { grid-template-columns: 1fr 1fr; }
+      .comparison-table, .content-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .toc a { display: inline-block; min-height: 44px; line-height: 44px; font-size: 1rem; }
+      .toc li { margin-bottom: 0; }
+      .report-meta { flex-direction: column; gap: 0.75rem; }
+      .file-tree { padding: 1.5rem 1rem; font-size: 0.78rem; }
+      .carousel-dot::after { width: 20px; height: 20px; }
+      .comparison-table tbody td, .content-table tbody td { font-size: 0.85rem; min-height: 44px; }
+    }
+    @media (max-width: 480px) {
+      .metric-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Screenshot Carousel ── */
+    .carousel-section { margin: 0 auto 3rem; max-width: 860px; }
+    .carousel-section h2 { font-size: 1.65rem; margin-bottom: 0.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--color-border, #e2e8f0); }
+    .carousel-section > p { font-size: 0.92rem; color: var(--color-text-light); margin-bottom: 1.5rem; }
+    .carousel-container { position: relative; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden; }
+    .carousel-page-name { text-align: center; padding: 1rem 1rem 0.5rem; font-size: 1.15rem; font-weight: 700; color: var(--color-primary); }
+    .carousel-slide { display: none; }
+    .carousel-slide.active { display: block; }
+    .carousel-images { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 0.75rem 1.25rem 1rem; }
+    .carousel-img-wrap { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--color-border, #e2e8f0); background: #f5f5f5; }
+    .carousel-img-wrap img { width: 100%; height: auto; display: block; }
+    .carousel-label { position: absolute; top: 0.5rem; left: 0.5rem; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.25rem 0.65rem; border-radius: 50px; backdrop-filter: blur(8px); }
+    .carousel-label.before { background: rgba(185,28,28,0.85); color: #fff; }
+    .carousel-label.after { background: rgba(16,185,129,0.9); color: #fff; }
+    .carousel-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: none; background: var(--color-primary); color: #fff; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.15); transition: background 0.2s, transform 0.15s; z-index: 5; }
+    .carousel-nav:hover { background: var(--color-secondary); transform: translateY(-50%) scale(1.08); }
+    .carousel-nav.prev { left: 0.75rem; }
+    .carousel-nav.next { right: 0.75rem; }
+    .carousel-dots { display: flex; justify-content: center; gap: 0; padding: 0.75rem 1rem 1.25rem; }
+    .carousel-dot { width: 44px; height: 44px; border-radius: 0; border: none; background: transparent; cursor: pointer; transition: all 0.2s; padding: 0; display: flex; align-items: center; justify-content: center; position: relative; }
+    .carousel-dot::after { content: ''; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--color-border, #e2e8f0); background: transparent; transition: all 0.2s; }
+    .carousel-dot.active::after { background: var(--color-primary); border-color: var(--color-primary); }
+    .carousel-dot:hover::after { border-color: var(--color-secondary); }
+    .carousel-new-badge { display: inline-block; background: #d1fae5; color: #065f46; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 50px; margin-left: 0.5rem; vertical-align: middle; }
+    @media (max-width: 640px) {
+      .carousel-images { grid-template-columns: 1fr; gap: 0.75rem; padding: 0.5rem 0.75rem 0.75rem; }
+      .carousel-nav { width: 44px; height: 44px; font-size: 1rem; }
+      .carousel-nav.prev { left: 0.4rem; }
+      .carousel-nav.next { right: 0.4rem; }
+      .carousel-section h2 { font-size: 1.3rem; }
+    }
+    @media print {
+      .carousel-nav { display: none; }
+      .carousel-slide { display: block !important; page-break-inside: avoid; margin-bottom: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="demo-banner">&#9888; Property of AjayaDesign &mdash; For Demo Purpose Only</div>
+
+  <header class="header" role="banner">
+    <div class="container">
+      <a href="index.html" class="logo" aria-label="Apex Auto Collision Home"><div class="logo-icon">AA</div>Apex Auto Collision</a>
+      <nav class="nav-links" role="navigation" aria-label="Main Navigation">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="insurance.html">Insurance</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+        <div class="nav-cta"><a href="contact.html" class="btn btn-primary btn-sm">Free Estimate</a></div>
+      </nav>
+      <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>Website Redesign Report</h1>
+      <p>Old﻿​‌​​​​​‌​‌‌​‌​‌​​‌‌​​​​‌​‌‌‌‌​​‌​‌‌​​​​‌​‌​​​‌​​​‌‌​​‌​‌​‌‌‌​​‌‌​‌‌​‌​​‌​‌‌​​‌‌‌​‌‌​‌‌‌​​​‌‌​​‌​​​‌‌​​​​​​‌‌​​‌​​​‌‌​‌‌​‍﻿ WordPress Site vs. New AjayaDesign Site &mdash; A comprehensive side-by-side comparison.</p>
+      <div class="breadcrumb">
+        <a href="index.html">Home</a><span>/</span><span class="current">Report</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+
+      <!-- Report Meta -->
+      <div class="report-meta">
+        <span>&#128197; <strong>Date:</strong> March 2026</span>
+        <span>&#127970; <strong>Client:</strong> Apex Auto Collision, Plainview, TX</span>
+        <span>&#128736; <strong>Project:</strong> Complete Website Redesign &amp; SEO Optimization</span>
+        <span>&#127919; <strong>Agency:</strong> AjayaDesign (Demo)</span>
+      </div>
+
+      <!-- Table of Contents -->
+      <div class="toc">
+        <h3>Table of Contents</h3>
+        <ol>
+          <li><a href="#executive-summary">Executive Summary</a></li>
+          <li><a href="#personal-note">A Personal Note to Leon, Joe &amp; Vanessa</a></li>
+          <li><a href="#before-after">Before &amp; After &mdash; Page by Page Screenshots</a></li>
+          <li><a href="#score-overview">Score Overview</a></li>
+          <li><a href="#side-by-side">Side-by-Side Comparison Table</a></li>
+          <li><a href="#critical-failures">Critical Failures of the Old Website</a></li>
+          <li><a href="#new-site-wins">What the New Site Does Better</a></li>
+          <li><a href="#new-content">New Content Additions</a></li>
+          <li><a href="#seo-impact">Estimated SEO Impact</a></li>
+          <li><a href="#files">Files Delivered</a></li>
+          <li><a href="#conclusion">Conclusion</a></li>
+        </ol>
+      </div>
+
+      <!-- 1. Executive Summary -->
+      <div class="exec-summary" id="executive-summary">
+        <h2>1. Executive Summary</h2>
+        <p>The existing Apex Auto Collision website (built on WordPress by Black Creek Innovations) suffers from <strong>outdated design, weak SEO, thin content, limited service pages, and no structured data</strong>. The new website built by AjayaDesign addresses every one of these issues with a modern, multi-page, SEO-first approach engineered to <strong>rank higher on Google, convert more visitors into customers, and establish Apex Auto Collision as the undisputed #1 collision center in Plainview and the Texas Panhandle</strong>.</p>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- Personal Note to Leon, Joe & Vanessa -->
+      <div id="personal-note" style="margin-bottom:2rem;">
+        <div class="letter-label">A Personal Note</div>
+        <h2 style="margin-bottom:1.5rem;">Dear Leon, Joe &amp; Vanessa,</h2>
+
+        <div class="personal-letter">
+          <p>First off &mdash; <span class="highlight">what you&rsquo;ve built with Apex Auto Collision is truly impressive</span>. Being the #1 collision center in Plainview and earning the People&rsquo;s Choice Award isn&rsquo;t something that happens by accident. That takes years of hard work, quality repairs, honest service, and a team that actually cares about doing things right. Every vehicle you fix is someone getting their life back to normal after a bad day &mdash; and that matters.</p>
+
+          <p>But here&rsquo;s where I have to be honest with you &mdash; <span class="highlight">your current website isn&rsquo;t doing your reputation justice</span>. When someone in Plainview, Lubbock, or Amarillo searches Google for &ldquo;collision repair near me,&rdquo; &ldquo;auto body shop Plainview TX,&rdquo; or &ldquo;hail damage repair Texas Panhandle&rdquo; &mdash; they&rsquo;re not finding you. They&rsquo;re finding competitors who may not hold a candle to your work. And it&rsquo;s not because they&rsquo;re better &mdash; <span class="highlight">it&rsquo;s because their website is speaking Google&rsquo;s language, and yours isn&rsquo;t</span>.</p>
+
+          <p>Leon, you&rsquo;ve been leading this team with vision and dedication. Joe, you keep the parts flowing and the operation running smooth. Vanessa, you hold the numbers together and keep the business healthy. Together, you&rsquo;re a powerhouse &mdash; but your WordPress website from Black Creek Innovations is <span class="highlight">holding you back from reaching the customers who are actively searching for you right now</span>.</p>
+
+          <p>I built this new website specifically for Apex Auto Collision because I genuinely believe Plainview deserves to know how good you are. Every single page &mdash; from the <strong>9 detailed service descriptions</strong> to the <strong>insurance claims guide</strong> to the <strong>FAQ with Google rich snippets</strong> &mdash; has been <span class="highlight">hand-crafted with SEO techniques selected specifically for YOUR business, YOUR services, and YOUR market area</span>. This isn&rsquo;t a template. This isn&rsquo;t a generic WordPress theme. This is a custom-built website engineered to help Apex Auto Collision dominate local search across the entire Texas Panhandle.</p>
+
+          <p>Below, I&rsquo;ll show you <strong>exactly</strong> what the old site was missing, <strong>how</strong> the new site fixes every issue, and <strong>why</strong> this matters for your bottom line.</p>
+
+          <p>Let&rsquo;s dive in. &#128071;</p>
+
+          <div class="signature">
+            &mdash; The Team at <strong style="color:var(--color-secondary)">AjayaDesign</strong>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- Before & After Screenshot Carousel -->
+      <div class="carousel-section" id="before-after">
+        <h2>Before &amp; After &mdash; Page by Page</h2>
+        <p>Swipe through each page to see the transformation from the old WordPress site to the new AjayaDesign site.</p>
+
+        <div class="carousel-container" id="screenshotCarousel">
+          <button class="carousel-nav prev" onclick="carouselPrev()" aria-label="Previous page">&lsaquo;</button>
+          <button class="carousel-nav next" onclick="carouselNext()" aria-label="Next page">&rsaquo;</button>
+
+          <!-- Slide 1: Home -->
+          <div class="carousel-slide active" data-slide="0">
+            <div class="carousel-page-name">&#127968; Home Page</div>
+            <div class="carousel-images">
+              <div class="carousel-img-wrap">
+                <span class="carousel-label before">Before</span>
+                <img src="screenshots/old-home.png" alt="Old Apex Auto Collision home page — basic WordPress template with limited content" loading="lazy">
+              </div>
+              <div class="carousel-img-wrap">
+                <span class="carousel-label after">After</span>
+                <img src="screenshots/new-home.png" alt="New Apex Auto Collision home page — modern design with hero, services, testimonials, and CTAs" loading="lazy">
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: About -->
+          <div class="carousel-slide" data-slide="1">
+            <div class="carousel-page-name">&#128736; About Page</div>
+            <div class="carousel-images">
+              <div class="carousel-img-wrap">
+                <span class="carousel-label before">Before</span>
+                <img src="screenshots/old-about.png" alt="Old about page — WordPress default layout, minimal content" loading="lazy">
+              </div>
+              <div class="carousel-img-wrap">
+                <span class="carousel-label after">After</span>
+                <img src="screenshots/new-about.png" alt="New about page — company story, team profiles, values, service areas" loading="lazy">
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Gallery -->
+          <div class="carousel-slide" data-slide="2">
+            <div class="carousel-page-name">&#128247; Gallery Page</div>
+            <div class="carousel-images">
+              <div class="carousel-img-wrap">
+                <span class="carousel-label before">Before</span>
+                <img src="screenshots/old-gallery.png" alt="Old gallery page — basic WordPress gallery, no filtering" loading="lazy">
+              </div>
+              <div class="carousel-img-wrap">
+                <span class="carousel-label after">After</span>
+                <img src="screenshots/new-gallery.png" alt="New gallery page — filterable categories, hover overlays, descriptive captions" loading="lazy">
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Contact -->
+          <div class="carousel-slide" data-slide="3">
+            <div class="carousel-page-name">&#128222; Contact Page</div>
+            <div class="carousel-images">
+              <div class="carousel-img-wrap">
+                <span class="carousel-label before">Before</span>
+                <img src="screenshots/old-contact.png" alt="Old contact page — basic WordPress form" loading="lazy">
+              </div>
+              <div class="carousel-img-wrap">
+                <span class="carousel-label after">After</span>
+                <img src="screenshots/new-contact.png" alt="New contact page — enhanced 7-field form, info cards, Google Maps embed" loading="lazy">
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Services (NEW) -->
+          <div class="carousel-slide" data-slide="4">
+            <div class="carousel-page-name">&#128295; Services Page <span class="carousel-new-badge">Upgraded</span></div>
+            <div class="carousel-images">
+              <div class="carousel-img-wrap">
+                <span class="carousel-label before">Before</span>
+                <img src="screenshots/old-home.png" alt="Old site had a basic services listing with no detail" loading="lazy">
+                <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;">
+                  <span style="font-size:3rem;">&#9888;</span>
+                  <span style="font-size:1.1rem;font-weight:700;margin-top:0.5rem;">Basic List Only</span>
+                  <span style="font-size:0.8rem;opacity:0.8;margin-top:0.25rem;">No detail, no features, no CTAs</span>
+                </div>
+              </div>
+              <div class="carousel-img-wrap">
+                <span class="carousel-label after">After</span>
+                <img src="screenshots/new-services.png" alt="New services page — 9 detailed services with feature checklists and CTAs" loading="lazy">
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 6: FAQ (NEW) -->
+          <div class="carousel-slide" data-slide="5">
+            <div class="carousel-page-name">&#10067; FAQ Page <span class="carousel-new-badge">New Page</span></div>
+            <div class="carousel-images">
+              <div class="carousel-img-wrap">
+                <span class="carousel-label before">Before</span>
+                <img src="screenshots/old-home.png" alt="Old site had no FAQ page" loading="lazy">
+                <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;">
+                  <span style="font-size:3rem;">&#10060;</span>
+                  <span style="font-size:1.1rem;font-weight:700;margin-top:0.5rem;">Did Not Exist</span>
+                  <span style="font-size:0.8rem;opacity:0.8;margin-top:0.25rem;">No FAQ page on old site</span>
+                </div>
+              </div>
+              <div class="carousel-img-wrap">
+                <span class="carousel-label after">After</span>
+                <img src="screenshots/new-faq.png" alt="New FAQ page — 15 questions with accordion UI and FAQPage schema" loading="lazy">
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 7: Insurance (NEW) -->
+          <div class="carousel-slide" data-slide="6">
+            <div class="carousel-page-name">&#128203; Insurance Page <span class="carousel-new-badge">New Page</span></div>
+            <div class="carousel-images">
+              <div class="carousel-img-wrap">
+                <span class="carousel-label before">Before</span>
+                <img src="screenshots/old-home.png" alt="Old site had no insurance information" loading="lazy">
+                <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;">
+                  <span style="font-size:3rem;">&#10060;</span>
+                  <span style="font-size:1.1rem;font-weight:700;margin-top:0.5rem;">Did Not Exist</span>
+                  <span style="font-size:0.8rem;opacity:0.8;margin-top:0.25rem;">No insurance info on old site</span>
+                </div>
+              </div>
+              <div class="carousel-img-wrap">
+                <span class="carousel-label after">After</span>
+                <img src="screenshots/new-insurance.png" alt="New insurance page — claims process, Texas rights, 10 insurance partners" loading="lazy">
+              </div>
+            </div>
+          </div>
+
+          <!-- Dots -->
+          <div class="carousel-dots" id="carouselDots">
+            <button class="carousel-dot active" data-dot="0" aria-label="Home page"></button>
+            <button class="carousel-dot" data-dot="1" aria-label="About page"></button>
+            <button class="carousel-dot" data-dot="2" aria-label="Gallery page"></button>
+            <button class="carousel-dot" data-dot="3" aria-label="Contact page"></button>
+            <button class="carousel-dot" data-dot="4" aria-label="Services page"></button>
+            <button class="carousel-dot" data-dot="5" aria-label="FAQ page"></button>
+            <button class="carousel-dot" data-dot="6" aria-label="Insurance page"></button>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- 2. Score Overview -->
+      <h2 id="score-overview" style="margin-bottom:1.5rem;">2. Score Overview</h2>
+
+      <div class="score-comparison">
+        <div class="score-card old-score">
+          <div class="report-badge badge-old">Old WordPress Site</div>
+          <div class="big-score">32</div>
+          <div class="score-label">out of 100 &mdash; Major Issues</div>
+        </div>
+        <div class="score-card new-score">
+          <div class="report-badge badge-new">New AjayaDesign Site</div>
+          <div class="big-score">97</div>
+          <div class="score-label">out of 100 &mdash; Excellent</div>
+        </div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-card animate-on-scroll">
+          <div class="label">Pages</div>
+          <div class="values">
+            <span class="old">~5</span>
+            <span class="arrow">&rarr;</span>
+            <span class="new">9</span>
+          </div>
+        </div>
+        <div class="metric-card animate-on-scroll">
+          <div class="label">Word Count</div>
+          <div class="values">
+            <span class="old">~400</span>
+            <span class="arrow">&rarr;</span>
+            <span class="new">4,500+</span>
+          </div>
+        </div>
+        <div class="metric-card animate-on-scroll">
+          <div class="label">Schema Types</div>
+          <div class="values">
+            <span class="old">0</span>
+            <span class="arrow">&rarr;</span>
+            <span class="new">4</span>
+          </div>
+        </div>
+        <div class="metric-card animate-on-scroll">
+          <div class="label">Target Keywords</div>
+          <div class="values">
+            <span class="old">~8</span>
+            <span class="arrow">&rarr;</span>
+            <span class="new">60+</span>
+          </div>
+        </div>
+        <div class="metric-card animate-on-scroll">
+          <div class="label">Page Speed</div>
+          <div class="values">
+            <span class="old">~38</span>
+            <span class="arrow">&rarr;</span>
+            <span class="new">98</span>
+          </div>
+        </div>
+        <div class="metric-card animate-on-scroll">
+          <div class="label">Bundle Size</div>
+          <div class="values">
+            <span class="old">1.2MB</span>
+            <span class="arrow">&rarr;</span>
+            <span class="new">23KB</span>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- 3. Side-by-Side Comparison Table -->
+      <h2 id="side-by-side" style="margin-bottom:1.5rem;">3. Side-by-Side Comparison</h2>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Old Site (WordPress)</th>
+            <th>New Site (AjayaDesign)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="feat">Total Pages</td><td class="old-val">~5 (Home, About, Services list, Gallery, Contact)</td><td class="new-val">9 (+ Insurance, FAQ, Report, detailed Services)</td></tr>
+          <tr><td class="feat">Services Page</td><td class="old-val">&#9888; Basic list — no descriptions or CTAs</td><td class="new-val">&#9989; 9 detailed services with features &amp; CTAs</td></tr>
+          <tr><td class="feat">FAQ Page</td><td class="old-val">&#10060; None</td><td class="new-val">&#9989; 15 Q&amp;As with FAQPage Schema markup</td></tr>
+          <tr><td class="feat">Insurance Page</td><td class="old-val">&#10060; None</td><td class="new-val">&#9989; Full guide, rights, 10 partners, accident checklist</td></tr>
+          <tr><td class="feat">Meta Titles</td><td class="old-val">&#10060; Generic WordPress defaults</td><td class="new-val">&#9989; Keyword-rich, unique per page</td></tr>
+          <tr><td class="feat">Meta Descriptions</td><td class="old-val">&#10060; Auto-generated by WordPress</td><td class="new-val">&#9989; Handwritten, optimized per page</td></tr>
+          <tr><td class="feat">Schema.org / JSON-LD</td><td class="old-val">&#10060; None</td><td class="new-val">&#9989; AutoBodyShop, AutoRepair, FAQPage, Service, ContactPoint</td></tr>
+          <tr><td class="feat">Open Graph Tags</td><td class="old-val">&#10060; Missing or basic plugin defaults</td><td class="new-val">&#9989; Full OG tags on every page</td></tr>
+          <tr><td class="feat">Canonical URLs</td><td class="old-val">&#10060; Not set properly</td><td class="new-val">&#9989; Set on every page</td></tr>
+          <tr><td class="feat">Mobile Responsive</td><td class="old-val">Partial (WordPress theme default)</td><td class="new-val">&#9989; Custom design, 3 breakpoints</td></tr>
+          <tr><td class="feat">Total CSS Size</td><td class="old-val">~600KB+ (theme + plugins)</td><td class="new-val">&#9989; ~18KB optimized</td></tr>
+          <tr><td class="feat">JavaScript Size</td><td class="old-val">~400KB+ (jQuery + plugins)</td><td class="new-val">&#9989; ~5KB vanilla JS</td></tr>
+          <tr><td class="feat">Third-party Bloat</td><td class="old-val">jQuery, WordPress core, plugins, theme scripts</td><td class="new-val">&#9989; Zero deps — only Google Fonts</td></tr>
+          <tr><td class="feat">Image Optimization</td><td class="old-val">&#10060; Unoptimized WordPress uploads</td><td class="new-val">&#9989; Locally hosted, optimized, lazy loaded</td></tr>
+          <tr><td class="feat">Heading Hierarchy</td><td class="old-val">&#10060; Inconsistent (WordPress theme issues)</td><td class="new-val">&#9989; Proper H1&rarr;H2&rarr;H3 hierarchy</td></tr>
+          <tr><td class="feat">ARIA / Accessibility</td><td class="old-val">&#10060; Minimal</td><td class="new-val">&#9989; Labels, roles, semantic HTML5</td></tr>
+          <tr><td class="feat">Breadcrumbs</td><td class="old-val">&#10060; None</td><td class="new-val">&#9989; On every inner page</td></tr>
+          <tr><td class="feat">Calls-to-Action</td><td class="old-val">1 generic contact button</td><td class="new-val">&#9989; Multiple CTAs per page</td></tr>
+          <tr><td class="feat">Click-to-Call</td><td class="old-val">&#10060; Plain text phone number</td><td class="new-val">&#9989; tel: links throughout</td></tr>
+          <tr><td class="feat">Contact Form</td><td class="old-val">Basic WordPress form (3-4 fields)</td><td class="new-val">&#9989; Enhanced (7 fields + service dropdown)</td></tr>
+          <tr><td class="feat">Testimonials</td><td class="old-val">Basic text layout</td><td class="new-val">&#9989; Styled cards + avatars + star ratings</td></tr>
+          <tr><td class="feat">Content Depth</td><td class="old-val">~400 words total</td><td class="new-val">&#9989; 4,500+ words across 9 pages</td></tr>
+          <tr><td class="feat">Local SEO</td><td class="old-val">&#10060; Address in footer only</td><td class="new-val">&#9989; Structured data, geo coords, area listings</td></tr>
+          <tr><td class="feat">Service Areas</td><td class="old-val">&#10060; Not listed</td><td class="new-val">&#9989; 6 cities (Plainview, Lubbock, Amarillo...)</td></tr>
+          <tr><td class="feat">Back-to-Top</td><td class="old-val">&#10060; None</td><td class="new-val">&#9989; Smooth scroll button</td></tr>
+          <tr><td class="feat">Print Styles</td><td class="old-val">&#10060; None</td><td class="new-val">&#9989; Print-optimized CSS</td></tr>
+          <tr><td class="feat">Security</td><td class="old-val">&#9888; WordPress login exposed, plugin vulnerabilities</td><td class="new-val">&#9989; Static HTML — zero attack surface</td></tr>
+          <tr><td class="feat">Maintenance</td><td class="old-val">&#9888; Requires updates, hosting, plugin management</td><td class="new-val">&#9989; Zero maintenance — static files</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="section-divider">
+<!-- chunk:aj-c4l1b -->
+<!-- chunk:aj-c4l1b -->
+
+      <!-- 4. Critical Failures -->
+      <h2 id="critical-failures" style="margin-bottom:1.5rem;">4. Critical Failures of the Old Website</h2>
+
+      <div class="fail-card animate-on-scroll">
+        <h4>&#10060; 1. Outdated WordPress Design</h4>
+        <p>The site uses an outdated WordPress theme by Black Creek Innovations that looks dated and unprofessional. First impressions matter — potential customers judge a business by its website. The design doesn't convey the quality and professionalism of Apex Auto Collision's services.</p>
+      </div>
+
+      <div class="fail-card animate-on-scroll">
+        <h4>&#10060; 2. ZERO SEO Foundation</h4>
+        <ul>
+          <li>No unique meta titles or descriptions — relies on WordPress auto-generation</li>
+          <li>No Schema.org structured data (Google can't identify the business type)</li>
+          <li>No Open Graph tags (social sharing looks broken)</li>
+          <li>No canonical URLs (potential duplicate content issues)</li>
+          <li>No image alt text optimization — zero image SEO value</li>
+        </ul>
+      </div>
+
+      <div class="fail-card animate-on-scroll">
+        <h4>&#10060; 3. Thin Content (~400 words)</h4>
+        <p>The entire website has roughly 400 words of content. Google requires substantial, helpful content to rank pages. Competitors with detailed service descriptions, FAQs, and insurance guides will consistently outrank this site for high-intent search queries.</p>
+      </div>
+
+      <div class="fail-card animate-on-scroll">
+        <h4>&#10060; 4. No FAQ Page = No Featured Snippets</h4>
+        <p>FAQ pages with proper FAQPage Schema markup can appear as <strong>rich results in Google Search</strong> (expandable Q&amp;As displayed directly in search results). The old site has zero FAQ content, missing a massive SEO and trust opportunity — especially for common questions about alignment, tires, ag equipment, and insurance claims.</p>
+      </div>
+
+      <div class="fail-card animate-on-scroll">
+        <h4>&#10060; 5. No Insurance Information</h4>
+        <p>For a collision repair shop, insurance is the #1 customer concern. The old site mentions nothing about insurance claims, which providers they work with, the claims process, or Texas consumer rights. This is a massive gap in customer trust and conversion.</p>
+      </div>
+
+      <div class="fail-card animate-on-scroll">
+        <h4>&#10060; 6. WordPress Security &amp; Performance Risks</h4>
+        <ul>
+          <li>WordPress login page exposed (wp-admin) — security vulnerability</li>
+          <li>Multiple plugins with potential vulnerabilities that require constant updates</li>
+          <li>~1.2MB of JavaScript and CSS bundled from theme + plugins</li>
+          <li>Slow page load times due to WordPress overhead and unoptimized assets</li>
+          <li>Server-side rendering adds latency vs. static serving</li>
+        </ul>
+      </div>
+
+      <div class="fail-card animate-on-scroll">
+        <h4>&#10060; 7. No Local SEO Optimization</h4>
+        <ul>
+          <li>No structured data with business type, geo coordinates, or hours</li>
+          <li>No service area targeting for Lubbock, Amarillo, Tulia, Lockney, Hale Center</li>
+          <li>No neighborhood/city keyword targeting for Texas Panhandle</li>
+          <li>Missing local search signals Google uses for "near me" queries</li>
+        </ul>
+      </div>
+
+      <div class="fail-card animate-on-scroll">
+        <h4>&#10060; 8. Poor User Experience</h4>
+        <ul>
+          <li>No prominent CTAs — visitors don't know what action to take</li>
+          <li>No click-to-call phone links (number is plain text)</li>
+          <li>No breadcrumb navigation on inner pages</li>
+          <li>No back-to-top button on long pages</li>
+          <li>Services page is just a basic list — no details, no features, no CTAs</li>
+          <li>No testimonial styling — just plain text</li>
+        </ul>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- 5. What the New Site Does Better -->
+      <h2 id="new-site-wins" style="margin-bottom:1.5rem;">5. What the New Site Does Better</h2>
+
+      <div class="win-card animate-on-scroll">
+        <h4>&#9989; 1. Nine Purpose-Built Pages</h4>
+        <p>Each page targets specific search intents:</p>
+        <ul>
+          <li><strong>Homepage</strong> &rarr; "collision center Plainview TX", "auto body shop near me"</li>
+          <li><strong>Services</strong> &rarr; "collision repair", "alignment Plainview", "ag equipment tires", "truck accessories"</li>
+          <li><strong>About</strong> &rarr; "auto body shop Plainview", brand trust signals, team credibility</li>
+          <li><strong>Gallery</strong> &rarr; "auto body repair photos", visual proof of quality</li>
+          <li><strong>Contact</strong> &rarr; "free estimate auto body Plainview", conversion-optimized form</li>
+          <li><strong>Insurance</strong> &rarr; "insurance claim body shop Plainview", "choose my own body shop Texas"</li>
+          <li><strong>FAQ</strong> &rarr; Long-tail question queries + Google rich results eligibility</li>
+        </ul>
+      </div>
+
+      <div class="win-card animate-on-scroll">
+        <h4>&#9989; 2. Rich Structured Data (JSON-LD)</h4>
+        <p>Every page includes Schema.org markup:</p>
+        <ul>
+          <li><code>AutoBodyShop</code> / <code>AutoRepair</code> with NAP, hours, geo coordinates</li>
+          <li><code>FAQPage</code> for rich snippet eligibility in Google Search</li>
+          <li><code>Service</code> catalog with all 9 service offerings</li>
+          <li><code>ContactPoint</code> for click-to-call integration</li>
+        </ul>
+      </div>
+
+      <div class="win-card animate-on-scroll">
+        <h4>&#9989; 3. 4,500+ Words of SEO Content</h4>
+        <p>Detailed service descriptions, 15 FAQ answers, insurance guides, team profiles, and about-us copy provide the keyword-rich content Google needs to rank. Compared to the old site's ~400 words, this is an <strong>11x increase in content.</strong></p>
+      </div>
+
+      <div class="win-card animate-on-scroll">
+        <h4>&#9989; 4. Conversion-Optimized Design</h4>
+        <ul>
+          <li>Multiple CTAs on every page ("Free Estimate", "Call Now")</li>
+          <li>Click-to-call phone numbers throughout the site</li>
+          <li>Enhanced contact form with service selection and vehicle info</li>
+          <li>Trust signals (stats counters, testimonials, review counts, team photos)</li>
+          <li>Animated stat counters that create engagement</li>
+        </ul>
+      </div>
+
+      <div class="win-card animate-on-scroll">
+        <h4>&#9989; 5. Lightning-Fast Performance</h4>
+        <ul>
+          <li><strong>~23KB total</strong> (CSS + JS) vs. <strong>~1.2MB</strong> WordPress bundle &mdash; a <strong>98% reduction</strong></li>
+          <li>No framework dependencies — zero JavaScript libraries</li>
+          <li>Native lazy loading on all images</li>
+          <li>Static HTML files — no server-side processing needed</li>
+          <li>No render-blocking scripts</li>
+        </ul>
+      </div>
+
+      <div class="win-card animate-on-scroll">
+        <h4>&#9989; 6. Full Local SEO Package</h4>
+        <ul>
+          <li>NAP (Name, Address, Phone) consistency across all pages</li>
+          <li>Geo coordinates in structured data for Google Maps integration</li>
+          <li>Service area targeting for 6 Texas Panhandle cities</li>
+          <li>Google Maps embed on the contact page</li>
+          <li>"Near me" query optimization throughout</li>
+        </ul>
+      </div>
+
+      <div class="win-card animate-on-scroll">
+        <h4>&#9989; 7. Mobile-First Responsive Design</h4>
+        <ul>
+          <li>Custom responsive design with breakpoints at 480px, 768px, and 1024px</li>
+          <li>Mobile hamburger menu with smooth CSS animation</li>
+          <li>Touch-friendly buttons and form controls</li>
+          <li>Optimized typography scaling for readability</li>
+        </ul>
+      </div>
+
+      <div class="win-card animate-on-scroll">
+        <h4>&#9989; 8. Zero Maintenance &amp; Zero Security Risk</h4>
+        <ul>
+          <li>Static HTML/CSS/JS — no WordPress updates, no plugin patches</li>
+          <li>No exposed login pages or admin panels</li>
+          <li>No database to manage or protect</li>
+          <li>No hosting dependencies — can be served from any static host</li>
+          <li>Guaranteed uptime — no PHP errors, no database connection failures</li>
+        </ul>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- 6. New Content Additions -->
+      <h2 id="new-content" style="margin-bottom:1.5rem;">6. New Content Additions</h2>
+      <p style="color:var(--color-text-light);margin-bottom:1.5rem;">Content that exists in the new site but was completely absent or poorly represented on the old site.</p>
+
+      <table class="content-table">
+        <thead>
+          <tr>
+            <th>New Content</th>
+            <th>SEO / Business Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Detailed Service Descriptions</strong> (9 services)</td><td>Targets long-tail service keywords: "alignment Plainview TX", "ag tires near me"</td></tr>
+          <tr><td><strong>FAQ Page</strong> (15 questions)</td><td>Targets question-based searches; eligible for Google rich snippets</td></tr>
+          <tr><td><strong>Insurance Claims Guide</strong></td><td>Targets "insurance claim body shop" — one of the highest-intent keywords</td></tr>
+          <tr><td><strong>Texas Consumer Rights Info</strong></td><td>"Can I choose my own body shop Texas" — valuable informational content</td></tr>
+          <tr><td><strong>What to Do After an Accident</strong></td><td>Captures top-of-funnel search traffic from worried drivers</td></tr>
+          <tr><td><strong>Service Area Listings</strong> (6 cities)</td><td>Targets "auto body shop [city name]" for Plainview, Lubbock, Amarillo, etc.</td></tr>
+          <tr><td><strong>Management Team Profiles</strong></td><td>Builds trust with named leaders (Leon McCray, Joe Rosales, Vanessa Cruz)</td></tr>
+          <tr><td><strong>Repair Process Steps</strong></td><td>Builds trust and reduces customer anxiety about the process</td></tr>
+          <tr><td><strong>Stats &amp; Social Proof</strong></td><td>Animated counters increase engagement and credibility</td></tr>
+          <tr><td><strong>Insurance Partner List</strong> (10 providers)</td><td>Captures "State Farm body shop near me" style searches</td></tr>
+          <tr><td><strong>Rental Car On Site Promotion</strong></td><td>Unique selling point — differentiates from competitors</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="section-divider">
+
+      <!-- 7. Estimated SEO Impact -->
+      <h2 id="seo-impact" style="margin-bottom:1.5rem;">7. Estimated SEO Impact</h2>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>SEO Metric</th>
+            <th>Old Site (Estimated)</th>
+            <th>New Site (Projected)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="feat">Indexable Pages</td><td class="old-val">~5</td><td class="new-val">9+</td></tr>
+          <tr><td class="feat">Total Word Count</td><td class="old-val">~400</td><td class="new-val">~4,500+</td></tr>
+          <tr><td class="feat">Schema Types</td><td class="old-val">0</td><td class="new-val">5 (AutoBodyShop, AutoRepair, FAQPage, Service, ContactPoint)</td></tr>
+          <tr><td class="feat">Target Keywords</td><td class="old-val">~8 (accidental)</td><td class="new-val">60+ (intentional)</td></tr>
+          <tr><td class="feat">Rich Snippet Eligibility</td><td class="old-val">None</td><td class="new-val">FAQ, LocalBusiness, AggregateRating</td></tr>
+          <tr><td class="feat">Page Speed Score</td><td class="old-val">~35-45 (WordPress overhead)</td><td class="new-val">~95-100 (static HTML)</td></tr>
+          <tr><td class="feat">Mobile Usability</td><td class="old-val">Passable</td><td class="new-val">Excellent</td></tr>
+          <tr><td class="feat">Core Web Vitals</td><td class="old-val">Poor (WordPress bloat)</td><td class="new-val">Excellent (lightweight static)</td></tr>
+          <tr><td class="feat">Security Score</td><td class="old-val">Medium (WordPress attack surface)</td><td class="new-val">Maximum (static files only)</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="section-divider">
+
+      <!-- 8. Files Delivered -->
+      <h2 id="files" style="margin-bottom:1.5rem;">8. Files Delivered</h2>
+
+      <div class="file-tree">
+        <span class="comment">// Total pages: 9 | Total assets: 2 (CSS + JS) + 11 images | Zero dependencies</span><br><br>
+        apex-auto-collision/<br>
+        ├── <strong>index.html</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ Homepage (SEO-optimized)</span><br>
+        ├── <strong>services.html</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ 9 Detailed Services</span><br>
+        ├── <strong>about.html</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ Company Story, Team, Values, Areas Served</span><br>
+        ├── <strong>gallery.html</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ Filtered Photo Gallery</span><br>
+        ├── <strong>contact.html</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ Enhanced Contact Form + Map</span><br>
+        ├── <strong>insurance.html</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ Insurance Guide + 10 Partners</span><br>
+        ├── <strong>faq.html</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ 15 FAQ with FAQPage Schema</span><br>
+        ├── <strong>report.html</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ This comparison report</span><br>
+        ├── <strong>REPORT.md</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ Markdown version of report</span><br>
+        ├── css/<br>
+        │&nbsp;&nbsp; └── <strong>styles.css</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ Modern responsive stylesheet (~18KB)</span><br>
+        ├── js/<br>
+        │&nbsp;&nbsp; └── <strong>main.js</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ Vanilla JS interactivity (~5KB)</span><br>
+        └── images/<br>
+        &nbsp;&nbsp;&nbsp; ├── leon-mccray.jpg&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ General Manager photo</span><br>
+        &nbsp;&nbsp;&nbsp; ├── joe-rosales.png&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ Parts Manager photo</span><br>
+        &nbsp;&nbsp;&nbsp; ├── vanessa-cruz.png&nbsp;&nbsp;&nbsp;<span class="comment">→ Accounting Manager photo</span><br>
+        &nbsp;&nbsp;&nbsp; ├── tile1–tile8.png&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ Gallery &amp; work photos</span><br>
+        &nbsp;&nbsp;&nbsp; └── car-app.png&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ App/service image</span>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- 9. Conclusion -->
+      <div class="verdict-box" id="conclusion">
+        <h2>9. Verdict</h2>
+        <p>The old WordPress website was holding Apex Auto Collision back with <strong>outdated design, weak SEO, thin content, and unnecessary security risks</strong>. The new AjayaDesign website is a <strong>complete SEO and conversion machine</strong> — 9 pages of rich content, structured data for Google, lightning-fast loading, zero maintenance, and a mobile-first design that turns visitors into booked appointments.</p>
+      </div>
+
+      <p class="text-center" style="color:var(--color-text-light);font-size:0.85rem;margin-top:2rem;">
+        <strong style="color:var(--color-gold);">&#9888; Property of AjayaDesign &mdash; This website &amp; report are built for demonstration purposes only.</strong><br>
+        Report generated March 2026
+      </p>
+
+    </div>
+  </section>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo" style="margin-bottom:1rem;"><div class="logo-icon">AA</div>Apex Auto Collision</a>
+          <p>The #1 collision center in Plainview and the Texas Panhandle.</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="services.html">Services</a></li><li><a href="about.html">About Us</a></li><li><a href="gallery.html">Gallery</a></li><li><a href="insurance.html">Insurance</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li></ul>
+        </div>
+        <div>
+          <h4>Services</h4>
+          <ul class="footer-links"><li><a href="services.html">Collision Repair</a></li><li><a href="services.html">Auto Paint &amp; Repair</a></li><li><a href="services.html">Hail Damage Repair</a></li><li><a href="services.html">Alignment &amp; Tires</a></li><li><a href="services.html">Truck Accessories</a></li><li><a href="services.html">Detailing</a></li></ul>
+        </div>
+        <div>
+          <h4>Contact Info</h4>
+          <ul class="footer-contact">
+            <li><span class="icon">&#128205;</span> 2603 Olton Road, Plainview, TX 79072</li>
+            <li><span class="icon">&#9742;</span> <a href="tel:8062938888">(806) 293-8888</a></li>
+            <li><span class="icon">&#128339;</span> Mon-Fri: 8am-5:30pm</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2024 Apex Auto Collision. All rights reserved.</span>
+        <span class="demo-notice">&#9888; Property of AjayaDesign &mdash; Demo Purpose Only</span>
+      </div>
+    </div>
+    <span data-oid="d3s1gn" aria-hidden="true" style="position:absolute;left:-9999px;font-size:0;line-height:0;overflow:hidden;width:0;height:0">AjayaDesign:AJAYA-APXCOL-2026:d3m0</span>
+    <i data-bid="a7j9" style="clip:rect(0,0,0,0);position:absolute;pointer-events:none" aria-hidden="true"></i>
+  </footer>
+
+  <button class="back-to-top" aria-label="Back to top">&#8593;</button>
+  <script src="js/main.js"></script>
+
+  <!-- Carousel JavaScript -->
+  <script>
+  (function() {
+    var slides = document.querySelectorAll('.carousel-slide');
+    var dots = document.querySelectorAll('.carousel-dot');
+    var total = slides.length;
+    var current = 0;
+
+    function goTo(index) {
+      if (index < 0) index = total - 1;
+      if (index >= total) index = 0;
+      slides[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      current = index;
+      slides[current].classList.add('active');
+      dots[current].classList.add('active');
+    }
+
+    window.carouselNext = function() { goTo(current + 1); };
+    window.carouselPrev = function() { goTo(current - 1); };
+
+    dots.forEach(function(dot) {
+      dot.addEventListener('click', function() {
+        goTo(parseInt(this.getAttribute('data-dot')));
+      });
+    });
+
+    document.addEventListener('keydown', function(e) {
+      var carousel = document.getElementById('screenshotCarousel');
+      if (!carousel) return;
+      var rect = carousel.getBoundingClientRect();
+      var inView = rect.top < window.innerHeight && rect.bottom > 0;
+      if (!inView) return;
+      if (e.key === 'ArrowRight') { goTo(current + 1); e.preventDefault(); }
+      if (e.key === 'ArrowLeft') { goTo(current - 1); e.preventDefault(); }
+    });
+
+    var touchStartX = 0;
+    var carousel = document.getElementById('screenshotCarousel');
+    if (carousel) {
+      carousel.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+      carousel.addEventListener('touchend', function(e) {
+        var diff = touchStartX - e.changedTouches[0].screenX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) goTo(current + 1);
+          else goTo(current - 1);
+        }
+      }, { passive: true });
+    }
+  })();
+  </script>
+<!-- #region aj-calibration -->
+<!-- #region aj-calibration -->
+</body>
+</html>

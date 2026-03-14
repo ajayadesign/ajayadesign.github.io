@@ -57,6 +57,48 @@
     <priority>0.5</priority>
   </url>
 
+  <!-- ═══ Apex Auto Collision (New) ═══ -->
+  <url>
+    <loc>https://ajayadesign.github.io/apex-auto-collision/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/apex-auto-collision/services.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/apex-auto-collision/about.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/apex-auto-collision/gallery.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/apex-auto-collision/contact.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/apex-auto-collision/insurance.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/apex-auto-collision/faq.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/apex-auto-collision/report.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
   <!-- ═══ Austin Barbell ═══ -->
   <url>
     <loc>https://ajayadesign.github.io/austin-barbell/</loc>
