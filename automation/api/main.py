@@ -1623,6 +1623,236 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning("Outreach scheduler failed to start: %s", e)
 
+    # ── Start Agent Orchestration Scheduler (11 HTTP agents) ──
+    agent_scheduler = None
+    try:
+        from apscheduler.schedulers.asyncio import AsyncIOScheduler
+        from apscheduler.triggers.cron import CronTrigger
+        from apscheduler.triggers.interval import IntervalTrigger
+
+        agent_scheduler = AsyncIOScheduler(timezone="America/Chicago")
+
+        # Define agent heartbeat caller
+        async def trigger_agent(agent_name: str, endpoint: str, context: dict):
+            """Call an agent heartbeat endpoint."""
+            try:
+                from api.routes.agents import HeartbeatRequest
+
+                request = HeartbeatRequest(
+                    agent_id=f"auto-{agent_name}",
+                    company_id="ajayadesign",
+                    goal=f"Automated {agent_name} cycle",
+                    budget_remaining=10000.0,  # $10k monthly budget
+                    context=context
+                )
+
+                # Import the specific heartbeat handler
+                if "scout" in endpoint:
+                    from api.routes.agents import scout_heartbeat
+                    result = await scout_heartbeat(request)
+                elif "audit" in endpoint:
+                    from api.routes.agents import audit_heartbeat
+                    result = await audit_heartbeat(request)
+                elif "copywriter" in endpoint:
+                    from api.routes.agents import copywriter_heartbeat
+                    result = await copywriter_heartbeat(request)
+                elif "enrichment" in endpoint:
+                    from api.routes.agents import enrichment_heartbeat
+                    result = await enrichment_heartbeat(request)
+                elif "scoring" in endpoint:
+                    from api.routes.agents import scoring_heartbeat
+                    result = await scoring_heartbeat(request)
+                elif "email-qa" in endpoint:
+                    from api.routes.agents import email_qa_heartbeat
+                    result = await email_qa_heartbeat(request)
+                elif "pipeline-monitor" in endpoint:
+                    from api.routes.agents import pipeline_monitor_heartbeat
+                    result = await pipeline_monitor_heartbeat(request)
+                elif "sales-qualification" in endpoint:
+                    from api.routes.agents import sales_qualification_heartbeat
+                    result = await sales_qualification_heartbeat(request)
+                elif "proposal-generator" in endpoint:
+                    from api.routes.agents import proposal_generator_heartbeat
+                    result = await proposal_generator_heartbeat(request)
+                elif "contract" in endpoint:
+                    from api.routes.agents import contract_heartbeat
+                    result = await contract_heartbeat(request)
+                elif "onboarding" in endpoint:
+                    from api.routes.agents import onboarding_heartbeat
+                    result = await onboarding_heartbeat(request)
+                else:
+                    logger.error(f"Unknown agent endpoint: {endpoint}")
+                    return
+
+                if result.status == "success":
+                    logger.info(f"✅ {agent_name}: {result.message}")
+                else:
+                    logger.warning(f"⚠️  {agent_name}: {result.message}")
+
+            except Exception as e:
+                logger.error(f"❌ {agent_name} failed: {e}", exc_info=True)
+
+        # ────────────────────────────────────────────────────────────
+        # PHASE 1 AGENTS (Discovery & Outreach)
+        # ────────────────────────────────────────────────────────────
+
+        # Scout Agent #1 - Manor (every 6 hours)
+        agent_scheduler.add_job(
+            trigger_agent,
+            CronTrigger(hour="*/6", minute=0),
+            args=["Scout-Manor", "/api/v1/agents/scout/heartbeat", {"geo_ring": "Manor", "limit": 30}],
+            id="agent_scout_manor",
+            replace_existing=True,
+            misfire_grace_time=3600,
+        )
+
+        # Website Audit Agent (every 20 minutes)
+        agent_scheduler.add_job(
+            trigger_agent,
+            IntervalTrigger(minutes=20),
+            args=["Audit", "/api/v1/agents/audit/heartbeat", {"batch_size": 15, "timeout_seconds": 60}],
+            id="agent_audit",
+            replace_existing=True,
+            misfire_grace_time=1200,
+        )
+
+        # Email Copywriter Agent (every 3 hours)
+        agent_scheduler.add_job(
+            trigger_agent,
+            CronTrigger(hour="*/3", minute=0),
+            args=["Copywriter", "/api/v1/agents/copywriter/heartbeat", {
+                "min_wp_score": 60,
+                "batch_size": 30,
+                "ai_provider": "github-models"
+            }],
+            id="agent_copywriter",
+            replace_existing=True,
+            misfire_grace_time=3600,
+        )
+
+        # ────────────────────────────────────────────────────────────
+        # PHASE 2 AGENTS (Enrichment & Quality)
+        # ────────────────────────────────────────────────────────────
+
+        # Scout Agent #2 - Pflugerville (every 6 hours, offset 1 hour)
+        agent_scheduler.add_job(
+            trigger_agent,
+            CronTrigger(hour="1,7,13,19", minute=0),
+            args=["Scout-Pflugerville", "/api/v1/agents/scout/heartbeat", {"geo_ring": "Pflugerville", "limit": 30}],
+            id="agent_scout_pflugerville",
+            replace_existing=True,
+            misfire_grace_time=3600,
+        )
+
+        # Data Enrichment Agent (every 30 minutes)
+        agent_scheduler.add_job(
+            trigger_agent,
+            IntervalTrigger(minutes=30),
+            args=["Enrichment", "/api/v1/agents/enrichment/heartbeat", {
+                "batch_size": 20,
+                "timeout_seconds": 120
+            }],
+            id="agent_enrichment",
+            replace_existing=True,
+            misfire_grace_time=1800,
+        )
+
+        # Scoring Agent (every 25 minutes)
+        agent_scheduler.add_job(
+            trigger_agent,
+            IntervalTrigger(minutes=25),
+            args=["Scoring", "/api/v1/agents/scoring/heartbeat", {"batch_size": 50}],
+            id="agent_scoring",
+            replace_existing=True,
+            misfire_grace_time=1500,
+        )
+
+        # Email QA Agent (every 30 minutes)
+        agent_scheduler.add_job(
+            trigger_agent,
+            IntervalTrigger(minutes=30),
+            args=["EmailQA", "/api/v1/agents/email-qa/heartbeat", {
+                "batch_size": 30,
+                "auto_approve_threshold": 0.90,
+                "ai_provider": "github-models"
+            }],
+            id="agent_email_qa",
+            replace_existing=True,
+            misfire_grace_time=1800,
+        )
+
+        # Pipeline Monitor (every 30 minutes)
+        agent_scheduler.add_job(
+            trigger_agent,
+            IntervalTrigger(minutes=30),
+            args=["PipelineMonitor", "/api/v1/agents/pipeline-monitor/heartbeat", {}],
+            id="agent_pipeline_monitor",
+            replace_existing=True,
+            misfire_grace_time=1800,
+        )
+
+        # ────────────────────────────────────────────────────────────
+        # PHASE 3 AGENTS (Autonomous Sales)
+        # ────────────────────────────────────────────────────────────
+
+        # Sales Qualification Agent (every hour)
+        agent_scheduler.add_job(
+            trigger_agent,
+            IntervalTrigger(hours=1),
+            args=["SalesQualification", "/api/v1/agents/sales-qualification/heartbeat", {
+                "batch_size": 20,
+                "ai_provider": "github-models",
+                "calendly_link": "https://calendly.com/ajayadesign/30min"
+            }],
+            id="agent_sales_qualification",
+            replace_existing=True,
+            misfire_grace_time=3600,
+        )
+
+        # Proposal Generator (every 2 hours)
+        agent_scheduler.add_job(
+            trigger_agent,
+            CronTrigger(hour="*/2", minute=0),
+            args=["ProposalGenerator", "/api/v1/agents/proposal-generator/heartbeat", {
+                "batch_size": 5,
+                "ai_provider": "github-models"
+            }],
+            id="agent_proposal_generator",
+            replace_existing=True,
+            misfire_grace_time=7200,
+        )
+
+        # Contract Agent (every hour)
+        agent_scheduler.add_job(
+            trigger_agent,
+            IntervalTrigger(hours=1),
+            args=["Contract", "/api/v1/agents/contract/heartbeat", {
+                "batch_size": 10,
+                "use_docusign": False
+            }],
+            id="agent_contract",
+            replace_existing=True,
+            misfire_grace_time=3600,
+        )
+
+        # Onboarding Agent (every 2 hours)
+        agent_scheduler.add_job(
+            trigger_agent,
+            CronTrigger(hour="*/2", minute=30),
+            args=["Onboarding", "/api/v1/agents/onboarding/heartbeat", {"batch_size": 10}],
+            id="agent_onboarding",
+            replace_existing=True,
+            misfire_grace_time=7200,
+        )
+
+        agent_scheduler.start()
+        logger.info("✅ Agent orchestration scheduler started (11 agents)")
+
+    except ImportError:
+        logger.info("ℹ️  Agent scheduler dependencies not available")
+    except Exception as e:
+        logger.warning("Agent scheduler failed to start: %s", e)
+
     # ── Start Pipeline Worker (autonomous prospect processing) ──
     pipeline_worker = None
     try:
@@ -1643,6 +1873,9 @@ async def lifespan(app: FastAPI):
     if pipeline_worker:
         from api.services.pipeline_worker import stop_pipeline_worker
         await stop_pipeline_worker()
+    if agent_scheduler:
+        logger.info("🤖 Shutting down agent scheduler...")
+        agent_scheduler.shutdown(wait=False)
     if outreach_scheduler:
         outreach_scheduler.shutdown(wait=False)
     poller_task.cancel()
@@ -1697,6 +1930,10 @@ app.include_router(outreach_router, prefix="/api/v1")
 # Mass outreach routes (SMTP pool, import, verification)
 from api.routes.mass_outreach import mass_router
 app.include_router(mass_router, prefix="/api/v1")
+
+# Paperclip agent heartbeat routes
+from api.routes.agents import router as agents_router
+app.include_router(agents_router, prefix="/api/v1")
 
 
 @app.get("/", include_in_schema=False)

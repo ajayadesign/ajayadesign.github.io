@@ -50,6 +50,16 @@ const SEED_SITES = [
     tagline: "Caring for Your Little Ones",
     status: "complete",
   },
+  {
+    client_name: "Mack Magnets",
+    niche: "Marketing / Promotional Products",
+    goals: "Custom magnet marketing products and promotional materials",
+    email: "",
+    live_url: "https://mackmagnets.github.io/",
+    directory_name: "mackmagnets.github.io",
+    tagline: "Custom Magnets for Your Business",
+    status: "complete",
+  },
 ];
 
 // ── Load portfolio from API (with Firebase RTDB fallback) ──
