@@ -8,26 +8,16 @@ let portfolioSites = [];
 let selectedPortfolioId = null;
 let portfolioSubTab = 'sites';
 
-// ── 4 existing sites to seed ───────────────────────────
+// ── Portfolio sites to seed ───────────────────────────
 const SEED_SITES = [
   {
     client_name: "Ajaya Dahal",
     niche: "Personal Portfolio",
     goals: "Showcase engineering portfolio, education, skills, and achievements",
     email: "",
-    live_url: "https://ajayadesign.github.io/ajayadahal/",
-    directory_name: "ajayadahal",
+    live_url: "https://ajayadahal.github.io/",
+    directory_name: "ajayadahal.github.io",
     tagline: "Hardware Engineering Portfolio",
-    status: "complete",
-  },
-  {
-    client_name: "Chhaya Photography",
-    niche: "Wedding Photography",
-    goals: "Display photography portfolio, galleries, and booking information",
-    email: "",
-    live_url: "https://ajayadesign.github.io/chhayaphotography/",
-    directory_name: "chhayaphotography",
-    tagline: "Capturing Life's Beautiful Moments",
     status: "complete",
   },
   {
@@ -35,19 +25,9 @@ const SEED_SITES = [
     niche: "Photo Magnets / E-commerce",
     goals: "Sell custom photo magnets, events, wholesale, and retail",
     email: "",
-    live_url: "https://ajayadesign.github.io/magnetmomentsco/",
-    directory_name: "magnetmomentsco",
+    live_url: "https://magnetmomentsco.github.io/",
+    directory_name: "magnetmomentsco.github.io",
     tagline: "Turn Your Favorite Photos Into Magnets",
-    status: "complete",
-  },
-  {
-    client_name: "Sanz The Nanny",
-    niche: "Nanny / Childcare Services",
-    goals: "Professional nanny service website with booking and testimonials",
-    email: "",
-    live_url: "https://ajayadesign.github.io/sanz-the-nanny/",
-    directory_name: "sanz-the-nanny",
-    tagline: "Caring for Your Little Ones",
     status: "complete",
   },
   {
@@ -58,6 +38,36 @@ const SEED_SITES = [
     live_url: "https://mackmagnets.github.io/",
     directory_name: "mackmagnets.github.io",
     tagline: "Custom Magnets for Your Business",
+    status: "complete",
+  },
+  {
+    client_name: "Dahal Event Planner",
+    niche: "Event Planning",
+    goals: "Create unforgettable weddings, engagements, birthdays, corporate events and celebrations in Austin, TX",
+    email: "",
+    live_url: "https://dahal-event-planner.github.io/",
+    directory_name: "dahal-event-planner.github.io",
+    tagline: "Creating Moments That Last Forever",
+    status: "complete",
+  },
+  {
+    client_name: "Monument Pilates",
+    niche: "Pilates Studio",
+    goals: "Premier classical and contemporary Pilates studio in Pflugerville, TX with certified instructors",
+    email: "",
+    live_url: "https://monumentpilates.github.io/",
+    directory_name: "monumentpilates.github.io",
+    tagline: "Pflugerville's Premier Pilates Studio",
+    status: "complete",
+  },
+  {
+    client_name: "PictureThisMagnet",
+    niche: "Photo Magnets / E-commerce",
+    goals: "Turn your favorite photos into personalized square photo magnets, custom sets, bulk orders and gift cards",
+    email: "picturethis.susan@gmail.com",
+    live_url: "https://picturethismagnet.github.io/",
+    directory_name: "picturethismagnet.github.io",
+    tagline: "Custom Photo Magnets & Keepsakes",
     status: "complete",
   },
 ];
@@ -110,7 +120,7 @@ async function loadPortfolio() {
 
 // ── Seed existing sites ────────────────────────────────
 async function seedPortfolioSites() {
-  if (!confirm('Seed the 4 existing portfolio sites into the database?')) return;
+  if (!confirm('Seed the 6 existing portfolio sites into the database?')) return;
 
   try {
     const res = await fetch(`${API_BASE}/portfolio/seed`, {
