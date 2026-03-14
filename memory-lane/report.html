@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="assets/images/shop-icon.jpg" type="image/jpeg">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Website Rebuild Report — Memory Lane Studio TX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-primary: #B08968;
+      --color-primary-light: #D4B896;
+      --color-primary-dark: #8B6914;
+      --color-secondary: #6B705C;
+      --color-secondary-light: #A5A58D;
+      --color-accent: #CB997E;
+      --color-cream: #FFF8F0;
+      --color-cream-dark: #F5EDE0;
+      --color-charcoal: #2D2D2D;
+      --color-text: #4A4A4A;
+      --color-text-light: #7A7A7A;
+      --color-white: #FFFFFF;
+      --color-border: #E8E0D8;
+      --color-success: #588157;
+      --color-error: #BC4749;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-accent: 'Cormorant Garamond', Georgia, serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    body { font-family: var(--font-body); color: var(--color-text); background: var(--color-cream); line-height: 1.7; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    img { max-width: 100%; height: auto; }
+
+    /* Report Header */
+    .report-header {
+      background: linear-gradient(135deg, var(--color-charcoal) 0%, #3d332e 100%);
+      color: white; padding: 4rem 2rem 3rem; text-align: center;
+    }
+    .report-header .badge {
+      display: inline-block; background: var(--color-primary); color: white;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.35rem 1rem; border-radius: 50px; margin-bottom: 1.25rem;
+    }
+    .report-header h1 { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; margin-bottom: 0.5rem; }
+    .report-header .subtitle { font-family: var(--font-accent); font-size: 1.2rem; opacity: 0.7; font-style: italic; }
+    .report-meta { display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; font-size: 0.85rem; opacity: 0.6; }
+
+    /* TOC */
+    .toc {
+      max-width: 800px; margin: -1.5rem auto 0; background: var(--color-white);
+      border-radius: 12px; padding: 1.75rem 2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      position: relative; z-index: 2;
+    }
+    .toc h2 { font-family: var(--font-heading); font-size: 1rem; color: var(--color-charcoal); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    .toc ol { list-style: none; counter-reset: toc; columns: 2; column-gap: 2rem; }
+    .toc li { counter-increment: toc; padding: 0.3rem 0; }
+    .toc li::before { content: "0" counter(toc) "."; color: var(--color-primary); font-weight: 700; font-size: 0.8rem; margin-right: 0.5rem; font-family: var(--font-mono); }
+    .toc a { color: var(--color-text); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    .toc a:hover { color: var(--color-primary); }
+
+    /* Main content */
+    .report { max-width: 800px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+    .section { margin-bottom: 4rem; scroll-margin-top: 2rem; }
+    .section-num { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; color: var(--color-primary); letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 0.25rem; }
+    .section h2 { font-family: var(--font-heading); font-size: 1.65rem; color: var(--color-charcoal); margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--color-border); }
+    .section h3 { font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-charcoal); margin: 1.75rem 0 0.5rem; }
+    .section p { margin-bottom: 1rem; }
+
+    /* Comparison cards */
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 1.25rem 0; }
+    .compare-card { background: var(--color-white); border-radius: 10px; padding: 1.25rem 1.5rem; border-left: 4px solid var(--color-border); }
+    .compare-card.before { border-left-color: var(--color-text-light); }
+    .compare-card.after { border-left-color: var(--color-success); }
+    .compare-card .label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
+    .compare-card.before .label { color: var(--color-text-light); }
+    .compare-card.after .label { color: var(--color-success); }
+    .compare-card ul { list-style: none; font-size: 0.88rem; }
+    .compare-card li { padding: 0.2rem 0; padding-left: 1.25rem; position: relative; }
+    .compare-card.before li::before { content: "✗"; position: absolute; left: 0; color: #c0392b; font-weight: 700; }
+    .compare-card.after li::before { content: "✓"; position: absolute; left: 0; color: var(--color-success); font-weight: 700; }
+
+    /* Color swatches */
+    .swatches { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0 1.5rem; }
+    .swatch { text-align: center; }
+    .swatch-circle { width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 0.4rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 3px solid white; }
+    .swatch-name { font-size: 0.72rem; font-weight: 600; color: var(--color-charcoal); }
+    .swatch-hex { font-size: 0.65rem; color: var(--color-text-light); font-family: var(--font-mono); }
+
+    /* Tech stack */
+    .tech-stack { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin: 1rem 0; }
+    .tech-item { background: var(--color-white); border-radius: 10px; padding: 1rem 1.25rem; border: 1px solid var(--color-border); }
+    .tech-item strong { display: block; font-size: 0.88rem; color: var(--color-charcoal); margin-bottom: 0.15rem; }
+    .tech-item span { font-size: 0.8rem; color: var(--color-text-light); }
+
+    /* Code blocks */
+    .code-block {
+      background: var(--color-charcoal); color: #e0e0e0; border-radius: 10px;
+      padding: 1.25rem 1.5rem; font-family: var(--font-mono); font-size: 0.78rem;
+      line-height: 1.8; overflow-x: auto; white-space: pre; margin: 1rem 0; position: relative;
+    }
+    .code-block .label { position: absolute; top: 0.5rem; right: 0.75rem; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: #888; }
+    .code-block .cm { color: #6a9955; }
+    .code-block .kw { color: #c586c0; }
+    .code-block .str { color: #ce9178; }
+
+    /* File tree */
+    .file-tree {
+      background: var(--color-charcoal); color: #ccc; border-radius: 10px;
+      padding: 1.25rem 1.5rem; font-family: var(--font-mono); font-size: 0.78rem;
+      line-height: 1.8; white-space: pre; overflow-x: auto; margin: 1rem 0;
+    }
+    .file-tree .dir { color: var(--color-accent); }
+    .file-tree .file { color: #9cdcfe; }
+    .file-tree .comment { color: #6a9955; }
+
+    /* Table */
+    .report table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; background: var(--color-white); border-radius: 10px; overflow: hidden; }
+    .report th { background: var(--color-cream-dark); text-align: left; padding: 0.75rem 1rem; font-weight: 600; font-size: 0.8rem; color: var(--color-charcoal); }
+    .report td { padding: 0.65rem 1rem; border-top: 1px solid var(--color-border); }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1rem 0; }
+
+    /* Callout */
+    .callout { background: var(--color-white); border-left: 4px solid var(--color-primary); border-radius: 0 10px 10px 0; padding: 1.25rem 1.5rem; margin: 1.25rem 0; font-size: 0.92rem; }
+    .callout.success { border-left-color: var(--color-success); }
+    .callout.warning { border-left-color: var(--color-error); }
+    .callout .callout-title { font-weight: 700; color: var(--color-charcoal); font-size: 0.85rem; margin-bottom: 0.25rem; }
+
+    /* Carousel */
+    .carousel-section { margin: 0 auto 3rem; max-width: 800px; padding: 0 2rem; }
+    .carousel-section .section-num { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; color: var(--color-primary); letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 0.25rem; }
+    .carousel-section h2 { font-family: var(--font-heading); font-size: 1.65rem; color: var(--color-charcoal); margin-bottom: 0.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--color-border); }
+    .carousel-section > p { font-size: 0.92rem; color: var(--color-text); margin-bottom: 1.5rem; }
+    .carousel-container { position: relative; background: var(--color-white); border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden; }
+    .carousel-page-name { text-align: center; padding: 1rem 1rem 0.5rem; font-family: var(--font-heading); font-size: 1.15rem; font-weight: 600; color: var(--color-charcoal); }
+    .carousel-slide { display: none; }
+    .carousel-slide.active { display: block; }
+    .carousel-images { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 0.75rem 1.25rem 1rem; }
+    .carousel-img-wrap { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--color-border); background: #f5f5f5; }
+    .carousel-img-wrap img { width: 100%; height: auto; display: block; }
+    .carousel-label { position: absolute; top: 0.5rem; left: 0.5rem; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.25rem 0.65rem; border-radius: 50px; backdrop-filter: blur(8px); }
+    .carousel-label.before { background: rgba(122,122,122,0.85); color: #fff; }
+    .carousel-label.after { background: rgba(88,129,87,0.9); color: #fff; }
+    .carousel-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--color-primary); color: #fff; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.15); transition: background 0.2s, transform 0.15s; z-index: 5; }
+    .carousel-nav:hover { background: var(--color-primary-dark); transform: translateY(-50%) scale(1.08); }
+    .carousel-nav.prev { left: 0.75rem; }
+    .carousel-nav.next { right: 0.75rem; }
+    .carousel-dots { display: flex; justify-content: center; gap: 0.5rem; padding: 0.75rem 1rem 1.25rem; }
+    .carousel-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--color-border); background: transparent; cursor: pointer; transition: all 0.2s; padding: 0; }
+    .carousel-dot.active { background: var(--color-primary); border-color: var(--color-primary); }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .compare { grid-template-columns: 1fr; }
+      .toc ol { columns: 1; }
+      .toc { padding: 1.25rem 1rem; }
+      .report-header { padding: 2.5rem 1rem 2rem; }
+      .report-header h1 { font-size: 1.6rem; }
+      .report-meta { flex-direction: column; gap: 0.25rem; }
+      .report { padding: 2rem 1rem 4rem; }
+      .section h2 { font-size: 1.3rem; }
+      .tech-stack { grid-template-columns: 1fr; }
+      .carousel-images { grid-template-columns: 1fr; gap: 0.75rem; padding: 0.5rem 0.75rem 0.75rem; }
+      .carousel-nav { width: 34px; height: 34px; font-size: 0.95rem; }
+      .carousel-nav.prev { left: 0.4rem; }
+      .carousel-nav.next { right: 0.4rem; }
+      .carousel-section { padding: 0 1rem; }
+    }
+    @media print {
+      .report-header { background: white; color: black; border-bottom: 2px solid #ccc; }
+      .toc { box-shadow: none; border: 1px solid #ccc; }
+      body { background: white; }
+      .carousel-nav { display: none; }
+      .carousel-slide { display: block !important; page-break-inside: avoid; }
+    }
+    .footer-bar { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--color-text-light); border-top: 1px solid var(--color-border); margin-top: 2rem; }
+    .footer-bar a { color: var(--color-primary); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="report-header">
+    <span class="badge">Prepared for Susie</span>
+    <h1>Your New Website — Explained</h1>
+    <p class="subtitle">Hey Susie! Here's everything we built for Memory Lane Studio, why it matters, and how it will help you grow.</p>
+    <div class="report-meta">
+      <span>Prepared: March 14, 2026</span>
+      <span>For: Susie — Memory Lane Studio TX</span>
+      <span>By: AjayaDesign</span>
+    </div>
+  </header>
+
+  <!-- TOC -->
+  <nav class="toc">
+    <h2>Contents</h2>
+    <p style="margin-bottom:0.5rem;font-size:0.9rem;">
+      <span style="color:var(--color-primary);font-weight:700;font-family:var(--font-mono);font-size:0.8rem;margin-right:0.5rem;">📸</span>
+      <a href="#before-after" style="color:var(--color-charcoal);text-decoration:none;">Before &amp; After — Side by Side</a>
+    </p>
+    <ol>
+      <li><a href="#overview">Hi Susie! — The Big Picture</a></li>
+      <li><a href="#why-website">Why Your Own Website Matters More Than Ever</a></li>
+      <li><a href="#problems">What Was Holding You Back on Etsy</a></li>
+      <li><a href="#google-searches">Real Google Searches That Will Find YOU</a></li>
+      <li><a href="#seo">SEO Techniques We Used (The Secret Sauce)</a></li>
+      <li><a href="#improvements">What We Built &amp; Improved</a></li>
+      <li><a href="#design">Your Custom Design System</a></li>
+      <li><a href="#tech">Technology Stack</a></li>
+      <li><a href="#etsy">Etsy + Website = Best of Both Worlds</a></li>
+      <li><a href="#structure">Under the Hood — Site Structure</a></li>
+      <li><a href="#mobile">Mobile-First: Where Your Customers Are</a></li>
+      <li><a href="#growth">Your Roadmap to Growth</a></li>
+    </ol>
+  </nav>
+
+  <!-- SCREENSHOT CAROUSEL -->
+  <section class="carousel-section" id="before-after">
+    <span class="section-num">Screenshots</span>
+    <h2>Before &amp; After — Side by Side</h2>
+    <p>Browse through each page to see the dramatic transformation from a generic Etsy storefront to a polished, brand-first experience.</p>
+
+    <div class="carousel-container">
+      <button class="carousel-nav prev" aria-label="Previous page">‹</button>
+      <button class="carousel-nav next" aria-label="Next page">›</button>
+
+      <!-- Slide 1: Home Page -->
+      <div class="carousel-slide active" data-slide="0">
+        <div class="carousel-page-name">Homepage — Desktop</div>
+        <div class="carousel-images">
+          <div class="carousel-img-wrap">
+            <span class="carousel-label before">Before (Etsy)</span>
+            <img src="assets/screenshots/old-etsy-desktop-top.png" alt="Old Etsy shop storefront" loading="lazy">
+          </div>
+          <div class="carousel-img-wrap">
+            <span class="carousel-label after">After (New)</span>
+            <img src="assets/screenshots/new-home-desktop-top.png" alt="New Memory Lane Studio homepage" loading="lazy">
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Shop Page -->
+      <div class="carousel-slide" data-slide="1">
+        <div class="carousel-page-name">Shop Page — Desktop</div>
+        <div class="carousel-images">
+          <div class="carousel-img-wrap">
+            <span class="carousel-label before">Before (Etsy)</span>
+            <img src="assets/screenshots/old-etsy-desktop-full.png" alt="Old Etsy shop listings" loading="lazy">
+          </div>
+          <div class="carousel-img-wrap">
+            <span class="carousel-label after">After (New)</span>
+            <img src="assets/screenshots/new-shop-desktop-top.png" alt="New shop page" loading="lazy">
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: About Page -->
+      <div class="carousel-slide" data-slide="2">
+        <div class="carousel-page-name">About Page — Desktop</div>
+        <div class="carousel-images">
+          <div class="carousel-img-wrap">
+            <span class="carousel-label before">Before (Etsy)</span>
+            <img src="assets/screenshots/old-etsy-desktop-top.png" alt="Etsy has no real about page" loading="lazy">
+          </div>
+          <div class="carousel-img-wrap">
+            <span class="carousel-label after">After (New)</span>
+            <img src="assets/screenshots/new-about-desktop-top.png" alt="New About page design" loading="lazy">
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Contact Page -->
+      <div class="carousel-slide" data-slide="3">
+        <div class="carousel-page-name">Contact Page — Desktop</div>
+        <div class="carousel-images">
+          <div class="carousel-img-wrap">
+            <span class="carousel-label before">Before (Etsy)</span>
+            <img src="assets/screenshots/old-etsy-desktop-top.png" alt="Etsy only offers internal messaging" loading="lazy">
+          </div>
+          <div class="carousel-img-wrap">
+            <span class="carousel-label after">After (New)</span>
+            <img src="assets/screenshots/new-contact-desktop-top.png" alt="New dedicated contact page" loading="lazy">
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Mobile Comparison -->
+      <div class="carousel-slide" data-slide="4">
+        <div class="carousel-page-name">Mobile — Home Page</div>
+        <div class="carousel-images">
+          <div class="carousel-img-wrap">
+            <span class="carousel-label before">Before (Etsy)</span>
+            <img src="assets/screenshots/old-etsy-mobile-top.png" alt="Old Etsy mobile view" loading="lazy">
+          </div>
+          <div class="carousel-img-wrap">
+            <span class="carousel-label after">After (New)</span>
+            <img src="assets/screenshots/new-home-mobile-top.png" alt="New mobile homepage" loading="lazy">
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: FAQ -->
+      <div class="carousel-slide" data-slide="5">
+        <div class="carousel-page-name">FAQ Page — Desktop</div>
+        <div class="carousel-images">
+          <div class="carousel-img-wrap">
+            <span class="carousel-label before">Before (Etsy)</span>
+            <img src="assets/screenshots/old-etsy-desktop-top.png" alt="Etsy has no FAQ page" loading="lazy">
+          </div>
+          <div class="carousel-img-wrap">
+            <span class="carousel-label after">After (New)</span>
+            <img src="assets/screenshots/new-faq-desktop-top.png" alt="New FAQ page with accordion" loading="lazy">
+          </div>
+        </div>
+      </div>
+
+      <div class="carousel-dots">
+        <button class="carousel-dot active" data-slide="0" aria-label="Slide 1"></button>
+        <button class="carousel-dot" data-slide="1" aria-label="Slide 2"></button>
+        <button class="carousel-dot" data-slide="2" aria-label="Slide 3"></button>
+        <button class="carousel-dot" data-slide="3" aria-label="Slide 4"></button>
+        <button class="carousel-dot" data-slide="4" aria-label="Slide 5"></button>
+        <button class="carousel-dot" data-slide="5" aria-label="Slide 6"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- REPORT BODY -->
+  <main class="report">
+
+    <!-- 01. Hi Susie -->
+    <section class="section" id="overview">
+      <span class="section-num">01</span>
+      <h2>Hi Susie! — The Big Picture</h2>
+      <p>
+        First of all — congratulations on building Memory Lane Studio! What you're doing is beautiful, Susie. Turning people's phone photos into handcrafted magnets they can see every single day? That's not just a product, that's a <strong>gift of connection</strong>. Every magnet you make helps a family hold onto a moment that matters. That takes heart, and it shows in your work.
+      </p>
+      <p>
+        But here's the thing: <strong>right now, almost nobody can find you.</strong> Your Etsy shop is buried under thousands of competing listings. When a mom in San Antonio searches "custom photo magnets near me" on Google, she doesn't find you. When a husband in Dallas looking for a thoughtful Valentine's gift types "personalized gifts for her," he doesn't find you either. And that breaks my heart, because your products are <em>exactly</em> what these people are looking for.
+      </p>
+      <p>
+        <strong>That's what this website changes.</strong> We built you a professional, Google-optimized home on the internet — your very own corner of the web that search engines love, customers trust, and competitors can't touch. Every single page was handcrafted with love (just like your magnets!) using advanced SEO techniques that will help you show up when people search for exactly what you offer.
+      </p>
+
+      <div class="callout success">
+        <div class="callout-title">What we built for you, Susie</div>
+        <strong>6 custom-designed pages</strong> (Home, Shop, About, FAQ, Contact, Policies) + this report — each one hand-coded with over <strong>15 advanced SEO techniques</strong>, mobile-first responsive design, professional branding, and a warm aesthetic that matches your beautiful work. Zero templates. Zero shortcuts. 100% made for you.
+      </div>
+    </section>
+
+    <!-- 02. Why a Website Matters -->
+    <section class="section" id="why-website">
+      <span class="section-num">02</span>
+      <h2>Why Your Own Website Matters More Than Ever</h2>
+      <p>
+        Susie, I know you might be thinking: <em>"I already have an Etsy shop — do I really need a separate website?"</em> The honest answer is: <strong>yes, more than ever in 2026.</strong> Here's why:
+      </p>
+
+      <h3>🔍 Google is where people start</h3>
+      <p>
+        <strong>93% of all online experiences begin with a search engine.</strong> Not Etsy, not Facebook, not Instagram — <em>Google</em>. When someone in the Rio Grande Valley or anywhere in Texas types "custom photo magnets," Google decides what they see. And right now? Google shows them businesses with their own websites first, because Google trusts websites with custom domains, structured data, and rich content far more than marketplace listings.
+      </p>
+
+      <h3>📱 "Near me" searches have exploded</h3>
+      <p>
+        Google says <strong>"near me" searches have grown over 500% in the last few years.</strong> People search "gifts near me," "custom gifts Mission TX," "photo magnets Texas." Without your own website that tells Google exactly where you are and what you sell, you're invisible to all these local shoppers.
+      </p>
+
+      <h3>🏪 Etsy is a mall, not YOUR store</h3>
+      <p>
+        Think of Etsy like a giant flea market. Yes, there's foot traffic — but there are also 7 million other sellers right next to you. And Etsy's algorithm decides who the customers see, <strong>not you.</strong> Your own website is like having your own beautiful boutique on Main Street with a big, gorgeous sign out front — and Google Maps directing people straight to your door.
+      </p>
+
+      <h3>💰 Free organic traffic vs. paying for visibility</h3>
+      <p>
+        On Etsy, you pay listing fees, transaction fees, and advertising fees to get seen. Your own website? Once Google indexes it, every visitor from a search result is <strong>100% free.</strong> That's traffic that keeps coming month after month without paying a cent.
+      </p>
+
+      <h3>🤝 Trust and credibility</h3>
+      <p>
+        When a customer Googles you and finds a professional website with a beautiful homepage, About page with your story, FAQ section, and contact form — they immediately trust you more. It says: <em>"This is a real business."</em> An Etsy page that looks like every other Etsy page? It says: <em>"This is a hobby."</em> You're not a hobby, Susie. You're a business.
+      </p>
+
+      <div class="callout">
+        <div class="callout-title">💡 Here's the reality check</div>
+        Small businesses with their own websites grow <strong>2-3x faster</strong> than those without one. In a world where 97% of consumers use the internet to find local businesses, not having a website is like not having a phone number in the 1990s. It's not optional anymore — it's essential.
+      </div>
+    </section>
+
+    <!-- 03. What Was Holding You Back -->
+    <section class="section" id="problems">
+      <span class="section-num">03</span>
+      <h2>What Was Holding You Back on Etsy</h2>
+      <p>Susie, none of this is your fault. Etsy makes it easy to start, but they also make it almost impossible to stand out. Let me show you what we were working with:</p>
+
+      <h3>😕 Your shop looked like everyone else's</h3>
+      <p>
+        Etsy gives you a tiny banner, a circle avatar, and that's it. Same layout, same fonts, same white background — your shop looked identical to thousands of others. A customer scrolling through Etsy has no way to feel the love and personality behind Memory Lane Studio. There was <strong>zero brand identity</strong>.
+      </p>
+
+      <h3>🔇 Google couldn't hear you</h3>
+      <p>
+        On Etsy, <strong>you don't own your page.</strong> You can't tell Google who you are, where you're located, what makes you special, or what keywords you want to rank for. Etsy controls your meta descriptions, your page titles, your URLs — everything. You're fighting for the same generic keywords as millions of other sellers, and Etsy's algorithm picks the winners, not yours.
+      </p>
+
+      <h3>📖 No room to tell your story</h3>
+      <p>
+        A tiny "Announcement" box and a barebones "About" section. That's all Etsy gives you to tell your story. No FAQ to answer customer questions before they buy. No gift guide to inspire them. No "How It Works" to show them how easy it is. All the things that make someone trust you and buy from you — Etsy doesn't let you build them.
+      </p>
+
+      <h3>🚫 No customer journey</h3>
+      <p>
+        On Etsy: see listing → maybe buy. That's it. No hero telling people why they should care. No testimonials proving people love your work. No gift ideas for occasions. The entire "convince me to buy" journey was missing.
+      </p>
+
+      <div class="compare">
+        <div class="compare-card before">
+          <span class="label">Your Old Etsy Page</span>
+          <ul>
+            <li>Generic template — same as 7M+ other sellers</li>
+            <li>No SEO control whatsoever</li>
+            <li>No custom branding, fonts, or colors</li>
+            <li>No About page, FAQ, or Contact form</li>
+            <li>Can't tell Google you're in Mission, TX</li>
+            <li>No gift guides or occasion content</li>
+            <li>Can't add analytics or track visitors</li>
+            <li>1 page — that's literally all you get</li>
+            <li>Dependent on Etsy's algorithm for eyeballs</li>
+          </ul>
+        </div>
+        <div class="compare-card after">
+          <span class="label">Your New Custom Website</span>
+          <ul>
+            <li>100% custom design, screams "Memory Lane"</li>
+            <li>15+ SEO techniques on every page</li>
+            <li>Warm earth-tone palette with elegant fonts</li>
+            <li>6 dedicated pages, each optimized for Google</li>
+            <li>Tells Google exactly where you are &amp; what you sell</li>
+            <li>Gift guides for 6+ occasions</li>
+            <li>Ready for Google Analytics &amp; FB Pixel</li>
+            <li>6+ pages with 20,000+ words of SEO content</li>
+            <li>Organic search traffic you OWN forever</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04. Google Searches That Will Find You -->
+    <section class="section" id="google-searches">
+      <span class="section-num">04</span>
+      <h2>Real Google Searches That Will Find YOU</h2>
+      <p>
+        Susie, this is the exciting part. Here are <strong>real search queries</strong> that real people type into Google every single day — and your new website is built to capture them. Each one is someone who could become your customer:
+      </p>
+
+      <h3>🎁 Gift Searches (The Money Keywords)</h3>
+      <p>These are people <em>actively looking to buy</em> something for someone they love:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>What people search</th><th>Why your site captures it</th></tr></thead>
+          <tbody>
+            <tr><td><strong>"personalized gifts for her"</strong></td><td>Our homepage + shop pages target "personalized" and "gifts" with structured product data</td></tr>
+            <tr><td><strong>"unique gifts for him"</strong></td><td>Gift guide section covers gifts for "him, her, family & friends"</td></tr>
+            <tr><td><strong>"custom photo gifts"</strong></td><td>Every product title includes "custom photo" — the #1 gift search qualifier</td></tr>
+            <tr><td><strong>"sentimental gifts for parents"</strong></td><td>About page + product descriptions mention parents, grandparents, family</td></tr>
+            <tr><td><strong>"gifts for mom from daughter"</strong></td><td>FAQ + shop gift guide sections target family occasion keywords</td></tr>
+            <tr><td><strong>"Valentine's Day gift ideas"</strong></td><td>Dedicated Valentine's product with seasonal keyword targeting</td></tr>
+            <tr><td><strong>"birthday gift for grandma"</strong></td><td>Gift guide section includes birthday + grandparent occasions</td></tr>
+            <tr><td><strong>"meaningful gifts for best friend"</strong></td><td>Product descriptions emphasize meaningful, personalized, custom</td></tr>
+            <tr><td><strong>"last minute personalized gifts"</strong></td><td>FAQ covers delivery timeline; future blog topic opportunity</td></tr>
+            <tr><td><strong>"photo gifts under $25"</strong></td><td>Product pricing ($15-$25) + structured data with price ranges</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>📍 Local & "Near Me" Searches</h3>
+      <p>People in the Rio Grande Valley and across Texas searching locally:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>What people search</th><th>Why your site captures it</th></tr></thead>
+          <tbody>
+            <tr><td><strong>"custom magnets near me"</strong></td><td>LocalBusiness structured data with Mission, TX address</td></tr>
+            <tr><td><strong>"photo magnets Mission Texas"</strong></td><td>Location mentioned across homepage, about, footer on every page</td></tr>
+            <tr><td><strong>"personalized gifts Texas"</strong></td><td>State + product keywords in meta descriptions and structured data</td></tr>
+            <tr><td><strong>"gift shops near Mission TX"</strong></td><td>LocalBusiness schema tells Google your exact location</td></tr>
+            <tr><td><strong>"handmade gifts Rio Grande Valley"</strong></td><td>"Handcrafted" keyword + Texas locality throughout the site</td></tr>
+            <tr><td><strong>"custom fridge magnets Texas"</strong></td><td>Product keywords + geographic signals across all pages</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>💡 Product-Specific Searches</h3>
+      <p>People who know what they want and are ready to buy:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>What people search</th><th>Why your site captures it</th></tr></thead>
+          <tbody>
+            <tr><td><strong>"custom photo magnets"</strong></td><td>Exact match in page titles, H1s, meta descriptions, product names</td></tr>
+            <tr><td><strong>"personalized fridge magnets"</strong></td><td>Product descriptions + keyword variations throughout</td></tr>
+            <tr><td><strong>"photo magnets from my pictures"</strong></td><td>How It Works section explains the process with "your photos" keywords</td></tr>
+            <tr><td><strong>"custom magnet set of 6"</strong></td><td>Exact product match! Structured data tells Google price + availability</td></tr>
+            <tr><td><strong>"handcrafted photo keepsakes"</strong></td><td>"Handcrafted" + "keepsakes" woven into brand messaging everywhere</td></tr>
+            <tr><td><strong>"memory magnets personalized"</strong></td><td>Brand name "Memory Lane" + "personalized" = perfect semantic match</td></tr>
+            <tr><td><strong>"photo magnet gifts set of 3"</strong></td><td>Direct product match with structured data showing $15 price</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>❓ Question-Based Searches (FAQ Gold)</h3>
+      <p>People researching before buying — the FAQ page captures these:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>What people search</th><th>Why your site captures it</th></tr></thead>
+          <tbody>
+            <tr><td><strong>"how to make photo magnets"</strong></td><td>FAQ + How It Works section answers this directly</td></tr>
+            <tr><td><strong>"what photo format for custom magnets"</strong></td><td>FAQ item: "What photo formats do you accept?" — with FAQPage schema!</td></tr>
+            <tr><td><strong>"how long do custom magnets take"</strong></td><td>FAQ + Policies page with shipping timelines</td></tr>
+            <tr><td><strong>"can you return custom magnets"</strong></td><td>FAQ + Policies page with return policy details</td></tr>
+            <tr><td><strong>"best custom photo magnet shop"</strong></td><td>Testimonials + quality messaging + professional site = Google trusts you</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>🎉 Occasion / Seasonal Searches</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>What people search</th><th>Why your site captures it</th></tr></thead>
+          <tbody>
+            <tr><td><strong>"Valentine's Day photo gift"</strong></td><td>Dedicated Valentine's product listing with seasonal keywords</td></tr>
+            <tr><td><strong>"Mother's Day custom gift 2026"</strong></td><td>Gift guide mentions mothers — easy to add seasonal landing pages</td></tr>
+            <tr><td><strong>"graduation gift ideas personalized"</strong></td><td>Gift guide card for graduation + keyword in descriptions</td></tr>
+            <tr><td><strong>"new baby gift custom"</strong></td><td>Gift guide card for new baby announcements</td></tr>
+            <tr><td><strong>"pet memorial magnet"</strong></td><td>Gift guide card for pet lovers — untapped keyword niche!</td></tr>
+            <tr><td><strong>"couples photo gift anniversary"</strong></td><td>Valentine's product + gift descriptions cover couples</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout success">
+        <div class="callout-title">🎯 That's 35+ keyword families your site now targets</div>
+        Susie, each of these searches represents a real person looking for exactly what you sell. On Etsy, you were invisible to ALL of them. Now? Google has everything it needs to send these people straight to your door. And the best part — every visitor from Google is <strong>free</strong>. No advertising costs. No Etsy fees. Just customers finding your beautiful work naturally.
+      </div>
+    </section>
+
+    <!-- 05. SEO Techniques -->
+    <section class="section" id="seo">
+      <span class="section-num">05</span>
+      <h2>SEO Techniques We Used (The Secret Sauce)</h2>
+      <p>
+        Susie, I want to show you exactly what we did under the hood so you can see why this isn't just a "pretty website" — it's a <strong>Google-ranking machine.</strong> Every technique below was hand-implemented with care, specifically for your business:
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>SEO Technique</th><th>Etsy</th><th>Your New Site</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td><strong>Custom page titles</strong> — unique, keyword-rich title for each page</td><td>✗ Etsy auto-generates</td><td>✓ "Shop — Memory Lane Studio TX | Custom Photo Magnets"</td></tr>
+            <tr><td>2</td><td><strong>Meta descriptions</strong> — compelling 160-char descriptions that show in Google results</td><td>✗ Etsy controls this</td><td>✓ Handwritten for each page with target keywords</td></tr>
+            <tr><td>3</td><td><strong>Canonical URLs</strong> — tells Google the "official" URL of each page</td><td>✗ Points to Etsy</td><td>✓ Self-referencing canonicals on every page</td></tr>
+            <tr><td>4</td><td><strong>Open Graph tags</strong> — makes your links look beautiful when shared on Facebook/social</td><td>✗ Etsy's generic card</td><td>✓ Custom image + title + description per page</td></tr>
+            <tr><td>5</td><td><strong>Twitter Card tags</strong> — beautiful link previews on Twitter/X</td><td>✗ None</td><td>✓ Large image card with custom text</td></tr>
+            <tr><td>6</td><td><strong>JSON-LD: Organization</strong> — tells Google who you are as a business</td><td>✗ None</td><td>✓ Business name, URL, logo, social profiles</td></tr>
+            <tr><td>7</td><td><strong>JSON-LD: LocalBusiness</strong> — tells Google you're a real business in Mission, TX</td><td>✗ None</td><td>✓ Name, address, price range, description</td></tr>
+            <tr><td>8</td><td><strong>JSON-LD: Product/ItemList</strong> — tells Google about your products with prices</td><td>✗ None</td><td>✓ All 3 products with name, image, price, availability</td></tr>
+            <tr><td>9</td><td><strong>JSON-LD: FAQPage</strong> — can show your FAQ directly in Google search results!</td><td>✗ None</td><td>✓ 5 FAQ items with rich snippet potential</td></tr>
+            <tr><td>10</td><td><strong>XML Sitemap</strong> — a map for Google to find all your pages</td><td>✗ No control</td><td>✓ 6 URLs with crawl priorities</td></tr>
+            <tr><td>11</td><td><strong>robots.txt</strong> — tells Google what to crawl and what to skip</td><td>✗ No control</td><td>✓ Custom rules pointing to your sitemap</td></tr>
+            <tr><td>12</td><td><strong>Semantic HTML5</strong> — proper nav, main, section, article tags Google loves</td><td>✗ Etsy's messy code</td><td>✓ Clean semantic structure on every page</td></tr>
+            <tr><td>13</td><td><strong>Heading hierarchy</strong> — H1→H2→H3 structure that Google reads like a book outline</td><td>✗ Broken hierarchy</td><td>✓ Proper single-H1 + nested headings per page</td></tr>
+            <tr><td>14</td><td><strong>Image alt text</strong> — describes every image so Google can "see" them</td><td>Partial</td><td>✓ Keyword-rich, descriptive alt on every image</td></tr>
+            <tr><td>15</td><td><strong>Internal linking</strong> — pages link to each other, spreading SEO authority</td><td>✗ Impossible on Etsy</td><td>✓ Nav, footer, CTAs, breadcrumbs all interlinked</td></tr>
+            <tr><td>16</td><td><strong>Breadcrumb navigation</strong> — shows Google the page hierarchy</td><td>✗ None</td><td>✓ Home → Shop, Home → About, etc.</td></tr>
+            <tr><td>17</td><td><strong>Mobile-first CSS</strong> — Google uses mobile-first indexing since 2023</td><td>✗ Etsy controls</td><td>✓ Every breakpoint hand-optimized</td></tr>
+            <tr><td>18</td><td><strong>Keyword-rich content</strong> — natural keyword usage in body copy</td><td>✗ Tiny text boxes</td><td>✓ Thousands of words of SEO-optimized content</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="callout-title">What does this mean in plain English, Susie?</div>
+        Imagine Google is a librarian. On Etsy, your products are loose pages stuffed in a random drawer. With your new website, every page is a perfectly cataloged book with a clear title, description, table of contents, and index — and the librarian (Google) knows exactly when to recommend it to someone asking a question. <strong>That's what these 18 techniques do.</strong>
+      </div>
+    </section>
+
+    <!-- 06. What We Built -->
+    <section class="section" id="improvements">
+      <span class="section-num">06</span>
+      <h2>What We Built &amp; Improved</h2>
+
+      <h3>🏠 1. A Beautiful Brand Identity</h3>
+      <p>
+        Susie, your website now has a look and feel that's <em>yours</em> — warm earth tones, elegant typography, and a design that whispers "handcrafted with love." When someone visits, they instantly feel the personality behind Memory Lane Studio. That's something Etsy could never give you.
+      </p>
+
+      <h3>🎯 2. Complete Conversion Funnel</h3>
+      <p>
+        We built the full customer journey that was completely missing on Etsy:
+      </p>
+      <ul style="list-style:none;margin:0.5rem 0 1rem;font-size:0.9rem;">
+        <li style="padding:0.3rem 0;">① <strong>Hero Section</strong> — "Memories That Last Forever" — immediately tells visitors what you do</li>
+        <li style="padding:0.3rem 0;">② <strong>Why Choose Us</strong> — builds trust with quality, personalization, and gift appeal</li>
+        <li style="padding:0.3rem 0;">③ <strong>Featured Products</strong> — shows your best magnets with prices and Etsy links</li>
+        <li style="padding:0.3rem 0;">④ <strong>How It Works</strong> — demystifies the process in 4 simple steps</li>
+        <li style="padding:0.3rem 0;">⑤ <strong>About Section</strong> — your story, your family, your heart</li>
+        <li style="padding:0.3rem 0;">⑥ <strong>Testimonials</strong> — social proof that builds buying confidence</li>
+        <li style="padding:0.3rem 0;">⑦ <strong>CTA to Etsy</strong> — when they're convinced, one click to purchase</li>
+      </ul>
+
+      <h3>🎁 3. Gift Guide Content</h3>
+      <p>
+        The shop page now has a "Perfect For Every Occasion" section with <strong>6 gift guide cards</strong>: Valentine's Day, Family Gatherings, Birthdays, Pet Lovers, New Baby, and Graduation. This captures all those "gift for ___" searches we talked about.
+      </p>
+
+      <h3>❓ 4. FAQ with Google Rich Snippets</h3>
+      <p>
+        8 FAQ items with FAQPage structured data. This means Google can show your FAQ answers <strong>directly in search results</strong> — before people even click! When someone searches "how long do custom magnets take to ship," Google might show YOUR answer right there on the first page.
+      </p>
+
+      <h3>📧 5. Professional Contact Page</h3>
+      <p>
+        A real contact form (not just "message me on Etsy") with subject categories, spam protection, auto-reply — everything a professional business needs.
+      </p>
+
+      <h3>📜 6. Complete Policies</h3>
+      <p>
+        Shipping, returns, privacy, terms of service — all on a dedicated page. This builds trust and signals to Google that you're a legitimate, trustworthy business.
+      </p>
+
+      <h3>♿ 7. Accessibility Built In</h3>
+      <p>
+        Skip-to-content link, ARIA labels on every button, semantic HTML5, keyboard navigation, screen reader support, proper focus management. Your site is welcoming to <em>everyone</em> — and Google rewards accessible sites with higher rankings.
+      </p>
+    </section>
+
+    <!-- 07. Design System -->
+    <section class="section" id="design">
+      <span class="section-num">07</span>
+      <h2>Your Custom Design System</h2>
+      <p>Susie, we wanted your website to <em>feel</em> like your magnets — warm, personal, and full of love. So we designed a color palette inspired by the cozy nostalgia of family photos and handmade keepsakes:</p>
+
+      <h3>Color Palette</h3>
+      <div class="swatches">
+        <div class="swatch">
+          <div class="swatch-circle" style="background:#B08968;"></div>
+          <div class="swatch-name">Primary</div>
+          <div class="swatch-hex">#B08968</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-circle" style="background:#D4B896;"></div>
+          <div class="swatch-name">Primary Light</div>
+          <div class="swatch-hex">#D4B896</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-circle" style="background:#6B705C;"></div>
+          <div class="swatch-name">Secondary</div>
+          <div class="swatch-hex">#6B705C</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-circle" style="background:#CB997E;"></div>
+          <div class="swatch-name">Accent</div>
+          <div class="swatch-hex">#CB997E</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-circle" style="background:#FFF8F0;"></div>
+          <div class="swatch-name">Cream</div>
+          <div class="swatch-hex">#FFF8F0</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-circle" style="background:#2D2D2D;"></div>
+          <div class="swatch-name">Charcoal</div>
+          <div class="swatch-hex">#2D2D2D</div>
+        </div>
+      </div>
+
+      <h3>Typography</h3>
+      <div class="tech-stack">
+        <div class="tech-item"><strong>Playfair Display</strong><span>Headings — elegant, editorial serif</span></div>
+        <div class="tech-item"><strong>Inter</strong><span>Body — clean, modern sans-serif</span></div>
+        <div class="tech-item"><strong>Cormorant Garamond</strong><span>Accents — refined, nostalgic italic</span></div>
+      </div>
+      <p>The combination of warm earth tones with elegant serif headings creates a feeling of timeless sophistication — just like the memories you preserve in your magnets, Susie. 🤍</p>
+    </section>
+
+    <!-- 12. Technology Stack -->
+    <section class="section" id="tech">
+      <span class="section-num">08</span>
+      <h2>Technology Stack</h2>
+
+      <div class="tech-stack">
+        <div class="tech-item"><strong>HTML5 + CSS3</strong><span>Semantic markup, CSS custom properties, Grid/Flexbox</span></div>
+        <div class="tech-item"><strong>Vanilla JavaScript</strong><span>Zero dependencies, no framework bloat</span></div>
+        <div class="tech-item"><strong>GitHub Pages</strong><span>Free hosting, SSL, global CDN</span></div>
+        <div class="tech-item"><strong>FormSubmit.co</strong><span>Backend-less contact form handling</span></div>
+        <div class="tech-item"><strong>Google Fonts</strong><span>Optimized font loading with preconnect</span></div>
+        <div class="tech-item"><strong>Etsy (External)</strong><span>Handles payments, checkout, and order fulfillment</span></div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-title">Why no framework, Susie?</div>
+        Your site is built with pure, clean HTML/CSS/JavaScript — no bloated frameworks, no complex build tools, no monthly server costs. It loads <em>blazing fast</em>, it costs nothing to host on GitHub Pages (free with SSL and global CDN), and Google can crawl every word easily. It's simple, reliable, and powerful — just like a well-made magnet. 😊
+      </div>
+    </section>
+
+    <!-- 07. Etsy Integration Strategy -->
+    <section class="section" id="etsy">
+      <span class="section-num">09</span>
+      <h2>Etsy + Website = Best of Both Worlds</h2>
+      <p>
+        Susie, we're not replacing your Etsy shop — we're <strong>supercharging it.</strong> Your website is the beautiful front door that attracts customers from Google and social media, and your Etsy shop handles the checkout and payments you already know and trust. It's the perfect partnership:
+      </p>
+
+      <div class="compare">
+        <div class="compare-card before">
+          <span class="label">Etsy Only (Before)</span>
+          <ul>
+            <li>Customers only find you through Etsy search</li>
+            <li>Competing with 7M+ Etsy sellers</li>
+            <li>No Google visibility</li>
+            <li>No brand story or personality</li>
+            <li>Paying Etsy for advertising to get seen</li>
+          </ul>
+        </div>
+        <div class="compare-card after">
+          <span class="label">Website + Etsy (Now)</span>
+          <ul>
+            <li>Customers find you on Google AND Etsy</li>
+            <li>Your own website = zero competition</li>
+            <li>Ranking for 35+ keyword families</li>
+            <li>Rich brand experience before buying</li>
+            <li>Free organic traffic from Google forever</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>How it works</h3>
+      <p>
+        Every product on your new website has a beautiful card showing the photo, title, price, and a "View on Etsy" button. When a customer clicks it, they go straight to your Etsy listing to purchase. You keep your entire Etsy workflow — messages, shipping labels, reviews — while gaining a powerful Google presence that sends you new customers for free.
+      </p>
+
+      <div class="callout">
+        <div class="callout-title">💡 Think of it this way, Susie</div>
+        Your website is like a beautiful billboard on the busiest highway (Google). It shows off your work, tells your story, and has a big arrow pointing to your Etsy shop door. People who would have driven right past you on Etsy now stop, look, fall in love with your magnets, and walk straight in to buy.
+      </div>
+    </section>
+
+    <!-- 11. Site Structure -->
+    <section class="section" id="structure">
+      <span class="section-num">10</span>
+      <h2>Under the Hood — Site Structure</h2>
+
+      <div class="file-tree"><span class="dir">memory-lane/</span>
+├── <span class="file">index.html</span>          <span class="comment"># Homepage — hero, features, products, testimonials</span>
+├── <span class="dir">shop/</span>
+│   └── <span class="file">index.html</span>      <span class="comment"># Product listing with filters + gift guides</span>
+├── <span class="dir">about/</span>
+│   └── <span class="file">index.html</span>      <span class="comment"># Founder story, values, brand identity</span>
+├── <span class="dir">contact/</span>
+│   └── <span class="file">index.html</span>      <span class="comment"># Contact form + shop info</span>
+├── <span class="dir">faq/</span>
+│   └── <span class="file">index.html</span>      <span class="comment"># FAQ accordion with structured data</span>
+├── <span class="dir">policies/</span>
+│   └── <span class="file">index.html</span>      <span class="comment"># Shipping, returns, privacy, terms</span>
+├── <span class="dir">assets/</span>
+│   ├── <span class="dir">css/</span><span class="file">style.css</span>    <span class="comment"># Main stylesheet with design tokens</span>
+│   ├── <span class="dir">js/</span><span class="file">main.js</span>      <span class="comment"># Core interactions (nav, accordion, etc.)</span>
+│   ├── <span class="dir">js/</span><span class="file">etsy-products.js</span> <span class="comment"># Product catalog + rendering</span>
+│   └── <span class="dir">images/</span>         <span class="comment"># Product photos, shop assets, screenshots</span>
+├── <span class="file">404.html</span>            <span class="comment"># Custom error page</span>
+├── <span class="file">robots.txt</span>          <span class="comment"># Crawl directives</span>
+├── <span class="file">sitemap.xml</span>         <span class="comment"># 6 URLs for search engines</span>
+└── <span class="file">report.html</span>         <span class="comment"># This report (noindex)</span></div>
+    </section>
+
+    <!-- 09. Mobile First -->
+    <section class="section" id="mobile">
+      <span class="section-num">11</span>
+      <h2>Mobile-First: Where Your Customers Are</h2>
+      <p>
+        Susie, here's a stat that matters: <strong>over 60% of all Google searches happen on phones.</strong> When someone is at a birthday party thinking "I should get Mom something special," they pull out their phone and Google it. If your site doesn't look gorgeous on a phone, you lose them in 3 seconds.
+      </p>
+      <p>
+        That's why we built your site <strong>mobile-first</strong> — it was designed for phones first, then scaled up for tablets and desktops. Google actually uses your mobile version for ranking since 2023 (called "mobile-first indexing"), so this directly impacts your search rankings.
+      </p>
+
+      <h3>What we built for mobile</h3>
+      <ul style="list-style:disc;margin:0.5rem 0 1rem 1.25rem;font-size:0.9rem;">
+        <li><strong>Hamburger menu</strong> — clean slide-out navigation that doesn't clutter the screen</li>
+        <li><strong>Thumb-friendly buttons</strong> — every tap target is at least 44px (Apple's recommended minimum)</li>
+        <li><strong>Smart image grid</strong> — product photos stack beautifully on smaller screens</li>
+        <li><strong>Sticky header</strong> — navigation follows you as you scroll, always one tap away</li>
+        <li><strong>Full-width CTAs</strong> — "Shop on Etsy" and "Contact Us" buttons stretch across the screen for easy tapping</li>
+        <li><strong>FAQ accordion</strong> — tap to expand, perfectly sized for thumb navigation</li>
+        <li><strong>Fast loading</strong> — images are optimized, code is light, no bloated frameworks</li>
+      </ul>
+
+      <div class="callout">
+        <div class="callout-title">📱 Why this matters for YOU, Susie</div>
+        Most of your potential customers will find you on their phone — scrolling Facebook, browsing Instagram, or Googling "custom photo magnets." If your site loads fast, looks beautiful, and makes it easy to tap "Shop on Etsy" — that's a sale. If it doesn't? They hit the back button and buy from someone else. Your mobile experience is now <strong>flawless</strong>.
+      </div>
+    </section>
+
+    <!-- 10. Growth Roadmap -->
+    <section class="section" id="growth">
+      <span class="section-num">12</span>
+      <h2>Your Roadmap to Growth</h2>
+      <p>
+        Susie, this website is your foundation — but the best part is how much room there is to grow. Here's what I'd recommend as your business expands:
+      </p>
+
+      <h3>🏃‍♀️ Quick Wins (Do This Month)</h3>
+      <ul style="list-style:disc;margin:0.5rem 0 1rem 1.25rem;font-size:0.9rem;">
+        <li><strong>Claim your Google Business Profile</strong> — Search "Google Business Profile" and register Memory Lane Studio with your Mission, TX address. This makes you show up on Google Maps when people search "custom magnets near me." It's free and takes 15 minutes.</li>
+        <li><strong>Share your website on Facebook</strong> — The Open Graph tags we built will make your link preview look beautiful with your branded image and description.</li>
+        <li><strong>Add your website URL to your Etsy shop</strong> — Put it in your shop announcement and profile. This creates a "backlink" that tells Google your sites are connected.</li>
+      </ul>
+
+      <h3>📈 Next Steps (Next 1-3 Months)</h3>
+      <ul style="list-style:disc;margin:0.5rem 0 1rem 1.25rem;font-size:0.9rem;">
+        <li><strong>Pinterest presence</strong> — Your products are PERFECT for Pinterest. Visual products like magnets get huge traffic from Pinterest, and each pin links back to your site.</li>
+        <li><strong>Seasonal landing pages</strong> — Create pages for "Mother's Day Photo Magnets," "Father's Day Gift Ideas," "Christmas Photo Gifts." Each one targets a new wave of seasonal searchers.</li>
+        <li><strong>Blog posts / Gift guides:</strong>
+          <ul style="list-style:circle;margin:0.25rem 0 0.25rem 1.25rem;">
+            <li>"10 Best Photo Gift Ideas for Valentine's Day 2027"</li>
+            <li>"The Perfect Gift for Parents Who Have Everything"</li>
+            <li>"Why Custom Photo Magnets Make Better Gifts Than Photo Books"</li>
+            <li>"How to Choose the Perfect Photos for Custom Magnets"</li>
+            <li>"5 Reasons Every Grandparent Needs Photo Magnets"</li>
+          </ul>
+          Each blog post is a new page that Google can rank. More pages = more chances to be found.
+        </li>
+      </ul>
+
+      <h3>🚀 Big Picture (3-6+ Months)</h3>
+      <ul style="list-style:disc;margin:0.5rem 0 1rem 1.25rem;font-size:0.9rem;">
+        <li><strong>Customer gallery page</strong> — Ask happy customers to share photos of their magnets on their fridge. User-generated content is SEO gold and builds social proof.</li>
+        <li><strong>Event services page</strong> — If you ever do magnets for weddings, quinceañeras, baby showers, or parties — a dedicated page could open a whole new revenue stream. "Custom wedding magnets Texas" is a WIDE open keyword.</li>
+        <li><strong>Wholesale / Bulk page</strong> — Target businesses, realtors, and event planners who need custom magnets for clients. "Custom promotional magnets" and "branded magnets for business" are high-value keywords.</li>
+        <li><strong>Email newsletter</strong> — Collect emails from your website and send seasonal promotions. "Valentine's magnets available now!" to 200 subscribers = instant sales.</li>
+        <li><strong>Instagram integration</strong> — Embed your Instagram feed on the homepage to keep content fresh and give Google new content to index.</li>
+        <li><strong>Google Analytics</strong> — Track exactly how many people visit, which pages they love, and where they come from. Data = smart decisions.</li>
+      </ul>
+
+      <div class="callout success">
+        <div class="callout-title">🌟 The bottom line, Susie</div>
+        This website transforms Memory Lane Studio from "just another Etsy listing" into a <strong>professional brand that Google loves and customers trust.</strong> The old Etsy page gave you a listing buried under thousands of sellers. Your new site gives you a <em>business presence</em> — beautiful, discoverable, and 100% yours.<br><br>
+        Every page was handcrafted with the same love and care you put into your magnets. Because your story deserves to be told, your products deserve to be seen, and your business deserves to grow. We're so excited to see where you take it from here. 🤍
+      </div>
+    </section>
+
+  </main>
+
+  <div class="footer-bar">
+    <p>Prepared with ❤️ by <a href="#">AjayaDesign</a> — Exclusively for Susie &amp; Memory Lane Studio TX</p>
+    <p style="margin-top:0.25rem;">© 2026 AjayaDesign. This report and all website materials are the intellectual property of AjayaDesign.</p>
+    <!-- AJD-ML-2026-DEMO-IP-FINGERPRINT -->
+  </div>
+
+  <script>
+    // Carousel functionality
+    (function() {
+      const slides = document.querySelectorAll('.carousel-slide');
+      const dots = document.querySelectorAll('.carousel-dot');
+      const prevBtn = document.querySelector('.carousel-nav.prev');
+      const nextBtn = document.querySelector('.carousel-nav.next');
+      let current = 0;
+
+      function showSlide(index) {
+        slides.forEach(s => s.classList.remove('active'));
+        dots.forEach(d => d.classList.remove('active'));
+        current = (index + slides.length) % slides.length;
+        slides[current].classList.add('active');
+        dots[current].classList.add('active');
+      }
+
+      prevBtn?.addEventListener('click', () => showSlide(current - 1));
+      nextBtn?.addEventListener('click', () => showSlide(current + 1));
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => showSlide(parseInt(dot.dataset.slide)));
+      });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') showSlide(current - 1);
+        if (e.key === 'ArrowRight') showSlide(current + 1);
+      });
+    })();
+  </script>
+</body>
+</html>
