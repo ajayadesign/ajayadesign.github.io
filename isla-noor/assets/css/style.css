@@ -171,7 +171,6 @@ h1, h2, h3, h4, h5 { font-family: var(--font-heading); font-weight: 700; line-he
 .hero-content h1 {
   font-size: clamp(2.5rem, 5vw, 3.8rem);
   margin-bottom: 1.25rem;
-  color: var(--color-charcoal);
 }
 .hero-content h1 em {
   font-style: normal;
@@ -271,7 +270,7 @@ h1, h2, h3, h4, h5 { font-family: var(--font-heading); font-weight: 700; line-he
   border-radius: 50%; display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 1.1rem; color: #fff;
 }
-.process-step h4 { font-size: .95rem; margin-bottom: .35rem; color: #fff; }
+.process-step h3, .process-step h4 { font-size: .95rem; margin-bottom: .35rem; color: #fff; }
 .process-step p { font-size: .8rem; color: rgba(255,255,255,.5); }
 .process-step:not(:last-child)::after {
   content: '→'; position: absolute; right: -1rem; top: 24px;
@@ -370,6 +369,8 @@ h1, h2, h3, h4, h5 { font-family: var(--font-heading); font-weight: 700; line-he
 
 /* --- Testimonials --- */
 .testimonials-section { background: var(--color-primary-dark); color: #fff; padding: 5rem 0; position: relative; overflow: hidden; }
+.testimonials-section h2 { color: #fff; }
+.testimonials-section p { color: rgba(255,255,255,.7); }
 .testimonials-section::before {
   content: ''; position: absolute; inset: 0; opacity: .04;
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M30 0L60 30L30 60L0 30z M30 8L52 30L30 52L8 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
@@ -511,7 +512,7 @@ h1, h2, h3, h4, h5 { font-family: var(--font-heading); font-weight: 700; line-he
   pointer-events: none;
 }
 .page-header > * { position: relative; }
-.page-header h1 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: .5rem; }
+.page-header h1 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: .5rem; color: var(--color-charcoal); }
 .page-header p { font-size: 1.05rem; color: var(--color-text-light); }
 .breadcrumb { font-size: .85rem; color: var(--color-text-muted); margin-top: .75rem; }
 .breadcrumb a { color: var(--color-primary); }
