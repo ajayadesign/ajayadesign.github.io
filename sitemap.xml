@@ -13,6 +13,13 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- ═══ Ankita Dahal ═══ -->
+  <url>
+    <loc>https://ajayadesign.github.io/ankita-dahal/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <!-- ═══ Apex Auto Collision ═══ -->
   <url>
     <loc>https://ajayadesign.github.io/apex-auto/</loc>
@@ -114,6 +121,33 @@
     <priority>0.6</priority>
   </url>
 
+  <!-- ═══ Everest Phones ═══ -->
+  <url>
+    <loc>https://ajayadesign.github.io/everest-phone/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/everest-phone/about.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/everest-phone/services.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/everest-phone/faq.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/everest-phone/contact.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
   <!-- ═══ Flicks by Riri ═══ -->
   <url>
     <loc>https://ajayadesign.github.io/flicks-by-riri/</loc>
@@ -121,51 +155,121 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- ═══ Monument Pilates ═══ -->
+  <!-- ═══ Isla Noor Accessories ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/monument-pilates/</loc>
+    <loc>https://ajayadesign.github.io/isla-noor/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/monument-pilates/about.html</loc>
+    <loc>https://ajayadesign.github.io/isla-noor/about/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/monument-pilates/classes.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://ajayadesign.github.io/monument-pilates/pricing.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://ajayadesign.github.io/monument-pilates/schedule.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://ajayadesign.github.io/monument-pilates/testimonials.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://ajayadesign.github.io/monument-pilates/blog.html</loc>
+    <loc>https://ajayadesign.github.io/isla-noor/shop/</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/monument-pilates/faq.html</loc>
+    <loc>https://ajayadesign.github.io/isla-noor/collections/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/isla-noor/faq/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/monument-pilates/contact.html</loc>
+    <loc>https://ajayadesign.github.io/isla-noor/contact/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+  </url>
+
+  <!-- ═══ Magnet Moments Co. (redirect to magnetmomentsco.github.io) ═══ -->
+  <url>
+    <loc>https://ajayadesign.github.io/magnetmomentsco/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- ═══ Memory Lane Studio TX ═══ -->
+  <url>
+    <loc>https://ajayadesign.github.io/memory-lane/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/memory-lane/about/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/memory-lane/shop/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/memory-lane/faq/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/memory-lane/policies/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/memory-lane/contact/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- ═══ Monument Pilates (redirect to monumentpilates.github.io) ═══ -->
+  <url>
+    <loc>https://ajayadesign.github.io/monument-pilates/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- ═══ Next Step Estate Sales ═══ -->
+  <url>
+    <loc>https://ajayadesign.github.io/nextstep-es/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/nextstep-es/about.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/nextstep-es/services.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/nextstep-es/gallery.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/nextstep-es/faq.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/nextstep-es/contact.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- ═══ Picture This Magnet (redirect to picturethismagnet.github.io) ═══ -->
+  <url>
+    <loc>https://ajayadesign.github.io/picture-this-magnet/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 
   <!-- ═══ Radha Madhav Dham ═══ -->
@@ -230,6 +334,38 @@
   </url>
   <url>
     <loc>https://ajayadesign.github.io/snoball-dude/contact.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- ═══ The Magnet Guy ═══ -->
+  <url>
+    <loc>https://ajayadesign.github.io/the-magnet-guy/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/the-magnet-guy/about/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/the-magnet-guy/shop/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/the-magnet-guy/events/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/the-magnet-guy/faq/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/the-magnet-guy/contact/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
