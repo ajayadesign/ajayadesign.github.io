@@ -40,18 +40,42 @@
 
   /* ─── Mobile Navigation ───────────────────────────────── */
   if (mobileBtn && navList) {
+    // Create overlay dynamically
+    let overlay = document.querySelector('.mobile-nav-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.className = 'mobile-nav-overlay';
+      document.body.appendChild(overlay);
+    }
+
+    function openMobileNav() {
+      mobileBtn.classList.add('open');
+      navList.classList.add('open');
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      mobileBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeMobileNav() {
+      mobileBtn.classList.remove('open');
+      navList.classList.remove('open');
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+      mobileBtn.setAttribute('aria-expanded', 'false');
+    }
+
     mobileBtn.addEventListener('click', () => {
-      mobileBtn.classList.toggle('open');
-      navList.classList.toggle('open');
-      document.body.style.overflow = navList.classList.contains('open') ? 'hidden' : '';
+      if (navList.classList.contains('open')) closeMobileNav();
+      else openMobileNav();
     });
+
+    // Close when clicking a link
     navList.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        mobileBtn.classList.remove('open');
-        navList.classList.remove('open');
-        document.body.style.overflow = '';
-      });
+      link.addEventListener('click', closeMobileNav);
     });
+
+    // Close when clicking the backdrop
+    overlay.addEventListener('click', closeMobileNav);
   }
 
   /* ─── Cart Drawer ─────────────────────────────────────── */
