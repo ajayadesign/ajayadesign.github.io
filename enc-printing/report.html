@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Website Report — ENC Printing | AjayaDesign</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           CSS Custom Properties — Design System
+           ============================================ */
+        :root {
+            --color-primary: #2c3e50;
+            --color-accent: #c8956c;
+            --color-secondary: #5a8f7b;
+            --color-cream: #faf8f5;
+            --color-charcoal: #2D2D2D;
+            --color-success: #588157;
+            --color-error: #BC4749;
+            --color-surface: #ffffff;
+            --color-border: #e8e2da;
+            --color-text: #3a3a3a;
+            --color-text-light: #6b6b6b;
+            --color-primary-rgb: 44, 62, 80;
+            --color-accent-rgb: 200, 149, 108;
+            --color-secondary-rgb: 90, 143, 123;
+            --font-heading: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-elegant: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+            --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2.5rem;
+            --spacing-xl: 4rem;
+            --spacing-2xl: 6rem;
+            --max-width: 1080px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ============================================
+           Reset & Base
+           ============================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--color-text);
+            background: var(--color-cream);
+            line-height: 1.7;
+            font-size: 16px;
+            overflow-x: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        a {
+            color: var(--color-accent);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+
+        a:hover {
+            color: var(--color-primary);
+        }
+
+        /* ============================================
+           Typography
+           ============================================ */
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            color: var(--color-primary);
+            line-height: 1.25;
+        }
+
+        .section-number {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--color-accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-subtitle {
+            font-family: var(--font-elegant);
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--color-text-light);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        /* ============================================
+           Layout
+           ============================================ */
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        .report-section {
+            padding: var(--spacing-2xl) 0;
+            position: relative;
+        }
+
+        .report-section + .report-section {
+            border-top: 1px solid var(--color-border);
+        }
+
+        /* ============================================
+           Report Header — Hero
+           ============================================ */
+        .report-hero {
+            background: linear-gradient(135deg, var(--color-primary) 0%, #1a252f 50%, #0f1923 100%);
+            color: #fff;
+            padding: var(--spacing-2xl) 0 8rem;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .report-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 600px 400px at 20% 80%, rgba(var(--color-accent-rgb), 0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 500px 300px at 80% 20%, rgba(var(--color-secondary-rgb), 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .report-hero .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(var(--color-accent-rgb), 0.15);
+            border: 1px solid rgba(var(--color-accent-rgb), 0.3);
+            color: var(--color-accent);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .hero-title {
+            font-family: var(--font-heading);
+            font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: var(--spacing-sm);
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--color-accent);
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-elegant);
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: rgba(255,255,255,0.7);
+            font-style: italic;
+            max-width: 600px;
+            margin: 0 auto var(--spacing-lg);
+        }
+
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .hero-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .hero-meta .meta-icon {
+            font-size: 1rem;
+        }
+
+        /* ============================================
+           Table of Contents — Floating Card
+           ============================================ */
+        .toc-wrapper {
+            position: relative;
+            z-index: 10;
+            margin-top: -5rem;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .toc-card {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            max-width: 780px;
+            margin: 0 auto;
+            border: 1px solid var(--color-border);
+        }
+
+        .toc-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .toc-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .toc-photo-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--color-accent);
+            background: rgba(var(--color-accent-rgb), 0.08);
+            padding: 0.35rem 0.85rem;
+            border-radius: 100px;
+            letter-spacing: 0.05em;
+            transition: all var(--transition);
+        }
+
+        .toc-photo-link:hover {
+            background: rgba(var(--color-accent-rgb), 0.16);
+            color: var(--color-primary);
+        }
+
+        .toc-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.35rem 2rem;
+        }
+
+        .toc-list li {
+            display: flex;
+            align-items: baseline;
+            gap: 0.6rem;
+        }
+
+        .toc-list a {
+            font-size: 0.9rem;
+            color: var(--color-text);
+            display: flex;
+            align-items: baseline;
+            gap: 0.6rem;
+            padding: 0.35rem 0;
+            transition: all var(--transition);
+            width: 100%;
+        }
+
+        .toc-list a:hover {
+            color: var(--color-accent);
+            padding-left: 0.25rem;
+        }
+
+        .toc-num {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--color-accent);
+            min-width: 2rem;
+            opacity: 0.7;
+        }
+
+        /* ============================================
+           Carousel — Before & After
+           ============================================ */
+        .carousel-section {
+            background: var(--color-primary);
+            padding: var(--spacing-2xl) 0;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .carousel-section .section-number {
+            color: rgba(var(--color-accent-rgb), 0.8);
+        }
+
+        .carousel-section .section-title {
+            color: #fff;
+        }
+
+        .carousel-section .section-subtitle {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .carousel-container {
+            position: relative;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .carousel-viewport {
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            padding: 0 var(--spacing-xs);
+        }
+
+        .slide-label {
+            text-align: center;
+            font-family: var(--font-elegant);
+            font-size: 1.15rem;
+            font-style: italic;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .slide-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-sm);
+            align-items: start;
+        }
+
+        .comparison-side {
+            position: relative;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .comparison-side img {
+            width: 100%;
+            display: block;
+            max-height: 420px;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        .comparison-badge {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.7rem;
+            border-radius: 100px;
+        }
+
+        .badge-before {
+            background: rgba(188, 71, 73, 0.85);
+            color: #fff;
+        }
+
+        .badge-after {
+            background: rgba(88, 129, 87, 0.85);
+            color: #fff;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+
+        .carousel-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 1.1rem;
+        }
+
+        .carousel-btn:hover {
+            background: rgba(var(--color-accent-rgb), 0.3);
+            border-color: var(--color-accent);
+        }
+
+        .carousel-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition);
+            padding: 0;
+        }
+
+        .carousel-dot.active {
+            background: var(--color-accent);
+            transform: scale(1.2);
+        }
+
+        /* ============================================
+           Cards & Panels
+           ============================================ */
+        .card {
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .callout-box {
+            background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.06) 0%, rgba(var(--color-secondary-rgb), 0.04) 100%);
+            border: 1px solid rgba(var(--color-accent-rgb), 0.2);
+            border-left: 4px solid var(--color-accent);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .callout-box h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--color-primary);
+        }
+
+        .callout-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .callout-box li {
+            padding: 0.25rem 0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .callout-box li::before {
+            content: '✓';
+            color: var(--color-success);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .success-callout {
+            border-left-color: var(--color-success);
+            background: linear-gradient(135deg, rgba(88, 129, 87, 0.06) 0%, rgba(var(--color-secondary-rgb), 0.04) 100%);
+            border-color: rgba(88, 129, 87, 0.2);
+        }
+
+        /* ============================================
+           Section 01 — Welcome
+           ============================================ */
+        .welcome-text {
+            font-size: 1.05rem;
+            line-height: 1.85;
+            color: var(--color-text);
+            max-width: 780px;
+        }
+
+        .welcome-text p {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .welcome-text strong {
+            color: var(--color-primary);
+        }
+
+        /* ============================================
+           Section 02 — Before / After Cards
+           ============================================ */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .comparison-card {
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            position: relative;
+        }
+
+        .comparison-card.before-card {
+            background: linear-gradient(145deg, #f8f0f0, #fdf6f6);
+            border: 1px solid rgba(188, 71, 73, 0.15);
+        }
+
+        .comparison-card.after-card {
+            background: linear-gradient(145deg, #f0f8f2, #f5fdf7);
+            border: 1px solid rgba(88, 129, 87, 0.15);
+        }
+
+        .comparison-card-badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.75rem;
+            border-radius: 100px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .before-card .comparison-card-badge {
+            background: rgba(188, 71, 73, 0.1);
+            color: var(--color-error);
+        }
+
+        .after-card .comparison-card-badge {
+            background: rgba(88, 129, 87, 0.1);
+            color: var(--color-success);
+        }
+
+        .comparison-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comparison-card li {
+            padding: 0.4rem 0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .before-card li::before {
+            content: '✕';
+            color: var(--color-error);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .after-card li::before {
+            content: '✓';
+            color: var(--color-success);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ============================================
+           Section 03 — Value Cards
+           ============================================ */
+        .value-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .value-card {
+            padding: var(--spacing-lg);
+        }
+
+        .value-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .value-icon.speed {
+            background: rgba(var(--color-accent-rgb), 0.1);
+        }
+
+        .value-icon.seo {
+            background: rgba(var(--color-secondary-rgb), 0.1);
+        }
+
+        .value-icon.access {
+            background: rgba(88, 129, 87, 0.1);
+        }
+
+        .value-icon.trust {
+            background: rgba(var(--color-primary-rgb), 0.1);
+        }
+
+        .value-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .value-card p {
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+            line-height: 1.65;
+        }
+
+        .value-card .value-detail {
+            margin-top: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--color-accent);
+            opacity: 0.8;
+        }
+
+        /* ============================================
+           Section 04 — Design System
+           ============================================ */
+        .design-system-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .color-swatches {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+        }
+
+        .swatch {
+            text-align: center;
+        }
+
+        .swatch-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 auto var(--spacing-xs);
+            box-shadow: var(--shadow-sm);
+            border: 3px solid var(--color-surface);
+        }
+
+        .swatch-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--color-text-light);
+            letter-spacing: 0.05em;
+        }
+
+        .swatch-hex {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .typography-showcase h3 {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .type-sample {
+            margin-bottom: var(--spacing-md);
+            padding: var(--spacing-sm);
+            background: rgba(var(--color-primary-rgb), 0.03);
+            border-radius: var(--radius-sm);
+        }
+
+        .type-sample-heading {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .type-sample-body {
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .type-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--color-accent);
+            margin-bottom: 0.25rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* ============================================
+           Section 05 — Tech Victories
+           ============================================ */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: var(--spacing-lg) var(--spacing-sm);
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            transition: all var(--transition);
+        }
+
+        .metric-card:hover {
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+        }
+
+        .metric-number {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--color-primary);
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-accent);
+            margin-bottom: 0.4rem;
+        }
+
+        .metric-detail {
+            font-size: 0.8rem;
+            color: var(--color-text-light);
+            line-height: 1.4;
+        }
+
+        /* ============================================
+           Section 06 — Mobile Mockup
+           ============================================ */
+        .mobile-showcase {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: var(--spacing-xl);
+            align-items: center;
+            margin-top: var(--spacing-lg);
+        }
+
+        .phone-frame {
+            width: 280px;
+            background: #111;
+            border-radius: 36px;
+            padding: 12px;
+            box-shadow:
+                0 0 0 2px #333,
+                var(--shadow-xl),
+                0 30px 60px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 24px;
+            background: #111;
+            border-radius: 0 0 16px 16px;
+            z-index: 2;
+        }
+
+        .phone-screen {
+            border-radius: 26px;
+            overflow: hidden;
+            background: var(--color-cream);
+        }
+
+        .phone-screen img {
+            width: 100%;
+            display: block;
+        }
+
+        .mobile-info h3 {
+            font-size: 1.4rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .mobile-info p {
+            font-size: 0.95rem;
+            color: var(--color-text-light);
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.7;
+        }
+
+        .breakpoint-list {
+            list-style: none;
+            padding: 0;
+            margin-top: var(--spacing-sm);
+        }
+
+        .breakpoint-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--color-border);
+            font-size: 0.9rem;
+        }
+
+        .breakpoint-list li:last-child {
+            border-bottom: none;
+        }
+
+        .bp-size {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--color-accent);
+            min-width: 60px;
+        }
+
+        .bp-device {
+            font-weight: 600;
+            color: var(--color-primary);
+            min-width: 80px;
+        }
+
+        /* ============================================
+           Section 07 — Roadmap
+           ============================================ */
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .roadmap-card {
+            padding: var(--spacing-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .roadmap-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .roadmap-card.quick::before { background: var(--color-success); }
+        .roadmap-card.content::before { background: var(--color-accent); }
+        .roadmap-card.medium::before { background: var(--color-secondary); }
+        .roadmap-card.big::before { background: var(--color-primary); }
+
+        .roadmap-tier {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .roadmap-card.quick .roadmap-tier { color: var(--color-success); }
+        .roadmap-card.content .roadmap-tier { color: var(--color-accent); }
+        .roadmap-card.medium .roadmap-tier { color: var(--color-secondary); }
+        .roadmap-card.big .roadmap-tier { color: var(--color-primary); }
+
+        .roadmap-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .roadmap-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .roadmap-card li {
+            font-size: 0.85rem;
+            padding: 0.3rem 0;
+            color: var(--color-text);
+            display: flex;
+            align-items: baseline;
+            gap: 0.4rem;
+        }
+
+        .roadmap-card li::before {
+            content: '→';
+            color: var(--color-accent);
+            flex-shrink: 0;
+        }
+
+        /* ============================================
+           Final Callout
+           ============================================ */
+        .final-callout {
+            background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.06) 0%, rgba(var(--color-secondary-rgb), 0.06) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            text-align: center;
+            margin: var(--spacing-xl) 0;
+            border: 1px solid rgba(var(--color-accent-rgb), 0.15);
+        }
+
+        .final-callout h2 {
+            font-size: 1.75rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .final-callout p {
+            font-family: var(--font-elegant);
+            font-size: 1.15rem;
+            color: var(--color-text-light);
+            max-width: 640px;
+            margin: 0 auto;
+            line-height: 1.7;
+            font-style: italic;
+        }
+
+        .final-callout .signature {
+            margin-top: var(--spacing-md);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--color-accent);
+            letter-spacing: 0.1em;
+        }
+
+        /* ============================================
+           Footer
+           ============================================ */
+        .report-footer {
+            background: var(--color-primary);
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            padding: var(--spacing-lg) var(--spacing-md);
+            font-size: 0.85rem;
+        }
+
+        .report-footer .heart {
+            color: var(--color-accent);
+        }
+
+        .report-footer strong {
+            color: rgba(255,255,255,0.85);
+        }
+
+        .footer-copyright {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            opacity: 0.5;
+        }
+
+        /* ============================================
+           Responsive — 640px
+           ============================================ */
+        @media (max-width: 640px) {
+            .report-hero {
+                padding: var(--spacing-xl) 0 6rem;
+            }
+
+            .hero-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .toc-card {
+                padding: var(--spacing-md);
+            }
+
+            .toc-list {
+                grid-template-columns: 1fr;
+            }
+
+            .toc-header {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: flex-start;
+            }
+
+            .slide-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .value-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .design-system-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .mobile-showcase {
+                grid-template-columns: 1fr;
+                justify-items: center;
+                text-align: center;
+            }
+
+            .phone-frame {
+                width: 240px;
+            }
+
+            .breakpoint-list {
+                text-align: left;
+            }
+
+            .roadmap-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .final-callout {
+                padding: var(--spacing-lg);
+            }
+        }
+
+        /* ============================================
+           Print Stylesheet
+           ============================================ */
+        @media print {
+            body {
+                font-size: 11pt;
+                background: #fff;
+            }
+
+            .report-hero {
+                background: var(--color-primary) !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                padding: 2rem 0 3rem;
+            }
+
+            .toc-wrapper {
+                margin-top: 0;
+                page-break-after: always;
+            }
+
+            .toc-card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+
+            .carousel-section {
+                background: #2c3e50 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .carousel-track {
+                display: grid !important;
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                transform: none !important;
+            }
+
+            .carousel-slide {
+                min-width: 100% !important;
+                page-break-inside: avoid;
+            }
+
+            .carousel-controls {
+                display: none;
+            }
+
+            .report-section {
+                page-break-inside: avoid;
+                padding: 1.5rem 0;
+            }
+
+            .card, .metric-card, .comparison-card, .roadmap-card, .value-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .carousel-btn {
+                display: none;
+            }
+
+            .phone-frame {
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            a {
+                color: var(--color-text) !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================
+         REPORT HEADER — HERO
+         ============================================ -->
+    <header class="report-hero">
+        <div class="container">
+            <div class="hero-badge">Prepared for Chase &amp; Kayla</div>
+            <h1 class="hero-title">Your New Website — <em>Explained</em></h1>
+            <p class="hero-subtitle">A custom-built digital home for ENC Printing — handcrafted to showcase your photo magnets, 3D printed frames, and everything you create.</p>
+            <div class="hero-meta">
+                <span><span class="meta-icon">📅</span> March 15, 2026</span>
+                <span><span class="meta-icon">🏷️</span> ENC Printing</span>
+                <span><span class="meta-icon">✦</span> By: AjayaDesign</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================
+         TABLE OF CONTENTS
+         ============================================ -->
+    <div class="toc-wrapper">
+        <nav class="toc-card" aria-label="Table of Contents">
+            <div class="toc-header">
+                <h2>What's Inside</h2>
+                <a href="#carousel" class="toc-photo-link" aria-label="Jump to Before and After photos">📸 Before &amp; After Photos</a>
+            </div>
+            <ol class="toc-list">
+                <li><a href="#welcome"><span class="toc-num">01</span> Hi Chase &amp; Kayla!</a></li>
+                <li><a href="#built"><span class="toc-num">02</span> What We Built &amp; Improved</a></li>
+                <li><a href="#value"><span class="toc-num">03</span> Why This Matters</a></li>
+                <li><a href="#design-system"><span class="toc-num">04</span> Your Design System</a></li>
+                <li><a href="#tech"><span class="toc-num">05</span> Technical Triumphs</a></li>
+                <li><a href="#mobile"><span class="toc-num">06</span> Mobile-First Design</a></li>
+                <li><a href="#roadmap"><span class="toc-num">07</span> Your Roadmap to Growth</a></li>
+            </ol>
+        </nav>
+    </div>
+
+    <main>
+        <!-- ============================================
+             BEFORE & AFTER CAROUSEL
+             ============================================ -->
+        <section id="carousel" class="carousel-section">
+            <div class="container">
+                <span class="section-number">Visual Comparison</span>
+                <h2 class="section-title">Before &amp; After</h2>
+                <p class="section-subtitle">See the transformation side by side — your original Shopify store versus your new custom-built site.</p>
+
+                <div class="carousel-container">
+                    <div class="carousel-viewport">
+                        <div class="carousel-track" id="carouselTrack">
+                            <!-- Slide 1: Homepage Desktop -->
+                            <div class="carousel-slide">
+                                <p class="slide-label">Homepage — Desktop</p>
+                                <div class="slide-comparison">
+                                    <div class="comparison-side">
+                                        <span class="comparison-badge badge-before">Before</span>
+                                        <img src="screenshots/original-desktop.png" alt="Original ENC Printing homepage on desktop" loading="lazy">
+                                    </div>
+                                    <div class="comparison-side">
+                                        <span class="comparison-badge badge-after">After</span>
+                                        <img src="screenshots/build-desktop.png" alt="New ENC Printing homepage on desktop" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Slide 2: About Page -->
+                            <div class="carousel-slide">
+                                <p class="slide-label">About Page</p>
+                                <div class="slide-comparison">
+                                    <div class="comparison-side">
+                                        <span class="comparison-badge badge-before">Before</span>
+                                        <img src="screenshots/original-about.png" alt="Original ENC Printing about page" loading="lazy">
+                                    </div>
+                                    <div class="comparison-side">
+                                        <span class="comparison-badge badge-after">After</span>
+                                        <img src="screenshots/build-about.png" alt="New ENC Printing about page" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Slide 3: Contact Page -->
+                            <div class="carousel-slide">
+                                <p class="slide-label">Contact Page</p>
+                                <div class="slide-comparison">
+                                    <div class="comparison-side">
+                                        <span class="comparison-badge badge-before">Before</span>
+                                        <img src="screenshots/original-contact.png" alt="Original ENC Printing contact page" loading="lazy">
+                                    </div>
+                                    <div class="comparison-side">
+                                        <span class="comparison-badge badge-after">After</span>
+                                        <img src="screenshots/build-contact.png" alt="New ENC Printing contact page" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Slide 4: Photo Magnets Collection -->
+                            <div class="carousel-slide">
+                                <p class="slide-label">Photo Magnets Collection — New Page</p>
+                                <div class="slide-comparison">
+                                    <div class="comparison-side">
+                                        <span class="comparison-badge badge-before">Before</span>
+                                        <img src="screenshots/original-desktop.png" alt="Original site had no dedicated collection page" loading="lazy">
+                                    </div>
+                                    <div class="comparison-side">
+                                        <span class="comparison-badge badge-after">After</span>
+                                        <img src="screenshots/build-photo-magnets.png" alt="New dedicated photo magnets collection page" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Slide 5: Mobile Homepage -->
+                            <div class="carousel-slide">
+                                <p class="slide-label">Homepage — Mobile</p>
+                                <div class="slide-comparison">
+                                    <div class="comparison-side">
+                                        <span class="comparison-badge badge-before">Before</span>
+                                        <img src="screenshots/original-mobile.png" alt="Original ENC Printing homepage on mobile" loading="lazy">
+                                    </div>
+                                    <div class="comparison-side">
+                                        <span class="comparison-badge badge-after">After</span>
+                                        <img src="screenshots/build-mobile.png" alt="New ENC Printing homepage on mobile" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="carousel-controls">
+                        <button class="carousel-btn" id="prevBtn" aria-label="Previous slide">&#8592;</button>
+                        <div class="carousel-dots" id="carouselDots">
+                            <button class="carousel-dot active" data-slide="0" aria-label="Go to slide 1"></button>
+                            <button class="carousel-dot" data-slide="1" aria-label="Go to slide 2"></button>
+                            <button class="carousel-dot" data-slide="2" aria-label="Go to slide 3"></button>
+                            <button class="carousel-dot" data-slide="3" aria-label="Go to slide 4"></button>
+                            <button class="carousel-dot" data-slide="4" aria-label="Go to slide 5"></button>
+                        </div>
+                        <button class="carousel-btn" id="nextBtn" aria-label="Next slide">&#8594;</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 01 — WELCOME
+             ============================================ -->
+        <section id="welcome" class="report-section">
+            <div class="container">
+                <span class="section-number">Section 01</span>
+                <h2 class="section-title">Hi Chase &amp; Kayla! — The Big Picture</h2>
+                <p class="section-subtitle">A quick hello — and a vision for your new digital home.</p>
+
+                <div class="welcome-text">
+                    <p>First off — we've been genuinely inspired by what you've built with ENC Printing. It's clear this isn't just a business: it's a reflection of the craftsmanship, creativity, and personal touch you both pour into every product you make, from your signature <strong>custom photo magnets</strong> to your beautifully detailed <strong>3D printed frames</strong> in standard, bohemian, vintage, and rattan styles.</p>
+
+                    <p>Your current Shopify store has served you well to get started. But as your product line has grown — into <strong>lithophane products</strong>, <strong>frame accessories</strong>, <strong>downloadable 3D print files</strong>, and more — you deserve a site that can keep up with your ambition. A site that works as hard as you do. That's exactly what we want to show you.</p>
+
+                    <p>What you're looking at is a <strong>complete ground-up redesign concept</strong>: 13 custom HTML pages, each hand-coded (no cookie-cutter templates), optimized for search engines, tested for accessibility, and designed to look stunning on every device your customers use. It's a custom-built, SEO-optimized experience purpose-built for a family business in eastern North Carolina that takes pride in what they create. We built this to show you what's possible — and we'd love the chance to make it yours.</p>
+                </div>
+
+                <div class="callout-box success-callout">
+                    <h4>What We Delivered</h4>
+                    <ul>
+                        <li>13 hand-coded pages — homepage, about, contact, 6 collection pages, 4 product detail pages</li>
+                        <li>Image optimization pipeline via custom Python script (WebP conversion, lossless compression)</li>
+                        <li>Automated test suite — 79 tests passed, 1 skipped (Playwright + axe-core)</li>
+                        <li>JSON-LD structured data on every page for rich search results</li>
+                        <li>WCAG 2.0 AA accessibility compliance — zero critical or serious violations</li>
+                        <li>Mobile-first responsive design at 375px, 768px, and 1280px breakpoints</li>
+                        <li>Directory-based SEO-friendly URLs for every page</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 02 — WHAT WE BUILT & IMPROVED
+             ============================================ -->
+        <section id="built" class="report-section">
+            <div class="container">
+                <span class="section-number">Section 02</span>
+                <h2 class="section-title">What We Built &amp; Improved</h2>
+                <p class="section-subtitle">A clear look at where things were — and where they are now.</p>
+
+                <div class="comparison-grid">
+                    <div class="comparison-card before-card card">
+                        <span class="comparison-card-badge">Before</span>
+                        <h3>Standard Shopify Template</h3>
+                        <ul>
+                            <li>Generic, one-size-fits-all Shopify theme</li>
+                            <li>Limited customization options for layout and branding</li>
+                            <li>Basic top-level navigation with no dropdown menus</li>
+                            <li>Standard product listings without organized collections</li>
+                            <li>No FAQ section or interactive contact form</li>
+                            <li>No structured data for search engines</li>
+                            <li>Template-imposed page structure and URLs</li>
+                            <li>Default mobile responsiveness with limited control</li>
+                        </ul>
+                    </div>
+
+                    <div class="comparison-card after-card card">
+                        <span class="comparison-card-badge">After</span>
+                        <h3>Custom Hand-Coded Design</h3>
+                        <ul>
+                            <li>Unique, brand-aligned design built from scratch</li>
+                            <li>Glassmorphic sticky navigation with consolidated "Shop" dropdown</li>
+                            <li>6 organized collection pages + 4 detailed product pages</li>
+                            <li>Centered product grids with consistent card layouts</li>
+                            <li>FAQ accordion with smooth expand/collapse interactions</li>
+                            <li>Contact form with real-time field validation</li>
+                            <li>JSON-LD structured data on all 13 pages (WebSite, LocalBusiness, Product, ContactPage, ItemList)</li>
+                            <li>SEO-optimized directory-based URLs and unique meta tags per page</li>
+                            <li>CSS custom properties design system with three responsive breakpoints</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 03 — WHY THIS MATTERS
+             ============================================ -->
+        <section id="value" class="report-section">
+            <div class="container">
+                <span class="section-number">Section 03</span>
+                <h2 class="section-title">Why This Matters for Your Business</h2>
+                <p class="section-subtitle">The technical work translates directly into real-world results for ENC Printing.</p>
+
+                <div class="value-grid">
+                    <div class="value-card card">
+                        <div class="value-icon speed">⚡</div>
+                        <h3>Speed = Revenue</h3>
+                        <p>Every image on your site was processed through a custom Python optimization pipeline — converted to WebP format with lossless compression. Faster load times mean lower bounce rates and more customers who stick around to browse your products.</p>
+                        <div class="value-detail">WebP conversion + lossless compression via custom script</div>
+                    </div>
+
+                    <div class="value-card card">
+                        <div class="value-icon seo">🔍</div>
+                        <h3>SEO &amp; Discoverability</h3>
+                        <p>JSON-LD structured data tells Google exactly what your business is, what products you sell, and where you're located. Combined with semantic HTML, unique meta descriptions per page, a proper sitemap, and clean directory-based URLs — your site is built to be found.</p>
+                        <div class="value-detail">5 schema types · sitemap.xml · robots.txt · unique meta per page</div>
+                    </div>
+
+                    <div class="value-card card">
+                        <div class="value-icon access">♿</div>
+                        <h3>Accessibility = Reach</h3>
+                        <p>Your site meets WCAG 2.0 AA standards with zero critical or serious violations confirmed by axe-core automated testing. That means people using screen readers, keyboard navigation, or assistive technology can fully experience your store — expanding your potential customer base.</p>
+                        <div class="value-detail">axe-core verified · 0 critical / 0 serious violations</div>
+                    </div>
+
+                    <div class="value-card card">
+                        <div class="value-icon trust">🏆</div>
+                        <h3>Professional Trust</h3>
+                        <p>A polished, custom-designed website signals credibility. When customers land on your site, they see a business that's invested in quality — the same quality they'll expect from your photo magnets and 3D printed frames. Your site is ready for a custom domain whenever you choose.</p>
+                        <div class="value-detail">Custom domain-ready · SSL-compatible · production-grade code</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 04 — DESIGN SYSTEM
+             ============================================ -->
+        <section id="design-system" class="report-section">
+            <div class="container">
+                <span class="section-number">Section 04</span>
+                <h2 class="section-title">Your Custom Design System</h2>
+                <p class="section-subtitle">A cohesive visual language built around your brand's warmth and craftsmanship.</p>
+
+                <div class="design-system-grid">
+                    <div>
+                        <h3 style="font-size:1.15rem; margin-bottom:var(--spacing-md);">Color Palette</h3>
+                        <div class="color-swatches">
+                            <div class="swatch">
+                                <div class="swatch-circle" style="background:#2c3e50;"></div>
+                                <div class="swatch-label">Primary</div>
+                                <div class="swatch-hex">#2c3e50</div>
+                            </div>
+                            <div class="swatch">
+                                <div class="swatch-circle" style="background:#c8956c;"></div>
+                                <div class="swatch-label">Accent</div>
+                                <div class="swatch-hex">#c8956c</div>
+                            </div>
+                            <div class="swatch">
+                                <div class="swatch-circle" style="background:#5a8f7b;"></div>
+                                <div class="swatch-label">Secondary</div>
+                                <div class="swatch-hex">#5a8f7b</div>
+                            </div>
+                            <div class="swatch">
+                                <div class="swatch-circle" style="background:#faf8f5; border-color:#e8e2da;"></div>
+                                <div class="swatch-label">Background</div>
+                                <div class="swatch-hex">#faf8f5</div>
+                            </div>
+                            <div class="swatch">
+                                <div class="swatch-circle" style="background:#ffffff; border-color:#e8e2da;"></div>
+                                <div class="swatch-label">Surface</div>
+                                <div class="swatch-hex">#ffffff</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="typography-showcase">
+                        <h3 style="font-size:1.15rem; margin-bottom:var(--spacing-md);">Typography Stack</h3>
+
+                        <div class="type-sample">
+                            <div class="type-label">Headings — Playfair Display</div>
+                            <div class="type-sample-heading">Crafted with Care</div>
+                        </div>
+
+                        <div class="type-sample">
+                            <div class="type-label">Body — Inter</div>
+                            <div class="type-sample-body">Custom photo magnets and 3D printed frames, handmade in eastern North Carolina with attention to every detail.</div>
+                        </div>
+
+                        <div class="type-sample">
+                            <div class="type-label">Code / Labels — JetBrains Mono</div>
+                            <div style="font-family:var(--font-mono); font-size:0.85rem; color:var(--color-accent);">font-weight: 700 · line-height: 1.25</div>
+                        </div>
+
+                        <div class="type-sample">
+                            <div class="type-label">Elegant / Quotes — Cormorant Garamond</div>
+                            <div style="font-family:var(--font-elegant); font-size:1.15rem; font-style:italic; color:var(--color-text-light);">Where creativity meets craftsmanship.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 05 — TECHNICAL TRIUMPHS
+             ============================================ -->
+        <section id="tech" class="report-section">
+            <div class="container">
+                <span class="section-number">Section 05</span>
+                <h2 class="section-title">Technical Triumphs</h2>
+                <p class="section-subtitle">The numbers behind the craftsmanship — every metric earned, every test passed.</p>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-number">79</div>
+                        <div class="metric-label">Tests Passed</div>
+                        <div class="metric-detail">Automated suite via Playwright + axe-core covering functionality, layout, and accessibility</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-number">0</div>
+                        <div class="metric-label">A11y Violations</div>
+                        <div class="metric-detail">Zero critical or serious WCAG 2.0 AA accessibility violations detected</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-number">13</div>
+                        <div class="metric-label">Custom Pages</div>
+                        <div class="metric-detail">Hand-coded HTML pages — homepage, about, contact, 6 collections, 4 product details</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-number">5</div>
+                        <div class="metric-label">JSON-LD Schemas</div>
+                        <div class="metric-detail">WebSite, LocalBusiness, Product, ContactPage, and ItemList structured data</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-number">3</div>
+                        <div class="metric-label">Breakpoints</div>
+                        <div class="metric-detail">Mobile-first responsive design at 375px, 768px, and 1280px</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-number">SEO</div>
+                        <div class="metric-label">URL Structure</div>
+                        <div class="metric-detail">Directory-based clean URLs with unique meta tags, sitemap, and robots.txt</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 06 — MOBILE FIRST
+             ============================================ -->
+        <section id="mobile" class="report-section">
+            <div class="container">
+                <span class="section-number">Section 06</span>
+                <h2 class="section-title">Mobile-First: Where Your Customers Are</h2>
+                <p class="section-subtitle">Over half of all web traffic comes from mobile devices — your site is built for that reality.</p>
+
+                <div class="mobile-showcase">
+                    <div class="phone-frame">
+                        <div class="phone-screen">
+                            <img src="screenshots/build-mobile.png" alt="ENC Printing mobile homepage view">
+                        </div>
+                    </div>
+
+                    <div class="mobile-info">
+                        <h3>Designed for Every Screen</h3>
+                        <p>Your website was built mobile-first — meaning we designed for the smallest screens first, then progressively enhanced the experience for larger devices. This ensures your customers on phones get a fast, beautiful experience without compromise.</p>
+                        <p>The layout, navigation, typography, and images all adapt fluidly across three carefully tuned breakpoints:</p>
+
+                        <ul class="breakpoint-list">
+                            <li>
+                                <span class="bp-size">375px</span>
+                                <span class="bp-device">Mobile</span>
+                                <span>Stacked layouts, touch-friendly tap targets, optimized images</span>
+                            </li>
+                            <li>
+                                <span class="bp-size">768px</span>
+                                <span class="bp-device">Tablet</span>
+                                <span>Two-column grids, expanded navigation, balanced spacing</span>
+                            </li>
+                            <li>
+                                <span class="bp-size">1280px</span>
+                                <span class="bp-device">Desktop</span>
+                                <span>Full multi-column layouts, glassmorphic nav, hover interactions</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 07 — ROADMAP
+             ============================================ -->
+        <section id="roadmap" class="report-section">
+            <div class="container">
+                <span class="section-number">Section 07</span>
+                <h2 class="section-title">Your Roadmap to Growth</h2>
+                <p class="section-subtitle">Your site is a strong foundation — here's where you can take it next.</p>
+
+                <div class="roadmap-grid">
+                    <div class="roadmap-card quick card">
+                        <div class="roadmap-tier">Quick Wins</div>
+                        <h3>Set Up This Week</h3>
+                        <ul>
+                            <li>Connect Google Analytics to track visitor behavior and top-performing pages</li>
+                            <li>Claim and optimize your Google Business Profile for local visibility</li>
+                            <li>Add an Instagram feed integration to showcase @enc_printing on your site</li>
+                            <li>Set up Facebook Pixel for future retargeting ad campaigns</li>
+                        </ul>
+                    </div>
+
+                    <div class="roadmap-card content card">
+                        <div class="roadmap-tier">Content Ideas</div>
+                        <h3>Blog Posts to Drive Traffic</h3>
+                        <ul>
+                            <li>"How to Display Photo Magnets: Creative Ideas for Every Room"</li>
+                            <li>"Custom Magnets for Events: Weddings, Baby Showers &amp; More"</li>
+                            <li>"Behind the Print: How We 3D Print Your Custom Frames"</li>
+                            <li>"Gift Guide: Personalized Photo Magnets for Every Occasion"</li>
+                        </ul>
+                    </div>
+
+                    <div class="roadmap-card medium card">
+                        <div class="roadmap-tier">Medium Term</div>
+                        <h3>Build Over the Next Few Months</h3>
+                        <ul>
+                            <li>Launch an email newsletter to keep customers in the loop on new products</li>
+                            <li>Create a seasonal promotions page for holidays and special events</li>
+                            <li>Build a customer photo gallery featuring real orders and happy customers</li>
+                            <li>Add product review and testimonial sections to build social proof</li>
+                        </ul>
+                    </div>
+
+                    <div class="roadmap-card big card">
+                        <div class="roadmap-tier">Big Picture</div>
+                        <h3>Long-Term Growth Opportunities</h3>
+                        <ul>
+                            <li>Wholesale and bulk ordering portal for business and event planners</li>
+                            <li>Event services page — weddings, baby showers, corporate gifts</li>
+                            <li>Affiliate or referral program to turn happy customers into ambassadors</li>
+                            <li>Expanded product customization tool with live preview</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             FINAL CALLOUT
+             ============================================ -->
+        <section class="report-section" style="border-top:none; padding-top:0;">
+            <div class="container">
+                <div class="final-callout">
+                    <h2>Here's to What's Next, Chase &amp; Kayla</h2>
+                    <p>What you've built at ENC Printing is special — a family business rooted in creativity, quality, and the kind of personal care that no big-box store can replicate. Your new website is designed to reflect exactly that. We're excited to see where you take it from here, and we'll be right here whenever you need us.</p>
+                    <div class="signature">— The AjayaDesign Team</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer class="report-footer">
+        <p>Prepared with <span class="heart">❤️</span> by <strong>AjayaDesign</strong> — Exclusively for <strong>Chase &amp; Kayla</strong> at <strong>ENC Printing</strong></p>
+        <p class="footer-copyright">&copy; 2026 AjayaDesign. This report is confidential and intended solely for the named recipient.</p>
+    </footer>
+
+    <!-- ============================================
+         JAVASCRIPT — Carousel
+         ============================================ -->
+    <script>
+        (function() {
+            var currentSlide = 0;
+            var track = document.getElementById('carouselTrack');
+            var slides = track.querySelectorAll('.carousel-slide');
+            var dots = document.querySelectorAll('.carousel-dot');
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            var totalSlides = slides.length;
+
+            function showSlide(index) {
+                if (index < 0) index = totalSlides - 1;
+                if (index >= totalSlides) index = 0;
+                currentSlide = index;
+                track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+                dots.forEach(function(dot, i) {
+                    dot.classList.toggle('active', i === currentSlide);
+                });
+            }
+
+            prevBtn.addEventListener('click', function() {
+                showSlide(currentSlide - 1);
+            });
+
+            nextBtn.addEventListener('click', function() {
+                showSlide(currentSlide + 1);
+            });
+
+            dots.forEach(function(dot) {
+                dot.addEventListener('click', function() {
+                    var slideIndex = parseInt(this.getAttribute('data-slide'), 10);
+                    showSlide(slideIndex);
+                });
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowLeft') {
+                    showSlide(currentSlide - 1);
+                } else if (e.key === 'ArrowRight') {
+                    showSlide(currentSlide + 1);
+                }
+            });
+
+            showSlide(0);
+        })();
+    </script>
+</body>
+</html>
