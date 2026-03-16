@@ -1,0 +1,15 @@
+{
+  "name": "velvet-bloom",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Velvet & Bloom — Modern SEO-optimized website redesign by AjayaDesign",
+  "author": "AjayaDesign",
+  "homepage": "https://ajayadesign.github.io/works/ecommerce/velvet-bloom/",
+  "scripts": {
+    "test": "npx playwright test",
+    "serve": "python3 -m http.server 8765"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}

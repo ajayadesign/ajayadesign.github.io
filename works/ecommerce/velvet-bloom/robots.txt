@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ajayadesign.github.io/works/ecommerce/velvet-bloom/sitemap.xml

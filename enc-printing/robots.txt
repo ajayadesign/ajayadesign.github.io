@@ -1,8 +1,0 @@
-User-agent: *
-Disallow: /
-
-# This is a demo site - not for production indexing
-# Original: https://encprinting.com/
-# Built by AjayaDesign
-
-Sitemap: https://ajayadesign.github.io/enc-printing/sitemap.xml

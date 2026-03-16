@@ -151,6 +151,40 @@
 
   <script>
     document.getElementById('current-path').textContent = window.location.pathname;
+
+    // Works migration fallback: redirect old slug paths to new works/ structure
+    (function() {
+      var map = {
+        'apex-auto':'/works/automotive/apex-auto/',
+        'apex-auto-collision':'/works/automotive/apex-auto-collision/',
+        'enc-printing':'/works/ecommerce/enc-printing/',
+        'isla-noor':'/works/ecommerce/isla-noor/',
+        'magnetic-soul':'/works/ecommerce/magnetic-soul/',
+        'memory-lane':'/works/ecommerce/memory-lane/',
+        'memory-magnets':'/works/ecommerce/memory-magnets/',
+        'the-magnet-guy':'/works/ecommerce/the-magnet-guy/',
+        'velvet-bloom':'/works/ecommerce/velvet-bloom/',
+        'austin-barbell':'/works/fitness/austin-barbell/',
+        'snoball-dude':'/works/food-bev/snoball-dude/',
+        'flicks-by-riri':'/works/photography/flicks-by-riri/',
+        'ankita-dahal':'/works/portfolio/ankita-dahal/',
+        'sanskriti-chaulagain':'/works/portfolio/sanskriti-chaulagain/',
+        'nextstep-es':'/works/services/nextstep-es/',
+        'radha-madhav':'/works/services/radha-madhav/',
+        'zach-the-pilot':'/works/services/zach-the-pilot/',
+        'compu-plus':'/works/tech/compu-plus/',
+        'everest-phone':'/works/tech/everest-phone/',
+        'magnetmomentsco':'/works/redirects/magnetmomentsco/',
+        'monument-pilates':'/works/redirects/monument-pilates/',
+        'picture-this-magnet':'/works/redirects/picture-this-magnet/'
+      };
+      var segs = window.location.pathname.split('/').filter(Boolean);
+      if (segs.length > 0 && map[segs[0]]) {
+        var rest = segs.slice(1).join('/');
+        var dest = map[segs[0]] + (rest ? rest : '');
+        window.location.replace(dest);
+      }
+    })();
   </script>
 </body>
 </html>
