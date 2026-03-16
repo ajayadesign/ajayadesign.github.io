@@ -231,6 +231,10 @@
     await _loadRingsFromAPI();
     // Refresh send queue panel
     await _loadSendQueue();
+    // Refresh hot prospects from API
+    await _loadHotProspectsFromAPI();
+    // Refresh pipeline funnel from API
+    await _loadFunnelFromAPI();
   }
 
   async function _loadRingsFromAPI() {
@@ -2899,6 +2903,41 @@
   }
 
   // ── Send Queue panel ────────────────────────────────
+  let _sqNextRunTarget = 0;
+  let _sqCountdownTimer = null;
+  function _sqTickCountdown() {
+    const $next = document.getElementById('sq-next-run');
+    if (!$next) return;
+    const diff = Math.max(0, Math.round((_sqNextRunTarget - Date.now()) / 1000));
+    const mm = Math.floor(diff / 60);
+    const ss = diff % 60;
+    $next.textContent = 'Next send in ' + mm + ':' + String(ss).padStart(2, '0');
+  }
+  async function _loadFunnelFromAPI() {
+    const stats = _lastStats;
+    if (!stats) return;
+    const sc = stats.status_counts || {};
+    const total = stats.total_prospects || 0;
+    const dead = (sc.dead || 0) + (sc.do_not_contact || 0);
+    _renderFunnel({
+      discovered: total,
+      qualified: total - dead,
+      contacted: stats.total_contacted || 0,
+      opened: stats.total_opened || 0,
+      replied: stats.total_replied || 0,
+      meeting: stats.total_meetings || 0,
+      converted: 0
+    });
+  }
+  async function _loadHotProspectsFromAPI() {
+    const data = await _api('GET', '/outreach/prospects?brief=true&limit=10&sort=priority_score&order=desc&has_website=false');
+    if (!data || !data.prospects) return;
+    const mapped = {};
+    data.prospects.forEach((p, i) => {
+      mapped[i] = { name: p.business_name, score: p.priority_score || 0, status: p.status || '' };
+    });
+    _renderHotProspects(mapped);
+  }
   async function _loadSendQueue() {
     const data = await _api('GET', '/outreach/queue');
     if (!data) return;
@@ -2957,10 +2996,11 @@
     // Next run time
     const $next = document.getElementById('sq-next-run');
     if ($next && data.next_run) {
-      const diff = Math.max(0, Math.round((new Date(data.next_run) - Date.now()) / 1000));
-      const mm = Math.floor(diff / 60);
-      const ss = diff % 60;
-      $next.textContent = 'Next send in ' + mm + ':' + String(ss).padStart(2, '0');
+      _sqNextRunTarget = new Date(data.next_run).getTime();
+      _sqTickCountdown();
+      if (!_sqCountdownTimer) {
+        _sqCountdownTimer = setInterval(_sqTickCountdown, 1000);
+      }
     } else if ($next) {
       $next.textContent = 'Interval: ' + (data.interval_minutes || 15) + 'min';
     }
