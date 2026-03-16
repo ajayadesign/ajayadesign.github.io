@@ -27,6 +27,7 @@ Invoke this skill **start-to-finish** when creating a new client project from a 
   - SEO audit (Phase 6), UI/UX check (Phase 4), and identity injection (Phase 5) are independent — run all three in parallel.
   - Screenshot retakes, test suite updates, and report.html updates are independent — parallelize.
   - **Rule:** If task A does not depend on the output of task B, they SHOULD be parallelized. Prefer spawning 2-4 subagents over sequential execution. Each subagent prompt must be self-contained with full context.
+  - **CSS Contract Rule:** When spawning subagents to create HTML pages, ALWAYS include the full CSS file (or a class-name reference list extracted from it) in the subagent's prompt. Subagents MUST use the exact class names defined in the stylesheet — they are NOT allowed to invent new class names for components the CSS already styles (nav, dropdowns, product grids, testimonials, breadcrumbs, etc.). After all subagents complete, run a **CSS/HTML class audit**: grep every class used in HTML and verify a corresponding rule exists in the CSS file. Flag any orphaned classes (HTML class with no CSS) or dead selectors (CSS rule with no matching HTML).
 
 ## Procedure
 
@@ -98,6 +99,11 @@ Every navigation item and every product/item should have its own dedicated HTML 
 3. **Navigation Updates:** Update `<nav>` links on ALL pages (index, contact, category pages, product pages) to point to the real directory-based pages using trailing slashes (e.g., `magnet-making/`, `products/2x2-magnet-kit/`). Keep anchor links on the homepage as secondary shortcuts.
 4. **Sitemap & Internal Linking:** Update `sitemap.xml` to include all new pages. Ensure strong internal linking between category pages, product pages, and the homepage.
 5. **Consistent Layout:** All new pages must share the same nav, footer, CSS, and design system as the homepage. Reuse the glassmorphic nav, footer branding, and identity markers.
+6. **CSS Class Contract (MANDATORY for Subagents):** Before spawning any page-building subagent, extract a **class name reference sheet** from the CSS file — listing every component class name and its purpose (e.g., `.has-dropdown` for nav dropdowns, `.product-grid` for product listings, `.testimonials-section` for reviews). Include this sheet verbatim in every subagent prompt. Subagents MUST NOT invent new class names for components already defined in CSS. After all pages are created, run an automated CSS/HTML consistency audit:
+   - `grep -rohP 'class="[^"]+"' *.html **/*.html | sort -u` → extract all HTML classes.
+   - Cross-reference against CSS selectors. Any mismatch = immediate fix required before proceeding to Phase 4.
+   - Pay special attention to: nav structure (dropdown class names), grid containers (product grids, bento grids), section wrappers (testimonials, hero), and form elements.
+7. **Nav Scalability Check:** After building the nav, visually verify it fits on a single line at 1280px viewport. If the site has more than 5-6 top-level nav items, consolidate into dropdown groups (e.g., a single "Shop" dropdown containing all product categories). Do NOT ship a nav that wraps to two lines on desktop.
 
 ### Phase 4 -- UI/UX Quality Check (Shneiderman's 8 Rules)
 
@@ -156,7 +162,22 @@ Before executing any test suite, run a comprehensive audit of every HTML file to
    - Contact form validation (empty submit blocked, valid submit shows success).
    - Navigation & scroll interactions.
    - Identity marker verification (build signature, footer branding).
+   - **Layout Regression Tests (MANDATORY):**
+     - **Nav single-line check:** Verify that the nav bar height is ≤ 80px at 1280px viewport (if it's taller, items are wrapping).
+     - **Product grid fill-width check:** On each collection page, verify product cards span the available container width (not clustered to one side). Check that the grid container's `scrollWidth` is close to its `offsetWidth`.
+     - **CSS/HTML class match check:** For critical components (`.product-grid`, `.product-card`, dropdown classes, breadcrumb), verify the element both exists in DOM AND has computed styles applied (e.g., `display: grid` on the grid container, `position: absolute` on dropdown menus).
+     - **Dropdown functionality check:** Hover over dropdown triggers and verify the dropdown menu becomes visible (opacity > 0, visibility: visible).
+   - **Visual Spot-Check Tests (MANDATORY):**
+     - Take a viewport screenshot of at least 3 representative pages (homepage, one collection, one product detail).
+     - Assert screenshots are non-blank (file size > 50KB).
+     - Compare nav area height across pages to ensure consistency.
 2. **Console Integrity:** Run a headless browser check. Fail if there are any 404s, broken links, or JavaScript console errors.
+3. **CSS/HTML Consistency Audit (MANDATORY before running Playwright):**
+   - Extract all CSS class selectors from the stylesheet.
+   - Extract all `class=` values from every HTML file.
+   - Flag any CSS selector that matches zero HTML elements (dead CSS).
+   - Flag any HTML class that has no corresponding CSS rule (orphaned class — likely a mismatch bug).
+   - This audit catches the #1 subagent bug: CSS says `.nav-dropdown` but HTML says `.has-dropdown`.
 
 ### Phase 8 -- Premium Client Report (`report.html`)
 
