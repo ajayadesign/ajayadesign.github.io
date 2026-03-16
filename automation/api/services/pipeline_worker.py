@@ -862,24 +862,55 @@ class PipelineWorker:
             )
             skip_emails = {r[0].lower() for r in already_emailed.fetchall() if r[0]}
 
-        # FOR UPDATE SKIP LOCKED so concurrent agents claim different rows
+        # 50/50 split: half contractors, half crawler-found local businesses.
+        # If one pool has fewer prospects, the other fills the remaining slots.
+        half = ENQUEUE_BATCH_SIZE // 2  # 5 each by default
+
+        _base_filter = [
+            Prospect.status == "enriched",
+            Prospect.owner_email.isnot(None),
+            or_(
+                Prospect.wp_score >= 40,
+                Prospect.wp_score.is_(None),  # backward compat: unscored prospects
+            ),
+        ]
+        _ordering = [
+            Prospect.wp_score.desc().nullslast(),
+            Prospect.priority_score.desc(),
+        ]
+
         async with async_session_factory() as db:
-            result = await db.execute(
+            # Contractor pool
+            contractor_result = await db.execute(
                 select(Prospect.id).where(
-                    Prospect.status == "enriched",
-                    Prospect.owner_email.isnot(None),
-                    # Only email prospects with meaningful wp_score
-                    or_(
-                        Prospect.wp_score >= 40,
-                        Prospect.wp_score.is_(None),  # backward compat: unscored prospects
-                    ),
-                ).order_by(
-                    Prospect.wp_score.desc().nullslast(),
-                    Prospect.priority_score.desc(),
-                ).limit(ENQUEUE_BATCH_SIZE)
+                    *_base_filter,
+                    Prospect.source == "contractor_registry",
+                ).order_by(*_ordering)
+                .limit(ENQUEUE_BATCH_SIZE)  # fetch up to full batch as fallback
                 .with_for_update(skip_locked=True)
             )
-            prospect_ids = [str(r[0]) for r in result.fetchall()]
+            contractor_ids = [str(r[0]) for r in contractor_result.fetchall()]
+
+            # Local business pool (crawler-found)
+            local_result = await db.execute(
+                select(Prospect.id).where(
+                    *_base_filter,
+                    or_(
+                        Prospect.source != "contractor_registry",
+                        Prospect.source.is_(None),
+                    ),
+                ).order_by(*_ordering)
+                .limit(ENQUEUE_BATCH_SIZE)
+                .with_for_update(skip_locked=True)
+            )
+            local_ids = [str(r[0]) for r in local_result.fetchall()]
+
+        # Take half from each; if one pool is short, the other fills the gap
+        c_take = min(len(contractor_ids), half)
+        l_take = min(len(local_ids), half)
+        c_take = min(len(contractor_ids), ENQUEUE_BATCH_SIZE - l_take)
+        l_take = min(len(local_ids), ENQUEUE_BATCH_SIZE - c_take)
+        prospect_ids = contractor_ids[:c_take] + local_ids[:l_take]
 
         if not prospect_ids:
             return 0
