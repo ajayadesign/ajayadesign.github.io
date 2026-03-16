@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<!-- ============================================================
+  Radha Madhav Dham — About Page
+  Engineered by AjayaDesign | https://ajayadesign.github.io
+  Intellectual property of AjayaDesign. Demo purposes only.
+  Fingerprint: RMD-DEMO-2026-AJAYA-D3S1GN-PR0P-ABOUT
+============================================================ -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us | Radha Madhav Dham — Hindu Temple &amp; Ashram, Austin TX</title>
+  <meta name="description" content="Learn about Radha Madhav Dham — built in 1990, spread over 200 acres in Austin's Hill Country. Discover our mission, the temple of Radha Rani, and the holy landmarks of Braj.">
+  <meta name="generator" content="AjayaDesign/1.0">
+  <link rel="canonical" href="https://ajayadesign.github.io/works/services/radha-madhav/about.html">
+
+  <meta property="og:title" content="About Radha Madhav Dham | Hindu Temple, Austin TX">
+  <meta property="og:description" content="One of the largest Hindu temples in the U.S. — 200 acres of spiritual sanctuary since 1990.">
+  <meta property="og:type" content="website">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'saffron': '#E8720C', 'saffron-light': '#FF9F43', 'saffron-dark': '#C45A00',
+            'maroon': '#6B1D3A', 'maroon-light': '#8B2E4F',
+            'gold': '#D4A853', 'gold-light': '#F0D78C',
+            'cream': '#FFFAF5', 'cream-dark': '#F5EDE3',
+            'temple-dark': '#1A0F08', 'temple-text': '#2D1810', 'warm-gray': '#8B7B6B',
+          },
+          fontFamily: {
+            display: ['"Playfair Display"', 'Georgia', 'serif'],
+            body: ['"Inter"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="font-body text-temple-text bg-cream" data-engineered-by="AjayaDesign" data-fingerprint="RMD-2026-AJAYA">
+
+  <!-- DEMO BANNER -->
+  <div class="demo-banner fixed top-0 left-0 right-0 z-[100] text-center py-1.5 px-4 text-xs font-medium text-white tracking-wide">
+    <i class="fa-solid fa-flask mr-1"></i>
+    This site is property of <strong>AjayaDesign</strong> and is for <strong>demonstration purposes only</strong>.
+    <a href="https://ajayadesign.github.io" class="underline ml-1 hover:text-gold-light">ajayadesign.github.io</a>
+  </div>
+
+  <!-- NAVIGATION -->
+  <nav class="nav-glass fixed top-8 left-0 right-0 z-50 border-b border-gold/10" id="mainNav">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-20">
+        <a href="index.html" class="flex items-center gap-3 shrink-0">
+          <img src="https://api.radhamadhavdham.org/uploads/images/logo2024-02-19T12-13-16.863Z-Ellipse4.png" alt="Radha Madhav Dham" class="h-10 w-10 md:h-12 md:w-12 rounded-full" loading="lazy">
+          <div class="hidden sm:block">
+            <div class="font-display font-bold text-maroon text-lg leading-tight">Radha Madhav Dham</div>
+            <div class="text-[10px] text-warm-gray tracking-widest uppercase">Austin, Texas</div>
+          </div>
+        </a>
+        <div class="hidden lg:flex items-center gap-8">
+          <a href="index.html" class="nav-link text-sm font-medium text-temple-text hover:text-saffron">Home</a>
+          <a href="about.html" class="nav-link text-sm font-medium text-temple-text hover:text-saffron active">About</a>
+          <a href="events.html" class="nav-link text-sm font-medium text-temple-text hover:text-saffron">Events</a>
+          <a href="visit.html" class="nav-link text-sm font-medium text-temple-text hover:text-saffron">Visit</a>
+          <a href="gallery.html" class="nav-link text-sm font-medium text-temple-text hover:text-saffron">Gallery</a>
+          <a href="contact.html" class="nav-link text-sm font-medium text-temple-text hover:text-saffron">Contact</a>
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="https://radhamadhavdham.org/donate-us" target="_blank" rel="noopener" class="btn-saffron hidden md:inline-flex px-5 py-2.5 rounded-full text-sm font-semibold"><i class="fa-solid fa-heart mr-2"></i>Donate</a>
+          <button id="menuToggle" class="lg:hidden p-2 text-temple-text hover:text-saffron" aria-label="Open menu"><i class="fa-solid fa-bars text-xl"></i></button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="mobile-menu fixed inset-y-0 right-0 w-72 bg-cream z-[60] shadow-2xl p-6 pt-20">
+    <button id="menuClose" class="absolute top-6 right-6 text-temple-text hover:text-saffron" aria-label="Close menu"><i class="fa-solid fa-xmark text-2xl"></i></button>
+    <div class="flex flex-col gap-4">
+      <a href="index.html" class="text-lg font-medium text-temple-text hover:text-saffron">Home</a>
+      <a href="about.html" class="text-lg font-display font-semibold text-maroon">About</a>
+      <a href="events.html" class="text-lg font-medium text-temple-text hover:text-saffron">Events</a>
+      <a href="visit.html" class="text-lg font-medium text-temple-text hover:text-saffron">Visit</a>
+      <a href="gallery.html" class="text-lg font-medium text-temple-text hover:text-saffron">Gallery</a>
+      <a href="contact.html" class="text-lg font-medium text-temple-text hover:text-saffron">Contact</a>
+      <hr class="border-gold/20 my-2">
+      <a href="https://radhamadhavdham.org/donate-us" target="_blank" rel="noopener" class="btn-saffron text-center px-5 py-3 rounded-full text-sm font-semibold"><i class="fa-solid fa-heart mr-2"></i>Donate</a>
+    </div>
+  </div>
+  <div id="menuOverlay" class="fixed inset-0 bg-black/30 z-[55] hidden"></div>
+
+  <!-- HERO -->
+  <section class="relative h-[50vh] min-h-[350px] flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0">
+      <img src="https://api.radhamadhavdham.org/uploads/aboutS5/img_path2024-03-15T18-43-00.367Z-ontopofbarsana.jpeg" alt="Radha Madhav Dham Grounds" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-b from-temple-dark/60 via-temple-dark/40 to-temple-dark/70"></div>
+    </div>
+    <div class="relative z-10 text-center px-4 pt-20">
+      <div class="ornament-divider text-gold mb-4">
+        <span class="text-gold/80 text-xs tracking-[0.3em] uppercase font-medium">Est. 1990</span>
+      </div>
+      <h1 class="font-display text-4xl md:text-6xl font-bold text-white mb-4">About Us</h1>
+      <p class="text-white/70 text-lg max-w-xl mx-auto">Discover the history and mission of Radha Madhav Dham</p>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section class="py-20 md:py-28 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div class="reveal">
+          <div class="ornament-divider justify-start mb-4">
+            <span class="text-saffron text-xs tracking-[0.3em] uppercase font-semibold">Our Mission</span>
+          </div>
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-maroon mb-6 leading-tight">
+            Inspiring Devotion to<br><span class="italic text-saffron">Radha Krishna</span>
+          </h2>
+          <p class="text-warm-gray leading-relaxed mb-4">
+            The path of Bhakti (devotion) is a soul's journey toward Radha Krishna. Our mission is to inspire you to begin that journey, and if you are fortunate to have begun that journey, we hope to inspire you to make steady progress and reach your goal.
+          </p>
+          <p class="text-warm-gray leading-relaxed mb-6">
+            Radha Madhav Dham is one of the largest Hindu temples and ashrams in the U.S. Built in 1990, it was created to preserve the devotional environment that prevailed in the ancient ashrams of Vrindavan. Spread over <strong class="text-temple-text">200 acres</strong> in the Hill Country of Austin, this ashram is a representation of the holy land of Braj in India where Radha Rani and Shree Krishna appeared 5,000 years ago.
+          </p>
+          <p class="text-warm-gray leading-relaxed">
+            All souls, regardless of their faith and belief, are welcome at Radha Madhav Dham. We hope you are inspired to learn Hindu philosophy and follow the path of Bhakti that is practiced here.
+          </p>
+        </div>
+        <div class="reveal reveal-delay-2">
+          <img src="https://api.radhamadhavdham.org/uploads/overnightmultipleimages/image2024-02-20T02-17-58.424Z-FullgloriousviewRMD.jpg" alt="Radha Madhav Dham full temple view" class="w-full rounded-2xl shadow-xl object-cover h-[400px] md:h-[500px]" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEMPLE -->
+  <section class="bg-temple-dark py-20 md:py-28 px-4 relative overflow-hidden">
+    <div class="absolute top-10 right-10 text-gold/5 text-[180px] font-display floating-om select-none" aria-hidden="true">ॐ</div>
+    <div class="max-w-7xl mx-auto">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div class="reveal order-2 lg:order-1">
+          <img src="https://api.radhamadhavdham.org/uploads/about_s3/s2_img_path2024-04-01T10-02-23.282Z-s2_img_path2024-02-06T05-56-59.531Z-Rectangle3213.png" alt="Nikunj Darshan of Radha Krishna" class="w-full rounded-2xl shadow-xl object-cover h-[400px]" loading="lazy">
+        </div>
+        <div class="reveal reveal-delay-2 order-1 lg:order-2">
+          <div class="ornament-divider justify-start mb-4">
+            <span class="text-gold text-xs tracking-[0.3em] uppercase font-semibold">The Temple</span>
+          </div>
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
+            Nikunj Darshan of<br>Radha Krishna
+          </h2>
+          <p class="text-white/60 leading-relaxed mb-4">
+            Shree Raseshwari Radha Rani Temple is the <strong class="text-gold">largest temple of Radha Rani in the world</strong>. It is designed to create a vision of Radha Krishna in nikunj darshan as described by Rasik Saints.
+          </p>
+          <p class="text-white/60 leading-relaxed mb-6">
+            Radha Krishna are portrayed sitting, standing, or playing in an open space surrounded by flowering gardens, fragrant atmosphere, and river Yamuna running behind. You also see Raseshwari Radha Rani sitting on the throne, surrounded by flowering gardens and a rasik saint absorbed in Their divine darshan.
+          </p>
+          <a href="visit.html" class="btn-saffron inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold">
+            Plan Your Darshan <i class="fa-solid fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOLY LANDMARKS -->
+  <section class="py-20 md:py-28 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center reveal mb-16">
+        <div class="ornament-divider mb-4">
+          <span class="text-saffron text-xs tracking-[0.3em] uppercase font-semibold">Sacred Grounds</span>
+        </div>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-maroon mb-4">Holy Landmarks of Braj</h2>
+        <p class="text-warm-gray max-w-3xl mx-auto">
+          Of the several landmarks represented in the 200+ acre property, some are most popularly visited by guests. Take a walking tour in loving remembrance of Krishna leelas that took place in these holy places.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="reveal card-lift bg-white rounded-2xl p-6 border border-cream-dark flex gap-5">
+          <div class="w-14 h-14 rounded-full bg-saffron/10 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-mountain text-saffron text-xl"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-semibold text-maroon text-lg mb-2">Govardhan Hill</h3>
+            <p class="text-warm-gray text-sm leading-relaxed">Recalls the Krishna leela where Little Kanha held up this hill on His little finger for seven days to protect all the Brajwasis from Lord Indra's torrential rains.</p>
+          </div>
+        </div>
+
+        <div class="reveal reveal-delay-1 card-lift bg-white rounded-2xl p-6 border border-cream-dark flex gap-5">
+          <div class="w-14 h-14 rounded-full bg-saffron/10 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-water text-saffron text-xl"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-semibold text-maroon text-lg mb-2">Prem Sarovar</h3>
+            <p class="text-warm-gray text-sm leading-relaxed">The "Pond of Divine Love" where hundreds of loving, joyful Radha Krishna leelas were performed.</p>
+          </div>
+        </div>
+
+        <div class="reveal card-lift bg-white rounded-2xl p-6 border border-cream-dark flex gap-5">
+          <div class="w-14 h-14 rounded-full bg-saffron/10 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-gopuram text-saffron text-xl"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-semibold text-maroon text-lg mb-2">Barsana Hill</h3>
+            <p class="text-warm-gray text-sm leading-relaxed">Reminiscent of the place atop a small hill in Barsana Village where Radha Rani's palace was situated. Today, Shreeji Temple is built on this spot.</p>
+          </div>
+        </div>
+
+        <div class="reveal reveal-delay-1 card-lift bg-white rounded-2xl p-6 border border-cream-dark flex gap-5">
+          <div class="w-14 h-14 rounded-full bg-saffron/10 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-dove text-saffron text-xl"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-semibold text-maroon text-lg mb-2">Raas Mandal</h3>
+            <p class="text-warm-gray text-sm leading-relaxed">Celebrates the Raas leela of Radha Krishna, showcased by the outdoor shrine with Radha, Krishna, and 8 Maha Sakhis performing Raas.</p>
+          </div>
+        </div>
+
+        <div class="reveal card-lift bg-white rounded-2xl p-6 border border-cream-dark flex gap-5">
+          <div class="w-14 h-14 rounded-full bg-saffron/10 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-droplet text-saffron text-xl"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-semibold text-maroon text-lg mb-2">Radha Kund</h3>
+            <p class="text-warm-gray text-sm leading-relaxed">Marvel at the divine beauty of this sacred kund, a representation of the holiest bathing place in all of Braj.</p>
+          </div>
+        </div>
+
+        <div class="reveal reveal-delay-1 card-lift bg-white rounded-2xl p-6 border border-cream-dark flex gap-5">
+          <div class="w-14 h-14 rounded-full bg-saffron/10 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-dragon text-saffron text-xl"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-semibold text-maroon text-lg mb-2">Kali Dah</h3>
+            <p class="text-warm-gray text-sm leading-relaxed">Reminds us of the time when Krishna danced on Kaliya Naag and forced him away from the Yamuna river, clearing Yamunaji from his poison.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NATURAL BEAUTY -->
+  <section class="bg-cream-dark py-20 md:py-28 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center reveal mb-16">
+        <div class="ornament-divider mb-4">
+          <span class="text-saffron text-xs tracking-[0.3em] uppercase font-semibold">Natural Beauty</span>
+        </div>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-maroon mb-4">200 Acres of Serenity</h2>
+        <p class="text-warm-gray max-w-2xl mx-auto">
+          Located in the Hill Country of Austin, the grounds feature lush landscapes, natural creeks, roaming peacocks and deer, beautiful sunsets, and devotional walking paths.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div class="reveal img-zoom rounded-xl overflow-hidden">
+          <img src="https://farm8.staticflickr.com/7297/14101652143_4ed643cf3a.jpg" alt="Holy Places at Radha Madhav Dham" class="w-full h-48 md:h-64 object-cover" loading="lazy">
+        </div>
+        <div class="reveal reveal-delay-1 img-zoom rounded-xl overflow-hidden">
+          <img src="https://farm3.staticflickr.com/2929/13894975387_c5dea3d3fe.jpg" alt="Grounds at Radha Madhav Dham" class="w-full h-48 md:h-64 object-cover" loading="lazy">
+        </div>
+        <div class="reveal reveal-delay-2 img-zoom rounded-xl overflow-hidden">
+          <img src="https://live.staticflickr.com/2898/14082048094_ab54525222_b.jpg" alt="Landscape at Radha Madhav Dham" class="w-full h-48 md:h-64 object-cover" loading="lazy">
+        </div>
+        <div class="reveal img-zoom rounded-xl overflow-hidden">
+          <img src="https://api.radhamadhavdham.org/uploads/homesection4/image_22024-02-18T21-06-17.941Z-FlyingKiteswithtempleview.jpg" alt="Kite flying at temple" class="w-full h-48 md:h-64 object-cover" loading="lazy">
+        </div>
+        <div class="reveal reveal-delay-1 img-zoom rounded-xl overflow-hidden">
+          <img src="https://api.radhamadhavdham.org/uploads/aboutS5/img_path2024-02-12T07-10-09.903Z-evd2.png" alt="Temple programs" class="w-full h-48 md:h-64 object-cover" loading="lazy">
+        </div>
+        <div class="reveal reveal-delay-2 img-zoom rounded-xl overflow-hidden">
+          <img src="https://api.radhamadhavdham.org/uploads/rentmultipleimages/image2026-01-06T19-13-40.843Z-54349442915_ab347fe0dc_k.jpg" alt="Overnight stay" class="w-full h-48 md:h-64 object-cover" loading="lazy">
+        </div>
+      </div>
+
+      <div class="text-center mt-10 reveal">
+        <a href="gallery.html" class="btn-maroon inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold">
+          View Full Gallery <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="py-20 md:py-28 px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="reveal mb-16">
+        <div class="ornament-divider mb-4">
+          <span class="text-saffron text-xs tracking-[0.3em] uppercase font-semibold">Testimonials</span>
+        </div>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-maroon mb-4">What Visitors Say</h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="reveal card-lift bg-white rounded-2xl p-8 text-left border border-cream-dark">
+          <i class="fa-solid fa-quote-left text-saffron/20 text-3xl mb-4"></i>
+          <p class="text-warm-gray leading-relaxed mb-6">
+            "Gorgeous grounds, we were welcomed by so many with loving arms. The beauty and serenity of this place is unparalleled. Inside the main temple is truly breathtaking."
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-saffron/10 flex items-center justify-center">
+              <span class="font-display font-bold text-saffron">G</span>
+            </div>
+            <div>
+              <div class="font-semibold text-temple-text text-sm">Gaurav Agrawal</div>
+              <div class="text-warm-gray text-xs">Austin, TX</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal reveal-delay-1 card-lift bg-white rounded-2xl p-8 text-left border border-cream-dark">
+          <i class="fa-solid fa-quote-left text-saffron/20 text-3xl mb-4"></i>
+          <p class="text-warm-gray leading-relaxed mb-6">
+            "It was a delightful evening with singing of Ramayana Chaupais, cultural programs, fireworks and Ras Garba dance. I thoroughly enjoyed the Diwali celebrations at Radha Madhav Dham."
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-saffron/10 flex items-center justify-center">
+              <span class="font-display font-bold text-saffron">J</span>
+            </div>
+            <div>
+              <div class="font-semibold text-temple-text text-sm">Jenee Fox</div>
+              <div class="text-warm-gray text-xs">Austin, TX</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-temple-dark border-t border-white/5 text-white/70">
+    <div class="max-w-7xl mx-auto px-4 py-16">
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <img src="https://api.radhamadhavdham.org/uploads/images/logo2024-02-19T12-13-16.863Z-Ellipse4.png" alt="Logo" class="h-10 w-10 rounded-full" loading="lazy">
+            <div class="font-display font-bold text-white text-lg">Radha Madhav Dham</div>
+          </div>
+          <p class="text-sm leading-relaxed mb-4">Inspiring devotion to Radha Krishna through daily satsang, festivals, retreats, and community.</p>
+          <div class="flex gap-3">
+            <a href="https://www.facebook.com/RadhaMadhavDham" target="_blank" rel="noopener" aria-label="Facebook" class="w-9 h-9 rounded-full bg-white/5 hover:bg-saffron/20 flex items-center justify-center transition-colors"><i class="fa-brands fa-facebook-f text-sm"></i></a>
+            <a href="https://www.instagram.com/radhamadhavdham/" target="_blank" rel="noopener" aria-label="Instagram" class="w-9 h-9 rounded-full bg-white/5 hover:bg-saffron/20 flex items-center justify-center transition-colors"><i class="fa-brands fa-instagram text-sm"></i></a>
+            <a href="https://www.youtube.com/RadhaMadhavDham" target="_blank" rel="noopener" aria-label="YouTube" class="w-9 h-9 rounded-full bg-white/5 hover:bg-saffron/20 flex items-center justify-center transition-colors"><i class="fa-brands fa-youtube text-sm"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-display font-semibold text-white mb-4">Quick Links</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="about.html" class="hover:text-gold transition-colors">About Us</a></li>
+            <li><a href="events.html" class="hover:text-gold transition-colors">Events</a></li>
+            <li><a href="visit.html" class="hover:text-gold transition-colors">Plan Your Visit</a></li>
+            <li><a href="gallery.html" class="hover:text-gold transition-colors">Gallery</a></li>
+            <li><a href="contact.html" class="hover:text-gold transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-display font-semibold text-white mb-4">Contact</h4>
+          <ul class="space-y-3 text-sm">
+            <li class="flex items-start gap-2"><i class="fa-solid fa-location-dot text-saffron mt-1 shrink-0"></i>400 Barsana Road,<br>Austin, TX 78737</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-phone text-saffron shrink-0"></i><a href="tel:+15122887180" class="hover:text-gold transition-colors">(512) 288-7180</a></li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-envelope text-saffron shrink-0"></i><a href="mailto:contact@RadhaMadhavDham.org" class="hover:text-gold transition-colors">contact@RadhaMadhavDham.org</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-display font-semibold text-white mb-4">Centers</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="https://rgddallas.org/" target="_blank" rel="noopener" class="hover:text-gold transition-colors">RGD, Dallas</a></li>
+            <li><a href="https://rgdny.org/" target="_blank" rel="noopener" class="hover:text-gold transition-colors">RGD, New York</a></li>
+            <li><a href="https://www.rgdla.org/" target="_blank" rel="noopener" class="hover:text-gold transition-colors">Radha Krishna Dham, LA</a></li>
+            <li><a href="https://rgddc.org/" target="_blank" rel="noopener" class="hover:text-gold transition-colors">RGD, Washington D.C.</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-white/5 py-4 px-4">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/40">
+        <span>&copy; 2026 Radha Madhav Dham. All rights reserved.</span>
+        <span>Demo site designed &amp; engineered by <a href="https://ajayadesign.github.io" class="text-gold hover:text-gold-light transition-colors font-medium">AjayaDesign</a> — for demonstration purposes only.</span>
+      </div>
+    </div>
+    <div style="position:absolute;left:-9999px;opacity:0;pointer-events:none;font-size:0" aria-hidden="true" data-creator="AjayaDesign" data-license="demo-only" data-fingerprint="RMD-DEMO-2026-AJAYA-D3S1GN-PR0P">This website is the intellectual property of AjayaDesign (ajayadesign.github.io). For demonstration purposes only.</div>
+  </footer>
+
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const menuClose = document.getElementById('menuClose');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    function openMenu() { mobileMenu.classList.add('open'); menuOverlay.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+    function closeMenu() { mobileMenu.classList.remove('open'); menuOverlay.classList.add('hidden'); document.body.style.overflow = ''; }
+    menuToggle.addEventListener('click', openMenu);
+    menuClose.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 50); });
+
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
+    }, { threshold: 0.15 });
+    reveals.forEach(el => observer.observe(el));
+
+    console.log('%c🛕 Radha Madhav Dham — Demo Site by AjayaDesign', 'color: #E8720C; font-size: 14px; font-weight: bold;');
+  </script>
+</body>
+</html>

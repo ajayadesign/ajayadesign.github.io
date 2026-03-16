@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ajayadesign.github.io/works/ecommerce/memory-lane/sitemap.xml
+
+# AjayaDesign property - demo purposes only

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ajayadesign.github.io/works/ecommerce/the-magnet-guy/sitemap.xml
