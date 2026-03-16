@@ -1,0 +1,13 @@
+{
+  "name": "magnetic-soul",
+  "private": true,
+  "scripts": {
+    "serve": "npx serve . -l 9222",
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@playwright/test": "^1.58.2"
+  }
+}
