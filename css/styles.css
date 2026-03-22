@@ -97,17 +97,18 @@ body {
 }
 
 
-/* Mobile + Reduced Motion Enhancements */
-@media (max-width: 768px), (prefers-reduced-motion: reduce) {
-  .scroll-hero { height: 250vh !important; }
-  .scroll-hero .scroll-hero__video { display: none !important; }
-  .scroll-hero .scroll-hero__poster { display: block !important; }
+/* Mobile Enhancements (scrollytelling stays active) */
+@media (max-width: 768px) {
+  .hero-section { min-height: 80vh !important; }
   .grid-cols-3 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
   #mobile-menu-btn { min-width: 44px; min-height: 44px; padding: 10px; }
   #mobile-menu a { min-height: 44px; display: flex; align-items: center; }
   .cta-btn, .nav-link { min-height: 44px; }
 }
 
+/* Reduced Motion: kill canvas, show static poster */
 @media (prefers-reduced-motion: reduce) {
+  .scroll-canvas-bg { display: none !important; }
+  .scroll-video-poster { display: block !important; }
   * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
 }

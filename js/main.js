@@ -33,77 +33,71 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── Mobile + reduced motion fallback + scroll-synced hero video ──
-  const isMobileView = window.matchMedia('(max-width: 768px)').matches;
+  // ── PrecisionScrollEngine — Apple-style canvas frame sequence ──
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const heroVideo = document.getElementById('hero-video');
-  const scrollHero = document.querySelector('.scroll-hero');
-  const heroPosters = document.querySelectorAll('.scroll-hero__poster');
+  const scrollCanvas = document.getElementById('scroll-canvas');
+  const heroPosters = document.querySelectorAll('.scroll-video-poster');
 
-  const enableHeroPoster = () => {
+  if (prefersReducedMotion) {
+    // Reduced-motion: static poster, no canvas animation
     document.body.classList.add('reduced-motion');
-    if (heroVideo) {
-      heroVideo.pause();
-      heroVideo.currentTime = 0;
-      heroVideo.style.display = 'none';
-    }
+    if (scrollCanvas) scrollCanvas.style.display = 'none';
     heroPosters.forEach(poster => {
       poster.classList.remove('hidden');
       poster.style.display = 'block';
     });
-  };
+  } else if (scrollCanvas) {
+    // Desktop: PrecisionScrollEngine — preload WebP frames, draw to canvas on scroll
+    const ctx = scrollCanvas.getContext('2d');
+    const frameDir = scrollCanvas.dataset.frames;   // e.g. "/assets/frames/drone"
+    const frameCount = parseInt(scrollCanvas.dataset.frameCount, 10) || 64;
+    const frames = [];
+    let loadedCount = 0;
+    let currentFrame = -1;
+    let rafPending = false;
 
-  const enableScrollHero = () => {
-    if (!heroVideo || !scrollHero) return;
-    heroVideo.muted = true;
-    heroVideo.playsInline = true;
-    heroVideo.pause();
-    heroVideo.currentTime = 0;
+    // Preload all frames
+    for (let i = 1; i <= frameCount; i++) {
+      const img = new Image();
+      img.src = `${frameDir}/frame_${String(i).padStart(4, '0')}.webp`;
+      img.onload = () => {
+        loadedCount++;
+        // Draw first frame immediately once loaded
+        if (i === 1 && ctx) drawFrame(0);
+      };
+      frames.push(img);
+    }
 
-    // Scrub video currentTime against scroll within the .scroll-hero container only.
-    // At scrollTop = top of .scroll-hero → frame 0.
-    // At scrollTop = bottom of .scroll-hero → last frame.
-    const scrub = () => {
-      const rect = scrollHero.getBoundingClientRect();
-      const heroHeight = scrollHero.offsetHeight;
-      // How far we've scrolled into the hero: 0 at top, heroHeight - vh at bottom
-      const scrolled = -rect.top;
-      const maxScroll = heroHeight - window.innerHeight;
-      const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, scrolled / maxScroll)) : 0;
+    heroPosters.forEach(p => { p.style.display = 'none'; });
 
-      // Scrub video
-      if (heroVideo.duration > 0 && !Number.isNaN(heroVideo.duration)) {
-        heroVideo.currentTime = heroVideo.duration * ratio;
+    function drawFrame(index) {
+      if (index === currentFrame) return;
+      const img = frames[index];
+      if (!img || !img.complete || img.naturalWidth === 0) return;
+      currentFrame = index;
+      // Match canvas internal resolution to image
+      if (scrollCanvas.width !== img.naturalWidth || scrollCanvas.height !== img.naturalHeight) {
+        scrollCanvas.width = img.naturalWidth;
+        scrollCanvas.height = img.naturalHeight;
       }
+      ctx.drawImage(img, 0, 0);
+    }
 
-      // Progressive video opacity: 0.3 → 0.75 as you scroll
-      heroVideo.style.opacity = 0.3 + 0.45 * ratio;
+    function scrub() {
+      rafPending = false;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const maxScroll = document.body.scrollHeight - window.innerHeight;
+      const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, scrollTop / maxScroll)) : 0;
+      const frameIndex = Math.min(frameCount - 1, Math.floor(ratio * frameCount));
+      drawFrame(frameIndex);
+      // Ramp canvas opacity: visible in hero (0.55), brightens to 0.80 as user scrolls
+      scrollCanvas.style.opacity = 0.55 + 0.25 * ratio;
+    }
 
-      // Fade content in early (0%–25% of scroll), hold until 75%, then fade out
-      const content = scrollHero.querySelector('.scroll-hero__content');
-      if (content) {
-        let contentOpacity = 1;
-        if (ratio < 0.15) {
-          contentOpacity = ratio / 0.15;        // fade in 0–15%
-        } else if (ratio > 0.85) {
-          contentOpacity = (1 - ratio) / 0.15;  // fade out 85–100%
-        }
-        content.style.opacity = Math.max(0, Math.min(1, contentOpacity));
-        content.style.transform = `translateY(${(1 - contentOpacity) * 20}px)`;
-      }
-    };
-
-    window.addEventListener('scroll', () => requestAnimationFrame(scrub), { passive: true });
-    heroVideo.addEventListener('loadedmetadata', scrub);
-    // Initial call
+    window.addEventListener('scroll', () => {
+      if (!rafPending) { rafPending = true; requestAnimationFrame(scrub); }
+    }, { passive: true });
     scrub();
-  };
-
-  if (isMobileView || prefersReducedMotion) {
-    enableHeroPoster();
-  } else {
-    heroPosters.forEach(poster => { poster.style.display = 'none'; });
-    enableScrollHero();
   }
 
   // ── Scroll Reveal (IntersectionObserver) ──
