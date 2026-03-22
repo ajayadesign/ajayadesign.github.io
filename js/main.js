@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const isMobileView = window.matchMedia('(max-width: 768px)').matches;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const heroVideo = document.getElementById('hero-video');
+  const scrollHero = document.querySelector('.scroll-hero');
   const heroPosters = document.querySelectorAll('.scroll-hero__poster');
 
   const enableHeroPoster = () => {
@@ -45,8 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
       heroVideo.pause();
       heroVideo.currentTime = 0;
       heroVideo.style.display = 'none';
-      heroVideo.removeAttribute('autoplay');
-      heroVideo.removeAttribute('loop');
     }
     heroPosters.forEach(poster => {
       poster.classList.remove('hidden');
@@ -55,35 +54,55 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const enableScrollHero = () => {
-    if (!heroVideo) return;
+    if (!heroVideo || !scrollHero) return;
     heroVideo.muted = true;
     heroVideo.playsInline = true;
     heroVideo.pause();
-    heroVideo.removeAttribute('autoplay');
-    heroVideo.removeAttribute('loop');
+    heroVideo.currentTime = 0;
 
-    const updateProgress = () => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const maxScroll = document.body.scrollHeight - window.innerHeight;
-      const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, scrollTop / maxScroll)) : 0;
+    // Scrub video currentTime against scroll within the .scroll-hero container only.
+    // At scrollTop = top of .scroll-hero → frame 0.
+    // At scrollTop = bottom of .scroll-hero → last frame.
+    const scrub = () => {
+      const rect = scrollHero.getBoundingClientRect();
+      const heroHeight = scrollHero.offsetHeight;
+      // How far we've scrolled into the hero: 0 at top, heroHeight - vh at bottom
+      const scrolled = -rect.top;
+      const maxScroll = heroHeight - window.innerHeight;
+      const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, scrolled / maxScroll)) : 0;
+
+      // Scrub video
       if (heroVideo.duration > 0 && !Number.isNaN(heroVideo.duration)) {
         heroVideo.currentTime = heroVideo.duration * ratio;
       }
+
+      // Progressive video opacity: 0.3 → 0.75 as you scroll
+      heroVideo.style.opacity = 0.3 + 0.45 * ratio;
+
+      // Fade content in early (0%–25% of scroll), hold until 75%, then fade out
+      const content = scrollHero.querySelector('.scroll-hero__content');
+      if (content) {
+        let contentOpacity = 1;
+        if (ratio < 0.15) {
+          contentOpacity = ratio / 0.15;        // fade in 0–15%
+        } else if (ratio > 0.85) {
+          contentOpacity = (1 - ratio) / 0.15;  // fade out 85–100%
+        }
+        content.style.opacity = Math.max(0, Math.min(1, contentOpacity));
+        content.style.transform = `translateY(${(1 - contentOpacity) * 20}px)`;
+      }
     };
 
-    window.addEventListener('scroll', () => requestAnimationFrame(updateProgress));
-    window.addEventListener('resize', updateProgress);
-    heroVideo.addEventListener('loadedmetadata', updateProgress);
-    updateProgress();
+    window.addEventListener('scroll', () => requestAnimationFrame(scrub), { passive: true });
+    heroVideo.addEventListener('loadedmetadata', scrub);
+    // Initial call
+    scrub();
   };
 
   if (isMobileView || prefersReducedMotion) {
     enableHeroPoster();
   } else {
-    // Hide poster assets for desktop; use scroll+video scrubbing.
-    heroPosters.forEach(poster => {
-      poster.style.display = 'none';
-    });
+    heroPosters.forEach(poster => { poster.style.display = 'none'; });
     enableScrollHero();
   }
 

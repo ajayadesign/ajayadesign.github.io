@@ -12,6 +12,9 @@ test('page loads with correct title', async ({ page }) => {
 
 test('hero section is visible', async ({ page }) => {
   await page.goto('/');
+  // Scroll slightly to trigger the scroll-synced content fade-in
+  await page.evaluate(() => window.scrollTo(0, window.innerHeight * 0.5));
+  await page.waitForTimeout(200);
   await expect(page.locator('h1')).toBeVisible();
   await expect(page.locator('h1')).toContainText('One Click Away');
 });
@@ -146,9 +149,10 @@ test('no horizontal overflow', async ({ page }) => {
 
 test('axe accessibility audit — home page', async ({ page }) => {
   await page.goto('/');
-  // Force all reveal elements to visible so axe tests content at full opacity
+  // Force all reveal + scroll-hero content visible so axe tests at full opacity
   await page.evaluate(() => {
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    document.querySelectorAll('.scroll-hero__content').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
   });
   await page.waitForTimeout(700); // wait for opacity transitions to complete
 
@@ -175,6 +179,7 @@ test('axe accessibility audit — edge page', async ({ page }) => {
   await page.goto('/edge/');
   await page.evaluate(() => {
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    document.querySelectorAll('.scroll-hero__content').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
   });
   await page.waitForTimeout(700);
   const results = await new AxeBuilder({ page })
@@ -190,6 +195,7 @@ test('axe accessibility audit — works page', async ({ page }) => {
   await page.goto('/works/');
   await page.evaluate(() => {
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    document.querySelectorAll('.scroll-hero__content').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
   });
   await page.waitForTimeout(700);
   const results = await new AxeBuilder({ page })
