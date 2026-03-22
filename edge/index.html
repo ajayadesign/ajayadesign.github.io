@@ -189,7 +189,12 @@
         <span id="nav-status-text">Checking…</span>
       </div>
 
-      <button id="mobile-menu-btn" class="md:hidden text-gray-400 hover:text-white" aria-label="Toggle menu">
+      <!-- Audio Toggle -->
+      <button id="audio-toggle" class="hidden md:flex items-center justify-center w-8 h-8 text-gray-500 hover:text-white transition-colors" aria-label="Toggle ambient audio" title="Ambient audio">
+        <svg id="audio-icon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5.586v12.828a1 1 0 01-1.707.707L5.586 15z"/></svg>
+      </button>
+
+      <button id="mobile-menu-btn" class="relative z-10 md:hidden text-gray-400 hover:text-white" aria-label="Toggle menu">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path id="menu-icon-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
           <path id="menu-icon-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -226,14 +231,43 @@
   <img class="scroll-video-poster hidden" src="/assets/hero/pcb-hero.webp" alt="PCB traces poster" />
 
 
-  <!-- ═══════════════════ HERO SECTION ═══════════════════ -->
+  <!-- ═══════════════════ HERO SECTION (cornered editorial layout) ═══════════════════ -->
   <section class="hero-section">
-      <div class="max-w-4xl mx-auto px-6 text-center py-32">
-          <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Features</p>
-          <h1 class="font-mono font-bold text-4xl sm:text-5xl md:text-6xl text-white leading-tight tracking-tight">
+      <div class="relative z-10 w-full h-full min-h-screen grid grid-cols-1 md:grid-cols-2 grid-rows-[1fr_auto] px-6 sm:px-10 lg:px-16 py-24 sm:py-32">
+
+        <!-- TOP-LEFT: Label + Headline -->
+        <div class="flex flex-col justify-center" data-scroll-fade data-scroll-start="0" data-scroll-end="0.6">
+          <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Episode 01</p>
+          <h1 class="font-mono font-bold text-4xl sm:text-5xl md:text-5xl lg:text-7xl text-white leading-tight tracking-tight">
             The <span class="text-amd-red">Edge</span>
           </h1>
-          <p class="mt-4 text-gray-400 max-w-xl mx-auto text-lg">What separates an engineered site from a templated one.</p>
+          <p class="mt-4 text-gray-400 max-w-md text-lg leading-relaxed">What separates an engineered site from a templated one.</p>
+        </div>
+
+        <!-- TOP-RIGHT: Feature hint -->
+        <div class="flex flex-col justify-center items-end mt-8 md:mt-0" data-scroll-fade data-scroll-start="0.1" data-scroll-end="0.7">
+          <div class="text-right space-y-4">
+            <div class="font-mono text-xs text-gray-500 tracking-widest uppercase">Systems Architecture</div>
+            <div class="flex flex-col gap-2 items-end">
+              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border-dim text-xs font-mono text-electric-blue">⚡ Sub-1s Load</span>
+              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border-dim text-xs font-mono text-amd-red-text">🔧 Custom CI/CD</span>
+              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border-dim text-xs font-mono text-green-400">✓ 95+ Lighthouse</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTTOM-LEFT: Microcopy -->
+        <div class="flex items-end pb-8" data-scroll-fade data-scroll-start="0.15" data-scroll-end="0.8">
+          <p class="font-mono text-xs text-gray-500 max-w-sm leading-relaxed tracking-wide">Speed · Systems Logic · Hardware-Level Precision</p>
+        </div>
+
+        <!-- BOTTOM-RIGHT: Scroll hint -->
+        <div class="flex items-end justify-end pb-8" data-scroll-fade data-scroll-start="0" data-scroll-end="0.5">
+          <div class="flex flex-col items-center gap-2 text-gray-400">
+            <span class="text-xs font-mono">explore</span>
+            <div class="w-px h-8 bg-gradient-to-b from-amd-red to-transparent"></div>
+          </div>
+        </div>
       </div>
   </section>
 

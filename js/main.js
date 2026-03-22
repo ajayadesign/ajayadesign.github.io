@@ -34,12 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── PrecisionScrollEngine — Apple-style canvas frame sequence ──
+  // Upgrades: lerp interpolation, DPR-aware rendering, progressive preload
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const scrollCanvas = document.getElementById('scroll-canvas');
   const heroPosters = document.querySelectorAll('.scroll-video-poster');
 
   if (prefersReducedMotion) {
-    // Reduced-motion: static poster, no canvas animation
     document.body.classList.add('reduced-motion');
     if (scrollCanvas) scrollCanvas.style.display = 'none';
     heroPosters.forEach(poster => {
@@ -47,26 +47,45 @@ document.addEventListener('DOMContentLoaded', () => {
       poster.style.display = 'block';
     });
   } else if (scrollCanvas) {
-    // Desktop: PrecisionScrollEngine — preload WebP frames, draw to canvas on scroll
     const ctx = scrollCanvas.getContext('2d');
-    const frameDir = scrollCanvas.dataset.frames;   // e.g. "/assets/frames/drone"
+    const frameDir = scrollCanvas.dataset.frames;
     const frameCount = parseInt(scrollCanvas.dataset.frameCount, 10) || 64;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2); // cap at 2x
     const frames = [];
     let loadedCount = 0;
     let currentFrame = -1;
-    let rafPending = false;
+    let displayFrame = 0;  // lerp target (float)
+    let animFrame = 0;     // actual rendered frame (float, lerped)
+    let rafId = null;
 
-    // Preload all frames
-    for (let i = 1; i <= frameCount; i++) {
+    // Progressive preload: load frame 1 first, then rest
+    function preloadFrame(i) {
       const img = new Image();
       img.src = `${frameDir}/frame_${String(i).padStart(4, '0')}.webp`;
       img.onload = () => {
         loadedCount++;
-        // Draw first frame immediately once loaded
-        if (i === 1 && ctx) drawFrame(0);
+        if (i === 1 && ctx) {
+          setupCanvasDPR(img);
+          drawFrame(0);
+        }
       };
-      frames.push(img);
+      frames[i - 1] = img;
     }
+
+    // DPR-aware canvas sizing
+    function setupCanvasDPR(img) {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      scrollCanvas.style.width = vw + 'px';
+      scrollCanvas.style.height = vh + 'px';
+      scrollCanvas.width = vw * dpr;
+      scrollCanvas.height = vh * dpr;
+      ctx.scale(dpr, dpr);
+    }
+
+    // Preload frame 1 immediately, queue rest
+    preloadFrame(1);
+    for (let i = 2; i <= frameCount; i++) preloadFrame(i);
 
     heroPosters.forEach(p => { p.style.display = 'none'; });
 
@@ -75,29 +94,73 @@ document.addEventListener('DOMContentLoaded', () => {
       const img = frames[index];
       if (!img || !img.complete || img.naturalWidth === 0) return;
       currentFrame = index;
-      // Match canvas internal resolution to image
-      if (scrollCanvas.width !== img.naturalWidth || scrollCanvas.height !== img.naturalHeight) {
-        scrollCanvas.width = img.naturalWidth;
-        scrollCanvas.height = img.naturalHeight;
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      // Cover-fit: scale image to fill viewport
+      const imgRatio = img.naturalWidth / img.naturalHeight;
+      const vpRatio = vw / vh;
+      let dw, dh, dx, dy;
+      if (imgRatio > vpRatio) {
+        dh = vh; dw = vh * imgRatio;
+        dx = (vw - dw) / 2; dy = 0;
+      } else {
+        dw = vw; dh = vw / imgRatio;
+        dx = 0; dy = (vh - dh) / 2;
       }
-      ctx.drawImage(img, 0, 0);
+      ctx.clearRect(0, 0, vw, vh);
+      ctx.drawImage(img, dx, dy, dw, dh);
     }
 
-    function scrub() {
-      rafPending = false;
+    // Lerp animation loop — smooth sub-frame interpolation
+    function lerpLoop() {
+      animFrame += (displayFrame - animFrame) * 0.12; // lerp factor
+      const snapped = Math.round(animFrame);
+      const clamped = Math.min(frameCount - 1, Math.max(0, snapped));
+      drawFrame(clamped);
+
+      // Ramp canvas opacity: 0.45 at top → 0.75 at bottom
+      const ratio = frameCount > 1 ? animFrame / (frameCount - 1) : 0;
+      scrollCanvas.style.opacity = 0.45 + 0.30 * ratio;
+
+      rafId = requestAnimationFrame(lerpLoop);
+    }
+
+    function onScroll() {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const maxScroll = document.body.scrollHeight - window.innerHeight;
       const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, scrollTop / maxScroll)) : 0;
-      const frameIndex = Math.min(frameCount - 1, Math.floor(ratio * frameCount));
-      drawFrame(frameIndex);
-      // Ramp canvas opacity: visible in hero (0.55), brightens to 0.80 as user scrolls
-      scrollCanvas.style.opacity = 0.55 + 0.25 * ratio;
+      displayFrame = ratio * (frameCount - 1);
     }
 
-    window.addEventListener('scroll', () => {
-      if (!rafPending) { rafPending = true; requestAnimationFrame(scrub); }
-    }, { passive: true });
-    scrub();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => {
+      if (frames[0] && frames[0].complete) setupCanvasDPR(frames[0]);
+      currentFrame = -1; // force redraw
+    });
+    onScroll();
+    rafId = requestAnimationFrame(lerpLoop);
+  }
+
+  // ── Scroll-Driven Hero Overlays (fade + translate tied to scroll) ──
+  const heroOverlays = document.querySelectorAll('[data-scroll-fade]');
+  if (heroOverlays.length && !prefersReducedMotion) {
+    function updateOverlays() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const vh = window.innerHeight;
+      heroOverlays.forEach(el => {
+        const start = parseFloat(el.dataset.scrollStart || '0') * vh;
+        const end = parseFloat(el.dataset.scrollEnd || '1') * vh;
+        const progress = Math.min(1, Math.max(0, (scrollTop - start) / (end - start)));
+        // Fade in from 0 → 1 in first half, fade out from 1 → 0 in second half
+        const opacity = progress < 0.5 ? progress * 2 : (1 - progress) * 2;
+        const translateY = (1 - opacity) * 30; // 30px offset when faded
+        el.style.opacity = opacity;
+        el.style.transform = `translateY(${translateY}px)`;
+      });
+      requestAnimationFrame(updateOverlays);
+    }
+    requestAnimationFrame(updateOverlays);
   }
 
   // ── Scroll Reveal (IntersectionObserver) ──
@@ -112,15 +175,87 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-  // ── Navbar Shrink on Scroll ──
+  // ── Navbar Blur Transition ──
   const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      navbar.classList.add('py-0');
-    } else {
-      navbar.classList.remove('py-0');
+  if (navbar) {
+    // Start transparent, transition to frosted glass on scroll
+    navbar.style.transition = 'background-color 0.4s ease, backdrop-filter 0.4s ease, padding 0.3s ease';
+    function updateNavbar() {
+      const scrolled = window.scrollY > 50;
+      if (scrolled) {
+        navbar.classList.add('py-0', 'nav-scrolled');
+        navbar.classList.remove('nav-top');
+      } else {
+        navbar.classList.remove('py-0', 'nav-scrolled');
+        navbar.classList.add('nav-top');
+      }
     }
-  });
+    window.addEventListener('scroll', updateNavbar, { passive: true });
+    updateNavbar();
+  }
+
+  // ── Background Ambient Audio ──
+  const audioToggle = document.getElementById('audio-toggle');
+  const audioIcon = document.getElementById('audio-icon');
+  if (audioToggle) {
+    let audio = null;
+    let isPlaying = false;
+    const targetVolume = 0.15;
+    const fadeDuration = 600; // ms
+
+    function createAudio() {
+      if (audio) return audio;
+      audio = new Audio('/assets/audio/ambient.mp3');
+      audio.loop = true;
+      audio.volume = 0;
+      audio.preload = 'none';
+      return audio;
+    }
+
+    function fadeIn() {
+      const a = createAudio();
+      a.play().then(() => {
+        const steps = 20;
+        const stepTime = fadeDuration / steps;
+        let step = 0;
+        const interval = setInterval(() => {
+          step++;
+          a.volume = Math.min(targetVolume, (step / steps) * targetVolume);
+          if (step >= steps) clearInterval(interval);
+        }, stepTime);
+        isPlaying = true;
+        audioToggle.classList.add('audio-playing');
+        if (audioIcon) audioIcon.setAttribute('data-state', 'playing');
+      }).catch(() => {});
+    }
+
+    function fadeOut() {
+      if (!audio) return;
+      const startVol = audio.volume;
+      const steps = 20;
+      const stepTime = fadeDuration / steps;
+      let step = 0;
+      const interval = setInterval(() => {
+        step++;
+        audio.volume = Math.max(0, startVol * (1 - step / steps));
+        if (step >= steps) {
+          clearInterval(interval);
+          audio.pause();
+          isPlaying = false;
+          audioToggle.classList.remove('audio-playing');
+          if (audioIcon) audioIcon.setAttribute('data-state', 'paused');
+        }
+      }, stepTime);
+    }
+
+    audioToggle.addEventListener('click', () => {
+      if (isPlaying) fadeOut();
+      else fadeIn();
+    });
+
+    // Stop on page unload
+    window.addEventListener('beforeunload', () => { if (audio) { audio.pause(); audio.src = ''; } });
+  }
 
   // ── Smooth Scroll on Nav Click (same-page #hash links only) ──
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {

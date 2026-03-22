@@ -289,13 +289,20 @@ test('hero CTA meets minimum touch target size', async ({ page }, testInfo) => {
   expect(box.width).toBeGreaterThanOrEqual(44);
 });
 
-test('mobile and reduced-motion fallback shows poster', async ({ page }, testInfo) => {
+test('mobile scrollytelling canvas is active', async ({ page }, testInfo) => {
   if (!testInfo.project.name.toLowerCase().includes('mobile')) {
     test.skip();
   }
   await page.goto('/');
-  const display = await page.evaluate(() => {
+  const canvasDisplay = await page.evaluate(() => {
+    const c = document.getElementById('scroll-canvas');
+    return c ? window.getComputedStyle(c).display : 'no-element';
+  });
+  // Canvas should be visible on mobile (scrollytelling enabled)
+  expect(canvasDisplay).not.toBe('none');
+  const posterDisplay = await page.evaluate(() => {
     return window.getComputedStyle(document.querySelector('.scroll-video-poster')).display;
   });
-  expect(display).toBe('block');
+  // Poster should be hidden when canvas is active
+  expect(posterDisplay).toBe('none');
 });
