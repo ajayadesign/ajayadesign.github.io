@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function createAudio() {
       if (audio) return audio;
-      audio = new Audio('/assets/audio/ambient.mp3');
+      audio = new Audio(document.body.dataset.audio || '/assets/audio/ambient-drone.mp3');
       audio.loop = true;
       audio.volume = 0;
       audio.preload = 'none';
