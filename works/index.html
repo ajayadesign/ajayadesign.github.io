@@ -122,6 +122,7 @@
       height: 100%;
       object-fit: cover;
       opacity: 0.3;
+      will-change: opacity;
     }
     .scroll-hero__content {
       position: relative;
@@ -130,7 +131,11 @@
       align-items: center;
       justify-content: center;
       height: 100%;
+      opacity: 0;
+      will-change: opacity, transform;
+      transition: opacity 0.1s ease-out, transform 0.1s ease-out;
     }
+    .reduced-motion .scroll-hero__content { opacity: 1; transform: none; }
   </style>
 </head>
 
@@ -198,7 +203,7 @@
   <!-- ═══════════════════ SCROLLYTELLING HERO: 3D NOZZLE ═══════════════════ -->
   <div class="scroll-hero">
     <div class="scroll-hero__sticky">
-      <video id="hero-video" class="scroll-hero__video" autoplay loop muted playsinline poster="/assets/hero/nozzle-hero.webp">
+      <video id="hero-video" class="scroll-hero__video" muted playsinline poster="/assets/hero/nozzle-hero.webp">
         <source src="/assets/video/nozzle-loop.webm" type="video/webm" />
         <source src="/assets/video/nozzle-loop.mp4" type="video/mp4" />
       </video>
