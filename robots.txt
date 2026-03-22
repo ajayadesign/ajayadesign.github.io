@@ -14,5 +14,6 @@ Disallow: /tests/
 
 # Report pages (internal analytics)
 Disallow: /*report.html
+Disallow: /index.html.bak
 
 Sitemap: https://ajayadesign.github.io/sitemap.xml

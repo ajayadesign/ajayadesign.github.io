@@ -13,20 +13,44 @@ document.addEventListener('DOMContentLoaded', () => {
   const iconOpen   = document.getElementById('menu-icon-open');
   const iconClose  = document.getElementById('menu-icon-close');
 
-  menuBtn.addEventListener('click', () => {
-    mobileMenu.classList.toggle('hidden');
-    iconOpen.classList.toggle('hidden');
-    iconClose.classList.toggle('hidden');
-  });
-
-  // Close mobile menu on link click
-  mobileMenu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      mobileMenu.classList.add('hidden');
-      iconOpen.classList.remove('hidden');
-      iconClose.classList.add('hidden');
+  if (menuBtn && mobileMenu) {
+    menuBtn.addEventListener('click', () => {
+      const open = mobileMenu.classList.contains('hidden');
+      mobileMenu.classList.toggle('hidden');
+      if (iconOpen) iconOpen.classList.toggle('hidden');
+      if (iconClose) iconClose.classList.toggle('hidden');
+      document.body.style.overflow = open ? 'hidden' : 'auto';
     });
-  });
+
+    // Close mobile menu on link click
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        if (iconOpen) iconOpen.classList.remove('hidden');
+        if (iconClose) iconClose.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+      });
+    });
+  }
+
+  // ── Mobile + reduced motion fallback ──
+  const isMobileView = window.matchMedia('(max-width: 768px)').matches;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (isMobileView || prefersReducedMotion) {
+    document.body.classList.add('reduced-motion');
+    const heroVideos = document.querySelectorAll('.scroll-hero__video');
+    const heroPosters = document.querySelectorAll('.scroll-hero__poster');
+
+    heroVideos.forEach(video => {
+      video.pause();
+      video.style.display = 'none';
+    });
+
+    heroPosters.forEach(poster => {
+      poster.classList.remove('hidden');
+      poster.style.display = 'block';
+    });
+  }
 
   // ── Scroll Reveal (IntersectionObserver) ──
   const revealObserver = new IntersectionObserver((entries) => {
@@ -50,18 +74,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ── Smooth Scroll on Nav Click ──
+  // ── Smooth Scroll on Nav Click (same-page #hash links only) ──
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', (e) => {
       const targetId = anchor.getAttribute('href');
-      if (targetId === '#') return;  // logo link
+      if (targetId === '#') return;
       const target = document.querySelector(targetId);
       if (!target) return;
       e.preventDefault();
-      const navHeight = navbar.offsetHeight;
+      const navHeight = navbar ? navbar.offsetHeight : 0;
       const targetPos = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
       window.scrollTo({ top: targetPos, behavior: 'smooth' });
-      // Update URL hash without jumping
       history.pushState(null, '', targetId);
     });
   });
@@ -162,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const API_TIMEOUT_MS = 5000;
   const intakeForm = document.getElementById('ajayadesign-intake-form');
 
-  intakeForm.addEventListener('submit', async (e) => {
+  if (intakeForm) intakeForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = new FormData(intakeForm);
     const data = Object.fromEntries(formData.entries());
@@ -273,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Lazy-Load Portfolio Iframes ──
   // Only load iframes when their card is visible; unload when far off-screen.
   // Caps concurrent iframes to avoid memory/CPU spikes that crash the tab.
+  // (Only runs on pages with project cards — i.e. /works/)
   const MAX_CONCURRENT_IFRAMES = 6;
   const loadedIframes = new Set();
 
@@ -308,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.project-card').forEach(card => iframeObserver.observe(card));
 
-  // ── Portfolio Filtering ──
+  // ── Portfolio Filtering (works page only) ──
   const filterBtns = document.querySelectorAll('.filter-btn');
   const projectCards = document.querySelectorAll('.project-card');
   const filterPath = document.getElementById('filter-path');

@@ -16,19 +16,18 @@ test('hero section is visible', async ({ page }) => {
   await expect(page.locator('h1')).toContainText('One Click Away');
 });
 
-test('all nav links point to valid anchors', async ({ page }) => {
+test('all nav links point to valid pages', async ({ page }) => {
   await page.goto('/');
-  const anchors = page.locator('nav a[href^="#"]');
-  const hrefs = await anchors.evaluateAll(els => els.map(e => e.getAttribute('href')));
-  for (const href of hrefs) {
-    const id = href.replace('#', '');
-    if (!id) continue;
-    await expect(page.locator(`#${id}`)).toBeAttached();
+  const navLinks = page.locator('nav ul a.nav-link');
+  const hrefs = await navLinks.evaluateAll(els => els.map(e => e.getAttribute('href')));
+  const expectedPaths = ['/edge/', '/works/', '/contact/'];
+  for (const path of expectedPaths) {
+    expect(hrefs).toContain(path);
   }
 });
 
 test('intake form has all required fields and submits', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/contact/');
   const form = page.locator('#ajayadesign-intake-form');
   await expect(form).toBeAttached();
 
@@ -81,7 +80,7 @@ test('intake form has all required fields and submits', async ({ page }) => {
 });
 
 test('optional fields toggle reveals additional inputs', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/contact/');
   const form = page.locator('#ajayadesign-intake-form');
 
   // Optional section is hidden by default
@@ -105,7 +104,7 @@ test('optional fields toggle reveals additional inputs', async ({ page }) => {
 });
 
 test('rebuild checkbox shows confirmation panel', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/contact/');
   const form = page.locator('#ajayadesign-intake-form');
 
   // Expand optional fields
@@ -125,7 +124,7 @@ test('rebuild checkbox shows confirmation panel', async ({ page }) => {
 });
 
 test('portfolio links point to live GitHub Pages sites', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/works/');
   const links = page.locator('#works a[target="_blank"]');
   const count = await links.count();
   expect(count).toBeGreaterThanOrEqual(4);
@@ -145,7 +144,7 @@ test('no horizontal overflow', async ({ page }) => {
   expect(overflow).toBe(false);
 });
 
-test('axe accessibility audit — zero critical or serious violations', async ({ page }) => {
+test('axe accessibility audit — home page', async ({ page }) => {
   await page.goto('/');
   // Force all reveal elements to visible so axe tests content at full opacity
   await page.evaluate(() => {
@@ -169,6 +168,51 @@ test('axe accessibility audit — zero critical or serious violations', async ({
     });
   }
 
+  expect(critical).toHaveLength(0);
+});
+
+test('axe accessibility audit — edge page', async ({ page }) => {
+  await page.goto('/edge/');
+  await page.evaluate(() => {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  });
+  await page.waitForTimeout(700);
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'])
+    .analyze();
+  const critical = results.violations.filter(
+    v => v.impact === 'critical' || v.impact === 'serious'
+  );
+  expect(critical).toHaveLength(0);
+});
+
+test('axe accessibility audit — works page', async ({ page }) => {
+  await page.goto('/works/');
+  await page.evaluate(() => {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  });
+  await page.waitForTimeout(700);
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'])
+    .analyze();
+  const critical = results.violations.filter(
+    v => v.impact === 'critical' || v.impact === 'serious'
+  );
+  expect(critical).toHaveLength(0);
+});
+
+test('axe accessibility audit — contact page', async ({ page }) => {
+  await page.goto('/contact/');
+  await page.evaluate(() => {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  });
+  await page.waitForTimeout(700);
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'])
+    .analyze();
+  const critical = results.violations.filter(
+    v => v.impact === 'critical' || v.impact === 'serious'
+  );
   expect(critical).toHaveLength(0);
 });
 
@@ -227,7 +271,7 @@ test('mobile menu toggles', async ({ page }, testInfo) => {
   await expect(mobileMenu).toBeVisible();
 
   // Clicking a link closes the menu
-  await mobileMenu.locator('a[href="#edge"]').click();
+  await mobileMenu.locator('a[href="/edge/"]').click();
   await expect(mobileMenu).toBeHidden();
 });
 
@@ -236,11 +280,24 @@ test('hero CTA meets minimum touch target size', async ({ page }, testInfo) => {
     test.skip();
   }
   await page.goto('/');
-  // On mobile the nav CTA is hidden; pick the visible hero CTA
-  const cta = page.locator('section a[href="#intake"]').first();
+  // On mobile, pick a visible CTA — the gateway card (not the hidden nav link)
+  const cta = page.locator('section a[href="/edge/"].group, section a[href="/works/"].group').first();
   await expect(cta).toBeVisible();
   const box = await cta.boundingBox();
-  // WCAG 2.5.8 Target Size (minimum) — 24x24 CSS pixels (AA)
-  expect(box.height).toBeGreaterThanOrEqual(24);
-  expect(box.width).toBeGreaterThanOrEqual(24);
+  // WCAG 2.5.8 Target Size (minimum) — 44x44 CSS pixels (AA recommended)
+  expect(box.height).toBeGreaterThanOrEqual(44);
+  expect(box.width).toBeGreaterThanOrEqual(44);
+});
+
+test('mobile and reduced-motion fallback shows poster', async ({ page }, testInfo) => {
+  if (!testInfo.project.name.toLowerCase().includes('mobile')) {
+    test.skip();
+  }
+  await page.goto('/');
+  const html = await page.evaluate(() => {
+    document.documentElement.style.width = '375px';
+    document.documentElement.style.height = '667px';
+    return window.getComputedStyle(document.querySelector('.scroll-hero__poster')).display;
+  });
+  expect(html).toBe('block');
 });
