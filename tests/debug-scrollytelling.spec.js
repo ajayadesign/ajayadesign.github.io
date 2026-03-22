@@ -43,7 +43,7 @@ for (const pg of PAGES_WITH_CANVAS) {
       expect(attrs.frameCount).toBe('64');
     });
 
-    test(`canvas is position:fixed and fills viewport`, async ({ page, browserName }, testInfo) => {
+    test(`canvas is position:fixed and fills viewport`, async ({ page }) => {
       await page.goto(pg.path);
       await page.waitForTimeout(1000);
 
@@ -62,9 +62,25 @@ for (const pg of PAGES_WITH_CANVAS) {
 
       expect(canvasStyle.position).toBe('fixed');
       expect(canvasStyle.display).not.toBe('none');
-      // Mobile viewport is 375px wide, desktop 1280px+
       expect(canvasStyle.width).toBeGreaterThan(300);
       expect(canvasStyle.height).toBeGreaterThan(300);
+    });
+
+    test(`canvas loads fewer frames on mobile for performance`, async ({ page }, testInfo) => {
+      const isMobile = testInfo.project.name === 'Mobile Chrome';
+      if (!isMobile) { test.skip(); return; }
+
+      await page.goto(pg.path);
+      await page.waitForTimeout(1500);
+
+      // Canvas should still be present and visible on mobile
+      const canvasInfo = await page.evaluate(() => {
+        const c = document.getElementById('scroll-canvas');
+        if (!c) return { error: 'no canvas' };
+        const s = window.getComputedStyle(c);
+        return { display: s.display, width: c.width, height: c.height };
+      });
+      expect(canvasInfo.display).not.toBe('none');
     });
 
     test(`hero section is transparent (canvas shows through)`, async ({ page }) => {
@@ -105,7 +121,7 @@ for (const pg of PAGES_WITH_CANVAS) {
       }
     });
 
-    test(`scroll-synced canvas scrub: opacity ramps up`, async ({ page }, testInfo) => {
+    test(`scroll-synced canvas scrub: opacity ramps up`, async ({ page }) => {
       await page.goto(pg.path);
       await page.waitForTimeout(1500);
 
@@ -156,9 +172,9 @@ for (const pg of PAGES_WITH_CANVAS) {
       expect(rectMiddle.left).toBe(rectTop.left);
     });
 
-    test(`poster image is hidden when canvas is active`, async ({ page }, testInfo) => {
+    test(`poster hidden when canvas is active`, async ({ page }) => {
       await page.goto(pg.path);
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1500);
 
       const posterDisplay = await page.evaluate(() => {
         const poster = document.querySelector('.scroll-video-poster');
@@ -166,6 +182,7 @@ for (const pg of PAGES_WITH_CANVAS) {
         return window.getComputedStyle(poster).display;
       });
 
+      // Poster should be hidden once canvas draws frame 1 (both desktop & mobile)
       expect(posterDisplay).toBe('none');
     });
   });

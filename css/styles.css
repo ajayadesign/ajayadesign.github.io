@@ -134,18 +134,34 @@ nav {
 }
 
 
-/* Mobile Enhancements (scrollytelling stays active) */
+/* Mobile Enhancements — lighter canvas mode */
 @media (max-width: 768px) {
-  .hero-section { min-height: 80vh !important; }
+  .hero-section {
+    min-height: 80vh !important;
+  }
   .grid-cols-3 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
   #mobile-menu-btn { min-width: 44px; min-height: 44px; padding: 10px; }
   #mobile-menu a { min-height: 44px; display: flex; align-items: center; }
   .cta-btn, .nav-link { min-height: 44px; }
+  /* GPU layer promotion for smooth canvas compositing on mobile */
+  .scroll-canvas-bg { will-change: transform; }
+  /* Show full landscape frame in portrait viewport (letterboxed) */
+  .scroll-video-poster { object-fit: contain !important; }
+  /* Solid background on mobile — backdrop-filter causes severe scroll jank */
+  .content-over-video {
+    background: #0A0A0F !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
 
-/* Reduced Motion: kill canvas, show static poster */
+/* Reduced Motion: kill canvas, show static poster, no blur */
 @media (prefers-reduced-motion: reduce) {
   .scroll-canvas-bg { display: none !important; }
   .scroll-video-poster { display: block !important; }
+  .content-over-video {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
   * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
 }

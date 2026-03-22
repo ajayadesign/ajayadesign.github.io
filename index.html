@@ -154,7 +154,7 @@
       height: 100%;
       object-fit: cover;
       z-index: 0;
-      opacity: 0.55;
+      opacity: 0.90;
       will-change: opacity;
       pointer-events: none;
     }
@@ -166,9 +166,10 @@
       object-fit: cover;
       z-index: 0;
       pointer-events: none;
+      opacity: 0.85;
     }
 
-    /* Hero: first viewport, transparent so video shows through */
+    /* Hero: first viewport, transparent so canvas shows through */
     .hero-section {
       position: relative;
       z-index: 1;
@@ -176,7 +177,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(to bottom, rgba(10,10,15,0.75) 0%, rgba(10,10,15,0.55) 40%, rgba(10,10,15,0.75) 100%);
+      background: transparent;
+    }
+    /* Text readability over canvas — dark glow behind text */
+    .hero-section h1, .hero-section p, .hero-section div {
+      text-shadow: 0 0 20px rgba(10,10,15,0.9), 0 0 40px rgba(10,10,15,0.7);
     }
 
     /* All content sections float above the video with dark overlay */
@@ -265,7 +270,7 @@
 
   <!-- ═══════════════════ FIXED CANVAS BACKGROUND (Apple-style frame sequence) ═══════════════════ -->
   <canvas id="scroll-canvas" class="scroll-canvas-bg" data-frames="/assets/frames/drone" data-frame-count="64"></canvas>
-  <img class="scroll-video-poster hidden" src="/assets/hero/drone-hero.webp" alt="Drone lens poster" />
+  <img class="scroll-video-poster" src="/assets/hero/drone-hero.webp" alt="Drone lens poster" fetchpriority="high" />
 
 
   <!-- ═══════════════════ HERO SECTION (cornered editorial layout) ═══════════════════ -->

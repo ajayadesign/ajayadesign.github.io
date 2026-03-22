@@ -34,42 +34,61 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── PrecisionScrollEngine — Apple-style canvas frame sequence ──
-  // Upgrades: lerp interpolation, DPR-aware rendering, progressive preload
+  // Desktop: full 64 frames, 2x DPR, continuous lerp
+  // Mobile: lighter — 1x DPR, every-other-frame, idle rAF stop
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobileCanvas = window.matchMedia('(max-width: 768px)').matches;
   const scrollCanvas = document.getElementById('scroll-canvas');
   const heroPosters = document.querySelectorAll('.scroll-video-poster');
 
   if (prefersReducedMotion) {
+    // Reduced-motion only: show static poster, skip canvas entirely
     document.body.classList.add('reduced-motion');
     if (scrollCanvas) scrollCanvas.style.display = 'none';
     heroPosters.forEach(poster => {
       poster.classList.remove('hidden');
       poster.style.display = 'block';
+      poster.style.opacity = '0.7';
     });
   } else if (scrollCanvas) {
     const ctx = scrollCanvas.getContext('2d');
     const frameDir = scrollCanvas.dataset.frames;
-    const frameCount = parseInt(scrollCanvas.dataset.frameCount, 10) || 64;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2); // cap at 2x
+    const totalFrames = parseInt(scrollCanvas.dataset.frameCount, 10) || 64;
+    // Mobile: 1x DPR (halves GPU pixels), skip every other frame
+    const dpr = isMobileCanvas ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+    const frameStep = isMobileCanvas ? 2 : 1; // load every Nth frame
+    const frameCount = Math.ceil(totalFrames / frameStep);
     const frames = [];
     let loadedCount = 0;
     let currentFrame = -1;
     let displayFrame = 0;  // lerp target (float)
     let animFrame = 0;     // actual rendered frame (float, lerped)
     let rafId = null;
+    let isScrolling = false;
+    let scrollTimer = null;
+    const lerpFactor = isMobileCanvas ? 0.18 : 0.12; // faster settle on mobile
+
+    // Show poster as fallback until frame 1 loads
+    // (poster is hidden only after first canvas draw)
 
     // Progressive preload: load frame 1 first, then rest
-    function preloadFrame(i) {
+    function preloadFrame(frameIndex, arrayIndex) {
       const img = new Image();
-      img.src = `${frameDir}/frame_${String(i).padStart(4, '0')}.webp`;
+      img.src = `${frameDir}/frame_${String(frameIndex).padStart(4, '0')}.webp`;
       img.onload = () => {
         loadedCount++;
-        if (i === 1 && ctx) {
+        if (arrayIndex === 0 && ctx) {
           setupCanvasDPR(img);
           drawFrame(0);
+          // Frame 1 painted — crossfade poster out smoothly
+          heroPosters.forEach(p => {
+            p.style.transition = 'opacity 0.4s ease';
+            p.style.opacity = '0';
+            setTimeout(() => { p.style.display = 'none'; }, 400);
+          });
         }
       };
-      frames[i - 1] = img;
+      frames[arrayIndex] = img;
     }
 
     // DPR-aware canvas sizing
@@ -80,14 +99,15 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollCanvas.style.height = vh + 'px';
       scrollCanvas.width = vw * dpr;
       scrollCanvas.height = vh * dpr;
-      ctx.scale(dpr, dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
     // Preload frame 1 immediately, queue rest
-    preloadFrame(1);
-    for (let i = 2; i <= frameCount; i++) preloadFrame(i);
-
-    heroPosters.forEach(p => { p.style.display = 'none'; });
+    preloadFrame(1, 0);
+    let arrIdx = 1;
+    for (let i = 1 + frameStep; i <= totalFrames; i += frameStep) {
+      preloadFrame(i, arrIdx++);
+    }
 
     function drawFrame(index) {
       if (index === currentFrame) return;
@@ -97,11 +117,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      // Cover-fit: scale image to fill viewport
       const imgRatio = img.naturalWidth / img.naturalHeight;
       const vpRatio = vw / vh;
       let dw, dh, dx, dy;
-      if (imgRatio > vpRatio) {
+
+      if (isMobileCanvas && imgRatio > vpRatio) {
+        // Mobile portrait + landscape image: contain-fit (show full frame)
+        dw = vw; dh = vw / imgRatio;
+        dx = 0; dy = (vh - dh) / 2;
+      } else if (imgRatio > vpRatio) {
+        // Desktop cover-fit
         dh = vh; dw = vh * imgRatio;
         dx = (vw - dw) / 2; dy = 0;
       } else {
@@ -113,17 +138,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Lerp animation loop — smooth sub-frame interpolation
+    // On mobile: stops after settling to save battery
     function lerpLoop() {
-      animFrame += (displayFrame - animFrame) * 0.12; // lerp factor
+      animFrame += (displayFrame - animFrame) * lerpFactor;
       const snapped = Math.round(animFrame);
       const clamped = Math.min(frameCount - 1, Math.max(0, snapped));
       drawFrame(clamped);
 
-      // Ramp canvas opacity: 0.45 at top → 0.75 at bottom
+      // Ramp canvas opacity: 0.90 at top → 1.0 at bottom (frames are dark, need high opacity)
       const ratio = frameCount > 1 ? animFrame / (frameCount - 1) : 0;
-      scrollCanvas.style.opacity = 0.45 + 0.30 * ratio;
+      scrollCanvas.style.opacity = 0.90 + 0.10 * ratio;
 
+      // On mobile, stop loop when settled to save battery
+      if (isMobileCanvas && !isScrolling && Math.abs(displayFrame - animFrame) < 0.5) {
+        rafId = null;
+        return;
+      }
       rafId = requestAnimationFrame(lerpLoop);
+    }
+
+    function startLoop() {
+      if (!rafId) rafId = requestAnimationFrame(lerpLoop);
     }
 
     function onScroll() {
@@ -131,20 +166,27 @@ document.addEventListener('DOMContentLoaded', () => {
       const maxScroll = document.body.scrollHeight - window.innerHeight;
       const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, scrollTop / maxScroll)) : 0;
       displayFrame = ratio * (frameCount - 1);
+
+      // Track scroll activity for mobile idle detection
+      isScrolling = true;
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => { isScrolling = false; }, 150);
+      startLoop();
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', () => {
       if (frames[0] && frames[0].complete) setupCanvasDPR(frames[0]);
       currentFrame = -1; // force redraw
+      startLoop();
     });
     onScroll();
-    rafId = requestAnimationFrame(lerpLoop);
+    startLoop();
   }
 
   // ── Scroll-Driven Hero Overlays (fade + translate tied to scroll) ──
   const heroOverlays = document.querySelectorAll('[data-scroll-fade]');
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const isMobile = isMobileCanvas;
   if (heroOverlays.length && !prefersReducedMotion) {
     if (isMobile) {
       // Mobile: show all hero text immediately — not enough scroll runway for fade effect
@@ -160,11 +202,11 @@ document.addEventListener('DOMContentLoaded', () => {
           const start = parseFloat(el.dataset.scrollStart || '0') * vh;
           const end = parseFloat(el.dataset.scrollEnd || '1') * vh;
           const progress = Math.min(1, Math.max(0, (scrollTop - start) / (end - start)));
-          // Fade in from 0 → 1 in first half, fade out from 1 → 0 in second half
-          const opacity = progress < 0.5 ? progress * 2 : (1 - progress) * 2;
-          const translateY = (1 - opacity) * 30; // 30px offset when faded
+          // Start visible, fade out as user scrolls past
+          const opacity = 1 - progress;
+          const translateY = progress * 30; // drift up 30px as fading out
           el.style.opacity = opacity;
-          el.style.transform = `translateY(${translateY}px)`;
+          el.style.transform = `translateY(-${translateY}px)`;
         });
         requestAnimationFrame(updateOverlays);
       }
