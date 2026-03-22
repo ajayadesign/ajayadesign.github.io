@@ -33,23 +33,58 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── Mobile + reduced motion fallback ──
+  // ── Mobile + reduced motion fallback + scroll-synced hero video ──
   const isMobileView = window.matchMedia('(max-width: 768px)').matches;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (isMobileView || prefersReducedMotion) {
+  const heroVideo = document.getElementById('hero-video');
+  const heroPosters = document.querySelectorAll('.scroll-hero__poster');
+
+  const enableHeroPoster = () => {
     document.body.classList.add('reduced-motion');
-    const heroVideos = document.querySelectorAll('.scroll-hero__video');
-    const heroPosters = document.querySelectorAll('.scroll-hero__poster');
-
-    heroVideos.forEach(video => {
-      video.pause();
-      video.style.display = 'none';
-    });
-
+    if (heroVideo) {
+      heroVideo.pause();
+      heroVideo.currentTime = 0;
+      heroVideo.style.display = 'none';
+      heroVideo.removeAttribute('autoplay');
+      heroVideo.removeAttribute('loop');
+    }
     heroPosters.forEach(poster => {
       poster.classList.remove('hidden');
       poster.style.display = 'block';
     });
+  };
+
+  const enableScrollHero = () => {
+    if (!heroVideo) return;
+    heroVideo.muted = true;
+    heroVideo.playsInline = true;
+    heroVideo.pause();
+    heroVideo.removeAttribute('autoplay');
+    heroVideo.removeAttribute('loop');
+
+    const updateProgress = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const maxScroll = document.body.scrollHeight - window.innerHeight;
+      const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, scrollTop / maxScroll)) : 0;
+      if (heroVideo.duration > 0 && !Number.isNaN(heroVideo.duration)) {
+        heroVideo.currentTime = heroVideo.duration * ratio;
+      }
+    };
+
+    window.addEventListener('scroll', () => requestAnimationFrame(updateProgress));
+    window.addEventListener('resize', updateProgress);
+    heroVideo.addEventListener('loadedmetadata', updateProgress);
+    updateProgress();
+  };
+
+  if (isMobileView || prefersReducedMotion) {
+    enableHeroPoster();
+  } else {
+    // Hide poster assets for desktop; use scroll+video scrubbing.
+    heroPosters.forEach(poster => {
+      poster.style.display = 'none';
+    });
+    enableScrollHero();
   }
 
   // ── Scroll Reveal (IntersectionObserver) ──
