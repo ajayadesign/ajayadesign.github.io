@@ -6,7 +6,7 @@ module.exports = defineConfig({
   timeout: 30000,
   retries: 0,
   use: {
-    baseURL: 'http://localhost:9222',
+    baseURL: 'http://localhost:9224',
     headless: true,
   },
   projects: [
@@ -22,8 +22,8 @@ module.exports = defineConfig({
     },
   ],
   webServer: {
-    command: 'npx serve . -l 9222',
-    port: 9222,
-    reuseExistingServer: false,
+    command: 'npx serve . -l 9224',
+    port: 9224,
+    reuseExistingServer: true,
   },
 });
