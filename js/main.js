@@ -144,23 +144,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Scroll-Driven Hero Overlays (fade + translate tied to scroll) ──
   const heroOverlays = document.querySelectorAll('[data-scroll-fade]');
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
   if (heroOverlays.length && !prefersReducedMotion) {
-    function updateOverlays() {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const vh = window.innerHeight;
+    if (isMobile) {
+      // Mobile: show all hero text immediately — not enough scroll runway for fade effect
       heroOverlays.forEach(el => {
-        const start = parseFloat(el.dataset.scrollStart || '0') * vh;
-        const end = parseFloat(el.dataset.scrollEnd || '1') * vh;
-        const progress = Math.min(1, Math.max(0, (scrollTop - start) / (end - start)));
-        // Fade in from 0 → 1 in first half, fade out from 1 → 0 in second half
-        const opacity = progress < 0.5 ? progress * 2 : (1 - progress) * 2;
-        const translateY = (1 - opacity) * 30; // 30px offset when faded
-        el.style.opacity = opacity;
-        el.style.transform = `translateY(${translateY}px)`;
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
       });
+    } else {
+      function updateOverlays() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const vh = window.innerHeight;
+        heroOverlays.forEach(el => {
+          const start = parseFloat(el.dataset.scrollStart || '0') * vh;
+          const end = parseFloat(el.dataset.scrollEnd || '1') * vh;
+          const progress = Math.min(1, Math.max(0, (scrollTop - start) / (end - start)));
+          // Fade in from 0 → 1 in first half, fade out from 1 → 0 in second half
+          const opacity = progress < 0.5 ? progress * 2 : (1 - progress) * 2;
+          const translateY = (1 - opacity) * 30; // 30px offset when faded
+          el.style.opacity = opacity;
+          el.style.transform = `translateY(${translateY}px)`;
+        });
+        requestAnimationFrame(updateOverlays);
+      }
       requestAnimationFrame(updateOverlays);
     }
-    requestAnimationFrame(updateOverlays);
   }
 
   // ── Scroll Reveal (IntersectionObserver) ──
