@@ -96,6 +96,43 @@ body {
   color: #FF6B6B !important;
 }
 
+/* ── Navbar Blur Transition ── */
+nav {
+  transition: background 0.4s ease, backdrop-filter 0.4s ease, -webkit-backdrop-filter 0.4s ease;
+}
+.nav-top {
+  background: transparent !important;
+  backdrop-filter: blur(0) !important;
+  -webkit-backdrop-filter: blur(0) !important;
+}
+.nav-scrolled {
+  background: rgba(10, 10, 15, 0.92) !important;
+  backdrop-filter: blur(16px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.2) !important;
+  border-bottom: 1px solid rgba(237, 28, 36, 0.08);
+}
+
+/* ── Audio Toggle ── */
+#audio-toggle {
+  transition: color 0.3s ease, filter 0.3s ease;
+}
+#audio-toggle.audio-playing {
+  color: #00D4FF;
+  filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.5));
+}
+
+/* ── Canvas Background ── */
+.scroll-canvas-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  image-rendering: auto;
+}
+
 
 /* Mobile Enhancements (scrollytelling stays active) */
 @media (max-width: 768px) {
