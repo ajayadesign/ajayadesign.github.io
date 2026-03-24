@@ -189,6 +189,13 @@ def calculate_priority_score(
     return int(site_badness + review_score + proximity_score + industry_mult + reach)
 
 
+class PlacesAPIError(Exception):
+    """Raised when Google Places API returns a non-OK/ZERO_RESULTS status."""
+    def __init__(self, status: str, message: str = ""):
+        self.status = status
+        super().__init__(f"Places API error: {status} — {message}")
+
+
 async def _places_request(session: aiohttp.ClientSession, endpoint: str, params: dict) -> dict:
     """Make a Google Places API request with error handling and daily rate limiting."""
     if not _check_daily_limit():
@@ -199,9 +206,11 @@ async def _places_request(session: aiohttp.ClientSession, endpoint: str, params:
     async with session.get(url, params=params, timeout=aiohttp.ClientTimeout(total=15)) as resp:
         data = await resp.json()
         status = data.get("status", "UNKNOWN")
-        if status not in ("OK", "ZERO_RESULTS"):
-            logger.warning("Places API %s returned status=%s: %s", endpoint, status, data.get("error_message", ""))
-        return data
+        if status in ("OK", "ZERO_RESULTS"):
+            return data
+        error_msg = data.get("error_message", "")
+        logger.warning("Places API %s returned status=%s: %s", endpoint, status, error_msg)
+        raise PlacesAPIError(status, error_msg)
 
 
 async def nearby_search(
@@ -474,8 +483,19 @@ async def crawl_ring(ring_id: str) -> dict:
 
         # Mark ring crawl progress
         ring.crawl_completed_at = datetime.now(timezone.utc)
-        if len(done_cats) >= len(ALL_CATEGORIES):
+        all_cats_done = len(done_cats) >= len(ALL_CATEGORIES)
+        has_businesses = (ring.businesses_found or 0) > 0
+        has_errors = len(stats["errors"]) > 0
+
+        if all_cats_done and (has_businesses or not has_errors):
             ring.status = "complete"
+        elif all_cats_done and not has_businesses and has_errors:
+            # All categories attempted but 0 results WITH errors = likely API issue
+            ring.status = "needs_retry"
+            logger.warning(
+                "Ring %s completed all categories but found 0 businesses with %d errors — marking needs_retry",
+                ring.name, len(stats["errors"]),
+            )
 
         # Count website stats
         q_with = select(func.count()).where(
@@ -484,8 +504,8 @@ async def crawl_ring(ring_id: str) -> dict:
         q_without = select(func.count()).where(
             Prospect.geo_ring_id == ring.id, Prospect.has_website == False
         )
-        ring.businesses_with_sites = (await db.execute(q_with)).scalar() or 0
-        ring.businesses_without_sites = (await db.execute(q_without)).scalar() or 0
+        ring.businesses_with_websites = (await db.execute(q_with)).scalar() or 0
+        ring.businesses_without_websites = (await db.execute(q_without)).scalar() or 0
 
         await db.commit()
 

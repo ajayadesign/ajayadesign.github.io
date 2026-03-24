@@ -364,6 +364,14 @@ async def send_email_record(email_id: str) -> bool:
             await db.commit()
             return False
 
+        # Guard: don't send to dead/bounced/unsubscribed prospects
+        if prospect.status in ("dead", "do_not_contact"):
+            email.status = "cancelled"
+            email.error_message = f"Pre-send guard: prospect is {prospect.status}"
+            await db.commit()
+            logger.info("🛑 Blocked send to %s — prospect is %s", prospect.business_name, prospect.status)
+            return False
+
         # Snapshot fields for SMTP send
         to_email = prospect.owner_email
         subject = email.subject
@@ -602,6 +610,23 @@ async def process_send_queue() -> dict:
             await db.commit()
 
     for email in emails:
+        # Re-check prospect status before each send (guards against
+        # earlier sends in this batch that bounced and marked prospect dead)
+        async with async_session_factory() as db:
+            prospect = await db.get(Prospect, email.prospect_id)
+            if prospect and prospect.status in ("dead", "do_not_contact", "replied", "manual_handling"):
+                logger.info(
+                    "🛑 Pre-send recheck: skipping %s — prospect now %s",
+                    prospect.business_name, prospect.status,
+                )
+                email_obj = await db.get(OutreachEmail, email.id)
+                if email_obj and email_obj.status not in ("cancelled", "bounced", "sent"):
+                    email_obj.status = "cancelled"
+                    email_obj.error_message = f"Pre-send recheck: prospect is {prospect.status}"
+                    await db.commit()
+                stats["skipped"] += 1
+                continue
+
         stats["attempted"] += 1
         result = await send_email_record(str(email.id))
         if result == "limit_exceeded":
@@ -652,19 +677,23 @@ async def handle_bounce(email_id: str):
         email.status = "bounced"
         prospect = await db.get(Prospect, email.prospect_id)
         if prospect:
-            # Cancel all future emails in sequence
+            # Cancel all future emails in sequence (any unsent status)
             future = await db.execute(
                 select(OutreachEmail)
                 .where(
                     OutreachEmail.prospect_id == prospect.id,
-                    OutreachEmail.status == "scheduled",
+                    OutreachEmail.id != email.id,
+                    OutreachEmail.status.in_(["pending_approval", "approved", "draft", "scheduled"]),
                 )
             )
+            cancelled_count = 0
             for fe in future.scalars().all():
                 fe.status = "cancelled"
+                fe.error_message = "Auto-cancelled: email bounced"
+                cancelled_count += 1
 
             prospect.status = "dead"
-            prospect.notes = (prospect.notes or "") + f"\nBounced: {email.subject}"
+            prospect.notes = (prospect.notes or "") + f"\nBounced: {email.subject} ({cancelled_count} future emails cancelled)"
             notify_info = (prospect.owner_email, prospect.business_name)
 
         await db.commit()
@@ -688,16 +717,17 @@ async def handle_unsubscribe(prospect_id: str):
 
         prospect.status = "do_not_contact"
 
-        # Cancel all scheduled emails
+        # Cancel all unsent emails
         result = await db.execute(
             select(OutreachEmail)
             .where(
                 OutreachEmail.prospect_id == prospect.id,
-                OutreachEmail.status == "scheduled",
+                OutreachEmail.status.in_(["pending_approval", "approved", "draft", "scheduled"]),
             )
         )
         for email in result.scalars().all():
             email.status = "cancelled"
+            email.error_message = "Auto-cancelled: prospect unsubscribed"
 
         await db.commit()
 

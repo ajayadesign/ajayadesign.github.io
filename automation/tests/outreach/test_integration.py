@@ -169,7 +169,7 @@ class TestCadenceEngine:
             )
             email = result.scalar_one_or_none()
             assert email is not None
-            assert email.status == "scheduled"
+            assert email.status == "pending_approval"
             assert email.sequence_step == 1
             assert email.tracking_id is not None
 

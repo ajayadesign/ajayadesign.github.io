@@ -117,9 +117,13 @@ class TestFullOutreachPipeline:
 
         async with verify_db() as vdb:
             email_rec = await vdb.get(OutreachEmail, email_id)
-            assert email_rec.status == "scheduled"
+            assert email_rec.status == "pending_approval"
             assert email_rec.tracking_id is not None
             tracking_id = email_rec.tracking_id
+
+            # Approve the email (operator approval step)
+            email_rec.status = "approved"
+            await vdb.commit()
 
         # ── Step 7: Send email (mocked SMTP → captured) ─────────
         from api.services.cadence_engine import send_email_record

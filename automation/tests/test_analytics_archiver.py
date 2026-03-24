@@ -297,13 +297,14 @@ class TestCatchUpIfNeeded:
             patch.dict("sys.modules", {"firebase_admin": mock_admin, "firebase_admin.db": mock_db}),
             patch("api.database.async_session_factory", db_session_factory),
             patch("api.services.firebase.is_initialized", return_value=True),
-            patch("api.services.analytics_archiver._previous_month_prefix", return_value="2026-01"),
             patch("api.services.analytics_archiver.asyncio.sleep", new_callable=AsyncMock),
         ):
             import importlib, api.services.analytics_archiver as mod
             importlib.reload(mod)
 
-            result = await mod.catch_up_if_needed()
+            # Patch _previous_month_prefix AFTER reload so the mock survives
+            with patch.object(mod, "_previous_month_prefix", return_value="2026-01"):
+                result = await mod.catch_up_if_needed()
 
         assert result is not None
         assert result["archived"] >= 1

@@ -15,6 +15,7 @@ Usage:
 import asyncio
 import json
 import os
+import sqlite3
 import uuid
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
@@ -28,6 +29,13 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.pool import StaticPool
 
 from api.database import Base
+
+# ── Register sqlite3 type adapters for PostgreSQL types ──
+# SQLite's DBAPI doesn't know how to bind uuid.UUID or Decimal objects.
+# These adapters convert them at the DBAPI level before SQLAlchemy's
+# type system, which is more reliable than monkey-patching SA internals.
+sqlite3.register_adapter(uuid.UUID, str)
+sqlite3.register_adapter(Decimal, lambda d: str(d))
 
 # ── Register PostgreSQL → SQLite type compilers ──────────
 # (must happen before any table creation)
@@ -423,8 +431,19 @@ def mock_smtp():
         })
         return {"success": True, "message": f"Test email captured for {to}"}
 
+    async def _capture_pool(to, subject, body_html, reply_to=None):
+        sent_emails.append({
+            "to": to,
+            "subject": subject,
+            "body_html": body_html,
+            "reply_to": reply_to,
+        })
+        return {"success": True, "message": f"Test email captured for {to}"}
+
     with patch("api.services.email_service.send_email",
-               side_effect=_capture_email) as m:
+               side_effect=_capture_email) as m, \
+         patch("api.services.smtp_pool.send_via_pool",
+               side_effect=_capture_pool):
         m.sent_emails = sent_emails
         yield m
 
@@ -534,15 +553,13 @@ def mock_recon_externals():
 # ═══════════════════════════════════════════════════════════
 
 @pytest_asyncio.fixture()
-async def client(outreach_engine):
+async def client(session_factory):
     """FastAPI test client with test DB injected."""
     from api.main import app
     from api.database import get_db
 
-    factory = async_sessionmaker(outreach_engine, expire_on_commit=False)
-
     async def _override_get_db():
-        async with factory() as session:
+        async with session_factory() as session:
             yield session
 
     app.dependency_overrides[get_db] = _override_get_db

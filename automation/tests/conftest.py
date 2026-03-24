@@ -22,21 +22,34 @@ from api.models.build import Build
 # Register compilation rules so that Base.metadata.create_all works in
 # in-memory SQLite (used by all unit tests). Production uses PostgreSQL.
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY, UUID
-from sqlalchemy import JSON, String, event
+import sqlite3
+import uuid as _uuid
+from decimal import Decimal
 
-@event.listens_for(Base.metadata, "before_create")
-def _patch_pg_types_for_sqlite(target, connection, **kw):
-    """Swap PG-only types to SQLite-friendly equivalents at DDL time."""
-    if connection.dialect.name != "sqlite":
-        return
-    for table in target.tables.values():
-        for col in table.columns:
-            if isinstance(col.type, JSONB):
-                col.type = JSON()
-            elif isinstance(col.type, ARRAY):
-                col.type = JSON()
-            elif isinstance(col.type, UUID):
-                col.type = String(36)
+from sqlalchemy import JSON, String, event
+from sqlalchemy.ext.compiler import compiles
+
+# ── Register sqlite3 type adapters ──────────────────────
+# These teach SQLite's DBAPI how to handle Python types that
+# aren't natively supported (UUID, Decimal).
+sqlite3.register_adapter(_uuid.UUID, str)
+sqlite3.register_adapter(Decimal, lambda d: str(d))
+
+# ── Compile PostgreSQL-specific DDL types to SQLite equivalents ──
+# Using @compiles avoids mutating the actual column type objects,
+# which would break runtime bind/result processing.
+
+@compiles(JSONB, "sqlite")
+def _compile_jsonb_sqlite(type_, compiler, **kw):
+    return "JSON"
+
+@compiles(ARRAY, "sqlite")
+def _compile_array_sqlite(type_, compiler, **kw):
+    return "JSON"
+
+@compiles(UUID, "sqlite")
+def _compile_uuid_sqlite(type_, compiler, **kw):
+    return "VARCHAR(36)"
 
 
 # ── Async Event Loop ────────────────────────────────────

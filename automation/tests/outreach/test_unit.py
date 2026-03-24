@@ -364,7 +364,7 @@ class TestEmailTrackerUrls:
         from api.services.email_tracker import get_tracking_pixel_url
         url = get_tracking_pixel_url("abc-123")
         assert "abc-123" in url
-        assert ".png" in url
+        assert "open.html" in url
 
     def test_click_url(self):
         from api.services.email_tracker import get_click_tracking_url
@@ -394,7 +394,7 @@ class TestEmailTrackerUrls:
         from api.services.email_tracker import inject_tracking
         html = '<a href="https://example.com">Click here</a>'
         result = inject_tracking(html, "track-id-1")
-        assert "track/click/track-id-1" in result
+        assert "track/click.html?t=track-id-1" in result
 
     def test_inject_tracking_skips_mailto(self):
         from api.services.email_tracker import inject_tracking
