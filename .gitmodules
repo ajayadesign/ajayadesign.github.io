@@ -1,3 +1,6 @@
 [submodule "velvet-bloom"]
 	path = velvet-bloom
 	url = https://github.com/ajayadesign/velvet-bloom.git
+[submodule "magnets-in-a-snap"]
+	path = magnets-in-a-snap
+	url = https://github.com/ajayadesign/magnets-in-a-snap.git
