@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Print Academy Promo — AjayaDesign</title>
+  <meta name="description" content="Learn to 3D print magnet frames — live 1:1 sessions, self-paced courses, and STL starter packs from AjayaDesign." />
+  <meta property="og:title" content="Learn to 3D Print Magnet Frames — AjayaDesign Academy" />
+  <meta property="og:description" content="Live 1:1 Sessions • STL Files Included • From Zero to Business. The only course built specifically for 3D printed magnet frames." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/3D-print/promo.html" />
+  <meta property="og:image" content="https://ajayadesign.github.io/3D-print/promo-card.png" />
+  <meta property="og:image:width" content="1080" />
+  <meta property="og:image:height" content="1080" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://ajayadesign.github.io/3D-print/promo-card.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #ED1C24;
+      --red-light: #FF6B6B;
+      --blue: #00D4FF;
+      --green: #39FF14;
+      --surface: #0A0A0F;
+      --card: #16161F;
+      --border: #1E1E2A;
+    }
+
+    body {
+      background: var(--surface);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      color: #fff;
+    }
+
+    /* ═══ THE PROMO CARD — 1080x1080 Instagram format ═══ */
+    .promo {
+      width: 1080px;
+      height: 1080px;
+      background: var(--surface);
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border: 2px solid rgba(237,28,36,.3);
+    }
+
+    /* Background grid */
+    .promo::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(237,28,36,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(237,28,36,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* Glow blobs */
+    .glow-red {
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(237,28,36,.12), transparent 70%);
+      pointer-events: none;
+    }
+    .glow-blue {
+      position: absolute;
+      bottom: -80px;
+      left: -80px;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(0,212,255,.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Top bar */
+    .promo-topbar {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .promo-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+    .promo-logo span { color: var(--red-light); }
+    .promo-logo .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--red);
+      margin-right: 8px;
+      box-shadow: 0 0 12px rgba(237,28,36,.5);
+    }
+    .promo-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--green);
+      background: rgba(57,255,20,.08);
+      border: 1px solid rgba(57,255,20,.2);
+      padding: 6px 16px;
+      border-radius: 100px;
+    }
+
+    /* Main content area */
+    .promo-body {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 60px;
+      text-align: center;
+    }
+
+    .promo-pretitle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--red-light);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .promo-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 56px;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      max-width: 800px;
+    }
+    .promo-title .highlight { color: var(--red); }
+    .promo-title .blue { color: var(--blue); }
+
+    .promo-subtitle {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #9ca3af;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* Feature pills row */
+    .promo-features {
+      display: flex;
+      gap: 12px;
+      margin-top: 36px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .promo-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+    .promo-pill .icon {
+      font-size: 18px;
+    }
+    .promo-pill.stl { border-color: rgba(0,212,255,.3); color: var(--blue); }
+    .promo-pill.live { border-color: rgba(57,255,20,.3); color: var(--green); }
+    .promo-pill.session { border-color: rgba(237,28,36,.3); color: var(--red-light); }
+
+    /* Bento grid with visual elements */
+    .promo-bento {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 36px;
+      width: 100%;
+      max-width: 720px;
+    }
+    .bento-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: border-color .3s;
+    }
+    .bento-card:hover { border-color: rgba(237,28,36,.4); }
+    .bento-card .bento-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    .bento-card .bento-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #6b7280;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .bento-card .bento-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .bento-card.red .bento-value { color: var(--red); }
+    .bento-card.blue .bento-value { color: var(--blue); }
+    .bento-card.green .bento-value { color: var(--green); }
+
+    /* Bottom bar */
+    .promo-bottom {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 40px;
+      border-top: 1px solid var(--border);
+      background: rgba(22,22,31,.6);
+    }
+    .promo-cta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      background: var(--red);
+      color: #fff;
+      padding: 12px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+      border: none;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .promo-cta:hover { background: #b71c1c; }
+    .promo-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #6b7280;
+    }
+    .promo-url span { color: var(--red-light); }
+
+    /* STL file visual element */
+    .stl-visual {
+      position: absolute;
+      top: 80px;
+      right: 40px;
+      z-index: 1;
+      opacity: .12;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--blue);
+      text-align: left;
+      line-height: 1.6;
+      pointer-events: none;
+    }
+
+    /* 3D frame illustration (CSS only) */
+    .frame-illustration {
+      position: absolute;
+      top: 110px;
+      left: 50px;
+      z-index: 1;
+      opacity: .08;
+      pointer-events: none;
+    }
+    .frame-illustration .frame {
+      width: 120px;
+      height: 160px;
+      border: 3px solid var(--red);
+      border-radius: 8px;
+      position: relative;
+    }
+    .frame-illustration .frame::after {
+      content: '📷';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
+    }
+    .frame-illustration .magnet {
+      position: absolute;
+      width: 16px;
+      height: 8px;
+      background: #888;
+      border-radius: 2px;
+    }
+    .frame-illustration .magnet.tl { top: -4px; left: 20px; }
+    .frame-illustration .magnet.tr { top: -4px; right: 20px; }
+    .frame-illustration .magnet.bl { bottom: -4px; left: 20px; }
+    .frame-illustration .magnet.br { bottom: -4px; right: 20px; }
+
+    /* Responsive scaling */
+    @media (max-width: 1120px) {
+      .promo {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1;
+        min-height: 600px;
+      }
+      .promo-title { font-size: 36px; }
+      .promo-body { padding: 24px 30px; }
+      .promo-bento { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .bento-card { padding: 16px; }
+      .bento-card .bento-value { font-size: 16px; }
+    }
+    @media (max-width: 600px) {
+      body { padding: 1rem; }
+      .promo-title { font-size: 28px; }
+      .promo-features { gap: 8px; }
+      .promo-pill { font-size: 11px; padding: 8px 12px; }
+      .promo-bento { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* Print / screenshot helper */
+    .share-bar {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .share-bar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--red-light);
+      text-decoration: none;
+      padding: 10px 20px;
+      border: 1px solid rgba(237,28,36,.3);
+      border-radius: 8px;
+      transition: background .2s, color .2s;
+    }
+    .share-bar a:hover { background: rgba(237,28,36,.1); color: #fff; }
+    .share-info {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #6b7280;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══ PROMO CARD ═══ -->
+  <div class="promo" id="promo-card">
+    <div class="glow-red"></div>
+    <div class="glow-blue"></div>
+
+    <!-- Background STL code -->
+    <div class="stl-visual">
+      solid magnet_frame<br>
+      &nbsp;&nbsp;facet normal 0 0 1<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;outer loop<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vertex 0 0 0<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vertex 70 0 0<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vertex 70 100 0<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;endloop<br>
+      &nbsp;&nbsp;endfacet<br>
+      &nbsp;&nbsp;facet normal 0 0 1<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;outer loop<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vertex 0 0 0<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vertex 70 100 0<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vertex 0 100 0<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;endloop<br>
+      &nbsp;&nbsp;endfacet<br>
+      endsolid
+    </div>
+
+    <!-- Frame illustration -->
+    <div class="frame-illustration">
+      <div class="frame">
+        <div class="magnet tl"></div>
+        <div class="magnet tr"></div>
+        <div class="magnet bl"></div>
+        <div class="magnet br"></div>
+      </div>
+    </div>
+
+    <!-- Top bar -->
+    <div class="promo-topbar">
+      <div class="promo-logo">
+        <span class="dot"></span>Ajaya<span>Design</span>
+      </div>
+      <div class="promo-badge">Now Enrolling</div>
+    </div>
+
+    <!-- Body -->
+    <div class="promo-body">
+      <div class="promo-pretitle">// 3D Print Academy</div>
+      <h1 class="promo-title">
+        Learn to <span class="highlight">3D Print</span><br>
+        Magnet <span class="blue">Frames</span>
+      </h1>
+      <p class="promo-subtitle">
+        From STL file to finished product — master design, printing, and selling custom magnet frames with live mentorship.
+      </p>
+
+      <!-- Feature pills -->
+      <div class="promo-features">
+        <div class="promo-pill stl">
+          <span class="icon">📐</span>
+          15+ STL Files
+        </div>
+        <div class="promo-pill live">
+          <span class="icon">🎥</span>
+          Live 1:1 Sessions
+        </div>
+        <div class="promo-pill session">
+          <span class="icon">🖨️</span>
+          6 Modules
+        </div>
+      </div>
+
+      <!-- Bento stats -->
+      <div class="promo-bento">
+        <div class="bento-card red">
+          <div class="bento-icon">🧲</div>
+          <div class="bento-label">Magnet Brands</div>
+          <div class="bento-value">6+ Built</div>
+        </div>
+        <div class="bento-card blue">
+          <div class="bento-icon">💰</div>
+          <div class="bento-label">Frame Cost</div>
+          <div class="bento-value">~$0.50</div>
+        </div>
+        <div class="bento-card green">
+          <div class="bento-icon">📈</div>
+          <div class="bento-label">Sell Price</div>
+          <div class="bento-value">$5–$15</div>
+        </div>
+      </div>
+
+      <!-- Evergreen launch badge (no timer — this is shared as static image) -->
+      <div style="margin-top:28px; padding:12px 28px; border-radius:12px; border:1px solid rgba(237,28,36,.4); background:rgba(237,28,36,.06); display:inline-flex; align-items:center; gap:10px;">
+        <span style="font-size:18px;">🔥</span>
+        <span style="font-family:'JetBrains Mono',monospace; color:#fff; font-size:14px; font-weight:700;">Limited Launch Pricing</span>
+        <span style="font-family:'JetBrains Mono',monospace; color:#ED1C24; font-size:12px; font-weight:600;">Up to 90% off</span>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="promo-bottom">
+      <div class="promo-url">ajayadesign.github.io/<span>3D-print</span></div>
+      <a href="/3D-print/" class="promo-cta"><span style="text-decoration:line-through;opacity:.5;font-size:.75em;margin-right:6px;">$199</span> Enroll — Starting at $29</a>
+    </div>
+  </div>
+
+  <!-- Actions below the card -->
+  <div class="share-bar">
+    <a href="/3D-print/">← Back to Course Page</a>
+    <a href="/3D-print/promo-card.png" download="AjayaDesign-3D-Academy.png" style="background:rgba(237,28,36,.08); color:#ED1C24;">⬇ Download 1080×1080 PNG</a>
+  </div>
+
+
+
+</body>
+</html>

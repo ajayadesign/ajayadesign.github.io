@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Print Academy — Learn to Design &amp; Print Magnet Frames | AjayaDesign</title>
+  <meta name="description" content="Master 3D printing magnet frames with live 1-on-1 sessions, self-paced courses, and ready-to-print STL files. From beginner to business owner — taught by the team that built 6+ magnet brands." />
+  <meta name="keywords" content="3D printing course, magnet frame design, STL files, 3D print magnet frames, live 3D printing class, learn 3D printing, custom photo magnets, magnet business, AjayaDesign" />
+  <meta name="author" content="AjayaDesign" />
+  <meta name="robots" content="index, follow" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0A0A0F" />
+
+  <link rel="canonical" href="https://ajayadesign.github.io/3D-print/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="3D Print Academy — Learn to Design &amp; Print Magnet Frames" />
+  <meta property="og:description" content="Master 3D printing magnet frames with live 1-on-1 sessions, self-paced courses, and ready-to-print STL files. Taught by the team behind 6+ magnet brands." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/3D-print/" />
+  <meta property="og:site_name" content="AjayaDesign" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content="https://ajayadesign.github.io/3D-print/promo-card.png" />
+  <meta property="og:image:width" content="1080" />
+  <meta property="og:image:height" content="1080" />
+  <meta property="og:image:type" content="image/png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="3D Print Academy — Learn to Design &amp; Print Magnet Frames" />
+  <meta name="twitter:description" content="Live 1:1 sessions, self-paced courses, and STL starter packs. From zero to magnet business." />
+  <meta name="twitter:image" content="https://ajayadesign.github.io/3D-print/promo-card.png" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Course",
+        "name": "3D Print Academy — Magnet Frame Design & Printing",
+        "description": "Learn to design, 3D print, and sell custom magnet frames. From CAD modeling to launching a magnet business.",
+        "url": "https://ajayadesign.github.io/3D-print/",
+        "provider": {
+          "@type": "Organization",
+          "name": "AjayaDesign",
+          "url": "https://ajayadesign.github.io/"
+        },
+        "educationalLevel": "Beginner to Advanced",
+        "teaches": ["3D Printing", "CAD Design", "Magnet Frame Manufacturing", "Small Business Launch"],
+        "hasCourseInstance": [
+          {
+            "@type": "CourseInstance",
+            "courseMode": "online",
+            "name": "Self-Paced Course",
+            "offers": { "@type": "Offer", "price": "97", "priceCurrency": "USD" }
+          },
+          {
+            "@type": "CourseInstance",
+            "courseMode": "online",
+            "name": "Live 1-on-1 Session",
+            "offers": { "@type": "Offer", "price": "149", "priceCurrency": "USD" }
+          },
+          {
+            "@type": "CourseInstance",
+            "courseMode": "online",
+            "name": "Complete Bundle",
+            "offers": { "@type": "Offer", "price": "349", "priceCurrency": "USD" }
+          }
+        ]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ajayadesign.github.io/" },
+          { "@type": "ListItem", "position": 2, "name": "3D Print Academy", "item": "https://ajayadesign.github.io/3D-print/" }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF6B6B',
+            'amd-red-btn': '#D91920',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+            'neon-green': '#39FF14',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
+            sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+            'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+            'float': 'float 6s ease-in-out infinite',
+            'spin-slow': 'spin 15s linear infinite',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { boxShadow: '0 0 0 0 rgba(237,28,36,0.4)' },
+              '50%': { boxShadow: '0 0 20px 4px rgba(237,28,36,0.15)' },
+            },
+            fadeInUp: {
+              from: { opacity: '0', transform: 'translateY(24px)' },
+              to: { opacity: '1', transform: 'translateY(0)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-20px)' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(237,28,36,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(237,28,36,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .gradient-line {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #ED1C24, #00D4FF, transparent);
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .6s ease-out, transform .6s ease-out;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .nav-link.active { color: #ED1C24; position: relative; }
+    .nav-link.active::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+      height: 2px; background: #ED1C24; border-radius: 1px;
+    }
+    .card-hover { transition: transform .3s, box-shadow .3s; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(237,28,36,.08); }
+    .stl-card {
+      background: linear-gradient(135deg, rgba(0,212,255,.05), rgba(237,28,36,.05));
+      border: 1px solid rgba(0,212,255,.15);
+    }
+    .price-tag {
+      background: linear-gradient(135deg, #D91920, #ED1C24);
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%);
+    }
+    @keyframes wireframe-spin {
+      from { transform: rotateY(0deg) rotateX(10deg); }
+      to { transform: rotateY(360deg) rotateX(10deg); }
+    }
+    .wireframe-anim { animation: wireframe-spin 15s linear infinite; transform-style: preserve-3d; }
+    .curriculum-step { counter-increment: step; }
+    .curriculum-step::before {
+      content: counter(step, decimal-leading-zero);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      color: #ED1C24;
+      opacity: .6;
+    }
+    .tab-btn.active { color: #ED1C24; border-color: #ED1C24; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    @media (max-width: 768px) {
+      .hero-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+
+<body class="font-sans text-gray-300 antialiased" style="background:#0A0A0F;">
+
+  <!-- ═══════════ NAV ═══════════ -->
+  <nav id="navbar" class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim transition-all duration-300">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <a href="/" class="flex items-center gap-2 group">
+        <span class="inline-block w-3 h-3 rounded-full bg-amd-red animate-pulse-glow"></span>
+        <span class="font-mono font-bold text-white text-lg tracking-tight">Ajaya<span class="text-amd-red-text">Design</span></span>
+      </a>
+
+      <ul class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <li><a href="/edge/" class="nav-link hover:text-amd-red transition-colors">The Edge</a></li>
+        <li><a href="/works/" class="nav-link hover:text-amd-red transition-colors">Works</a></li>
+        <li><a href="/3D-print/" class="nav-link active hover:text-amd-red transition-colors">3D Academy</a></li>
+        <li><a href="/contact/" class="nav-link hover:text-amd-red transition-colors">Contact</a></li>
+        <li>
+          <a href="#enroll" class="inline-flex items-center gap-2 px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">
+            Enroll Now
+          </a>
+        </li>
+      </ul>
+
+      <button id="mobile-menu-btn" class="relative z-10 md:hidden text-gray-400 hover:text-white" aria-label="Toggle menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path id="menu-icon-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          <path id="menu-icon-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="hidden md:hidden border-t border-border-dim bg-surface/95 backdrop-blur-lg">
+      <ul class="flex flex-col gap-1 px-6 py-4 text-sm font-medium">
+        <li><a href="/edge/" class="nav-link block py-2 hover:text-amd-red transition-colors">The Edge</a></li>
+        <li><a href="/works/" class="nav-link block py-2 hover:text-amd-red transition-colors">Works</a></li>
+        <li><a href="/3D-print/" class="nav-link active block py-2 hover:text-amd-red transition-colors">3D Academy</a></li>
+        <li><a href="/contact/" class="nav-link block py-2 hover:text-amd-red transition-colors">Contact</a></li>
+        <li class="pt-2">
+          <a href="#enroll" class="block text-center px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">
+            Enroll Now
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <section class="relative min-h-screen flex items-center grid-bg overflow-hidden pt-20">
+    <!-- Background effects -->
+    <div class="absolute top-1/4 right-0 w-[500px] h-[500px] bg-amd-red/5 rounded-full blur-[150px] pointer-events-none"></div>
+    <div class="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-electric-blue/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 py-20 w-full">
+      <div class="hero-grid grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- Left column -->
+        <div>
+          <div class="flex items-center gap-3 mb-6">
+            <span class="inline-flex items-center gap-2 px-3 py-1 bg-amd-red/10 border border-amd-red/20 rounded-full text-amd-red-text font-mono text-xs tracking-wider uppercase">
+              <span class="w-2 h-2 rounded-full bg-amd-red animate-pulse"></span>
+              New — Now Enrolling
+            </span>
+          </div>
+
+          <h1 class="font-mono font-bold text-4xl sm:text-5xl lg:text-6xl text-white leading-[1.1] tracking-tight">
+            Learn to <span class="text-amd-red">3D Print</span><br>
+            Magnet Frames
+          </h1>
+
+          <p class="mt-6 text-gray-400 text-lg max-w-lg leading-relaxed">
+            From STL file to finished product — master 3D printing magnet frames with live 1:1 mentorship, self-paced courses, and ready-to-print designs. Taught by the team behind <strong class="text-white">6+ magnet brands</strong>.
+          </p>
+
+          <div class="mt-8 flex flex-wrap gap-4">
+            <a href="#enroll" class="inline-flex items-center gap-2 px-7 py-3.5 bg-amd-red-btn text-white rounded-lg font-mono text-sm font-semibold hover:bg-red-800 transition-all hover:shadow-lg hover:shadow-amd-red/20">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Start Learning
+            </a>
+            <a href="#curriculum" class="inline-flex items-center gap-2 px-7 py-3.5 border border-border-dim text-gray-300 rounded-lg font-mono text-sm hover:border-amd-red/50 hover:text-white transition-all">
+              View Curriculum
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </a>
+          </div>
+
+          <!-- Trust badges -->
+          <div class="mt-10 flex flex-wrap items-center gap-6 text-sm text-gray-500">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-neon-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              <span>STL Files Included</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-neon-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              <span>Live 1-on-1 Sessions</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-neon-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+              <span>Beginner Friendly</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column - 3D visual -->
+        <div class="relative flex items-center justify-center">
+          <div class="relative w-80 h-80 sm:w-96 sm:h-96">
+            <!-- Rotating wireframe cube effect -->
+            <div class="absolute inset-0 wireframe-anim" style="perspective:800px">
+              <svg viewBox="0 0 400 400" class="w-full h-full opacity-20">
+                <rect x="80" y="80" width="240" height="240" fill="none" stroke="#ED1C24" stroke-width="1" rx="8"/>
+                <rect x="100" y="100" width="200" height="200" fill="none" stroke="#00D4FF" stroke-width="0.5" rx="6"/>
+                <rect x="120" y="120" width="160" height="160" fill="none" stroke="#ED1C24" stroke-width="0.5" rx="4" opacity=".5"/>
+              </svg>
+            </div>
+            <!-- Center content -->
+            <div class="absolute inset-0 flex items-center justify-center animate-float">
+              <div class="text-center">
+                <div class="w-32 h-32 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-amd-red/20 to-electric-blue/20 border border-amd-red/30 flex items-center justify-center backdrop-blur-sm">
+                  <svg class="w-16 h-16 text-amd-red" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L12 12.75 6.429 9.75m11.142 0l4.179 2.25L12 17.25 2.25 12l4.179-2.25m11.142 0l4.179 2.25L12 21.75l-9.75-5.25 4.179-2.25"/>
+                  </svg>
+                </div>
+                <p class="font-mono text-electric-blue text-sm tracking-wider">.STL</p>
+                <p class="font-mono text-gray-500 text-xs mt-1">magnet_frame_v3.stl</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating cards -->
+          <div class="absolute -top-4 right-0 sm:right-8 p-3 bg-surface-card/90 border border-border-dim rounded-lg backdrop-blur-sm animate-float" style="animation-delay: -2s">
+            <p class="font-mono text-xs text-electric-blue">Layer Height</p>
+            <p class="font-mono text-white text-sm font-bold">0.2mm</p>
+          </div>
+          <div class="absolute -bottom-4 left-0 sm:left-4 p-3 bg-surface-card/90 border border-border-dim rounded-lg backdrop-blur-sm animate-float" style="animation-delay: -4s">
+            <p class="font-mono text-xs text-amd-red-text">Print Time</p>
+            <p class="font-mono text-white text-sm font-bold">~45 min</p>
+          </div>
+          <div class="absolute top-1/2 -left-4 p-3 bg-surface-card/90 border border-border-dim rounded-lg backdrop-blur-sm animate-float" style="animation-delay: -1s">
+            <p class="font-mono text-xs text-neon-green">Material</p>
+            <p class="font-mono text-white text-sm font-bold">PLA+</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════ MARKET CONTEXT — WHY THIS MATTERS ═══════════ -->
+  <section class="py-20 sm:py-28">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-16 reveal">
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// The Opportunity</p>
+        <h2 class="font-mono font-bold text-3xl sm:text-4xl text-white leading-tight">
+          Why 3D Printed Magnet Frames?
+        </h2>
+        <p class="mt-4 text-gray-400 max-w-2xl mx-auto">A booming niche with zero specialized training — until now.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Stat 1 -->
+        <div class="reveal p-8 rounded-2xl bg-surface-card border border-border-dim card-hover text-center">
+          <div class="text-5xl font-mono font-black text-amd-red mb-3">153+</div>
+          <p class="text-gray-400 text-sm">Free magnet frame STL models on Printables — <strong class="text-white">demand is proven</strong></p>
+        </div>
+        <!-- Stat 2 -->
+        <div class="reveal p-8 rounded-2xl bg-surface-card border border-border-dim card-hover text-center" style="transition-delay:.1s">
+          <div class="text-5xl font-mono font-black text-electric-blue mb-3">$0</div>
+          <p class="text-gray-400 text-sm">Specialized magnet-frame courses on Udemy or Skillshare — <strong class="text-white">zero competition</strong></p>
+        </div>
+        <!-- Stat 3 -->
+        <div class="reveal p-8 rounded-2xl bg-surface-card border border-border-dim card-hover text-center" style="transition-delay:.2s">
+          <div class="text-5xl font-mono font-black text-neon-green mb-3">6K+</div>
+          <p class="text-gray-400 text-sm">Upvotes on Reddit 3D-printed magnet posts — <strong class="text-white">community craves this</strong></p>
+        </div>
+      </div>
+
+      <!-- Context paragraph -->
+      <div class="reveal mt-12 p-8 rounded-2xl stl-card">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-electric-blue/10 flex items-center justify-center">
+            <svg class="w-6 h-6 text-electric-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-mono text-white font-semibold mb-2">The Gap in the Market</h3>
+            <p class="text-gray-400 leading-relaxed">
+              Udemy has 10,000+ generic 3D printing courses at $13–$23, but <strong class="text-white">not a single one</strong> teaches magnet frame design specifically. Skillshare offers generic 1-on-1 coaching at $25–$60/hour with no niche focus. We've built websites and brand identities for <strong class="text-white">Memory Magnets, Picture This Magnet, Magnets in a Snap, The Magnet Guy, Magnet Moments Co,</strong> and <strong class="text-white">Magnetic Soul</strong> — we know this industry inside out. Now we're teaching you the craft.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════ WHAT YOU'LL LEARN ═══════════ -->
+  <section class="py-20 sm:py-28 grid-bg">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-16 reveal">
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// What You Get</p>
+        <h2 class="font-mono font-bold text-3xl sm:text-4xl text-white leading-tight">
+          Not Just Theory — <span class="text-amd-red">Real Skills</span>
+        </h2>
+        <p class="mt-4 text-gray-400 max-w-2xl mx-auto">Every student walks away with printable STL files, hands-on experience, and the confidence to sell.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="reveal p-6 rounded-2xl bg-surface-card border border-border-dim card-hover">
+          <div class="w-12 h-12 rounded-xl bg-amd-red/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-amd-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="font-mono text-white font-semibold mb-2">CAD Design for Magnets</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Learn TinkerCAD &amp; Fusion 360 to design magnet frames with precise magnet slot tolerances, snap-fit assemblies, and photo inserts.</p>
+        </div>
+
+        <div class="reveal p-6 rounded-2xl bg-surface-card border border-border-dim card-hover" style="transition-delay:.05s">
+          <div class="w-12 h-12 rounded-xl bg-electric-blue/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-electric-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+          </div>
+          <h3 class="font-mono text-white font-semibold mb-2">Print Optimization</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Master layer heights, infill patterns, material selection (PLA, PLA+, PETG), supports, and speed tuning for production-quality frames.</p>
+        </div>
+
+        <div class="reveal p-6 rounded-2xl bg-surface-card border border-border-dim card-hover" style="transition-delay:.1s">
+          <div class="w-12 h-12 rounded-xl bg-neon-green/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-neon-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="font-mono text-white font-semibold mb-2">Ready-to-Print STL Files</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Get our library of 15+ tested magnet frame designs — Instax, Polaroid, 2×3, 4×6 formats — all optimized and print-ready.</p>
+        </div>
+
+        <div class="reveal p-6 rounded-2xl bg-surface-card border border-border-dim card-hover" style="transition-delay:.15s">
+          <div class="w-12 h-12 rounded-xl bg-amd-red/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-amd-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          </div>
+          <h3 class="font-mono text-white font-semibold mb-2">Live 1-on-1 Mentorship</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Book a private session with our team. Screen share, troubleshoot your prints, review your designs in real time. No waiting for forum replies.</p>
+        </div>
+
+        <div class="reveal p-6 rounded-2xl bg-surface-card border border-border-dim card-hover" style="transition-delay:.2s">
+          <div class="w-12 h-12 rounded-xl bg-electric-blue/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-electric-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="font-mono text-white font-semibold mb-2">Build a Business</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Learn how to price, package, and sell your 3D printed magnet frames on Etsy, at craft fairs, or direct to customers. Real unit economics included.</p>
+        </div>
+
+        <div class="reveal p-6 rounded-2xl bg-surface-card border border-border-dim card-hover" style="transition-delay:.25s">
+          <div class="w-12 h-12 rounded-xl bg-neon-green/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-neon-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h3 class="font-mono text-white font-semibold mb-2">Post-Processing Mastery</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Sanding, priming, painting, and sealing techniques that turn a basic 3D print into a premium product worth 5× the material cost.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════ CURRICULUM ═══════════ -->
+  <section id="curriculum" class="py-20 sm:py-28">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="text-center mb-16 reveal">
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Full Curriculum</p>
+        <h2 class="font-mono font-bold text-3xl sm:text-4xl text-white leading-tight">
+          6 Modules. Zero Fluff.
+        </h2>
+        <p class="mt-4 text-gray-400 max-w-lg mx-auto">Every module builds on the last — from unboxing your printer to shipping your first order.</p>
+      </div>
+
+      <div class="space-y-4" style="counter-reset: step;">
+        <!-- Module 1 -->
+        <div class="reveal curriculum-step p-6 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/30 transition-colors">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-amd-red/10 flex items-center justify-center font-mono text-amd-red font-bold text-sm">01</div>
+            <div class="flex-1">
+              <h3 class="font-mono text-white font-semibold">3D Printing Fundamentals</h3>
+              <p class="text-gray-400 text-sm mt-1">Printer anatomy, bed leveling, filament types (PLA, PLA+, PETG), slicer setup (Cura/PrusaSlicer), your first test print.</p>
+              <div class="flex flex-wrap gap-2 mt-3">
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">2 hours</span>
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">Beginner</span>
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">Video + Hands-on</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module 2 -->
+        <div class="reveal curriculum-step p-6 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/30 transition-colors" style="transition-delay:.05s">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-amd-red/10 flex items-center justify-center font-mono text-amd-red font-bold text-sm">02</div>
+            <div class="flex-1">
+              <h3 class="font-mono text-white font-semibold">Magnet Frame Design — CAD Basics</h3>
+              <p class="text-gray-400 text-sm mt-1">TinkerCAD for beginners, Fusion 360 for advanced. Designing magnet slots (6×2mm neodymium), photo insert tolerances, snap-fit clips.</p>
+              <div class="flex flex-wrap gap-2 mt-3">
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">3 hours</span>
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">Beginner–Intermediate</span>
+                <span class="px-2 py-0.5 text-xs font-mono bg-electric-blue/10 rounded text-electric-blue">3 STL files included</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module 3 -->
+        <div class="reveal curriculum-step p-6 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/30 transition-colors" style="transition-delay:.1s">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-amd-red/10 flex items-center justify-center font-mono text-amd-red font-bold text-sm">03</div>
+            <div class="flex-1">
+              <h3 class="font-mono text-white font-semibold">Advanced Frame Designs</h3>
+              <p class="text-gray-400 text-sm mt-1">Multi-piece magnetic assemblies, themed frames (retro TV, Polaroid, Instax), multi-photo collage frames, custom text inserts.</p>
+              <div class="flex flex-wrap gap-2 mt-3">
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">3 hours</span>
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">Intermediate</span>
+                <span class="px-2 py-0.5 text-xs font-mono bg-electric-blue/10 rounded text-electric-blue">5 STL files included</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module 4 -->
+        <div class="reveal curriculum-step p-6 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/30 transition-colors" style="transition-delay:.15s">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-amd-red/10 flex items-center justify-center font-mono text-amd-red font-bold text-sm">04</div>
+            <div class="flex-1">
+              <h3 class="font-mono text-white font-semibold">Print Optimization &amp; Troubleshooting</h3>
+              <p class="text-gray-400 text-sm mt-1">Dialing in layer height, infill, speed, temperature. Eliminating stringing, warping, elephants foot. Batch printing for production.</p>
+              <div class="flex flex-wrap gap-2 mt-3">
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">2 hours</span>
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">Intermediate</span>
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">Slicer profiles included</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module 5 -->
+        <div class="reveal curriculum-step p-6 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/30 transition-colors" style="transition-delay:.2s">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-amd-red/10 flex items-center justify-center font-mono text-amd-red font-bold text-sm">05</div>
+            <div class="flex-1">
+              <h3 class="font-mono text-white font-semibold">Post-Processing &amp; Finishing</h3>
+              <p class="text-gray-400 text-sm mt-1">Sanding, priming, spray painting, clear coating. Embedding magnets mid-print vs. post-print gluing. Quality control checklist.</p>
+              <div class="flex flex-wrap gap-2 mt-3">
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">2 hours</span>
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">All Levels</span>
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">Materials list included</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module 6 -->
+        <div class="reveal curriculum-step p-6 rounded-xl bg-surface-card border border-border-dim hover:border-amd-red/30 transition-colors" style="transition-delay:.25s">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-neon-green/10 flex items-center justify-center font-mono text-neon-green font-bold text-sm">06</div>
+            <div class="flex-1">
+              <h3 class="font-mono text-white font-semibold">Launch Your Magnet Business</h3>
+              <p class="text-gray-400 text-sm mt-1">Pricing (cost per unit breakdown), Etsy store setup, craft fair strategy, product photography, packaging, scaling from hobby to income.</p>
+              <div class="flex flex-wrap gap-2 mt-3">
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">2 hours</span>
+                <span class="px-2 py-0.5 text-xs font-mono bg-surface-alt rounded text-gray-500">Business</span>
+                <span class="px-2 py-0.5 text-xs font-mono bg-neon-green/10 rounded text-neon-green">Pricing calculator included</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════ PRICING / ENROLL ═══════════ -->
+  <section id="enroll" class="py-20 sm:py-28 grid-bg">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-16 reveal">
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Choose Your Path</p>
+        <h2 class="font-mono font-bold text-3xl sm:text-4xl text-white leading-tight">
+          Plans That <span class="text-amd-red">Fit Your Goals</span>
+        </h2>
+        <p class="mt-4 text-gray-400 max-w-lg mx-auto">Whether you want to learn at your own pace or get hands-on mentorship — we've got you.</p>
+
+        <!-- Urgency Timer -->
+        <div id="urgency-banner" class="mt-8 p-4 sm:p-5 rounded-xl border border-amd-red/40 bg-amd-red/5 max-w-2xl mx-auto">
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
+            <div class="flex items-center gap-2">
+              <span class="text-amd-red text-lg">🔥</span>
+              <span class="font-mono text-white text-sm font-semibold">Launch Pricing — Ends Soon!</span>
+            </div>
+            <div id="countdown" class="flex items-center gap-2 font-mono text-sm">
+              <div class="flex flex-col items-center px-3 py-1.5 bg-surface rounded-lg border border-border-dim">
+                <span id="cd-days" class="text-amd-red font-bold text-lg leading-tight">00</span>
+                <span class="text-gray-500 text-[10px] uppercase">Days</span>
+              </div>
+              <span class="text-gray-600">:</span>
+              <div class="flex flex-col items-center px-3 py-1.5 bg-surface rounded-lg border border-border-dim">
+                <span id="cd-hours" class="text-amd-red font-bold text-lg leading-tight">00</span>
+                <span class="text-gray-500 text-[10px] uppercase">Hrs</span>
+              </div>
+              <span class="text-gray-600">:</span>
+              <div class="flex flex-col items-center px-3 py-1.5 bg-surface rounded-lg border border-border-dim">
+                <span id="cd-mins" class="text-amd-red font-bold text-lg leading-tight">00</span>
+                <span class="text-gray-500 text-[10px] uppercase">Min</span>
+              </div>
+              <span class="text-gray-600">:</span>
+              <div class="flex flex-col items-center px-3 py-1.5 bg-surface rounded-lg border border-border-dim">
+                <span id="cd-secs" class="text-amd-red font-bold text-lg leading-tight">00</span>
+                <span class="text-gray-500 text-[10px] uppercase">Sec</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-center mt-3 text-gray-400 text-xs font-mono">After the timer ends, prices increase to <span class="text-amd-red font-bold">$999/course</span>. Lock in today's rate now.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <!-- STL Pack -->
+        <div class="reveal p-6 rounded-2xl bg-surface-card border border-border-dim card-hover flex flex-col relative overflow-hidden">
+          <div class="absolute top-3 right-3">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amd-red/10 border border-amd-red/30 rounded-full font-mono text-[10px] text-amd-red-text font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-amd-red animate-pulse"></span>⏰ Price going up soon
+            </span>
+          </div>
+          <div class="mb-4 mt-5">
+            <span class="inline-block px-3 py-1 bg-electric-blue/10 text-electric-blue font-mono text-xs rounded-full">STL Pack</span>
+          </div>
+          <h3 class="font-mono text-white text-xl font-bold mb-1">STL Starter Pack</h3>
+          <p class="text-gray-500 text-sm mb-4">15+ ready-to-print magnet frame designs</p>
+          <div class="mb-1">
+            <span class="text-amd-red font-mono text-lg line-through opacity-60">$199</span>
+          </div>
+          <div class="mb-6">
+            <span class="text-4xl font-mono font-black text-white">$29</span>
+            <span class="text-gray-500 text-sm"> / one-time</span>
+            <span class="ml-2 inline-block px-2 py-0.5 bg-neon-green/10 text-neon-green font-mono text-[10px] rounded font-bold">SAVE 85%</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400 mb-8 flex-1">
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> 15+ Tested STL Files</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Instax, Polaroid &amp; Standard sizes</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Slicer profiles (Cura/Prusa)</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Commercial license included</li>
+          </ul>
+          <a href="/contact/?ref=3d-stl" class="block text-center px-5 py-3 border border-electric-blue/50 text-electric-blue rounded-lg font-mono text-sm hover:bg-electric-blue/10 transition-colors">
+            Get the Pack
+          </a>
+        </div>
+
+        <!-- Self-Paced -->
+        <div class="reveal p-6 rounded-2xl bg-surface-card border border-border-dim card-hover flex flex-col relative overflow-hidden" style="transition-delay:.05s">
+          <div class="absolute top-3 right-3">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amd-red/10 border border-amd-red/30 rounded-full font-mono text-[10px] text-amd-red-text font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-amd-red animate-pulse"></span>⏰ Price going up soon
+            </span>
+          </div>
+          <div class="mb-4 mt-5">
+            <span class="inline-block px-3 py-1 bg-amd-red/10 text-amd-red-text font-mono text-xs rounded-full">Self-Paced</span>
+          </div>
+          <h3 class="font-mono text-white text-xl font-bold mb-1">Full Course</h3>
+          <p class="text-gray-500 text-sm mb-4">All 6 modules + STL files, learn anytime</p>
+          <div class="mb-1">
+            <span class="text-amd-red font-mono text-lg line-through opacity-60">$999</span>
+          </div>
+          <div class="mb-6">
+            <span class="text-4xl font-mono font-black text-white">$97</span>
+            <span class="text-gray-500 text-sm"> / one-time</span>
+            <span class="ml-2 inline-block px-2 py-0.5 bg-neon-green/10 text-neon-green font-mono text-[10px] rounded font-bold">SAVE 90%</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400 mb-8 flex-1">
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> All 6 Modules (14+ hours)</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> 15+ STL Files Included</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Slicer profiles &amp; checklists</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Pricing calculator template</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Lifetime access</li>
+          </ul>
+          <a href="/contact/?ref=3d-course" class="block text-center px-5 py-3 border border-amd-red/50 text-amd-red-text rounded-lg font-mono text-sm hover:bg-amd-red/10 transition-colors">
+            Enroll Now
+          </a>
+        </div>
+
+        <!-- 1-on-1 -->
+        <div class="reveal p-6 rounded-2xl bg-surface-card border border-border-dim card-hover flex flex-col relative overflow-hidden" style="transition-delay:.1s">
+          <div class="absolute top-3 right-3">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amd-red/10 border border-amd-red/30 rounded-full font-mono text-[10px] text-amd-red-text font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-amd-red animate-pulse"></span>⏰ Price going up soon
+            </span>
+          </div>
+          <div class="mb-4 mt-5">
+            <span class="inline-block px-3 py-1 bg-neon-green/10 text-neon-green font-mono text-xs rounded-full">Live</span>
+          </div>
+          <h3 class="font-mono text-white text-xl font-bold mb-1">1-on-1 Session</h3>
+          <p class="text-gray-500 text-sm mb-4">Private live mentorship, your pace</p>
+          <div class="mb-1">
+            <span class="text-amd-red font-mono text-lg line-through opacity-60">$499</span>
+          </div>
+          <div class="mb-6">
+            <span class="text-4xl font-mono font-black text-white">$149</span>
+            <span class="text-gray-500 text-sm"> / session</span>
+            <span class="ml-2 inline-block px-2 py-0.5 bg-neon-green/10 text-neon-green font-mono text-[10px] rounded font-bold">SAVE 70%</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400 mb-8 flex-1">
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> 90-min private video call</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Screen sharing &amp; live CAD</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Print troubleshooting</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Design review &amp; feedback</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-neon-green flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Recording provided after</li>
+          </ul>
+          <a href="/contact/?ref=3d-1on1" class="block text-center px-5 py-3 border border-neon-green/50 text-neon-green rounded-lg font-mono text-sm hover:bg-neon-green/10 transition-colors">
+            Book a Session
+          </a>
+        </div>
+
+        <!-- Complete Bundle -->
+        <div class="reveal p-6 rounded-2xl border-2 border-amd-red/50 card-hover flex flex-col relative overflow-hidden" style="background: linear-gradient(135deg, rgba(217,25,32,.08), rgba(22,22,31,1)); transition-delay:.15s">
+          <div class="absolute top-0 right-0 bg-amd-red text-white font-mono text-xs px-4 py-1 rounded-bl-lg font-bold">BEST VALUE</div>
+          <div class="absolute top-3 left-3">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-amd-red/10 border border-amd-red/30 rounded-full font-mono text-[10px] text-amd-red-text font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-amd-red animate-pulse"></span>⏰ Price going up soon
+            </span>
+          </div>
+          <div class="mb-4 mt-8">
+            <span class="inline-block px-3 py-1 bg-amd-red/20 text-amd-red font-mono text-xs rounded-full">Bundle</span>
+          </div>
+          <h3 class="font-mono text-white text-xl font-bold mb-1">Complete Bundle</h3>
+          <p class="text-gray-500 text-sm mb-4">Full course + STLs + 2 live sessions</p>
+          <div class="mb-1">
+            <span class="text-amd-red font-mono text-lg line-through opacity-60">$1,999</span>
+          </div>
+          <div class="mb-2">
+            <span class="text-4xl font-mono font-black text-white">$349</span>
+            <span class="text-gray-500 text-sm"> / one-time</span>
+            <span class="ml-2 inline-block px-2 py-0.5 bg-neon-green/10 text-neon-green font-mono text-[10px] rounded font-bold">SAVE 83%</span>
+          </div>
+          <p class="text-amd-red-text text-xs font-mono mb-6">Save $75 vs. buying separately</p>
+          <ul class="space-y-2 text-sm text-gray-400 mb-8 flex-1">
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-amd-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> <strong class="text-white">Everything</strong> in Full Course</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-amd-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> 2× Live 1-on-1 Sessions</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-amd-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Priority scheduling</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-amd-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Business launch checklist</li>
+            <li class="flex items-center gap-2"><svg class="w-4 h-4 text-amd-red flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Lifetime updates &amp; support</li>
+          </ul>
+          <a href="/contact/?ref=3d-bundle" class="block text-center px-5 py-3 bg-amd-red-btn text-white rounded-lg font-mono text-sm font-semibold hover:bg-red-800 transition-colors">
+            Get the Bundle — $349
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════ WHO THIS IS FOR ═══════════ -->
+  <section class="py-20 sm:py-28">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="text-center mb-16 reveal">
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Perfect For</p>
+        <h2 class="font-mono font-bold text-3xl sm:text-4xl text-white leading-tight">
+          Who Should Enroll?
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div class="reveal p-6 rounded-xl bg-surface-card border border-border-dim">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">🎯</span>
+            <h3 class="font-mono text-white font-semibold">Etsy Sellers &amp; Crafters</h3>
+          </div>
+          <p class="text-gray-400 text-sm">Add 3D printed magnet frames to your product line. Learn what sells and how to price for profit.</p>
+        </div>
+        <div class="reveal p-6 rounded-xl bg-surface-card border border-border-dim" style="transition-delay:.05s">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">🖨️</span>
+            <h3 class="font-mono text-white font-semibold">3D Printing Hobbyists</h3>
+          </div>
+          <p class="text-gray-400 text-sm">Already own a printer? Learn a specific, in-demand niche instead of printing random Thingiverse models.</p>
+        </div>
+        <div class="reveal p-6 rounded-xl bg-surface-card border border-border-dim" style="transition-delay:.1s">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">💡</span>
+            <h3 class="font-mono text-white font-semibold">Side Hustle Seekers</h3>
+          </div>
+          <p class="text-gray-400 text-sm">Looking for a product-based business with low startup costs? A 3D printer + our course = revenue in weeks, not months.</p>
+        </div>
+        <div class="reveal p-6 rounded-xl bg-surface-card border border-border-dim" style="transition-delay:.15s">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">📸</span>
+            <h3 class="font-mono text-white font-semibold">Photographers &amp; Event Planners</h3>
+          </div>
+          <p class="text-gray-400 text-sm">Create custom magnet frames for weddings, photo booths, and events. A unique upsell your clients will love.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════ FAQ ═══════════ -->
+  <section class="py-20 sm:py-28 grid-bg">
+    <div class="max-w-3xl mx-auto px-6">
+      <div class="text-center mb-16 reveal">
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// FAQ</p>
+        <h2 class="font-mono font-bold text-3xl sm:text-4xl text-white leading-tight">
+          Common Questions
+        </h2>
+      </div>
+
+      <div class="space-y-3 reveal">
+        <details class="group p-5 rounded-xl bg-surface-card border border-border-dim">
+          <summary class="flex items-center justify-between cursor-pointer font-mono text-white text-sm font-semibold">
+            Do I need to own a 3D printer already?
+            <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-gray-400 text-sm leading-relaxed">Not required! Module 1 covers printer selection. We recommend budget-friendly options like the Ender 3 V3 SE ($199) or Bambu Lab A1 Mini ($299). You can also follow along in CAD software first and print later.</p>
+        </details>
+
+        <details class="group p-5 rounded-xl bg-surface-card border border-border-dim">
+          <summary class="flex items-center justify-between cursor-pointer font-mono text-white text-sm font-semibold">
+            What software do I need?
+            <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-gray-400 text-sm leading-relaxed">All software used is free: TinkerCAD (browser-based), Fusion 360 (free for personal use), and Cura or PrusaSlicer (open source). No purchases needed.</p>
+        </details>
+
+        <details class="group p-5 rounded-xl bg-surface-card border border-border-dim">
+          <summary class="flex items-center justify-between cursor-pointer font-mono text-white text-sm font-semibold">
+            How do the 1-on-1 sessions work?
+            <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-gray-400 text-sm leading-relaxed">After purchasing, you'll receive a scheduling link. Sessions are 90 minutes over Zoom or Google Meet. We screen share, walk through your designs, troubleshoot prints, or cover any module topic you need help with. Sessions are recorded so you can rewatch.</p>
+        </details>
+
+        <details class="group p-5 rounded-xl bg-surface-card border border-border-dim">
+          <summary class="flex items-center justify-between cursor-pointer font-mono text-white text-sm font-semibold">
+            Can I sell the magnet frames I make?
+            <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-gray-400 text-sm leading-relaxed">Absolutely. All STL files included in the course come with a commercial license. You're free to print, modify, and sell the finished products. Module 6 specifically teaches you how to build a profitable business around them.</p>
+        </details>
+
+        <details class="group p-5 rounded-xl bg-surface-card border border-border-dim">
+          <summary class="flex items-center justify-between cursor-pointer font-mono text-white text-sm font-semibold">
+            What makes this different from Udemy courses?
+            <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-gray-400 text-sm leading-relaxed">Udemy's 10,000+ 3D printing courses are generic — none focus on magnet frames. We're the only course that combines niche design expertise (from building 6+ magnet brand websites), ready-to-print STL files, live 1-on-1 mentorship, AND business launch training. It's specialized, not generalized.</p>
+        </details>
+
+        <details class="group p-5 rounded-xl bg-surface-card border border-border-dim">
+          <summary class="flex items-center justify-between cursor-pointer font-mono text-white text-sm font-semibold">
+            How much can I make selling magnet frames?
+            <svg class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 text-gray-400 text-sm leading-relaxed">A single magnet frame costs ~$0.30–$0.80 in filament and sells for $5–$15 on Etsy or at craft fairs. That's 10–50× markup. Our students' goal: 20 frames/day at $8 avg = $160/day revenue. The pricing calculator in Module 6 helps you find your sweet spot.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════ FINAL CTA ═══════════ -->
+  <section class="py-20 sm:py-28">
+    <div class="max-w-3xl mx-auto px-6 text-center reveal">
+      <div class="p-12 rounded-2xl border border-amd-red/20" style="background: linear-gradient(135deg, rgba(217,25,32,.06), rgba(0,212,255,.03))">
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-4">// Ready?</p>
+        <h2 class="font-mono font-bold text-3xl sm:text-4xl text-white leading-tight mb-4">
+          Turn Your Printer Into<br>a <span class="text-amd-red">Revenue Machine</span>
+        </h2>
+        <p class="text-gray-400 max-w-lg mx-auto mb-8">
+          Stop printing benchies. Start printing products. Join the only course built specifically for 3D printed magnet frames — from design to dollars.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="#enroll" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-amd-red-btn text-white rounded-lg font-mono text-sm font-semibold hover:bg-red-800 transition-all hover:shadow-lg hover:shadow-amd-red/20">
+            View Plans &amp; Enroll
+          </a>
+          <a href="/contact/?ref=3d-print" class="inline-flex items-center justify-center gap-2 px-8 py-4 border border-border-dim text-gray-300 rounded-lg font-mono text-sm hover:border-amd-red/50 hover:text-white transition-all">
+            Ask a Question
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="border-t border-border-dim py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-amd-red"></span>
+          <span class="font-mono font-bold text-white text-sm">Ajaya<span class="text-amd-red-text">Design</span></span>
+          <span class="text-gray-600 text-xs font-mono ml-2">3D Print Academy</span>
+        </div>
+        <div class="flex items-center gap-6 text-sm text-gray-500">
+          <a href="/" class="hover:text-white transition-colors">Home</a>
+          <a href="/works/" class="hover:text-white transition-colors">Works</a>
+          <a href="/contact/" class="hover:text-white transition-colors">Contact</a>
+          <a href="/3D-print/promo.html" class="hover:text-amd-red transition-colors font-mono text-xs">Share Promo</a>
+        </div>
+        <p class="text-gray-600 text-xs font-mono">&copy; <script>document.write(new Date().getFullYear())</script> AjayaDesign — Austin, Texas</p>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ═══════════ JS ═══════════ -->
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const iconOpen = document.getElementById('menu-icon-open');
+    const iconClose = document.getElementById('menu-icon-close');
+
+    menuBtn?.addEventListener('click', () => {
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      mobileMenu.classList.toggle('hidden');
+      iconOpen.classList.toggle('hidden');
+      iconClose.classList.toggle('hidden');
+      menuBtn.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+
+    // Countdown timer — 2 days from first visit (persisted in localStorage)
+    (function() {
+      const STORAGE_KEY = 'ad3d_launch_end';
+      let endTime = localStorage.getItem(STORAGE_KEY);
+      if (!endTime) {
+        endTime = Date.now() + 2 * 24 * 60 * 60 * 1000; // 2 days from now
+        localStorage.setItem(STORAGE_KEY, endTime);
+      }
+      endTime = parseInt(endTime, 10);
+
+      function updateCountdown() {
+        const now = Date.now();
+        const diff = Math.max(0, endTime - now);
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        const el = (id) => document.getElementById(id);
+        if (el('cd-days')) el('cd-days').textContent = String(d).padStart(2, '0');
+        if (el('cd-hours')) el('cd-hours').textContent = String(h).padStart(2, '0');
+        if (el('cd-mins')) el('cd-mins').textContent = String(m).padStart(2, '0');
+        if (el('cd-secs')) el('cd-secs').textContent = String(s).padStart(2, '0');
+        if (diff <= 0) {
+          const banner = document.getElementById('urgency-banner');
+          if (banner) banner.innerHTML = '<p class="font-mono text-amd-red font-bold text-center py-2">⏰ Launch pricing has ended. Current price: <span class="text-white">$999/course</span>. Contact us for availability.</p>';
+        }
+      }
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    })();
+  </script>
+</body>
+</html>
