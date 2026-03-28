@@ -2,30 +2,37 @@
  * 3D Print Academy — Google Apps Script
  * Stripe Webhook + Auto-Approval + Email Onboarding
  *
- * SETUP:
+ * AUTOMATED SETUP (via clasp CLI):
+ *   $ cd 3D-print/google-apps-script
+ *   $ clasp push
+ *   $ clasp deploy --description "v1" 
+ *   $ clasp open --webapp   ← copy the Web App URL
+ *
+ * MANUAL SETUP (alternative):
  *   1. Go to https://script.google.com/home → New Project
  *   2. Paste this entire file into Code.gs
  *   3. Set Script Properties (gear icon → Project Settings → Script Properties):
- *        STRIPE_SECRET_KEY    = sk_live_51TFlQz...
- *        STRIPE_WEBHOOK_SECRET = whsec_... (from Stripe dashboard after registering the webhook)
- *        FIREBASE_DB_URL      = https://ajayadesign-6d739-default-rtdb.firebaseio.com
+ *        STRIPE_SECRET_KEY = sk_live_51TFlQz...
+ *        FIREBASE_DB_URL   = https://ajayadesign-6d739-default-rtdb.firebaseio.com
  *   4. Deploy → New Deployment → Web App
  *        Execute as: Me (ajayadesign@gmail.com)
  *        Who has access: Anyone
  *   5. Copy the Web App URL
- *   6. In Stripe Dashboard → Developers → Webhooks → Add Endpoint:
- *        URL: <your web app URL>
- *        Events: checkout.session.completed
- *   7. Copy the Signing Secret → paste as STRIPE_WEBHOOK_SECRET in Script Properties
+ *   6. Register webhook:
+ *        $ stripe webhook_endpoints create --url <WEB_APP_URL> --enabled-events checkout.session.completed
+ *
+ * TRIGGERS (set once):
+ *   Triggers (clock icon) → Add Trigger → processEmailQueue → Hour timer → Every hour
+ *
+ * VERIFICATION: Events verified by re-fetching from Stripe API (not HMAC — Apps Script limitation)
  *
  * FEATURES:
  *   - Receives Stripe checkout.session.completed webhook
- *   - Verifies event by re-fetching from Stripe API (Apps Script can't do HMAC)
- *   - Maps product → tier
- *   - Auto-approves user in Firebase RTDB (/approved_users/{uid})
+ *   - Maps product → tier, auto-approves in RTDB
  *   - Stores in /pre_approved if user hasn't signed into portal yet
  *   - Sends welcome email via Gmail (Day 0)
- *   - Sets up time-driven triggers for Day 1, 3, 7, 14 follow-up emails
+ *   - Queues follow-up emails at Day 1, 3, 7, 14 (processed hourly)
+ *   - Notifies admin of every purchase
  */
 
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
