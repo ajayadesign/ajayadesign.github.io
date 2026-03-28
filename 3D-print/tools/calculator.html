@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Magnet Frame Pricing Calculator — 3D Print Academy</title>
+  <meta name="description" content="Calculate your cost per magnet frame, profit margins, and break-even point. Free tool from AjayaDesign 3D Print Academy." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" /><meta name="theme-color" content="#0A0A0F" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{'amd-red':'#ED1C24','amd-red-text':'#FF6B6B','amd-red-btn':'#D91920','electric-blue':'#00D4FF','surface':'#0A0A0F','surface-alt':'#111118','surface-card':'#16161F','border-dim':'#1E1E2A','neon-green':'#39FF14'},fontFamily:{mono:['"JetBrains Mono"','monospace'],sans:['"Inter"','system-ui','sans-serif']}}}};</script>
+  <style>
+    body{background:#0A0A0F;color:#e5e7eb;font-family:'Inter',sans-serif}
+    input[type="number"]{background:#111118;border:1px solid #1E1E2A;color:#fff;padding:8px 12px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:14px;width:100%}
+    input[type="number"]:focus{outline:none;border-color:#00D4FF}
+    .result-card{background:linear-gradient(135deg,#16161F,#111118);border:1px solid #1E1E2A;border-radius:16px;padding:24px;text-align:center}
+    @media print{body{background:#fff;color:#000}nav,.no-print{display:none!important}.result-card{border:2px solid #000;background:#f5f5f5}input[type="number"]{background:#fff;border:1px solid #ccc;color:#000}}
+  </style>
+</head>
+<body class="min-h-screen">
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim"><div class="max-w-3xl mx-auto flex items-center justify-between px-6 py-4"><a href="/3D-print/portal/" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Dashboard</a><button onclick="window.print()" class="no-print text-sm font-mono text-gray-500 hover:text-white transition-colors">🖨️ Print</button></div></nav>
+
+  <div class="max-w-3xl mx-auto px-6 pt-24 pb-16">
+    <div class="mb-8">
+      <h1 class="font-mono text-white text-2xl font-bold mb-2">🧮 Pricing Calculator</h1>
+      <p class="text-gray-400 text-sm">Calculate your cost per magnet frame, set your retail price, and see your profit margins instantly.</p>
+    </div>
+
+    <!-- Input Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+
+      <div class="space-y-4">
+        <h3 class="font-mono text-white font-semibold text-sm uppercase tracking-wider">Material Costs</h3>
+
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Filament cost per kg ($)</label>
+          <input type="number" id="filament-cost" value="20" step="0.5" min="0" />
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Filament per frame (grams)</label>
+          <input type="number" id="filament-grams" value="15" step="1" min="0" />
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Magnets per frame (qty)</label>
+          <input type="number" id="magnet-qty" value="4" step="1" min="0" />
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Cost per magnet ($)</label>
+          <input type="number" id="magnet-cost" value="0.05" step="0.01" min="0" />
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Packaging cost per unit ($)</label>
+          <input type="number" id="packaging-cost" value="0.25" step="0.05" min="0" />
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Electricity per print ($)</label>
+          <input type="number" id="electricity-cost" value="0.05" step="0.01" min="0" />
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="font-mono text-white font-semibold text-sm uppercase tracking-wider">Business Inputs</h3>
+
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Your retail price ($)</label>
+          <input type="number" id="retail-price" value="8" step="0.5" min="0" />
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Print time per frame (minutes)</label>
+          <input type="number" id="print-time" value="45" step="5" min="0" />
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Post-processing time (minutes)</label>
+          <input type="number" id="post-time" value="10" step="5" min="0" />
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Your hourly rate ($) for labor</label>
+          <input type="number" id="hourly-rate" value="15" step="1" min="0" />
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Units per month (goal)</label>
+          <input type="number" id="units-month" value="100" step="10" min="1" />
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Platform fee % (Etsy = 6.5, none = 0)</label>
+          <input type="number" id="platform-fee" value="6.5" step="0.5" min="0" max="100" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="result-card">
+        <p class="text-gray-500 text-xs font-mono mb-1">Material Cost</p>
+        <p id="r-material" class="text-2xl font-mono font-bold text-electric-blue">$0.00</p>
+      </div>
+      <div class="result-card">
+        <p class="text-gray-500 text-xs font-mono mb-1">Labor Cost</p>
+        <p id="r-labor" class="text-2xl font-mono font-bold text-electric-blue">$0.00</p>
+      </div>
+      <div class="result-card">
+        <p class="text-gray-500 text-xs font-mono mb-1">Total Cost/Unit</p>
+        <p id="r-total" class="text-2xl font-mono font-bold text-amd-red-text">$0.00</p>
+      </div>
+      <div class="result-card">
+        <p class="text-gray-500 text-xs font-mono mb-1">Profit/Unit</p>
+        <p id="r-profit" class="text-2xl font-mono font-bold text-neon-green">$0.00</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+      <div class="result-card">
+        <p class="text-gray-500 text-xs font-mono mb-1">Profit Margin</p>
+        <p id="r-margin" class="text-2xl font-mono font-bold text-neon-green">0%</p>
+      </div>
+      <div class="result-card">
+        <p class="text-gray-500 text-xs font-mono mb-1">Monthly Revenue</p>
+        <p id="r-revenue" class="text-2xl font-mono font-bold text-white">$0</p>
+      </div>
+      <div class="result-card">
+        <p class="text-gray-500 text-xs font-mono mb-1">Monthly Profit</p>
+        <p id="r-monthly-profit" class="text-2xl font-mono font-bold text-neon-green">$0</p>
+      </div>
+    </div>
+
+    <!-- Insight -->
+    <div id="insight" class="p-5 rounded-2xl bg-surface-card border border-border-dim mb-8">
+      <p class="font-mono text-sm text-gray-400" id="insight-text"></p>
+    </div>
+
+    <div class="text-center no-print">
+      <a href="/3D-print/" class="text-gray-500 text-sm hover:text-white transition-colors font-mono">← Back to 3D Print Academy</a>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var ids = ['filament-cost','filament-grams','magnet-qty','magnet-cost','packaging-cost','electricity-cost','retail-price','print-time','post-time','hourly-rate','units-month','platform-fee'];
+      function calc() {
+        var v = {};
+        ids.forEach(function(id) { v[id] = parseFloat(document.getElementById(id).value) || 0; });
+
+        var materialCost = (v['filament-cost'] / 1000 * v['filament-grams']) + (v['magnet-qty'] * v['magnet-cost']) + v['packaging-cost'] + v['electricity-cost'];
+        var laborMinutes = v['print-time'] + v['post-time'];
+        var laborCost = (laborMinutes / 60) * v['hourly-rate'];
+        var totalCost = materialCost + laborCost;
+        var platformFee = v['retail-price'] * (v['platform-fee'] / 100);
+        var profitPerUnit = v['retail-price'] - totalCost - platformFee;
+        var margin = v['retail-price'] > 0 ? (profitPerUnit / v['retail-price'] * 100) : 0;
+        var monthlyRevenue = v['retail-price'] * v['units-month'];
+        var monthlyProfit = profitPerUnit * v['units-month'];
+
+        document.getElementById('r-material').textContent = '$' + materialCost.toFixed(2);
+        document.getElementById('r-labor').textContent = '$' + laborCost.toFixed(2);
+        document.getElementById('r-total').textContent = '$' + totalCost.toFixed(2);
+        document.getElementById('r-profit').textContent = '$' + profitPerUnit.toFixed(2);
+        document.getElementById('r-profit').className = 'text-2xl font-mono font-bold ' + (profitPerUnit >= 0 ? 'text-neon-green' : 'text-amd-red-text');
+        document.getElementById('r-margin').textContent = margin.toFixed(1) + '%';
+        document.getElementById('r-margin').className = 'text-2xl font-mono font-bold ' + (margin >= 50 ? 'text-neon-green' : margin >= 20 ? 'text-yellow-400' : 'text-amd-red-text');
+        document.getElementById('r-revenue').textContent = '$' + Math.round(monthlyRevenue).toLocaleString();
+        document.getElementById('r-monthly-profit').textContent = '$' + Math.round(monthlyProfit).toLocaleString();
+        document.getElementById('r-monthly-profit').className = 'text-2xl font-mono font-bold ' + (monthlyProfit >= 0 ? 'text-neon-green' : 'text-amd-red-text');
+
+        // Insight
+        var insight = '';
+        if (margin >= 70) insight = '🔥 Excellent margins! You\'re pricing well above cost — great for premium positioning.';
+        else if (margin >= 50) insight = '✅ Healthy margins. Most successful Etsy sellers operate in this range.';
+        else if (margin >= 30) insight = '⚠️ Moderate margins. Consider reducing post-processing time or raising price slightly.';
+        else if (margin >= 0) insight = '🚨 Thin margins. You need to either reduce costs (batch printing, bulk magnets) or raise your price.';
+        else insight = '❌ Losing money at this price point. Raise your retail price or reduce costs significantly.';
+        insight += ' At ' + v['units-month'] + ' units/month, you\'d spend ~' + Math.round(laborMinutes * v['units-month'] / 60) + ' hours on production.';
+        document.getElementById('insight-text').textContent = insight;
+      }
+      ids.forEach(function(id) { document.getElementById(id).addEventListener('input', calc); });
+      calc();
+    })();
+  </script>
+</body>
+</html>

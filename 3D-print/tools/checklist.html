@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QC Checklist — 3D Print Academy</title>
+  <meta name="description" content="Quality control checklist for 3D printed magnet frames. Check every print before selling." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" /><meta name="theme-color" content="#0A0A0F" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{'amd-red':'#ED1C24','amd-red-text':'#FF6B6B','amd-red-btn':'#D91920','electric-blue':'#00D4FF','surface':'#0A0A0F','surface-alt':'#111118','surface-card':'#16161F','border-dim':'#1E1E2A','neon-green':'#39FF14'},fontFamily:{mono:['"JetBrains Mono"','monospace'],sans:['"Inter"','system-ui','sans-serif']}}}};</script>
+  <style>
+    body{background:#0A0A0F;color:#e5e7eb;font-family:'Inter',sans-serif}
+    .check-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-radius:12px;border:1px solid #1E1E2A;background:#16161F;cursor:pointer;transition:all .2s}
+    .check-item:hover{border-color:#00D4FF33}
+    .check-item.checked{border-color:#39FF1440;background:#39FF1408}
+    .check-item.checked .check-box{background:#39FF14;border-color:#39FF14;color:#000}
+    .check-box{width:24px;height:24px;border-radius:6px;border:2px solid #1E1E2A;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:14px;font-weight:bold}
+    .progress-ring{transition:stroke-dashoffset .6s ease}
+    @media print{body{background:#fff;color:#000}nav,.no-print{display:none!important}.check-item{background:#f9f9f9;border:1px solid #ccc}.check-box{border:2px solid #333}}
+  </style>
+</head>
+<body class="min-h-screen">
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim"><div class="max-w-3xl mx-auto flex items-center justify-between px-6 py-4"><a href="/3D-print/portal/" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Dashboard</a><div class="flex gap-3"><button id="reset-btn" class="no-print text-sm font-mono text-gray-500 hover:text-amd-red transition-colors">↺ Reset</button><button onclick="window.print()" class="no-print text-sm font-mono text-gray-500 hover:text-white transition-colors">🖨️ Print</button></div></div></nav>
+
+  <div class="max-w-3xl mx-auto px-6 pt-24 pb-16">
+    <!-- Header with ring -->
+    <div class="flex items-center gap-6 mb-8">
+      <div class="relative w-20 h-20 flex-shrink-0">
+        <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="35" stroke="#1E1E2A" stroke-width="6" fill="none"/>
+          <circle id="progress-circle" class="progress-ring" cx="40" cy="40" r="35" stroke="#39FF14" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="220"/>
+        </svg>
+        <span id="progress-pct" class="absolute inset-0 flex items-center justify-center font-mono text-neon-green text-sm font-bold">0%</span>
+      </div>
+      <div>
+        <h1 class="font-mono text-white text-2xl font-bold mb-1">✅ QC Checklist</h1>
+        <p class="text-gray-400 text-sm">Check every item before selling or shipping a magnet frame.</p>
+      </div>
+    </div>
+
+    <!-- Sections -->
+    <div class="space-y-8">
+
+      <!-- Print Quality -->
+      <div>
+        <h2 class="font-mono text-white font-semibold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-electric-blue"></span>Print Quality
+        </h2>
+        <div class="space-y-2" id="sec-print">
+          <div class="check-item" data-id="q1"><div class="check-box"></div><div><p class="text-white text-sm font-medium">No visible layer lines on front face</p><p class="text-gray-500 text-xs">Front-facing surfaces should be smooth at arm's length</p></div></div>
+          <div class="check-item" data-id="q2"><div class="check-box"></div><div><p class="text-white text-sm font-medium">No stringing between features</p><p class="text-gray-500 text-xs">Clean travel moves, no cobwebs or wisps</p></div></div>
+          <div class="check-item" data-id="q3"><div class="check-box"></div><div><p class="text-white text-sm font-medium">No warping or lifting on base</p><p class="text-gray-500 text-xs">Frame sits flat on a table, no corner curl</p></div></div>
+          <div class="check-item" data-id="q4"><div class="check-box"></div><div><p class="text-white text-sm font-medium">No elephant's foot on bottom layer</p><p class="text-gray-500 text-xs">Bottom edge should be clean, not bulging</p></div></div>
+          <div class="check-item" data-id="q5"><div class="check-box"></div><div><p class="text-white text-sm font-medium">Consistent color throughout</p><p class="text-gray-500 text-xs">No discoloration, white streaks, or temperature artifacts</p></div></div>
+        </div>
+      </div>
+
+      <!-- Dimensional Accuracy -->
+      <div>
+        <h2 class="font-mono text-white font-semibold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amd-red"></span>Dimensional Accuracy
+        </h2>
+        <div class="space-y-2" id="sec-dim">
+          <div class="check-item" data-id="q6"><div class="check-box"></div><div><p class="text-white text-sm font-medium">Photo insert fits correctly</p><p class="text-gray-500 text-xs">Test with target photo size (Instax/Polaroid/4×6) — should slide in without force</p></div></div>
+          <div class="check-item" data-id="q7"><div class="check-box"></div><div><p class="text-white text-sm font-medium">Photo doesn't fall out</p><p class="text-gray-500 text-xs">Gentle shake test — photo should stay held by friction or clips</p></div></div>
+          <div class="check-item" data-id="q8"><div class="check-box"></div><div><p class="text-white text-sm font-medium">Magnet slots are correct depth</p><p class="text-gray-500 text-xs">6×2mm neodymium magnets should sit flush or slightly recessed</p></div></div>
+        </div>
+      </div>
+
+      <!-- Magnet Installation -->
+      <div>
+        <h2 class="font-mono text-white font-semibold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-neon-green"></span>Magnet Installation
+        </h2>
+        <div class="space-y-2" id="sec-magnet">
+          <div class="check-item" data-id="q9"><div class="check-box"></div><div><p class="text-white text-sm font-medium">All magnets installed</p><p class="text-gray-500 text-xs">Count matches design spec (usually 4 per frame)</p></div></div>
+          <div class="check-item" data-id="q10"><div class="check-box"></div><div><p class="text-white text-sm font-medium">Polarity is correct</p><p class="text-gray-500 text-xs">Frame sticks firmly to fridge/metal surface — test all 4 corners</p></div></div>
+          <div class="check-item" data-id="q11"><div class="check-box"></div><div><p class="text-white text-sm font-medium">Magnets are secure (no rattle)</p><p class="text-gray-500 text-xs">Shake test — magnets should not move, click, or fall out</p></div></div>
+          <div class="check-item" data-id="q12"><div class="check-box"></div><div><p class="text-white text-sm font-medium">Glue is clean (no overflow)</p><p class="text-gray-500 text-xs">If post-glued: no visible glue residue around magnet wells</p></div></div>
+        </div>
+      </div>
+
+      <!-- Finishing -->
+      <div>
+        <h2 class="font-mono text-white font-semibold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-electric-blue"></span>Finishing (if painted)
+        </h2>
+        <div class="space-y-2" id="sec-finish">
+          <div class="check-item" data-id="q13"><div class="check-box"></div><div><p class="text-white text-sm font-medium">Even paint coverage</p><p class="text-gray-500 text-xs">No thin spots, drips, or orange peel texture</p></div></div>
+          <div class="check-item" data-id="q14"><div class="check-box"></div><div><p class="text-white text-sm font-medium">Clear coat applied</p><p class="text-gray-500 text-xs">Scratch resistance test — rub with fingernail, no damage</p></div></div>
+          <div class="check-item" data-id="q15"><div class="check-box"></div><div><p class="text-white text-sm font-medium">No paint in magnet wells or photo slot</p><p class="text-gray-500 text-xs">Photo still slides in, magnets still work through paint layer</p></div></div>
+        </div>
+      </div>
+
+      <!-- Final -->
+      <div>
+        <h2 class="font-mono text-white font-semibold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amd-red"></span>Final Check
+        </h2>
+        <div class="space-y-2" id="sec-final">
+          <div class="check-item" data-id="q16"><div class="check-box"></div><div><p class="text-white text-sm font-medium">No sharp edges</p><p class="text-gray-500 text-xs">Run finger along all edges — smooth, no snagging</p></div></div>
+          <div class="check-item" data-id="q17"><div class="check-box"></div><div><p class="text-white text-sm font-medium">Overall appearance: would YOU buy this?</p><p class="text-gray-500 text-xs">The "fridge test" — put it on your own fridge with a real photo. Does it look premium?</p></div></div>
+          <div class="check-item" data-id="q18"><div class="check-box"></div><div><p class="text-white text-sm font-medium">Packaged and labeled</p><p class="text-gray-500 text-xs">In protective packaging, ready for shipping or sale</p></div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mt-8 text-center no-print">
+      <a href="/3D-print/" class="text-gray-500 text-sm hover:text-white transition-colors font-mono">← Back to 3D Print Academy</a>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var items = document.querySelectorAll('.check-item');
+      var total = items.length;
+      var circle = document.getElementById('progress-circle');
+      var pct = document.getElementById('progress-pct');
+      var circumference = 2 * Math.PI * 35; // r=35
+
+      function updateProgress() {
+        var checked = document.querySelectorAll('.check-item.checked').length;
+        var percent = Math.round((checked / total) * 100);
+        var offset = circumference - (checked / total) * circumference;
+        circle.style.strokeDashoffset = offset;
+        pct.textContent = percent + '%';
+        if (percent === 100) {
+          circle.style.stroke = '#39FF14';
+          pct.style.color = '#39FF14';
+        }
+      }
+
+      items.forEach(function(item) {
+        item.addEventListener('click', function() {
+          this.classList.toggle('checked');
+          var box = this.querySelector('.check-box');
+          box.textContent = this.classList.contains('checked') ? '✓' : '';
+          updateProgress();
+        });
+      });
+
+      document.getElementById('reset-btn').addEventListener('click', function() {
+        items.forEach(function(item) {
+          item.classList.remove('checked');
+          item.querySelector('.check-box').textContent = '';
+        });
+        updateProgress();
+      });
+
+      updateProgress();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Downloads — 3D Print Academy</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#0A0A0F" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { 'amd-red': '#ED1C24', 'amd-red-text': '#FF6B6B', 'amd-red-btn': '#D91920', 'electric-blue': '#00D4FF', 'surface': '#0A0A0F', 'surface-alt': '#111118', 'surface-card': '#16161F', 'border-dim': '#1E1E2A', 'neon-green': '#39FF14' },
+        fontFamily: { mono: ['"JetBrains Mono"', 'monospace'], sans: ['"Inter"', 'system-ui', 'sans-serif'] },
+      }},
+    };
+  </script>
+  <style>
+    body { background: #0A0A0F; color: #e5e7eb; font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Nav -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
+    <div class="max-w-6xl mx-auto flex items-center justify-between h-14 px-6">
+      <a href="/3D-print/portal/" class="font-mono text-sm text-gray-400 hover:text-white transition-colors">← Dashboard</a>
+      <span class="font-mono text-xs text-gray-500">Downloads</span>
+    </div>
+  </nav>
+
+  <!-- Auth Gate -->
+  <div id="auth-gate" class="flex-1 flex items-center justify-center pt-14">
+    <p class="font-mono text-gray-500 text-sm">Verifying access…</p>
+  </div>
+
+  <!-- Content (hidden until auth) -->
+  <main id="module-content" class="hidden flex-1 pt-20 pb-16">
+    <div class="max-w-4xl mx-auto px-6">
+
+      <h1 class="font-mono text-3xl md:text-4xl font-black text-white mb-2">📦 Downloads</h1>
+      <p class="text-gray-400 mb-10">All STL files, slicer profiles, checklists, and templates included with your enrollment.</p>
+
+      <!-- STL Files -->
+      <section class="mb-10">
+        <h2 class="font-mono text-white text-xl font-bold mb-4 flex items-center gap-2">
+          <span class="text-electric-blue">01</span> STL Files — Magnet Frames
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3">
+            <span class="text-2xl">🖼️</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">Instax Mini Frame</p>
+              <p class="text-gray-500 text-xs">62×46mm insert, 6×2mm magnet slot</p>
+            </div>
+            <span class="text-gray-600 font-mono text-xs">STL</span>
+          </div>
+          <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3">
+            <span class="text-2xl">🖼️</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">Polaroid Frame</p>
+              <p class="text-gray-500 text-xs">79×79mm insert, snap-fit clip</p>
+            </div>
+            <span class="text-gray-600 font-mono text-xs">STL</span>
+          </div>
+          <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3">
+            <span class="text-2xl">🖼️</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">2×3 Standard Frame</p>
+              <p class="text-gray-500 text-xs">51×76mm insert, dual magnet</p>
+            </div>
+            <span class="text-gray-600 font-mono text-xs">STL</span>
+          </div>
+          <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3">
+            <span class="text-2xl">🖼️</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">4×6 Photo Frame</p>
+              <p class="text-gray-500 text-xs">102×152mm insert, quad magnet</p>
+            </div>
+            <span class="text-gray-600 font-mono text-xs">STL</span>
+          </div>
+          <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3">
+            <span class="text-2xl">📺</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">Retro TV Frame</p>
+              <p class="text-gray-500 text-xs">Themed frame, multi-piece assembly</p>
+            </div>
+            <span class="text-gray-600 font-mono text-xs">STL</span>
+          </div>
+          <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3">
+            <span class="text-2xl">🎞️</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">Multi-Photo Collage (3-up)</p>
+              <p class="text-gray-500 text-xs">Grid layout, 3× Instax slots</p>
+            </div>
+            <span class="text-gray-600 font-mono text-xs">STL</span>
+          </div>
+          <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3">
+            <span class="text-2xl">✏️</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">Custom Text Insert Template</p>
+              <p class="text-gray-500 text-xs">Editable Fusion 360 source + STL</p>
+            </div>
+            <span class="text-gray-600 font-mono text-xs">STL</span>
+          </div>
+          <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3 opacity-50">
+            <span class="text-2xl">📁</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">+ 8 more designs</p>
+              <p class="text-gray-500 text-xs">Hearts, stars, seasonal themes…</p>
+            </div>
+            <span class="text-gray-600 font-mono text-xs">STL</span>
+          </div>
+        </div>
+        <p class="text-gray-600 text-xs font-mono mt-3 italic">Download links will be active once course content is published. Check dashboard for updates.</p>
+      </section>
+
+      <!-- Slicer Profiles -->
+      <section class="mb-10">
+        <h2 class="font-mono text-white text-xl font-bold mb-4 flex items-center gap-2">
+          <span class="text-electric-blue">02</span> Slicer Profiles
+        </h2>
+        <div class="space-y-3">
+          <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3">
+            <span class="text-2xl">⚙️</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">Cura Profile — PLA Magnet Frames</p>
+              <p class="text-gray-500 text-xs">0.2mm layer, 20% gyroid, optimized retraction</p>
+            </div>
+            <span class="text-gray-600 font-mono text-xs">.curaprofile</span>
+          </div>
+          <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3">
+            <span class="text-2xl">⚙️</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">PrusaSlicer Profile — PLA Magnet Frames</p>
+              <p class="text-gray-500 text-xs">Matching settings for Prusa MK3S+/MK4</p>
+            </div>
+            <span class="text-gray-600 font-mono text-xs">.ini</span>
+          </div>
+          <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3">
+            <span class="text-2xl">⚙️</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">Cura Profile — PETG Batch Production</p>
+              <p class="text-gray-500 text-xs">Higher temp, slower speed for PETG durability</p>
+            </div>
+            <span class="text-gray-600 font-mono text-xs">.curaprofile</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Templates & Checklists -->
+      <section class="mb-10">
+        <h2 class="font-mono text-white text-xl font-bold mb-4 flex items-center gap-2">
+          <span class="text-electric-blue">03</span> Templates & Checklists
+        </h2>
+        <div class="space-y-3">
+          <a href="/3D-print/tools/calculator.html" class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3 hover:border-electric-blue/40 transition-colors">
+            <span class="text-2xl">🧮</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">Pricing Calculator</p>
+              <p class="text-gray-500 text-xs">Interactive cost-per-unit & profit margin tool</p>
+            </div>
+            <span class="text-electric-blue font-mono text-xs">Open →</span>
+          </a>
+          <a href="/3D-print/tools/checklist.html" class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3 hover:border-electric-blue/40 transition-colors">
+            <span class="text-2xl">✅</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">QC Checklist</p>
+              <p class="text-gray-500 text-xs">Print quality control — check every frame before shipping</p>
+            </div>
+            <span class="text-electric-blue font-mono text-xs">Open →</span>
+          </a>
+          <a href="/3D-print/tools/materials.html" class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3 hover:border-electric-blue/40 transition-colors">
+            <span class="text-2xl">🛒</span>
+            <div class="flex-1">
+              <p class="text-white font-mono text-sm">Materials List</p>
+              <p class="text-gray-500 text-xs">Everything you need — filament, magnets, tools, packaging</p>
+            </div>
+            <span class="text-electric-blue font-mono text-xs">Open →</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- Back to dashboard -->
+      <div class="pt-6 border-t border-border-dim">
+        <a href="/3D-print/portal/" class="inline-flex items-center gap-2 px-5 py-2.5 text-gray-400 border border-border-dim rounded-lg font-mono text-sm hover:text-white transition-colors">← Back to Dashboard</a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Mark-complete stub (not applicable for downloads but keeps portal-auth.js happy) -->
+  <button id="mark-complete" class="hidden"></button>
+  <span id="complete-icon" class="hidden"></span>
+
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-database-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script src="/3D-print/portal/portal-auth.js"></script>
+  <script>PortalAuth.initModule('downloads');</script>
+</body>
+</html>
