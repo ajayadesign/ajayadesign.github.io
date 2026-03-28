@@ -70,6 +70,11 @@ function getProps() {
   return PropertiesService.getScriptProperties();
 }
 
+/** Sanitize a Firebase RTDB path to prevent injection */
+function safePath(path) {
+  return (path || '').replace(/[.#$\[\]]/g, '');
+}
+
 function stripeGet(endpoint) {
   var sk = getProps().getProperty('STRIPE_SECRET_KEY');
   var resp = UrlFetchApp.fetch('https://api.stripe.com/v1/' + endpoint, {
@@ -83,7 +88,7 @@ function stripeGet(endpoint) {
  * Firebase RTDB — read a path (returns parsed JSON or null)
  */
 function fbRead(path) {
-  var url = getProps().getProperty('FIREBASE_DB_URL') + '/' + path + '.json';
+  var url = getProps().getProperty('FIREBASE_DB_URL') + '/' + safePath(path) + '.json';
   // Use the service account OAuth token for admin access
   var token = ScriptApp.getOAuthToken();
   var resp = UrlFetchApp.fetch(url, {
@@ -98,7 +103,7 @@ function fbRead(path) {
  * Firebase RTDB — write (PUT) to a path
  */
 function fbWrite(path, data) {
-  var url = getProps().getProperty('FIREBASE_DB_URL') + '/' + path + '.json';
+  var url = getProps().getProperty('FIREBASE_DB_URL') + '/' + safePath(path) + '.json';
   var token = ScriptApp.getOAuthToken();
   UrlFetchApp.fetch(url, {
     method: 'put',
@@ -113,7 +118,7 @@ function fbWrite(path, data) {
  * Firebase RTDB — push (POST) to a path
  */
 function fbPush(path, data) {
-  var url = getProps().getProperty('FIREBASE_DB_URL') + '/' + path + '.json';
+  var url = getProps().getProperty('FIREBASE_DB_URL') + '/' + safePath(path) + '.json';
   var token = ScriptApp.getOAuthToken();
   var resp = UrlFetchApp.fetch(url, {
     method: 'post',
@@ -129,7 +134,7 @@ function fbPush(path, data) {
  * Firebase RTDB — delete a path
  */
 function fbDelete(path) {
-  var url = getProps().getProperty('FIREBASE_DB_URL') + '/' + path + '.json';
+  var url = getProps().getProperty('FIREBASE_DB_URL') + '/' + safePath(path) + '.json';
   var token = ScriptApp.getOAuthToken();
   UrlFetchApp.fetch(url, {
     method: 'delete',
@@ -142,8 +147,12 @@ function fbDelete(path) {
  * Firebase RTDB — query by child value
  */
 function fbQuery(path, orderBy, equalTo) {
-  var url = getProps().getProperty('FIREBASE_DB_URL') + '/' + path + '.json'
-    + '?orderBy="' + orderBy + '"&equalTo="' + equalTo + '"';
+  // Sanitize path segments to prevent injection
+  var safePath = (path || '').replace(/[.#$\[\]]/g, '');
+  var safeOrder = (orderBy || '').replace(/[^a-zA-Z0-9_]/g, '');
+  var safeEqual = (equalTo || '').replace(/"/g, '');
+  var url = getProps().getProperty('FIREBASE_DB_URL') + '/' + safePath + '.json'
+    + '?orderBy="' + safeOrder + '"&equalTo="' + safeEqual + '"';
   var token = ScriptApp.getOAuthToken();
   var resp = UrlFetchApp.fetch(url, {
     headers: { 'Authorization': 'Bearer ' + token },
@@ -237,7 +246,7 @@ function doPost(e) {
   } catch (err) {
     console.error('Webhook error: ' + err.message + '\n' + err.stack);
     return ContentService.createTextOutput(
-      JSON.stringify({ error: err.message })
+      JSON.stringify({ error: 'internal_error' })
     ).setMimeType(ContentService.MimeType.JSON);
   }
 }

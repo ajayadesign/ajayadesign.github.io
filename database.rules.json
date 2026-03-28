@@ -47,14 +47,22 @@
 
     "site_analytics": {
       ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
-      ".write": true
+      ".write": true,
+      ".validate": "newData.isString() || newData.hasChildren()",
+      "sessions": { "$date": { "$entry": { ".validate": "newData.hasChildren(['page','ts'])" } } },
+      "presence": { "$sid": { ".validate": "newData.hasChildren(['page'])" } },
+      "pageviews": { "$date": { "$page": { ".validate": "newData.isNumber()" } } },
+      "clicks":    { "$date": { "$page": { "$el":   { ".validate": "newData.isNumber()" } } } },
+      "scroll":    { "$date": { "$page": { ".validate": "newData.isNumber()" } } },
+      "perf":      { "$date": { "$page": { ".validate": "newData.isNumber()" } } },
+      "referrers": { "$date": { "$ref":  { ".validate": "newData.isNumber()" } } }
     },
 
     "leads": {
       ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
       "$leadId": {
-        ".write": true,
-        ".validate": "newData.hasChildren(['email'])"
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['email']) && newData.child('email').isString() && newData.child('email').val().length < 256"
       }
     },
 
@@ -66,7 +74,8 @@
     "quote_viewer": {
       "$token": {
         ".read": true,
-        ".write": true
+        ".write": "!data.exists() || (auth != null && auth.token.email === 'ajayadesign@gmail.com')",
+        ".validate": "newData.hasChildren()"
       }
     },
 
@@ -80,7 +89,8 @@
     "signing": {
       "$token": {
         ".read": true,
-        ".write": true
+        ".write": "!data.child('signed').exists() || (auth != null && auth.token.email === 'ajayadesign@gmail.com')",
+        ".validate": "newData.hasChildren()"
       }
     },
 
