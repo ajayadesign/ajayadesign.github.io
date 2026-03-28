@@ -64,7 +64,27 @@
         Sign in with Google
       </button>
       <p id="login-error" class="hidden mt-4 text-amd-red-text text-xs font-mono"></p>
-      <p class="mt-8 text-gray-600 text-xs">Don't have access? <a href="/contact/?ref=3d-course" class="text-electric-blue hover:underline">Enroll here</a></p>
+      <p class="mt-8 text-gray-600 text-xs">Don't have access? <a href="/3D-print/#enroll" class="text-electric-blue hover:underline">Enroll here</a></p>
+    </div>
+  </div>
+
+  <!-- Pending Approval Screen (hidden until user signs in without approval) -->
+  <div id="pending-screen" class="hidden flex-1 flex items-center justify-center pt-20">
+    <div class="text-center max-w-md mx-auto px-6">
+      <div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-surface-card border border-border-dim flex items-center justify-center">
+        <span class="text-4xl">⏳</span>
+      </div>
+      <h1 class="font-mono text-white text-2xl font-bold mb-2">Access Pending</h1>
+      <p class="text-gray-400 text-sm mb-4">Your account (<span id="pending-email" class="text-electric-blue font-mono">—</span>) has been registered.</p>
+      <div class="p-4 rounded-xl bg-surface-card border border-border-dim text-left mb-6">
+        <p class="text-gray-400 text-sm leading-relaxed">
+          <strong class="text-white">Next steps:</strong><br>
+          1. Complete your purchase via the <a href="/3D-print/#enroll" class="text-electric-blue hover:underline">course page</a><br>
+          2. Our admin will verify your payment and activate your account<br>
+          3. You'll have full access the next time you log in
+        </p>
+      </div>
+      <p class="text-gray-600 text-xs">Questions? <a href="/contact/?ref=3d-access" class="text-electric-blue hover:underline">Contact us</a></p>
     </div>
   </div>
 

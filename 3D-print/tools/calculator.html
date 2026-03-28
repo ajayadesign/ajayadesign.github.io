@@ -82,8 +82,8 @@
           <input type="number" id="units-month" value="100" step="10" min="1" />
         </div>
         <div>
-          <label class="block text-gray-400 text-xs mb-1 font-mono">Platform fee % (Etsy = 6.5, none = 0)</label>
-          <input type="number" id="platform-fee" value="6.5" step="0.5" min="0" max="100" />
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Platform fee % (Shopify = 2.9, none = 0)</label>
+          <input type="number" id="platform-fee" value="2.9" step="0.5" min="0" max="100" />
         </div>
       </div>
     </div>
@@ -164,7 +164,7 @@
         // Insight
         var insight = '';
         if (margin >= 70) insight = '🔥 Excellent margins! You\'re pricing well above cost — great for premium positioning.';
-        else if (margin >= 50) insight = '✅ Healthy margins. Most successful Etsy sellers operate in this range.';
+        else if (margin >= 50) insight = '✅ Healthy margins. Most successful Shopify sellers operate in this range.';
         else if (margin >= 30) insight = '⚠️ Moderate margins. Consider reducing post-processing time or raising price slightly.';
         else if (margin >= 0) insight = '🚨 Thin margins. You need to either reduce costs (batch printing, bulk magnets) or raise your price.';
         else insight = '❌ Losing money at this price point. Raise your retail price or reduce costs significantly.';

@@ -162,7 +162,7 @@ By now you should have:
 **Here's the real talk**: The students who turn this into a side hustle do three things:
 
 1. **They batch-print.** 4-8 frames per plate, overnight. Wake up to product.
-2. **They pick ONE platform.** Etsy or craft fairs. Not both (yet).
+2. **They pick ONE platform.** Shopify or craft fairs. Not both (yet).
 3. **They price with confidence.** Not $5 "hobby" pricing — real margins. Use the calculator.
 
 Module 6 covers all of this in detail:
@@ -178,7 +178,7 @@ You're currently on the **STL-only** plan. If you want the full video course wit
 
 {if tier == 'course'}
 **Want personal guidance?**
-You've got the brains (the course). Now get the shortcut — a **1-on-1 live session** where I audit your prints, optimize your slicer settings, and help you set up your Etsy listing in real-time:
+You've got the brains (the course). Now get the shortcut — a **1-on-1 live session** where I audit your prints, optimize your slicer settings, and help you set up your Shopify store in real-time:
 → [Book 1-on-1 Session ($149) →](https://ajayadesign.github.io/contact/?ref=3d-mentorship-upgrade)
 {/if}
 

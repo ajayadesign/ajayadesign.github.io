@@ -767,7 +767,7 @@ Total packaging cost per frame: $0.45–$0.65. Total presentation value perceive
 
 **Photography tips for your online store:**
 
-When you photograph these frames for your Etsy or website:
+When you photograph these frames for your Shopify or website:
 
 1. **Good lighting**: Use natural window light or a softbox (overcast daylight is ideal—no harsh shadows)
 2. **Storytelling setup**: Lay the five frame designs on a neutral background (white poster board, light gray, soft wood) to tell the story of progression—from simple to complex

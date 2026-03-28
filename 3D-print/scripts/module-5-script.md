@@ -4,7 +4,7 @@
 **Instructor**: Ajaya Dahal, Hardware Engineer, Austin TX  
 **Production Format**: 1080p60, Multi-angle hands-on filming  
 **Total Duration**: ~120 minutes across 6 segments  
-**Target Audience**: 3D print entrepreneurs making magnet photo frames for Etsy
+**Target Audience**: 3D print entrepreneurs making magnet photo frames for Shopify
 
 ---
 
@@ -116,7 +116,7 @@ Segment 3 shows you how to turn a grey 3D-printed frame into a polished, profess
 
 ### [SCRIPT]
 
-Let's be direct: paint is where you transform a plastic object into a product people want to buy. A raw 3D-printed frame looks like a toy. A painted frame looks like something worth $18 to $25 on an Etsy shelf.
+Let's be direct: paint is where you transform a plastic object into a product people want to buy. A raw 3D-printed frame looks like a toy. A painted frame looks like something worth $18 to $25 on an Shopify shelf.
 
 Setup is everything. I've been through a lot of spray paint failures, and they were all due to lazy booth setup. You don't need a professional booth; you need a cheap cardboard spray booth, a lazy susan turntable, and a flat surface away from wind. Your total investment is about $15: a folding card table ($12 at Costco), a cardboard box spray booth ($3 on Amazon), and a plastic lazy susan ($3). That's it.
 
@@ -128,7 +128,7 @@ Here's the spray motion that separates professionals from everyone else: hold th
 
 Color selection is business strategy. Matte black is THE number one seller. Why? It hides layer lines, hides printing imperfections, hides dust and fingerprints, and looks premium. I sell probably 60 percent matte black frames. Use Rust-Oleum Matte Black 2X. Metallics are the premium upsell: gold, rose gold, chrome silver. These are $3 more per can than standard colors, so they cost you maybe $0.50 more per frame in paint, but you charge $5 to $10 extra for metallics. Montana Gold spray paint has the best color range if you want custom shades. Krylon ColorMaxx is also solid and dries faster.
 
-Here's where it gets interesting: multi-color frames. You print one frame, mask sections with painter's tape, spray one color, let it dry, remove the tape, mask different sections, spray a second color. You end up with a two-tone frame. These sell for double. A matte black frame with white accents, or white with rose-gold metallic, or navy with gold trim — these are premium products. Once you show a two-color frame on your Etsy listing, customers ask for them constantly.
+Here's where it gets interesting: multi-color frames. You print one frame, mask sections with painter's tape, spray one color, let it dry, remove the tape, mask different sections, spray a second color. You end up with a two-tone frame. These sell for double. A matte black frame with white accents, or white with rose-gold metallic, or navy with gold trim — these are premium products. Once you show a two-color frame on your Shopify listing, customers ask for them constantly.
 
 If you want a color change at a specific layer height, you use Cura's "Pause at Height" plugin. In Cura, you set a pause at exact Z-height — for instance, at 20 millimeters up the frame. The printer pauses mid-print, you swap filament to a different color, and hit resume. The frame prints the rest in the new color. When it comes off the printer, you have a single-print two-color frame. This is advanced, but it's worth learning.
 
@@ -311,15 +311,15 @@ You've now completed a frame from print to assembly. The final step is quality c
 ## SEGMENT 6: QUALITY CONTROL STANDARDS (~15 min)
 
 ### [INTRO]
-Segment 6 is about protecting your brand and maximizing profit by establishing rigorous quality standards. You'll learn the A/B/C/F grading system, how to photograph frames for Etsy listings to spot imperfections, batch QC strategies that save time while maintaining standards, rejection logging that reveals systematic problems in your process, customer expectation management, and how to sort frames efficiently. This segment prevents you from shipping substandard products to customers and helps you identify which process steps need improvement when failures start appearing in your rejection logs.
+Segment 6 is about protecting your brand and maximizing profit by establishing rigorous quality standards. You'll learn the A/B/C/F grading system, how to photograph frames for Shopify listings to spot imperfections, batch QC strategies that save time while maintaining standards, rejection logging that reveals systematic problems in your process, customer expectation management, and how to sort frames efficiently. This segment prevents you from shipping substandard products to customers and helps you identify which process steps need improvement when failures start appearing in your rejection logs.
 
 ### [SCRIPT]
 
-Here's a hard truth I learned after year three of selling these frames: quality control is where you either build a sustainable business or lose customer trust one refund at a time. You can have the best design, the best paint job, but if you ship a frame with a magnet that doesn't hold, or a photo cavity that's too tight, or paint that flakes, that's one bad review. Three bad reviews and your Etsy shop's algorithm takes a hit. Ten bad reviews and you're considered unreliable. All preventable with 30 seconds of QC per frame.
+Here's a hard truth I learned after year three of selling these frames: quality control is where you either build a sustainable business or lose customer trust one refund at a time. You can have the best design, the best paint job, but if you ship a frame with a magnet that doesn't hold, or a photo cavity that's too tight, or paint that flakes, that's one bad review. Three bad reviews and your Shopify shop's algorithm takes a hit. Ten bad reviews and you're considered unreliable. All preventable with 30 seconds of QC per frame.
 
 I use a four-tier grading system: A, B, C, and F.
 
-A-grade is premium. This frame has zero visible layer lines at normal viewing distance — that's about 60 centimeters away. The magnets are flush, properly oriented, and hold firmly. All edges are clean. The paint is flawless with no drips, inconsistencies, or brush marks. The photo slides in smoothly and sits straight. This is what you photograph for your Etsy listing. This is what you charge full price for. This is what builds your reputation.
+A-grade is premium. This frame has zero visible layer lines at normal viewing distance — that's about 60 centimeters away. The magnets are flush, properly oriented, and hold firmly. All edges are clean. The paint is flawless with no drips, inconsistencies, or brush marks. The photo slides in smoothly and sits straight. This is what you photograph for your Shopify listing. This is what you charge full price for. This is what builds your reputation.
 
 B-grade is functional. It has minor imperfections visible only up close — less than 15 centimeters away. Maybe a tiny bit of layer line texture on the back. Maybe a magnet is 0.5mm too proud (slightly raised above the surface). Maybe there's a microscopic paint drip that doesn't affect function. The frame is fully functional; all magnets hold, all photos fit and stay secure. You sell B-grade at standard price, not premium. It's still a good product, but it's not perfect.
 
@@ -329,11 +329,11 @@ F-grade is recycle. This gets shredded and sent to your recycling bin. Print fai
 
 Here's the system: check the first frame off your print bed thoroughly. A-grade or B-grade assessment. Check the last frame thoroughly. Then spot-check 20 percent of the middle frames. This statistical approach catches systematic problems — maybe your printer's nozzle is clogging by frame 5, so frames 5-9 are all slightly rough. You catch it, you stop, you clean your nozzle, you know not to ship those particular frames.
 
-Photographing for QC is your best discovery tool. Take a finished frame, put it under your studio lights, and photograph it from multiple angles. The camera is more critical than your eyes; imperfections that are subtle in person show up obvious in the photo. If any imperfection appears in a photograph, that frame is not A-grade. You're going to put that frame on your Etsy listing and a customer zooms in on the photo and sees the same imperfection. They'll request a refund. Prevent this by being more critical than the camera.
+Photographing for QC is your best discovery tool. Take a finished frame, put it under your studio lights, and photograph it from multiple angles. The camera is more critical than your eyes; imperfections that are subtle in person show up obvious in the photo. If any imperfection appears in a photograph, that frame is not A-grade. You're going to put that frame on your Shopify listing and a customer zooms in on the photo and sees the same imperfection. They'll request a refund. Prevent this by being more critical than the camera.
 
 The rejection log is essential. Create a simple spreadsheet: date, frame design, failure type, probable cause, segment that needs improvement. Every time you recycle a frame or downgrade to C-grade, log it. After you've logged ten failures, patterns emerge. Maybe all failures are support witness marks not sanded properly; that points you back to Segment 2 for more aggressive sanding. Maybe all magnet issues; that points to Segment 4 for better polarity verification. Patterns are data; data drives improvement.
 
-Customer expectations also matter. On your Etsy listing, show only A-grade photos. In your product description, don't promise perfection; promise functional, beautiful frames. Under-promise, over-deliver. When a customer receives a frame that's A-grade with no issues, they're thrilled. They leave a five-star review. When a customer receives a frame that's B-grade and it's fully functional, they're usually satisfied; they might not leave a review, but they don't complain.
+Customer expectations also matter. On your Shopify listing, show only A-grade photos. In your product description, don't promise perfection; promise functional, beautiful frames. Under-promise, over-deliver. When a customer receives a frame that's A-grade with no issues, they're thrilled. They leave a five-star review. When a customer receives a frame that's B-grade and it's fully functional, they're usually satisfied; they might not leave a review, but they don't complain.
 
 Weight-based sorting is a secondary QC pass. After assembly, weigh each frame. Log the weight. Frames that weigh significantly different from the average might have a structural issue — maybe magnets aren't fully glued, maybe the back plate is cracked, maybe something is loose inside. A frame that's 5 grams lighter than the average warrants a second inspection.
 
@@ -354,7 +354,7 @@ One final thought: your brand is built on the customer's unboxing experience and
 - Studio photography setup for QC documentation
 - 10-frame sorting demo narrated live: picking each frame, explaining tier placement
 - QC checklist tool on screen: interactive form with checkboxes and scoring
-- Etsy listing with only A-grade photos
+- Shopify listing with only A-grade photos
 - Before-QC supply pile (50 frames, mixed quality) → After-QC sorted bins (A-grade box, B-grade box, C-grade box, recycle bin)
 - Unboxing video POV: A-grade frame arriving to customer, first impression moment
 
@@ -369,12 +369,12 @@ One final thought: your brand is built on the customer's unboxing experience and
 - After 10 rejections logged, patterns emerge pointing to process improvements needed
 - Batch QC strategy: check first frame thoroughly + last frame thoroughly + spot-check 20% middle
 - Weight logging: frames 5+ grams lighter than average warrant second inspection for loose internals
-- Customer expectation: show only A-grade on Etsy; promise functional not perfection
+- Customer expectation: show only A-grade on Shopify; promise functional not perfection
 - Financial impact: reducing return rate from 10% to 1% generates $135–225/month additional revenue
 - QC time: 30 seconds per frame; ROI is obvious over time
 
 ### [TRANSITION CLOSING]
-You've now completed all six segments of Module 5: Post-Processing & Finishing. You understand support removal techniques, advanced sanding strategies, professional spray painting, magnet installation with verified polarity, final assembly sequencing, and rigorous quality control standards. Every frame you produce is now an opportunity to build your brand reputation, maximize your profit margin, and create products that customers genuinely value. In Module 6, our final module, we'll take these finished frames and turn them into a revenue-generating business: pricing strategies, Etsy optimization, customer service, scaling production, and planning your next steps as an entrepreneur in the custom 3D print space.
+You've now completed all six segments of Module 5: Post-Processing & Finishing. You understand support removal techniques, advanced sanding strategies, professional spray painting, magnet installation with verified polarity, final assembly sequencing, and rigorous quality control standards. Every frame you produce is now an opportunity to build your brand reputation, maximize your profit margin, and create products that customers genuinely value. In Module 6, our final module, we'll take these finished frames and turn them into a revenue-generating business: pricing strategies, Shopify optimization, customer service, scaling production, and planning your next steps as an entrepreneur in the custom 3D print space.
 
 ---
 

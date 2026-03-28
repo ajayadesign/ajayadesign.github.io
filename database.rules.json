@@ -1,0 +1,116 @@
+{
+  "rules": {
+
+    "approved_users": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+        ".validate": "newData.hasChildren(['email', 'tier']) && newData.child('tier').isString() && newData.child('tier').val().matches(/^(stl|course|session|bundle)$/)"
+      }
+    },
+
+    "pending_users": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && ((auth.uid === $uid && !data.exists()) || auth.token.email === 'ajayadesign@gmail.com')",
+        ".validate": "newData.hasChildren(['email', 'requested_at']) || !newData.exists()"
+      }
+    },
+
+    "courses": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "progress": {
+          "$module": {
+            ".validate": "newData.isBoolean() && $module.matches(/^module-[1-6]$/)"
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+
+    "site_analytics": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": true
+    },
+
+    "leads": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      "$leadId": {
+        ".write": true,
+        ".validate": "newData.hasChildren(['email'])"
+      }
+    },
+
+    "builds": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
+    "quote_viewer": {
+      "$token": {
+        ".read": true,
+        ".write": true
+      }
+    },
+
+    "quotes": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      "$quoteId": {
+        ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+      }
+    },
+
+    "signing": {
+      "$token": {
+        ".read": true,
+        ".write": true
+      }
+    },
+
+    "contracts": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
+    "portfolio": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
+    "parse_requests": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
+    "activity_logs": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
+    "commands": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
+    "outreach": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
+    "drone": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
+    "$other": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}

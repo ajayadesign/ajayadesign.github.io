@@ -6,7 +6,7 @@
 ## SEGMENT 1: Cost Analysis & Pricing (~20 min)
 
 ### [INTRO]
-In this segment, you'll learn the exact cost breakdown for every magnet frame you print—from PLA filament to magnets—and discover the pricing strategy that turned my hobby into a multi-brand business generating $2,000–$6,000/month in additional revenue. We'll walk through a live spreadsheet calculator that shows you profit per frame, Etsy fee impact, and realistic volume math so you know exactly what you're getting into before your first sale.
+In this segment, you'll learn the exact cost breakdown for every magnet frame you print—from PLA filament to magnets—and discover the pricing strategy that turned my hobby into a multi-brand business generating $2,000–$6,000/month in additional revenue. We'll walk through a live spreadsheet calculator that shows you profit per frame, Shopify fee impact, and realistic volume math so you know exactly what you're getting into before your first sale.
 
 ### [SCRIPT]
 
@@ -36,24 +36,24 @@ This print is about 60 grams of PLA, so **$1.20 in filament**. Six magnets inste
 
 Now here's where the dream becomes real: **pricing**.
 
-I sell Instax Mini frames at $10 on Etsy. Cost is $0.57. That's an $9.43 gross profit per frame, which is a **1,652% markup**. Yes. Sixteen-fifty-two.
+I sell Instax Mini frames at $10 on Shopify. Cost is $0.57. That's an $9.43 gross profit per frame, which is a **1,652% markup**. Yes. Sixteen-fifty-two.
 
 Higher-complexity builds—the Retro TV frame, the 3x3 collage—I price at $25–$35 retail, depending on color complexity and finish.
 
 Custom text? That's where I make real money. 30 seconds in Tinkercad to add someone's name or a date, I charge a $3–$5 upsell. They always say yes because it's a small bump on a sentimental gift.
 
-**But hold on. Etsy takes a cut.**
+**But hold on. Shopify takes a cut.**
 
 Here's the brutal breakdown on a $10 sale:
 
 - Listing fee: $0.20 (amortized across sales)
-- Etsy transaction fee: 6.5% = $0.65
+- Shopify transaction fee: 6.5% = $0.65
 - Payment processing: 3% = $0.30
-- Etsy Payment processing fixed: $0.25
+- Shopify Payment processing fixed: $0.25
 
-**Total Etsy fees: ~10% of revenue, or $1.00 on a $10 sale.**
+**Total Shopify fees: ~10% of revenue, or $1.00 on a $10 sale.**
 
-So a $10 sale nets me $8.50 after Etsy. Subtract my material cost of $0.57, and **I'm clearing $7.93 profit per frame**.
+So a $10 sale nets me $8.50 after Shopify. Subtract my material cost of $0.57, and **I'm clearing $7.93 profit per frame**.
 
 **Volume math.** This is what moved the needle for me.
 
@@ -61,9 +61,9 @@ So a $10 sale nets me $8.50 after Etsy. Subtract my material cost of $0.57, and 
 - 16 frames per day (two printers): $2,560/month
 - 25 frames per day (three printers): $4,000/month
 
-That's with zero paid ads. Just organic Etsy visibility and Instagram referrals.
+That's with zero paid ads. Just organic Shopify visibility and Instagram referrals.
 
-Add Etsy Ads ($2–$5/day to test), and you can double that. I spend $100/month on Etsy Ads and pull in 30–40% of my revenue from ads. **ROI of 300–400%.**
+Add Shopify Ads ($2–$5/day to test), and you can double that. I spend $100/month on Shopify Ads and pull in 30–40% of my revenue from ads. **ROI of 300–400%.**
 
 The spreadsheet I'm showing you here has cells for all of this. You'll fill in your own filament costs, your local power rates, your desired profit margins. This is your north star.
 
@@ -72,37 +72,37 @@ The spreadsheet I'm showing you here has cells for all of this. You'll fill in y
 - Screen recording of Google Sheets with columns: Material | Quantity | Unit Cost | Total
 - Live entries: PLA+ $20/kg, 15g per frame, = $0.30
 - Magnet entry: N52 6mm, $20/100-pack, 2 per frame, = $0.20
-- Color-coded cells: materials (blue), labor implicit (green), Etsy fees (red)
+- Color-coded cells: materials (blue), labor implicit (green), Shopify fees (red)
 - Final profit calculation row highlighted in bold
 - Side-by-side comparison: Instax vs. collage vs. custom
 - Chart showing profit per frame by product type (bar chart)
-- Screenshot of Etsy fee breakdown from a real order
+- Screenshot of Shopify fee breakdown from a real order
 
 ### [KEY POINTS]
 
 - **Materials per Instax Mini: $0.57** (filament $0.30 + magnets $0.20 + glue $0.02 + power $0.05)
 - **Collage frames: $1.99 per unit** (higher volume per print, justify higher retail price)
-- **Instax retail: $10 → $7.93 net profit per frame after Etsy fees**
-- **Etsy fees total ~10%** (listing + transaction + payment processing)
+- **Instax retail: $10 → $7.93 net profit per frame after Shopify fees**
+- **Shopify fees total ~10%** (listing + transaction + payment processing)
 - **Volume milestone: 10 frames/day = $1,600/month side income**
 - **Custom upsells: +$3–$5 per frame for 30 seconds of CAD work**
-- **Etsy Ads ROI: 300–400% (spend $100/month, pull $300–400 in extra revenue)**
+- **Shopify Ads ROI: 300–400% (spend $100/month, pull $300–400 in extra revenue)**
 
 ### [TRANSITION]
 
-So now you know exactly what you're making on every sale. But you can't make sales without a shop. In the next segment, we're going to walk through Etsy store setup step-by-step—from naming your shop to writing your first product listing with SEO-optimized titles that actually get found. Because a beautiful frame that nobody sees is just a hobby.
+So now you know exactly what you're making on every sale. But you can't make sales without a shop. In the next segment, we're going to walk through Shopify store setup step-by-step—from naming your shop to writing your first product listing with SEO-optimized titles that actually get found. Because a beautiful frame that nobody sees is just a hobby.
 
 ---
 
-## SEGMENT 2: Etsy Store Setup (~20 min)
+## SEGMENT 2: Shopify Store Setup (~20 min)
 
 ### [INTRO]
 
-Getting your Etsy shop live is simpler than you think, but the *details* separate shops that get buried from shops that get found. In this segment, I'll walk you through every step—shop naming, branding, and the anatomy of a high-converting product listing. I'll show you the exact title formula that got my MagnetMomentsCo shop to 300+ sales in year one, how to write descriptions that address customer questions before they ask them, and the keyword research that puts your frames in front of buyers searching "fridge magnet photo holder" instead of hoping they stumble on you.
+Getting your Shopify shop live is simpler than you think, but the *details* separate shops that get buried from shops that get found. In this segment, I'll walk you through every step—shop naming, branding, and the anatomy of a high-converting product listing. I'll show you the exact title formula that got my MagnetMomentsCo shop to 300+ sales in year one, how to write descriptions that address customer questions before they ask them, and the keyword research that puts your frames in front of buyers searching "fridge magnet photo holder" instead of hoping they stumble on you.
 
 ### [SCRIPT]
 
-Alright, you're ready to sell. Let's build your Etsy shop from zero.
+Alright, you're ready to sell. Let's build your Shopify shop from zero.
 
 **Step one: Choose your shop name.** This matters.
 
@@ -118,7 +118,7 @@ Examples that work: MagnetFrameStudio, PhotoMagnetCo, FridgeArtFrames, InstaxMag
 
 You'll need:
 - A banner image (1200×300px). I use Canva Pro ($13/month), which has templates. Your banner should show 2–3 of your best frames on a clean background, no clutter.
-- A logo (preferably 500×500px, but Etsy accepts any square). Again, Canva. Keep it simple.
+- A logo (preferably 500×500px, but Shopify accepts any square). Again, Canva. Keep it simple.
 - An About section. Write 2–3 paragraphs. People buy from people. Tell them you're a hardware engineer in Austin printing custom frames, not that you're a faceless factory. Include a photo of you next to your printer—that personal touch converts.
 
 **Step three: Create your first listing. This is where the real work is.**
@@ -148,7 +148,7 @@ Structure:
 - **Sentence 3:** Condition and use case
 - **Sentence 4:** Who buys it (gift buyers, dorm students, scrapbookers)
 
-In the description tags, Etsy gives you 140 characters of product details. I use mine for dimensions:
+In the description tags, Shopify gives you 140 characters of product details. I use mine for dimensions:
 
 "Frame dimensions: 3x3 inches. Photo window: 2x3 inches. Weight: ~8g. Color: [Your color]. Two N52 magnets included."
 
@@ -156,15 +156,15 @@ This is where customer objections die. They don't have to message you asking "do
 
 **Tags. This is where most people mess up.**
 
-Etsy gives you 13 tags. I use all 13, and I use each one strategically. Don't tag "gift ideas"—tag "instax photo frame", "fridge magnet holder", "3D printed gift", "personalized frame". 
+Shopify gives you 13 tags. I use all 13, and I use each one strategically. Don't tag "gift ideas"—tag "instax photo frame", "fridge magnet holder", "3D printed gift", "personalized frame". 
 
-Research your tags. Go to Etsy search, type "magnet frame", and see what pops up in autocomplete. Those are hot searches. Use eRank.io (free version) to see which tags have high search volume but low competition. This is your golden zone.
+Research your tags. Go to Shopify search, type "magnet frame", and see what pops up in autocomplete. Those are hot searches. Use eRank.io (free version) to see which tags have high search volume but low competition. This is your golden zone.
 
-**Pricing strategy.** I start at $10 for basic Instax frames. Then I watch. If they sell out in two weeks, I raise to $12. If they sit, I keep it at $10 and boost with Etsy Ads.
+**Pricing strategy.** I start at $10 for basic Instax frames. Then I watch. If they sell out in two weeks, I raise to $12. If they sit, I keep it at $10 and boost with Shopify Ads.
 
-**Shipping is crucial.** A magnet frame weighs ~8g. USPS First Class is $3.50–$4.50 depending on zone. I charge $4 flat shipping. On Etsy, customers see shipping upfront, so transparency wins. After my first 100 sales, I started offering free shipping on orders over $25—bulk orders love this.
+**Shipping is crucial.** A magnet frame weighs ~8g. USPS First Class is $3.50–$4.50 depending on zone. I charge $4 flat shipping. On Shopify, customers see shipping upfront, so transparency wins. After my first 100 sales, I started offering free shipping on orders over $25—bulk orders love this.
 
-**Variations: Offer them.** Same frame, different colors. That's three clicks in Etsy and it triples your perceived product range. I offer black, white, red, and gold as options.
+**Variations: Offer them.** Same frame, different colors. That's three clicks in Shopify and it triples your perceived product range. I offer black, white, red, and gold as options.
 
 **Photos. This is 80% of your success.** You need at minimum five high-quality photos:
 1. Hero shot: frame centered, white background, slightly angled to show depth
@@ -177,10 +177,10 @@ These photos need to be well-lit, in focus, and consistent. The first photo is y
 
 ### [VISUALS]
 
-- Screen recording of Etsy shop creation (blank → filled)
+- Screen recording of Shopify shop creation (blank → filled)
 - Banner design mockup in Canva
 - Logo examples (your designs vs. generic)
-- Screenshot of Etsy listing draft with title, description, tags
+- Screenshot of Shopify listing draft with title, description, tags
 - Highlighted SEO keyword breakdown
 - eRank.io dashboard showing tag search volume
 - Your real listing photo set (hero, scale, lifestyle, detail, color)
@@ -209,7 +209,7 @@ But here's the reality: your listing photo set is either going to make the sale 
 
 ### [INTRO]
 
-Product photography is where frame sellers win or lose. You can have the best magnet frame ever printed, but if your photo is flat, badly lit, or has a cluttered background, it won't sell. In this segment, I'm going to film my entire photography setup—the lightbox, the camera settings, the backgrounds—and walk you through the exact shot list for every listing. The best part? You don't need to spend $1,000 on equipment. I'm using a $20 Amazon lightbox, my iPhone 12, and free editing apps. I'll show you exactly how to get product photos that compete with Etsy shops charging 5x what you are.
+Product photography is where frame sellers win or lose. You can have the best magnet frame ever printed, but if your photo is flat, badly lit, or has a cluttered background, it won't sell. In this segment, I'm going to film my entire photography setup—the lightbox, the camera settings, the backgrounds—and walk you through the exact shot list for every listing. The best part? You don't need to spend $1,000 on equipment. I'm using a $20 Amazon lightbox, my iPhone 12, and free editing apps. I'll show you exactly how to get product photos that compete with Shopify shops charging 5x what you are.
 
 ### [SCRIPT]
 
@@ -225,7 +225,7 @@ That's it.
 
 The lightbox—it's a white fabric cube, collapsible, about 24 inches on each side. It diffuses light evenly and gives you that high-end photography look without reflections or harsh shadows. I use the "Professional Photography Light Tent Kit" on Amazon—$25, includes two LED strips.
 
-The camera: phone cameras are 2026 quality. iPhone 12 or newer, or any recent Android flagship. You're not printing billboards; you're uploading to Etsy at 2000×2000px. Your phone does that beautifully.
+The camera: phone cameras are 2026 quality. iPhone 12 or newer, or any recent Android flagship. You're not printing billboards; you're uploading to Shopify at 2000×2000px. Your phone does that beautifully.
 
 Lighting: natural light from a window is free and beautiful. Overcast day is ideal—diffused, no harsh shadows. If you're shooting at night, get a 5000K LED panel. I bought one for $40 on Amazon when I was scaling up. Color temperature matters—5000K looks natural, 3000K looks yellow and cheap, 6500K looks blue and weird.
 
@@ -233,7 +233,7 @@ Background: matte white or light gray poster board. Two dollars at Target. Tape 
 
 **The shot list. This is standardized across my six brands.**
 
-**Shot 1: Hero shot.** Frame on white background, centered in the frame, positioned at a 45-degree angle to show depth and the magnet attachment point. This is your Etsy thumbnail. It has to pop.
+**Shot 1: Hero shot.** Frame on white background, centered in the frame, positioned at a 45-degree angle to show depth and the magnet attachment point. This is your Shopify thumbnail. It has to pop.
 
 **Shot 2: Scale shot.** This is critical. Frame held in someone's hand—fingers visible—so buyers know the actual size. Instax Mini frames are small. Showing a hand-holding it eliminates buyer uncertainty. If you're solo, use a stand-in's hand or a common object—a quarter, a pen, something recognizable.
 
@@ -251,18 +251,18 @@ Adjustments in this order:
 3. **Saturation:** actually, leave it alone. If your frame is white, let it be white. Don't oversaturate.
 4. **White balance:** if the background looks gray instead of white, drag the temperature dial warm by +3–+5.
 5. **Sharpen:** +20–+30. Crisp edges make it look professional.
-6. **Crop:** Etsy prefers square 2000×2000px. Your phone shoots 16:9. Crop to square, centered on the frame.
+6. **Crop:** Shopify prefers square 2000×2000px. Your phone shoots 16:9. Crop to square, centered on the frame.
 
 Export at 2000×2000px PNG. You're done.
 
-**Frequency: shoot once a week.** Set aside 30 minutes every Saturday morning. Take your new designs, pop them in the lightbox, shoot all five angles, edit them all at once, upload to Etsy. Batch efficiency.
+**Frequency: shoot once a week.** Set aside 30 minutes every Saturday morning. Take your new designs, pop them in the lightbox, shoot all five angles, edit them all at once, upload to Shopify. Batch efficiency.
 
 **Content series:** Beyond the five product angles, I also shoot:
 - Progress shots: frame halfway through assembly
 - Print timelapses: (use Bambu Labs' built-in camera)
 - Gratuitule unboxings: customer feedback video
 
-These go on Instagram and TikTok to drive traffic *back* to your Etsy listings.
+These go on Instagram and TikTok to drive traffic *back* to your Shopify listings.
 
 ### [VISUALS]
 
@@ -278,7 +278,7 @@ These go on Instagram and TikTok to drive traffic *back* to your Etsy listings.
 - Snapseed app open with editing sequence
 - Before/after of unedited vs. edited product shot
 - Final exported image at 2000×2000px
-- Etsy listing with photos uploaded
+- Shopify listing with photos uploaded
 - Your Instagram feed showing product photography
 
 ### [KEY POINTS]
@@ -302,7 +302,7 @@ Your product photos are now gallery-gallery ready, and your first 20 listings ar
 
 ### [INTRO]
 
-There's a fascinating moment that happens around week 4–6 when your Etsy shop goes from experimental to promising. You're selling 3–5 frames per day. Your first printer is running nearly 24/7. And you realize: you've hit the ceiling on what one machine can do. This segment maps the exact progression from single-printer hobby to multi-printer business—stage by stage costs, timelines, the printer models I recommend, and the batch workflow that lets you go from managing prints to managing an actual operation. I'll show you real timelines from my businesses: how I went from Month 1 (one printer) to Month 12 (six brands, four printers, $50K annual revenue).
+There's a fascinating moment that happens around week 4–6 when your Shopify shop goes from experimental to promising. You're selling 3–5 frames per day. Your first printer is running nearly 24/7. And you realize: you've hit the ceiling on what one machine can do. This segment maps the exact progression from single-printer hobby to multi-printer business—stage by stage costs, timelines, the printer models I recommend, and the batch workflow that lets you go from managing prints to managing an actual operation. I'll show you real timelines from my businesses: how I went from Month 1 (one printer) to Month 12 (six brands, four printers, $50K annual revenue).
 
 ### [SCRIPT]
 
@@ -320,7 +320,7 @@ Your bottleneck is print time. An Instax frame takes 45 minutes. A collage frame
 
 This is the critical expansion. You buy a second printer. I recommend the Bambu Lab A1 Mini or the used Prusa i3 MK3S+. The A1 Mini is $199 and is *insanely* reliable for small frames. The MK3S+ is $350 used and is the workhorse if you're doing larger complex prints.
 
-Now you're printing 8–16 frames per day. Your revenue jumps to $1,000–$2,500/month (depending on ASP and Etsy Ads spend). Your biggest bottleneck is no longer print time—it's **post-processing**.
+Now you're printing 8–16 frames per day. Your revenue jumps to $1,000–$2,500/month (depending on ASP and Shopify Ads spend). Your biggest bottleneck is no longer print time—it's **post-processing**.
 
 This is where most people quit. They don't realize that a print comes off the build plate looking 60% done. You have to:
 - Remove supports (3–5 minutes per frame)
@@ -431,7 +431,7 @@ I hired my first assistant in Month 8 when I was at 50 frames/day across two of 
 
 ### [TRANSITION]
 
-Now you're genuinely scaling. Your website shop is doing $3k/month, you've got two or three printers running, and you've moved past "this is just a hobby". The next challenge is *awareness*. You've optimized your Etsy listings, but Etsy organic traffic only gets you so far. The brands that do $5k+/month aren't just sitting on Etsy—they're driving traffic via Instagram, TikTok, and Pinterest. In the next segment, I'm going to show you the social media playbook that took MagnetMomentsCo from 20 followers to 5,000+ followers in six months, and how you leverage that to drive $1000+ per month in incremental Etsy revenue. This is where the real scaling happens.
+Now you're genuinely scaling. Your website shop is doing $3k/month, you've got two or three printers running, and you've moved past "this is just a hobby". The next challenge is *awareness*. You've optimized your Shopify listings, but Shopify organic traffic only gets you so far. The brands that do $5k+/month aren't just sitting on Shopify—they're driving traffic via Instagram, TikTok, and Pinterest. In the next segment, I'm going to show you the social media playbook that took MagnetMomentsCo from 20 followers to 5,000+ followers in six months, and how you leverage that to drive $1000+ per month in incremental Shopify revenue. This is where the real scaling happens.
 
 ---
 
@@ -439,11 +439,11 @@ Now you're genuinely scaling. Your website shop is doing $3k/month, you've got t
 
 ### [INTRO]
 
-You've built something beautiful and you've optimized your Etsy shop, but if nobody knows about you, Etsy's algorithm won't help you either. Here's what I learned: Etsy is a search engine, and like Google, it rewards traffic. Bring them customers, and Etsy rewards you with visibility. In this segment, I'm walking through the exact social media playbook I used to take MagnetMomentsCo from 0 to 5,000 followers in 6 months. Instagram Reels, TikTok, Pinterest—each platform has a different role in your funnel. I'll show you the content types that get 100k+ impressions, the posting frequency that works, and how to measure what's actually converting to sales. You'll also see my Etsy Ads strategy ($1–$5/day test budgets) and why customer reviews matter infinitely more than paid ads.
+You've built something beautiful and you've optimized your Shopify shop, but if nobody knows about you, Shopify's algorithm won't help you either. Here's what I learned: Shopify is a search engine, and like Google, it rewards traffic. Bring them customers, and Shopify rewards you with visibility. In this segment, I'm walking through the exact social media playbook I used to take MagnetMomentsCo from 0 to 5,000 followers in 6 months. Instagram Reels, TikTok, Pinterest—each platform has a different role in your funnel. I'll show you the content types that get 100k+ impressions, the posting frequency that works, and how to measure what's actually converting to sales. You'll also see my Shopify Ads strategy ($1–$5/day test budgets) and why customer reviews matter infinitely more than paid ads.
 
 ### [SCRIPT]
 
-Social media is the second-order lever. Etsy organic gets you 30% of sales. Social media gets you the other 70%.
+Social media is the second-order lever. Shopify organic gets you 30% of sales. Social media gets you the other 70%.
 
 Let me walk you through my actual feeds.
 
@@ -465,7 +465,7 @@ This is gold. Real people, real use, real emotion. This converts browsers to buy
 
 Hashtag strategy: I use 30 hashtags split into three tiers:
 - **High volume:** #3Dprinting #3Dprinter #magnetframe #fridgemagnet (1M+ posts)
-- **Medium volume:** #instaxmini #etsyshop #handmademagnets (10k–100k posts)
+- **Medium volume:** #instaxmini #shopifyshop #handmademagnets (10k–100k posts)
 - **Long tail:** #magnetsinsnapshot #3Dprintedgifts #fridgegallerywall (1k–10k posts)
 
 Posting time: Tuesday–Thursday, 2 PM Eastern is when Instagram engagement is highest. I schedule posts using Meta's native scheduler.
@@ -480,21 +480,21 @@ Viral sound tip: trending sounds on TikTok change daily. When you post a video w
 
 Pinterest is not a social network; it's a visual search engine. People search "magnet photo frame gift" on Pinterest the same way they search Google. If you have a pin for every product, every size, every color, you're putting yourself in front of searchers.
 
-I use Tailwind (free version with 100 pins/month) or Canva's native Pin creator to make 1000×1500px vertical pins from my Etsy listing photos. I pin them once a month and let them live. Old pins from 2 years ago still drive traffic to my Etsy shop. Pinterest is the gift that keeps giving.
+I use Tailwind (free version with 100 pins/month) or Canva's native Pin creator to make 1000×1500px vertical pins from my Shopify listing photos. I pin them once a month and let them live. Old pins from 2 years ago still drive traffic to my Shopify shop. Pinterest is the gift that keeps giving.
 
-Each pin links directly to the Etsy product. When someone clicks through from Pinterest, they're already 80% convinced—they found *exactly* what they were searching for.
+Each pin links directly to the Shopify product. When someone clicks through from Pinterest, they're already 80% convinced—they found *exactly* what they were searching for.
 
-**Etsy Ads: $1–$5/day test budget.**
+**Shopify Ads: $1–$5/day test budget.**
 
-Etsy's own ad platform (formerly called Etsy Ads, part of Offsite Ads) is the easiest entry to paid marketing. Here's how I run it:
+Shopify's own ad platform (formerly called Shopify Ads, part of Offsite Ads) is the easiest entry to paid marketing. Here's how I run it:
 
-I create a campaign for my best seller (Instax Mini frames, typically). I set a daily budget of $2. Etsy's algorithm will serve ads to people searching "instax mini frame", "photo frame magnet", "fridge magnet holder". When they click through and buy, I get the sale. I pay a 12–20% ad fee on top of the 10% I already pay in Etsy fees.
+I create a campaign for my best seller (Instax Mini frames, typically). I set a daily budget of $2. Shopify's algorithm will serve ads to people searching "instax mini frame", "photo frame magnet", "fridge magnet holder". When they click through and buy, I get the sale. I pay a 12–20% ad fee on top of the 10% I already pay in Shopify fees.
 
 Metric to watch: ROAS (return on ad spend). If I spend $2 and get $8 in sales, that's a 4x ROAS. I'm profitable. If I spend $2 and get $4 in sales, that's 2x ROAS. Still profitable (my margin is 7–8 per sale), but I lower the budget.
 
 After a month of $2/day testing, if I'm seeing 3x+ ROAS, I increase to $5/day. At $5/day, I'm looking at $1,500/month in ad spend. If that generates 4x ROAS = $6,000/month in attributed revenue. That's an extra $3,000/month profit after ad costs and fees.
 
-I don't spend more than $100–$150/month on Etsy Ads because at that point, I'd rather hire someone to help me post-process more frames than pay Etsy for visibility.
+I don't spend more than $100–$150/month on Shopify Ads because at that point, I'd rather hire someone to help me post-process more frames than pay Shopify for visibility.
 
 **Customer reviews: Your best multiplier.**
 
@@ -502,7 +502,7 @@ Every package I ship includes a thank-you card and a hand-written note:
 
 "Hi [Name],
 
-Thanks so much for your order! I'm Ajaya, the person behind [brand name]. If you love your frame, I'd be so grateful if you could leave a review on Etsy or tag me on Instagram @[brand Instagram].
+Thanks so much for your order! I'm Ajaya, the person behind [brand name]. If you love your frame, I'd be so grateful if you could leave a review on Shopify or tag me on Instagram @[brand Instagram].
 
 Your frames helped me keep the lights on. Thank you ❤️
 
@@ -510,7 +510,7 @@ Your frames helped me keep the lights on. Thank you ❤️
 
 Here's what happens: 30% of buyers leave a 5-star review. Those reviews are *social proof*. New buyer sees 150 five-star reviews? They're buying. New buyer sees 8 reviews? They're skeptical.
 
-I've had months where I focused on reviews (send thank-you cards, follow up with buyers asking for reviews) and saw a 40–50% boost in Etsy organic traffic. Reviews signal to Etsy's algorithm that you're legit.
+I've had months where I focused on reviews (send thank-you cards, follow up with buyers asking for reviews) and saw a 40–50% boost in Shopify organic traffic. Reviews signal to Shopify's algorithm that you're legit.
 
 I don't pay for reviews. I just ask nicely.
 
@@ -520,7 +520,7 @@ I don't pay for reviews. I just ask nicely.
 - Wednesday: Customer photo feature on Instagram (afternoon)
 - Thursday: Before/after carousel on Instagram (morning)
 - Friday: Compile the week's videos, upload to TikTok (evening)
-- Saturday: Pin all new Etsy listings to Pinterest (morning)
+- Saturday: Pin all new Shopify listings to Pinterest (morning)
 - Sunday: Plan next week, refresh hashtag research
 
 Total time: 2–3 hours per week. Not including the time I'm already filming (since that's part of the print farm workflow).
@@ -533,7 +533,7 @@ Total time: 2–3 hours per week. Not including the time I'm already filming (si
 - Before/after carousel post with comments visible
 - TikTok video being uploaded, sound selection shown
 - Pinterest pin created in Canva, showing dimensions (1000×1500px)
-- Etsy Ads dashboard with budget and ROAS visible
+- Shopify Ads dashboard with budget and ROAS visible
 - Customer thank-you card template shown
 - Hashtag research tool (eRank or free alternative) showing search volume
 - Calendar view of posting schedule
@@ -547,10 +547,10 @@ Total time: 2–3 hours per week. Not including the time I'm already filming (si
 - **Pinterest:** 1000×1500px pins for every product, drives long-tail search traffic, evergreen growth
 - **Hashtags:** 30 total (10 high volume + 10 medium + 10 long-tail)
 - **Posting time:** Tuesday–Thursday, 2 PM ET peak engagement
-- **Etsy Ads:** $1–$5/day test budget, track ROAS (aim for 3x+), scale only what works
+- **Shopify Ads:** $1–$5/day test budget, track ROAS (aim for 3x+), scale only what works
 - **Customer reviews:** thank-you card in every package, hand-written note, ask for reviews (30% rate), reviews drive 40–50% organic lift
 - **Time investment:** 2–3 hours/week for social + filming
-- **Content types by platform:** Instagram (Reels + Stories + carousel), TikTok (trending sounds), Pinterest (search), Etsy Ads (paid boost for hot sellers)
+- **Content types by platform:** Instagram (Reels + Stories + carousel), TikTok (trending sounds), Pinterest (search), Shopify Ads (paid boost for hot sellers)
 
 ### [TRANSITION]
 
@@ -572,7 +572,7 @@ Here's the conversation I have with custom requests at least three times a week:
 
 This is a custom request. It has several variables: specific photo dimensions, specific deadline, specific price expectation, specific emotional weight (it's a gift).
 
-Here's my response (I have this templated in Etsy's notes):
+Here's my response (I have this templated in Shopify's notes):
 
 ---
 
@@ -589,7 +589,7 @@ Does this work for you? If yes, I'll need:
 2. Your color preference
 3. Confirm the 3–5 day timeline works for you
 
-Once I hear back, I'll send you a custom Etsy listing to pay for, and I'll start the print immediately.
+Once I hear back, I'll send you a custom Shopify listing to pay for, and I'll start the print immediately.
 
 Thanks! — Ajaya"
 
@@ -644,7 +644,7 @@ Every custom design I create gets saved in my "2026 Custom Gallery" folder, labe
 
 50% of my repeat customers ask for variations of existing designs. "Can you do that dog frame again but in white instead of black?" That's a 2-minute modification. I quote $20 (base) + $5 (variation) = $25, I spend 7 minutes, I'm done. That's $214/hour profit.
 
-**Etsy messaging system:**
+**Shopify messaging system:**
 
 I enable custom order messaging so customers can ask questions before buying. I have templated responses for:
 - "Do you do [specific request]?" → "Yes! [scope explanation] [timeline] [pricing]. Interested? Message me with details."
@@ -662,7 +662,7 @@ Now my bio says: "Custom magnet frames 🎨" and my custom request rate has gone
 
 ### [VISUALS]
 
-- Etsy message thread with customer custom request (real example)
+- Shopify message thread with customer custom request (real example)
 - My templated response visible
 - TinkerCAD interface open with a dual-frame design
 - Modifier controls being adjusted (dimensions, color, text)
@@ -673,7 +673,7 @@ Now my bio says: "Custom magnet frames 🎨" and my custom request rate has gone
 - Custom design library folder shown (200+ files)
 - Pricing calculator spreadsheet for custom work
 - Instagram Reel showing custom montage (playing with 60k view count)
-- Etsy message templates displayed
+- Shopify message templates displayed
 - Before/after of STL render → finished print
 
 ### [KEY POINTS]
@@ -684,13 +684,13 @@ Now my bio says: "Custom magnet frames 🎨" and my custom request rate has gone
 - **Profit rate:** ~$27/hour on custom (similar to standard but higher ASP), repeat variations are $200+/hour
 - **When to say no:** impossible physics, <3 business days deadline, undervalued pricing, 500+ unit bulk orders
 - **Save library:** every custom design for 50% repeat rate, 2-minute modifications worth $15–$25
-- **Templated responses:** 4–5 FAQs in Etsy messaging, saves 1–2 hours/week
+- **Templated responses:** 4–5 FAQs in Shopify messaging, saves 1–2 hours/week
 - **Marketing custom:** showcase custom work on Instagram Reels, "Custom designs" in bio, drives 2–3 inquiries/week
 - **Preview process:** send STL render before printing, 2x free revisions, additional changes = new fee
 
 ### [TRANSITION]
 
-You've now got the entire playbook: cost structure that's profitable, Etsy shop optimized for conversion, photography that sells, scaling strategy, social media driving traffic, custom work at premium rates. You've gone from "curiosity about 3D printing" to "running a real business." In our final segment, I'm going to recap the entire journey and lay out your 30-day action plan so you can replicate what took me 2 years to figure out in 4 weeks.
+You've now got the entire playbook: cost structure that's profitable, Shopify shop optimized for conversion, photography that sells, scaling strategy, social media driving traffic, custom work at premium rates. You've gone from "curiosity about 3D printing" to "running a real business." In our final segment, I'm going to recap the entire journey and lay out your 30-day action plan so you can replicate what took me 2 years to figure out in 4 weeks.
 
 ---
 
@@ -698,7 +698,7 @@ You've now got the entire playbook: cost structure that's profitable, Etsy shop 
 
 ### [INTRO]
 
-We've covered a lot: from the physics of 3D printing to the psychology of writing Etsy listings to the operational reality of scaling from one printer to four. This final segment is about consolidating everything into an actionable plan and motivating you to actually start. I'm not going to sugarcoat it: the first print might fail. Your first listing might not sell for a week. But if you follow the roadmap I've built here, you will hit $1,000 in revenue by month three. And if you get *any* traction after that, the compounding revenue from repeat customers and social media reach is genuinely life-changing. Let me recap the entire journey and give you your 30-day action plan.
+We've covered a lot: from the physics of 3D printing to the psychology of writing Shopify listings to the operational reality of scaling from one printer to four. This final segment is about consolidating everything into an actionable plan and motivating you to actually start. I'm not going to sugarcoat it: the first print might fail. Your first listing might not sell for a week. But if you follow the roadmap I've built here, you will hit $1,000 in revenue by month three. And if you get *any* traction after that, the compounding revenue from repeat customers and social media reach is genuinely life-changing. Let me recap the entire journey and give you your 30-day action plan.
 
 ### [SCRIPT]
 
@@ -723,7 +723,7 @@ You have a working Instax frame. Now you extend it. Create:
 
 This is all in TinkerCAD. You're remixing and parameterizing. Total time: 8 hours.
 
-**Week 3: Open Etsy Shop and Launch First Listings**
+**Week 3: Open Shopify Shop and Launch First Listings**
 
 You create your shop, spend 4 hours writing listing titles and descriptions using the formulas I gave you. You upload 15 photos (3 per product, or 5 high-quality photos for hero products, or 10–15 photos if you're doing color variations). You launch five listings.
 
@@ -731,7 +731,7 @@ Price them conservatively: $10–$15 for Instax variations, $18–$20 for larger
 
 Guess what happens? Nobody buys for 3–4 days.
 
-This is normal. Etsy's algorithm starts serving your listings to searchers, but visibility is low until you have your first few sales and reviews.
+This is normal. Shopify's algorithm starts serving your listings to searchers, but visibility is low until you have your first few sales and reviews.
 
 **Week 4: First Sale**
 
@@ -741,23 +741,23 @@ You make it, pack it carefully, ship it. You include a thank-you card with a han
 
 That customer leaves a five-star review. "Beautiful print quality. Arrived fast. Highly recommend!"
 
-That review signals to Etsy: this is a legit shop.
+That review signals to Shopify: this is a legit shop.
 
 Two days later, you get another order. Then two more.
 
-By the end of Week 4, you've sold 5 frames. You've pocketed $40 profit (after Etsy fees and materials). Your printer is almost paid for.
+By the end of Week 4, you've sold 5 frames. You've pocketed $40 profit (after Shopify fees and materials). Your printer is almost paid for.
 
 **Month 2:**
 
 You post 3x per week on Instagram. You buy a $25 lightbox and shoot new photos. You're consistently posting content.
 
-Your Etsy shop is now showing 20–40 visitors per day. 30% of visitors buy a frame. You're averaging 6–8 sales per week.
+Your Shopify shop is now showing 20–40 visitors per day. 30% of visitors buy a frame. You're averaging 6–8 sales per week.
 
 You've made $200–$300 profit. Your printer is paid for. You are now in genuine profit territory.
 
 **Month 3:**
 
-You add Etsy Ads ($2/day). Your traffic jumps. You're pulling 20+ orders per week. Post-processing is taking 4+ hours daily.
+You add Shopify Ads ($2/day). Your traffic jumps. You're pulling 20+ orders per week. Post-processing is taking 4+ hours daily.
 
 You buy a second printer. Now you can batch print.
 
@@ -767,11 +767,11 @@ You've made $800–$1,200 profit. You're reinvesting $300–$400 in printer #2. 
 
 - **Months 1–2:** One printer, learning, $300–$500 cumulative profit
 - **Months 3–4:** Second printer acquired, $1,000–$2,500 monthly revenue
-- **Months 5–6:** Etsy Ads scaling, Instagram growing, $2,000–$3,500 monthly revenue
+- **Months 5–6:** Shopify Ads scaling, Instagram growing, $2,000–$3,500 monthly revenue
 - **Months 7–9:** Third printer, custom orders scaling, $3,000–$5,000 monthly revenue
 - **Months 10–12:** Operational efficiency lock-in, social media compounding, $4,000–$6,000 monthly revenue
 
-If you follow this roadmap, your Year 1 cumulative revenue is $20,000–$25,000. After expenses (printers, filament, Etsy fees, Ads), your Year 1 net profit is $8,000–$12,000.
+If you follow this roadmap, your Year 1 cumulative revenue is $20,000–$25,000. After expenses (printers, filament, Shopify fees, Ads), your Year 1 net profit is $8,000–$12,000.
 
 **That's a side business that pays for cable, groceries, a car payment, or a nice vacation.**
 
@@ -779,7 +779,7 @@ If you follow this roadmap, your Year 1 cumulative revenue is $20,000–$25,000.
 
 Most people won't finish Week 2. They'll print a frame, it'll have a flaw, and they'll convince themselves "3D printing is hard" and go back to TikTok.
 
-Some people will finish Week 3 but won't post on Instagram or won't check their Etsy shop for 2 weeks and miss customer messages.
+Some people will finish Week 3 but won't post on Instagram or won't check their Shopify shop for 2 weeks and miss customer messages.
 
 The people who win are the ones who show up consistently. They print. They ship. They post. They reply to messages the same day.
 
@@ -790,8 +790,8 @@ You don't need to be the best designer or the fastest printer. You need to be co
 1. **By Sunday:** Order a printer. Bambu Lab A1 Mini ($199) or Prusa Mini+ ($349). Neither is wrong.
 2. **By next Friday:** Your printer arrives. Unbox it. Print an Instax frame. Fail. Learn. Print again.
 3. **Week 2:** Design four variations. Spend time in TinkerCAD.
-4. **Week 3:** Set up Etsy shop. Write listing titles. Upload photos. Launch. (If you need help with any of this, I have templates and guides in the course materials.)
-5. **Week 4:** Post on Instagram 3x. Answer every Etsy message within 24 hours. Ship your first order carefully.
+4. **Week 3:** Set up Shopify shop. Write listing titles. Upload photos. Launch. (If you need help with any of this, I have templates and guides in the course materials.)
+5. **Week 4:** Post on Instagram 3x. Answer every Shopify message within 24 hours. Ship your first order carefully.
 
 **Resources you have:**
 
@@ -803,8 +803,8 @@ You don't need to be the best designer or the fastest printer. You need to be co
 
 **Success metrics that matter:**
 
-- If you get 5 sales in Month 1, you're ahead of 90% of Etsy sellers.
-- If you hit $500 monthly revenue by Month 3, you're in the top 15% of Etsy side hustlers.
+- If you get 5 sales in Month 1, you're ahead of 90% of Shopify sellers.
+- If you hit $500 monthly revenue by Month 3, you're in the top 15% of Shopify side hustlers.
 - If you're consistently profitable every month, you've moved from hobby to business.
 
 **The motivational close:**
@@ -843,7 +843,7 @@ The printer is waiting.
 
 **Segments:**
 1. Cost Analysis & Pricing (20 min)
-2. Etsy Store Setup (20 min)
+2. Shopify Store Setup (20 min)
 3. Product Photography (15 min)
 4. Scaling Production (20 min)
 5. Marketing & Social Media (15 min)
@@ -853,8 +853,8 @@ The printer is waiting.
 **Total script word count:** ~5,100 words
 
 **Key learnings:**
-- Materials cost per Instax frame: $0.57; retail $10 → $7.93 profit after Etsy fees
-- Etsy fees total ~10% (listing + transaction + payment processing)
+- Materials cost per Instax frame: $0.57; retail $10 → $7.93 profit after Shopify fees
+- Shopify fees total ~10% (listing + transaction + payment processing)
 - Consistent $1,000+ monthly revenue achievable by Month 3 with strategy
 - Scaling path: 1 printer → 2 printers (Month 3) → 3–5 printers (Month 6+)
 - Social media (Instagram 3x/week + TikTok + Pinterest) drives 70% of sales

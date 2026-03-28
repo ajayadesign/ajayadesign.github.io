@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — 3D Print Academy | AjayaDesign</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#0A0A0F" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24', 'amd-red-text': '#FF6B6B', 'amd-red-btn': '#D91920',
+            'electric-blue': '#00D4FF', 'surface': '#0A0A0F', 'surface-alt': '#111118',
+            'surface-card': '#16161F', 'border-dim': '#1E1E2A', 'neon-green': '#39FF14',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Inter"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #0A0A0F; color: #e5e7eb; font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Nav -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <a href="/" class="flex items-center gap-2">
+        <span class="inline-block w-3 h-3 rounded-full bg-amd-red animate-pulse"></span>
+        <span class="font-mono font-bold text-white text-lg">Ajaya<span class="text-amd-red-text">Design</span></span>
+      </a>
+      <div class="flex items-center gap-4">
+        <a href="/3D-print/portal/" class="text-sm text-gray-400 hover:text-white transition-colors">← Portal</a>
+        <span class="px-2 py-0.5 bg-amd-red/20 text-amd-red-text text-xs font-mono font-bold rounded">ADMIN</span>
+        <button id="admin-signout" class="hidden text-sm font-mono text-gray-500 hover:text-amd-red transition-colors">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Auth Gate -->
+  <div id="admin-gate" class="flex-1 flex items-center justify-center pt-20">
+    <div class="text-center">
+      <p class="text-gray-500 font-mono text-sm">Verifying admin access...</p>
+    </div>
+  </div>
+
+  <!-- Admin Panel (hidden until admin auth) -->
+  <div id="admin-panel" class="hidden flex-1 pt-24 pb-16">
+    <div class="max-w-5xl mx-auto px-6">
+
+      <!-- Header -->
+      <div class="mb-10">
+        <h1 class="font-mono text-white text-2xl font-bold mb-1">🔐 Student Access Control</h1>
+        <p class="text-gray-500 text-sm font-mono">Approve, deny, or revoke student access to the 3D Print Academy portal.</p>
+      </div>
+
+      <!-- Pending Users -->
+      <div class="mb-10">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="text-xl">⏳</span>
+          <h2 class="font-mono text-white text-lg font-bold">Pending Approval</h2>
+        </div>
+        <div id="pending-list">
+          <p class="text-gray-500 text-sm font-mono">Loading...</p>
+        </div>
+      </div>
+
+      <div class="border-t border-border-dim my-8"></div>
+
+      <!-- Approved Users -->
+      <div class="mb-10">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="text-xl">✅</span>
+          <h2 class="font-mono text-white text-lg font-bold">Approved Students</h2>
+        </div>
+        <div id="approved-list">
+          <p class="text-gray-500 text-sm font-mono">Loading...</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-border-dim py-8">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <p class="text-gray-600 text-xs font-mono">&copy; <script>document.write(new Date().getFullYear())</script> AjayaDesign — Admin Panel</p>
+    </div>
+  </footer>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-database-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script src="/3D-print/portal/portal-auth.js"></script>
+  <script>PortalAuth.initAdmin();</script>
+</body>
+</html>

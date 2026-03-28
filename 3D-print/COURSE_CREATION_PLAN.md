@@ -80,7 +80,7 @@
 |---------|------|------|-------|
 | Cost per unit breakdown | 🤖 AI slides + narration | Gamma → ElevenLabs | Spreadsheet: filament + magnets + time + packaging |
 | Pricing strategy ($5–$15 retail) | 🤖 AI slides + narration | Gamma → ElevenLabs | Margin analysis, competitor pricing |
-| Etsy store setup | 🖥️ Screen record | OBS Studio | Full walkthrough: create listing, SEO, photos |
+| Shopify store setup | 🖥️ Screen record | OBS Studio | Full walkthrough: create store, listing SEO, photos. Upsell AjayaDesign website builds. |
 | Craft fair strategy | 🤖 AI slides + 📹 Film | Gamma + phone | Tips + B-roll of your actual booth setup |
 | Product photography | 📹 Film yourself | Phone | Show lighting setup, angles, backdrop |
 | Packaging ideas | 📹 Film yourself | Phone | Show your actual packaging process |
@@ -94,7 +94,7 @@
 | Production Type | Modules | Est. Time to Create | Tool Stack |
 |-----------------|---------|---------------------|------------|
 | 📹 Film yourself (physical demos) | 1,3,4,5,6 | ~12 hours filming + 6 hrs editing | Phone + tripod + OBS for editing |
-| 🖥️ Screen record (CAD/slicer/Etsy) | 1,2,3,4,6 | ~8 hours recording + 4 hrs editing | OBS Studio (free) |
+| 🖥️ Screen record (CAD/slicer/Shopify) | 1,2,3,4,6 | ~8 hours recording + 4 hrs editing | OBS Studio (free) |
 | 🤖 AI slides + narration | 1,2,4,5,6 | ~4 hours scripting → 1 hr generation | Gamma.app ($10/mo) + ElevenLabs ($5/mo) |
 | 🎙️ NotebookLM audio recaps | All 6 | ~2 hours (upload scripts, generate) | Google NotebookLM (free) |
 | 📦 Downloadable resources | 1,4,5,6 | ~3 hours creating | Google Sheets, PDF (Canva free) |

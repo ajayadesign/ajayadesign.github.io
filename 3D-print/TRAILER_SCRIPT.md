@@ -47,14 +47,14 @@
 3. The portal dashboard showing 6 modules
 4. Pricing calculator with numbers filling in
 **Text overlay**: "I'll teach you everything"
-**Voiceover**: "I built a step-by-step course — from 'what's an STL file' to running your own Etsy shop. Six modules. Forty-four lessons. Plus all the STL files to start selling day one."
+**Voiceover**: "I built a step-by-step course — from 'what's an STL file' to running your own Shopify store. Six modules. Forty-four lessons. Plus all the STL files to start selling day one."
 
 ---
 
 ### [0:32–0:40] SOCIAL PROOF / RESULTS
 **Visual**: 
 1. Fridge full of beautiful frames (different styles, colors)
-2. Etsy order notifications popping up (mockup)
+2. Shopify order notifications popping up (mockup)
 3. Hands unwrapping a packaged frame (customer POV)
 **Text overlay**: "From zero → first sale in under a week"
 **Voiceover**: "Most students print their first frame within 48 hours and make their first sale within a week."
@@ -97,7 +97,7 @@ Line 3: "Bundle — $349"
 ### What you can generate with AI:
 - **Music**: Suno.ai or free YouTube Audio Library
 - **Text overlays**: CapCut (free) or DaVinci Resolve
-- **Mockup Etsy notifications**: Screenshot + animate in CapCut
+- **Mockup Shopify notifications**: Screenshot + animate in CapCut
 
 ### Estimated filming time: 2–3 hours
 ### Estimated editing time: 1–2 hours in CapCut
