@@ -30,6 +30,9 @@
     stl:     { modules: [],             downloads: true }
   };
 
+  var LESSON_COUNTS = { 1: 7, 2: 7, 3: 7, 4: 8, 5: 7, 6: 7 };
+  var TOTAL_LESSONS = 43;
+
   var app = firebase.initializeApp(window.__firebaseConfig);
   var auth = firebase.auth();
   var db = firebase.database();
@@ -129,8 +132,33 @@
           if (check) check.classList.remove('hidden');
         }
       }
+      var lessonsDone = 0;
+      Object.keys(progress).forEach(function(k) {
+        if (k.indexOf('lesson-') === 0 && progress[k]) lessonsDone++;
+      });
       if ($progressBar) $progressBar.style.width = Math.round((completed / 6) * 100) + '%';
-      if ($progressText) $progressText.textContent = completed + ' / 6 modules';
+      if ($progressText) $progressText.textContent = completed + ' / 6 modules' + (lessonsDone > 0 ? ' \u00B7 ' + lessonsDone + '/' + TOTAL_LESSONS + ' lessons' : '');
+
+      // Per-module lesson progress on cards
+      for (var m = 1; m <= 6; m++) {
+        var card = document.getElementById('mod-' + m);
+        if (!card) continue;
+        var mLessons = LESSON_COUNTS[m] || 7;
+        var mDone = 0;
+        for (var l = 1; l <= mLessons; l++) {
+          if (progress['lesson-' + m + '-' + l]) mDone++;
+        }
+        if (mDone > 0) {
+          var sub = card.querySelector('.text-gray-500.text-xs');
+          if (sub) sub.textContent += ' \u00B7 ' + mDone + '/' + mLessons + ' lessons';
+        }
+      }
+
+      // Show booking section for session/bundle tiers
+      var $booking = document.getElementById('booking-section');
+      if ($booking && (data.tier === 'session' || data.tier === 'bundle' || data.tier === 'admin')) {
+        $booking.classList.remove('hidden');
+      }
     }
 
     function showPending(user) {
@@ -180,9 +208,23 @@
       $markBtn.addEventListener('click', function () {
         var u = auth.currentUser;
         if (!u) return;
-        db.ref('courses/' + u.uid + '/progress/' + moduleId).set(true).then(function () {
-          document.getElementById('complete-icon').textContent = '✓';
+        var updates = {};
+        updates[moduleId] = true;
+        var mNum = moduleId.replace('module-', '');
+        var lessonContainer = document.querySelector('.space-y-8.mb-12');
+        if (lessonContainer) {
+          for (var j = 1; j <= lessonContainer.children.length; j++) {
+            updates['lesson-' + mNum + '-' + j] = true;
+          }
+        }
+        db.ref('courses/' + u.uid + '/progress').update(updates).then(function () {
+          document.getElementById('complete-icon').textContent = '\u2713';
           $markBtn.classList.add('opacity-50');
+          var allChecks = document.querySelectorAll('.lesson-check');
+          for (var k = 0; k < allChecks.length; k++) {
+            allChecks[k].textContent = '\u2713';
+            allChecks[k].style.color = '#39FF14';
+          }
         });
       });
     } else if ($markBtn) {
@@ -197,6 +239,91 @@
     if (data.progress && data.progress[moduleId]) {
       document.getElementById('complete-icon').textContent = '✓';
       document.getElementById('mark-complete').classList.add('opacity-50');
+    }
+    // Initialize per-lesson tracking and video players on module pages
+    if (/^module-[1-6]$/.test(moduleId)) {
+      initLessonTracking(moduleId, data.progress || {});
+      initVideoPlayers(moduleId);
+    }
+  }
+
+  /* ── Per-Lesson Progress Tracking ── */
+  function initLessonTracking(moduleId, progress) {
+    var moduleNum = parseInt(moduleId.replace('module-', ''), 10);
+    var container = document.querySelector('.space-y-8.mb-12');
+    if (!container) return;
+    var cards = container.children;
+    var totalLessons = cards.length;
+
+    for (var i = 0; i < cards.length; i++) {
+      var lessonNum = i + 1;
+      var lessonId = 'lesson-' + moduleNum + '-' + lessonNum;
+      cards[i].setAttribute('data-lesson-id', lessonId);
+
+      var h3 = cards[i].querySelector('h3');
+      if (h3) {
+        var check = document.createElement('span');
+        check.className = 'lesson-check ml-auto cursor-pointer text-lg transition-colors flex-shrink-0';
+        check.setAttribute('data-lesson', lessonId);
+        if (progress[lessonId]) {
+          check.textContent = '\u2713';
+          check.style.color = '#39FF14';
+        } else {
+          check.textContent = '\u2610';
+          check.style.color = '#4b5563';
+        }
+        h3.appendChild(check);
+      }
+    }
+
+    // Event delegation for lesson checkboxes
+    container.addEventListener('click', function(e) {
+      var target = e.target.closest('.lesson-check');
+      if (!target) return;
+      var lid = target.getAttribute('data-lesson');
+      if (!lid || target.textContent === '\u2713') return;
+      var u = auth.currentUser;
+      if (!u) return;
+      db.ref('courses/' + u.uid + '/progress/' + lid).set(true).then(function() {
+        target.textContent = '\u2713';
+        target.style.color = '#39FF14';
+        // Auto-complete module when all lessons done
+        var allDone = true;
+        for (var n = 1; n <= totalLessons; n++) {
+          var c = document.querySelector('[data-lesson="lesson-' + moduleNum + '-' + n + '"]');
+          if (!c || c.textContent !== '\u2713') { allDone = false; break; }
+        }
+        if (allDone) {
+          db.ref('courses/' + u.uid + '/progress/' + moduleId).set(true);
+          var icon = document.getElementById('complete-icon');
+          var btn = document.getElementById('mark-complete');
+          if (icon) icon.textContent = '\u2713';
+          if (btn) btn.classList.add('opacity-50');
+        }
+      });
+    });
+  }
+
+  /* ── YouTube Video Player Initialization ── */
+  function initVideoPlayers(moduleId) {
+    var moduleNum = parseInt(moduleId.replace('module-', ''), 10);
+    var config = window.VIDEO_CONFIG || {};
+    var placeholders = document.querySelectorAll('.video-placeholder');
+    for (var i = 0; i < placeholders.length; i++) {
+      var lessonId = 'lesson-' + moduleNum + '-' + (i + 1);
+      var videoId = config[lessonId];
+      if (videoId && /^[\w-]{11}$/.test(videoId)) {
+        var iframe = document.createElement('iframe');
+        iframe.className = 'w-full h-full rounded-b-2xl';
+        iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?rel=0&modestbranding=1';
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('loading', 'lazy');
+        placeholders[i].innerHTML = '';
+        placeholders[i].appendChild(iframe);
+        placeholders[i].style.border = 'none';
+      }
     }
   }
 

@@ -24,8 +24,8 @@
         ".read": "auth != null && auth.uid === $uid",
         ".write": "auth != null && auth.uid === $uid",
         "progress": {
-          "$module": {
-            ".validate": "newData.isBoolean() && $module.matches(/^module-[1-6]$/)"
+          "$key": {
+            ".validate": "newData.isBoolean() && ($key.matches(/^module-[1-6]$/) || $key.matches(/^lesson-[1-6]-[1-9]$/))"
           }
         },
         "$other": {
