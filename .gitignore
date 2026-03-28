@@ -16,6 +16,7 @@ playwright-report/
 .vscode/
 
 # Secrets
+.env
 automation/.env
 automation/firebase-service-account.json
 
