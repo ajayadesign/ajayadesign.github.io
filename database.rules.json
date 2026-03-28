@@ -26,7 +26,7 @@
         ".write": "auth != null && auth.uid === $uid",
         "progress": {
           "$key": {
-            ".validate": "newData.isBoolean() && ($key.matches(/^module-[1-6]$/) || $key.matches(/^lesson-[1-6]-[1-9]$/))"
+            ".validate": "newData.isBoolean() && ($key.matches(/^module-[1-6]$/) || $key.matches(/^lesson-[1-6]-[1-9][0-9]?$/))"
           }
         },
         "$other": {

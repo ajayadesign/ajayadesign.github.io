@@ -375,6 +375,8 @@
     var $cc = document.getElementById('admin-command-center');
     if (!$cc) return;
     $cc.classList.remove('hidden');
+    var $content = document.getElementById('admin-cc-content');
+    if (!$content) return;
 
     // Load all data in parallel
     Promise.all([
@@ -390,7 +392,10 @@
       var allCourses = snaps[3].val() || {};
       var emailQueue = snaps[4].val() || {};
 
-      renderAdminCommandCenter($cc, approved, pending, preApproved, allCourses, emailQueue);
+      renderAdminCommandCenter($content, approved, pending, preApproved, allCourses, emailQueue);
+    }).catch(function(err) {
+      console.error('Command center error:', err);
+      $content.innerHTML = '<p class="text-amd-red-text text-sm font-mono">Failed to load analytics: ' + escapeHtml(err.message || 'Unknown error') + '</p>';
     });
   }
 
@@ -666,7 +671,11 @@
       };
       db.ref('approved_users/' + uid).update(updates).then(function() {
         initAdminCommandCenter(); // Refresh
+      }).catch(function(err) {
+        alert('Failed to book session: ' + err.message);
       });
+    }).catch(function(err) {
+      alert('Error reading user: ' + err.message);
     });
   }
 
@@ -697,7 +706,11 @@
       }
       db.ref('approved_users/' + uid).update(updates).then(function() {
         initAdminCommandCenter(); // Refresh
+      }).catch(function(err) {
+        alert('Failed to complete session: ' + err.message);
       });
+    }).catch(function(err) {
+      alert('Error reading user: ' + err.message);
     });
   }
 
@@ -770,6 +783,9 @@
           + '</div></div>';
       });
       $list.innerHTML = html;
+    }, function(err) {
+      console.error('Pending users error:', err);
+      $list.innerHTML = '<p class="text-amd-red-text text-sm font-mono">Failed to load: ' + escapeHtml(err.message || 'Permission denied') + '</p>';
     });
   }
 
@@ -796,6 +812,9 @@
           + '</div>';
       });
       $list.innerHTML = html;
+    }, function(err) {
+      console.error('Approved users error:', err);
+      $list.innerHTML = '<p class="text-amd-red-text text-sm font-mono">Failed to load: ' + escapeHtml(err.message || 'Permission denied') + '</p>';
     });
   }
 
@@ -831,6 +850,9 @@
         completed.forEach(function(u) { html += adminSessionRow(u, 'completed'); });
       }
       $list.innerHTML = html;
+    }, function(err) {
+      console.error('Session users error:', err);
+      $list.innerHTML = '<p class="text-amd-red-text text-sm font-mono">Failed to load: ' + escapeHtml(err.message || 'Permission denied') + '</p>';
     });
   }
 
@@ -881,23 +903,30 @@
         payment_ref: payRef || '',
         sessions_remaining: tier === 'bundle' ? 2 : tier === 'session' ? 1 : 0
       }).then(function () {
-        // Remove from pending
         db.ref('pending_users/' + uid).remove();
+      }).catch(function(err) {
+        alert('Failed to approve: ' + err.message);
       });
+    }).catch(function(err) {
+      alert('Error reading user: ' + err.message);
     });
   }
 
   function denyUser(uid) {
     var user = auth.currentUser;
     if (!user || !isAdmin(user.email)) return;
-    db.ref('pending_users/' + uid).remove();
+    db.ref('pending_users/' + uid).remove().catch(function(err) {
+      alert('Failed to deny: ' + err.message);
+    });
   }
 
   function revokeUser(uid) {
     var user = auth.currentUser;
     if (!user || !isAdmin(user.email)) return;
     if (!confirm('Revoke access for this user?')) return;
-    db.ref('approved_users/' + uid).remove();
+    db.ref('approved_users/' + uid).remove().catch(function(err) {
+      alert('Failed to revoke: ' + err.message);
+    });
   }
 
   /* ── Helpers ── */
