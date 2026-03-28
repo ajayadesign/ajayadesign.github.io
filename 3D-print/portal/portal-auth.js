@@ -33,6 +33,8 @@
   var LESSON_COUNTS = { 1: 7, 2: 7, 3: 7, 4: 8, 5: 7, 6: 7 };
   var TOTAL_LESSONS = 43;
 
+  var CALENDLY_URL = 'https://calendly.com/ajayadesign/3d-print-1on1';
+
   var app = firebase.initializeApp(window.__firebaseConfig);
   var auth = firebase.auth();
   var db = firebase.database();
@@ -116,6 +118,24 @@
       });
     });
 
+    function initCalendlyEmbed(user, $container, $btn) {
+      if (!$container) return;
+      // Smooth-show the embed area
+      $container.style.minHeight = '660px';
+      if ($btn) {
+        $btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          $container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+      // Prefill name + email from Firebase user
+      var prefill = '';
+      if (user.email) prefill += '&email=' + encodeURIComponent(user.email);
+      if (user.displayName) prefill += '&name=' + encodeURIComponent(user.displayName);
+      $container.innerHTML = '<iframe src="' + CALENDLY_URL + '?embed_type=Inline&embed_domain=' + location.hostname + prefill
+        + '" width="100%" height="660" frameborder="0" title="Schedule your 1-on-1 session" style="border-radius:12px"></iframe>';
+    }
+
     function showDashboard(user, data) {
       $login.classList.add('hidden');
       if ($pending) $pending.classList.add('hidden');
@@ -166,16 +186,20 @@
         var sessDate = data.session_date;
         var $bookingTitle = $booking.querySelector('h2');
         var $bookingDesc = $booking.querySelector('p');
-        var $bookingBtn = $booking.querySelector('a');
-        if (sessCompleted) {
+        var $bookingBtn = document.getElementById('booking-btn');
+        var $calendlyEmbed = document.getElementById('calendly-embed');
+        if (sessCompleted && (!sessRemain || sessRemain <= 0)) {
           if ($bookingTitle) $bookingTitle.textContent = '1-on-1 Session Complete \u2713';
-          if ($bookingDesc) $bookingDesc.textContent = 'Session completed' + (sessDate ? ' on ' + sessDate : '') + '. ' + (sessRemain > 0 ? sessRemain + ' session(s) remaining.' : 'All sessions used.');
-          if ($bookingBtn) { $bookingBtn.textContent = sessRemain > 0 ? 'Book Another \u2192' : 'All Done!'; if (!sessRemain) $bookingBtn.classList.add('opacity-50', 'pointer-events-none'); }
-          $booking.classList.remove('border-electric-blue/30'); $booking.classList.add('border-neon-green/30');
+          if ($bookingDesc) $bookingDesc.textContent = 'Session completed' + (sessDate ? ' on ' + sessDate : '') + '. All sessions used.';
+          if ($bookingBtn) { $bookingBtn.textContent = 'All Done!'; $bookingBtn.classList.add('opacity-50', 'pointer-events-none'); }
+          $booking.querySelector('.rounded-2xl').classList.remove('border-electric-blue/30'); $booking.querySelector('.rounded-2xl').classList.add('border-neon-green/30');
         } else if (sessBooked && sessDate) {
           if ($bookingTitle) $bookingTitle.textContent = '\uD83D\uDCC5 Session Scheduled';
-          if ($bookingDesc) $bookingDesc.textContent = 'Your session is booked for ' + sessDate + '. You\u2019ll receive a calendar invite with the meeting link.';
+          if ($bookingDesc) $bookingDesc.textContent = 'Your session is booked for ' + sessDate + '. You\u2019ll receive a calendar invite with the meeting link.' + (sessRemain > 0 ? ' ' + sessRemain + ' session(s) remaining after this.' : '');
           if ($bookingBtn) { $bookingBtn.textContent = 'Scheduled \u2713'; $bookingBtn.classList.add('opacity-50', 'pointer-events-none'); }
+        } else {
+          // Show Calendly inline embed
+          initCalendlyEmbed(user, $calendlyEmbed, $bookingBtn);
         }
       }
     }

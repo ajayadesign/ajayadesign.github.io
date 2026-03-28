@@ -542,7 +542,7 @@ function getDay14Body(name, tier) {
   if (tier === 'stl') {
     upsell = '\n\nWant to level up? You\'re on the STL-only plan. Upgrade to the Full Course ($97):\n→ https://ajayadesign.github.io/contact/?ref=3d-course-upgrade';
   } else if (tier === 'course') {
-    upsell = '\n\nWant personal guidance? Book a 1-on-1 live session ($149):\n→ https://ajayadesign.github.io/contact/?ref=3d-mentorship-upgrade';
+    upsell = '\n\nWant personal guidance? Book a 1-on-1 live session ($149):\n\u2192 https://calendly.com/ajayadesign/3d-print-1on1';
   }
 
   return 'Hey ' + name + ',\n\n'
@@ -571,7 +571,7 @@ function getDay14Html(name, tier) {
   } else if (tier === 'course') {
     upsell = '<div style="background:#f0f9ff;border-left:4px solid #00D4FF;padding:16px;margin:16px 0;border-radius:4px">'
       + '<strong>Want personal guidance?</strong> Get a 1-on-1 live session — print audit, slicer tuning, Shopify setup:'
-      + '<br><a href="https://ajayadesign.github.io/contact/?ref=3d-mentorship-upgrade" style="color:#ED1C24;font-weight:bold">Book 1-on-1 Session ($149) →</a></div>';
+      + '<br><a href="https://calendly.com/ajayadesign/3d-print-1on1" style="color:#ED1C24;font-weight:bold">Book 1-on-1 Session ($149) \u2192</a></div>';
   }
 
   return wrapEmail(
