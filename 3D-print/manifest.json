@@ -1,0 +1,25 @@
+{
+  "name": "3D Print Academy",
+  "short_name": "3D Academy",
+  "description": "Learn to design, 3D print, and sell custom magnet frames",
+  "start_url": "/3D-print/portal/",
+  "scope": "/3D-print/",
+  "display": "standalone",
+  "background_color": "#0A0A0F",
+  "theme_color": "#ED1C24",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education"]
+}

@@ -185,6 +185,11 @@
       if ($progressBar) $progressBar.style.width = Math.round((completed / 6) * 100) + '%';
       if ($progressText) $progressText.textContent = completed + ' / 6 modules' + (lessonsDone > 0 ? ' \u00B7 ' + lessonsDone + '/' + TOTAL_LESSONS + ' lessons' : '');
 
+      // Certificate of completion — show when all 6 modules done
+      if (completed === 6) {
+        showCertificate(user, data);
+      }
+
       // Per-module lesson progress on cards
       for (var m = 1; m <= 6; m++) {
         var card = document.getElementById('mod-' + m);
@@ -395,6 +400,38 @@
     }
   }
 
+  /* ── Certificate of Completion ── */
+  function showCertificate(user, data) {
+    var $cert = document.getElementById('certificate-section');
+    if (!$cert) {
+      // Create certificate section dynamically after progress bar
+      var $progressWrap = document.querySelector('#progress-bar').closest('.mb-10');
+      if (!$progressWrap) return;
+      $cert = document.createElement('div');
+      $cert.id = 'certificate-section';
+      $cert.className = 'mb-10';
+      $progressWrap.parentNode.insertBefore($cert, $progressWrap.nextSibling);
+    }
+    var name = user.displayName || 'Student';
+    var date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    $cert.innerHTML = '<div class="p-6 rounded-2xl border-2 border-neon-green/40 bg-gradient-to-br from-neon-green/5 to-surface-card text-center">'
+      + '<p class="text-neon-green font-mono text-xs font-bold tracking-widest mb-2">CERTIFICATE OF COMPLETION</p>'
+      + '<h2 class="font-mono text-white text-2xl font-bold mb-1">\uD83C\uDF93 Congratulations, ' + escapeHtml(name.split(' ')[0]) + '!</h2>'
+      + '<p class="text-gray-400 text-sm mb-4">You completed all 6 modules of the 3D Print Academy.</p>'
+      + '<div class="inline-block p-6 rounded-xl bg-surface border border-border-dim mb-4" id="cert-card">'
+      + '<p class="font-mono text-gray-500 text-xs mb-3">This certifies that</p>'
+      + '<p class="font-mono text-white text-xl font-bold mb-1">' + escapeHtml(name) + '</p>'
+      + '<p class="text-gray-400 text-sm mb-3">has successfully completed the</p>'
+      + '<p class="font-mono text-electric-blue text-lg font-bold mb-3">3D Print Academy</p>'
+      + '<p class="text-gray-500 text-xs">All 6 Modules \u2022 ' + TOTAL_LESSONS + ' Lessons \u2022 Magnet Frame Design & Business</p>'
+      + '<div class="border-t border-border-dim mt-4 pt-4 flex justify-between items-center">'
+      + '<div class="text-left"><p class="text-gray-500 text-xs">' + escapeHtml(date) + '</p></div>'
+      + '<div class="text-right"><p class="font-mono text-amd-red-text text-xs font-bold">AjayaDesign</p></div>'
+      + '</div></div>'
+      + '<button onclick="window.print()" class="px-5 py-2 bg-neon-green/20 text-neon-green border border-neon-green/30 rounded-lg font-mono text-sm font-semibold hover:bg-neon-green/30 transition-colors">\uD83D\uDDA8\uFE0F Print Certificate</button>'
+      + '</div>';
+  }
+
   /* ── Admin Command Center (portal dashboard, admin-only) ── */
   function initAdminCommandCenter() {
     var $cc = document.getElementById('admin-command-center');
@@ -526,6 +563,29 @@
           + '<p class="text-gray-500 text-xs">' + escapeHtml(s.email) + ' \u2022 ' + s.modules + '/6 modules \u2022 ' + s.lessons + '/' + TOTAL_LESSONS + ' lessons</p></div>'
           + '<span class="text-amd-red-text text-xs font-mono">' + daysSince(s.approved_at) + 'd ago</span></div>';
       });
+      html += '</div>';
+    }
+
+    // ── COMPLETION DISTRIBUTION CHART ──
+    if (progressStats.length) {
+      var buckets = [0,0,0,0,0,0,0]; // 0, 1, 2, 3, 4, 5, 6 modules
+      progressStats.forEach(function(s) { buckets[Math.min(s.modules, 6)]++; });
+      var maxBucket = Math.max.apply(null, buckets) || 1;
+      var bucketLabels = ['0', '1', '2', '3', '4', '5', '6\u2713'];
+      var bucketColors = ['#4b5563', '#EF4444', '#F59E0B', '#F59E0B', '#3B82F6', '#3B82F6', '#39FF14'];
+      html += '<div class="mb-8">';
+      html += '<h3 class="font-mono text-white text-lg font-bold mb-4 flex items-center gap-2"><span class="text-xl">\uD83D\uDCC8</span>Completion Distribution</h3>';
+      html += '<div class="flex items-end gap-2" style="height:120px">';
+      for (var b = 0; b < 7; b++) {
+        var pct = Math.round((buckets[b] / maxBucket) * 100);
+        html += '<div class="flex-1 flex flex-col items-center gap-1">'
+          + '<span class="font-mono text-xs" style="color:' + bucketColors[b] + '">' + buckets[b] + '</span>'
+          + '<div class="w-full rounded-t" style="height:' + Math.max(pct, 4) + '%;background:' + bucketColors[b] + ';min-height:4px"></div>'
+          + '<span class="font-mono text-gray-500 text-[10px]">' + bucketLabels[b] + '</span>'
+          + '</div>';
+      }
+      html += '</div>';
+      html += '<p class="text-gray-600 text-[10px] font-mono mt-2 text-center">Modules completed \u2192</p>';
       html += '</div>';
     }
 

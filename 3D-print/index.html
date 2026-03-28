@@ -12,7 +12,7 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="manifest" href="/3D-print/manifest.json" />
   <meta name="theme-color" content="#0A0A0F" />
 
   <link rel="canonical" href="https://ajayadesign.github.io/3D-print/" />
@@ -100,6 +100,41 @@
         "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ajayadesign.github.io/" },
           { "@type": "ListItem", "position": 2, "name": "3D Print Academy", "item": "https://ajayadesign.github.io/3D-print/" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Do I need to own a 3D printer already?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Not required! Module 1 covers printer selection. We recommend budget-friendly options like the Ender 3 V3 SE ($199) or Bambu Lab A1 Mini ($299). You can also follow along in CAD software first and print later." }
+          },
+          {
+            "@type": "Question",
+            "name": "What software do I need?",
+            "acceptedAnswer": { "@type": "Answer", "text": "All software used is free: TinkerCAD (browser-based), Fusion 360 (free for personal use), and Cura or PrusaSlicer (open source). No purchases needed." }
+          },
+          {
+            "@type": "Question",
+            "name": "How do the 1-on-1 sessions work?",
+            "acceptedAnswer": { "@type": "Answer", "text": "After purchasing, you'll receive a scheduling link. Sessions are 90 minutes over Zoom or Google Meet. We screen share, walk through your designs, troubleshoot prints, or cover any module topic you need help with. Sessions are recorded so you can rewatch." }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I sell the magnet frames I make?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Absolutely. All STL files included in the course come with a commercial license. You're free to print, modify, and sell the finished products. Module 6 specifically teaches you how to build a profitable business around them." }
+          },
+          {
+            "@type": "Question",
+            "name": "What makes this different from Udemy courses?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Udemy's 10,000+ 3D printing courses are generic — none focus on magnet frames. We're the only course that combines niche design expertise, ready-to-print STL files, live 1-on-1 mentorship, AND business launch training. It's specialized, not generalized." }
+          },
+          {
+            "@type": "Question",
+            "name": "How much can I make selling magnet frames?",
+            "acceptedAnswer": { "@type": "Answer", "text": "A single magnet frame costs ~$0.30–$0.80 in filament and sells for $5–$15 on Shopify or at craft fairs. That's 10–50× markup. Our students' goal: 20 frames/day at $8 avg = $160/day revenue. The pricing calculator in Module 6 helps you find your sweet spot." }
+          }
         ]
       }
     ]
@@ -1028,6 +1063,25 @@
         if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
       });
     });
+
+    // Referral & UTM tracking — forward to Stripe checkout links
+    (function() {
+      var params = new URLSearchParams(location.search);
+      var ref = params.get('ref') || params.get('utm_source') || '';
+      var utm_medium = params.get('utm_medium') || '';
+      var utm_campaign = params.get('utm_campaign') || '';
+      if (!ref && !utm_medium && !utm_campaign) return;
+      // Build client_reference_id for Stripe (max 200 chars)
+      var refId = [ref, utm_medium, utm_campaign].filter(Boolean).join('_').substring(0, 200);
+      // Append to all buy.stripe.com links
+      document.querySelectorAll('a[href*="buy.stripe.com"]').forEach(function(a) {
+        var url = new URL(a.href);
+        if (refId) url.searchParams.set('client_reference_id', refId);
+        a.href = url.toString();
+      });
+      // Store in localStorage for portal tracking
+      if (refId) localStorage.setItem('ad3d_ref', refId);
+    })();
 
     // Countdown timer — 2 days from first visit (persisted in localStorage)
     (function() {

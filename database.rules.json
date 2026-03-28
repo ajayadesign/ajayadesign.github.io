@@ -46,6 +46,11 @@
       ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
     },
 
+    "email_unsubscribed": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
     "site_analytics": {
       ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
       ".write": true,

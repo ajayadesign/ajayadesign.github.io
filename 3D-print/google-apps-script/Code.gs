@@ -63,6 +63,7 @@ var TIER_ACCESS_LIST = {
 
 var SENDER_NAME = 'Ajaya — 3D Print Academy';
 var PORTAL_URL  = 'https://ajayadesign.github.io/3D-print/portal/';
+var WEBAPP_URL  = 'https://script.google.com/macros/s/AKfycbwMydNtk-9kxOlxPR59IrlrLeb87R7i2TV8M8YHQZZPZnFixkhM0rypsoi4ZfvqC3dh/exec';
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 
@@ -252,9 +253,26 @@ function doPost(e) {
 }
 
 /**
- * Handle GET requests (health check / test)
+ * Handle GET requests — health check + unsubscribe handler
  */
 function doGet(e) {
+  var action = (e && e.parameter && e.parameter.action) || '';
+  var email = (e && e.parameter && e.parameter.email) || '';
+
+  if (action === 'unsubscribe' && email) {
+    // Store unsubscribe in Firebase
+    var safeKey = email.replace(/[.#$\[\]]/g, '_');
+    fbWrite('email_unsubscribed/' + safeKey, { email: email, unsubscribed_at: Date.now() });
+    return HtmlService.createHtmlOutput(
+      '<html><body style="font-family:Arial,sans-serif;max-width:500px;margin:60px auto;text-align:center">'
+      + '<h2 style="color:#ED1C24">Unsubscribed</h2>'
+      + '<p>You\'ve been removed from 3D Print Academy follow-up emails.</p>'
+      + '<p style="color:#666">You\'ll still have access to your portal and purchased content.</p>'
+      + '<p><a href="' + PORTAL_URL + '" style="color:#00D4FF">Back to Portal</a></p>'
+      + '</body></html>'
+    );
+  }
+
   return ContentService.createTextOutput(
     JSON.stringify({ status: 'ok', service: '3D Print Academy Webhook' })
   ).setMimeType(ContentService.MimeType.JSON);
@@ -397,6 +415,11 @@ function processEmailQueue() {
   var queue = fbRead('email_queue');
   if (!queue) return;
 
+  // Load unsubscribe list
+  var unsubs = fbRead('email_unsubscribed') || {};
+  var unsubEmails = {};
+  Object.keys(unsubs).forEach(function(k) { if (unsubs[k] && unsubs[k].email) unsubEmails[unsubs[k].email] = true; });
+
   var now = Date.now();
   var keys = Object.keys(queue);
 
@@ -404,6 +427,13 @@ function processEmailQueue() {
     var entry = queue[keys[i]];
     if (!entry || entry.sent) continue;
     if (entry.send_after > now) continue;
+
+    // Skip unsubscribed users
+    if (unsubEmails[entry.email]) {
+      fbWrite('email_queue/' + keys[i] + '/sent', true);
+      console.log('Skipped (unsubscribed) Day ' + entry.day + ' for: ' + entry.email);
+      continue;
+    }
 
     // Time to send
     try {
@@ -428,19 +458,19 @@ function sendFollowUpEmail(email, tier, fullName, dayNum) {
   if (dayNum === 1) {
     subject = 'Your first magnet frame — faster than you think';
     body = getDay1Body(firstName);
-    htmlBody = getDay1Html(firstName);
+    htmlBody = getDay1Html(firstName, email);
   } else if (dayNum === 3) {
     subject = 'The design that sells the most (it\'s not what you\'d guess)';
     body = getDay3Body(firstName);
-    htmlBody = getDay3Html(firstName);
+    htmlBody = getDay3Html(firstName, email);
   } else if (dayNum === 7) {
     subject = 'Quick check-in (+ a tool you\'ll want)';
     body = getDay7Body(firstName);
-    htmlBody = getDay7Html(firstName);
+    htmlBody = getDay7Html(firstName, email);
   } else if (dayNum === 14) {
     subject = 'What\'s next for your magnet frame business?';
     body = getDay14Body(firstName, tier);
-    htmlBody = getDay14Html(firstName, tier);
+    htmlBody = getDay14Html(firstName, tier, email);
   } else {
     return;
   }
@@ -466,7 +496,7 @@ function getDay1Body(name) {
     + 'Go get that first print done.\n\n— Ajaya';
 }
 
-function getDay1Html(name) {
+function getDay1Html(name, email) {
   return wrapEmail(
     '<p>Hey ' + escapeHtml(name) + ',</p>'
     + '<p>Quick question: have you opened Module 1 yet?</p>'
@@ -477,7 +507,7 @@ function getDay1Html(name) {
     + '<p><a href="' + PORTAL_URL + 'module-1.html" style="display:inline-block;padding:12px 24px;background:#ED1C24;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold">Start Module 1 →</a></p>'
     + '<p>Also — I made you a <a href="https://ajayadesign.github.io/3D-print/tools/calculator.html" style="color:#00D4FF">Pricing Calculator</a> so you can figure out what to charge.</p>'
     + '<p>— Ajaya</p>'
-  );
+  , email);
 }
 
 function getDay3Body(name) {
@@ -495,7 +525,7 @@ function getDay3Body(name) {
     + '— Ajaya';
 }
 
-function getDay3Html(name) {
+function getDay3Html(name, email) {
   return wrapEmail(
     '<p>Hey ' + escapeHtml(name) + ',</p>'
     + '<p>Here\'s something I learned the hard way:</p>'
@@ -505,7 +535,7 @@ function getDay3Html(name) {
     + '<p><a href="' + PORTAL_URL + 'module-2.html" style="display:inline-block;padding:12px 24px;background:#ED1C24;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold">Start Module 2: Design →</a></p>'
     + '<p><strong>Pro tip:</strong> Use the STL files in Module 3 to start selling <em>immediately</em> while you learn to design your own.</p>'
     + '<p>— Ajaya</p>'
-  );
+  , email);
 }
 
 function getDay7Body(name) {
@@ -521,7 +551,7 @@ function getDay7Body(name) {
     + 'Reply if you need help. Seriously.\n\n— Ajaya';
 }
 
-function getDay7Html(name) {
+function getDay7Html(name, email) {
   return wrapEmail(
     '<p>Hey ' + escapeHtml(name) + ',</p>'
     + '<p>It\'s been a week. How\'s it going?</p>'
@@ -534,7 +564,7 @@ function getDay7Html(name) {
     + '<p>Here\'s the <a href="https://ajayadesign.github.io/3D-print/tools/checklist.html" style="color:#00D4FF">QC Checklist</a> — use it before shipping any frame.</p>'
     + '<p>Reply to this email if you need help. Seriously.</p>'
     + '<p>— Ajaya</p>'
-  );
+  , email);
 }
 
 function getDay14Body(name, tier) {
@@ -562,7 +592,7 @@ function getDay14Body(name, tier) {
     + '🛒 Materials List: https://ajayadesign.github.io/3D-print/tools/materials.html';
 }
 
-function getDay14Html(name, tier) {
+function getDay14Html(name, tier, email) {
   var upsell = '';
   if (tier === 'stl') {
     upsell = '<div style="background:#f0f9ff;border-left:4px solid #00D4FF;padding:16px;margin:16px 0;border-radius:4px">'
@@ -590,7 +620,7 @@ function getDay14Html(name, tier) {
     + '🛒 <a href="https://ajayadesign.github.io/3D-print/tools/materials.html" style="color:#00D4FF">Materials List</a></p>'
     + '<p>Go print something today.</p>'
     + '<p>— <strong>Ajaya</strong></p>'
-  );
+  , email);
 }
 
 // ─── ADMIN NOTIFICATION ───────────────────────────────────────────────────────
@@ -618,13 +648,17 @@ function escapeHtml(str) {
   return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function wrapEmail(content) {
+function wrapEmail(content, email) {
+  var unsubUrl = WEBAPP_URL + '?action=unsubscribe&email=' + encodeURIComponent(email || '');
   return '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333">'
     + content
     + '<hr style="border:none;border-top:1px solid #eee;margin:24px 0">'
     + '<p style="color:#999;font-size:12px">AjayaDesign — 3D Print Academy<br>'
     + '<a href="' + PORTAL_URL + '" style="color:#999">' + PORTAL_URL + '</a></p>'
-    + '</div>';
+    + '<p style="color:#bbb;font-size:11px;margin-top:16px">'
+    + 'You received this because you purchased a 3D Print Academy product.<br>'
+    + '<a href="' + unsubUrl + '" style="color:#bbb;text-decoration:underline">Unsubscribe from follow-up emails</a>'
+    + '</p></div>';
 }
 
 // ─── MANUAL FUNCTIONS ─────────────────────────────────────────────────────────
