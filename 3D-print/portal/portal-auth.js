@@ -93,9 +93,22 @@
           return;
         }
 
-        // Not approved — register as pending and show waiting screen
+        // Not approved yet — register as pending and show waiting screen
+        // The Cloud Function will auto-approve if they pre-paid, so listen for changes
         registerPending(user);
         showPending(user);
+
+        // Listen for auto-approval (fires when Cloud Function promotes pre_approved → approved)
+        db.ref('approved_users/' + user.uid).on('value', function (liveSnap) {
+          var liveData = liveSnap.val();
+          if (liveData && liveData.tier) {
+            db.ref('approved_users/' + user.uid).off('value');
+            db.ref('courses/' + user.uid + '/progress').once('value').then(function (progSnap) {
+              liveData.progress = progSnap.val() || {};
+              showDashboard(user, liveData);
+            });
+          }
+        });
       });
     });
 

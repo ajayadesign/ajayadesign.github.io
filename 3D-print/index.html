@@ -28,11 +28,13 @@
   <meta property="og:image:width" content="1080" />
   <meta property="og:image:height" content="1080" />
   <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="3D Print Academy — Learn to design and print magnet frames. Courses from $29." />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="3D Print Academy — Learn to Design &amp; Print Magnet Frames" />
   <meta name="twitter:description" content="Live 1:1 sessions, self-paced courses, and STL starter packs. From zero to magnet business." />
   <meta name="twitter:image" content="https://ajayadesign.github.io/3D-print/promo-card.png" />
+  <meta name="twitter:image:alt" content="3D Print Academy by AjayaDesign — magnet frame course promo" />
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -44,33 +46,54 @@
         "name": "3D Print Academy — Magnet Frame Design & Printing",
         "description": "Learn to design, 3D print, and sell custom magnet frames. From CAD modeling to launching a magnet business.",
         "url": "https://ajayadesign.github.io/3D-print/",
+        "image": "https://ajayadesign.github.io/3D-print/promo-card.png",
+        "inLanguage": "en",
         "provider": {
           "@type": "Organization",
           "name": "AjayaDesign",
-          "url": "https://ajayadesign.github.io/"
+          "url": "https://ajayadesign.github.io/",
+          "logo": "https://ajayadesign.github.io/favicon.svg"
         },
         "educationalLevel": "Beginner to Advanced",
         "teaches": ["3D Printing", "CAD Design", "Magnet Frame Manufacturing", "Small Business Launch"],
+        "numberOfCredits": 6,
         "hasCourseInstance": [
           {
             "@type": "CourseInstance",
             "courseMode": "online",
             "name": "Self-Paced Course",
-            "offers": { "@type": "Offer", "price": "97", "priceCurrency": "USD" }
+            "courseWorkload": "PT14H",
+            "offers": { "@type": "Offer", "price": "97", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://ajayadesign.github.io/3D-print/#enroll" }
           },
           {
             "@type": "CourseInstance",
             "courseMode": "online",
             "name": "Live 1-on-1 Session",
-            "offers": { "@type": "Offer", "price": "149", "priceCurrency": "USD" }
+            "courseWorkload": "PT1H30M",
+            "offers": { "@type": "Offer", "price": "149", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://ajayadesign.github.io/3D-print/#enroll" }
           },
           {
             "@type": "CourseInstance",
             "courseMode": "online",
             "name": "Complete Bundle",
-            "offers": { "@type": "Offer", "price": "349", "priceCurrency": "USD" }
+            "courseWorkload": "PT17H",
+            "offers": { "@type": "Offer", "price": "349", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://ajayadesign.github.io/3D-print/#enroll" }
           }
         ]
+      },
+      {
+        "@type": "Product",
+        "name": "3D Print Academy — STL Starter Pack",
+        "description": "15+ ready-to-print magnet frame STL designs with slicer profiles and commercial license.",
+        "image": "https://ajayadesign.github.io/3D-print/promo-card.png",
+        "brand": { "@type": "Brand", "name": "AjayaDesign" },
+        "offers": {
+          "@type": "Offer",
+          "price": "29",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "url": "https://ajayadesign.github.io/3D-print/#enroll"
+        }
       },
       {
         "@type": "BreadcrumbList",
@@ -867,6 +890,36 @@
   <div class="gradient-line"></div>
 
 
+  <!-- ═══════════ EMAIL CAPTURE ═══════════ -->
+  <section class="py-16 sm:py-20" id="free-guide">
+    <div class="max-w-2xl mx-auto px-6 text-center reveal">
+      <p class="font-mono text-electric-blue text-xs tracking-widest uppercase mb-3">// Free Download</p>
+      <h2 class="font-mono font-bold text-2xl sm:text-3xl text-white leading-tight mb-3">
+        Get the <span class="text-neon-green">Magnet Frame Starter Checklist</span>
+      </h2>
+      <p class="text-gray-400 text-sm mb-8 max-w-lg mx-auto">
+        Printer settings, filament recommendations, magnet sizing guide, and your first STL — free. No spam, ever.
+      </p>
+      <form id="lead-form" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+        <input
+          type="email"
+          id="lead-email"
+          required
+          placeholder="you@email.com"
+          autocomplete="email"
+          class="flex-1 px-4 py-3 bg-surface-card border border-border-dim rounded-lg text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric-blue/50 transition-colors"
+        />
+        <button type="submit" class="px-6 py-3 bg-amd-red-btn text-white rounded-lg font-mono text-sm font-semibold hover:bg-red-800 transition-colors whitespace-nowrap">
+          Send It Free
+        </button>
+      </form>
+      <p id="lead-msg" class="mt-3 text-sm font-mono hidden"></p>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
   <!-- ═══════════ FINAL CTA ═══════════ -->
   <section class="py-20 sm:py-28">
     <div class="max-w-3xl mx-auto px-6 text-center reveal">
@@ -934,6 +987,39 @@
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
     }, { threshold: 0.1 });
     reveals.forEach(el => observer.observe(el));
+
+    // Lead capture form — writes to Firebase RTDB /leads via REST API
+    (function() {
+      const form = document.getElementById('lead-form');
+      const msg = document.getElementById('lead-msg');
+      if (!form) return;
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('lead-email').value.trim();
+        if (!email) return;
+        const btn = form.querySelector('button');
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+        fetch('https://ajayadesign-6d739-default-rtdb.firebaseio.com/leads.json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, source: '3d-print', ts: Date.now() })
+        }).then(function(r) {
+          if (!r.ok) throw new Error('Failed');
+          msg.textContent = '✓ Check your inbox! (Checklist coming soon)';
+          msg.className = 'mt-3 text-sm font-mono text-neon-green';
+          msg.classList.remove('hidden');
+          form.reset();
+          btn.textContent = 'Sent ✓';
+        }).catch(function() {
+          msg.textContent = 'Something went wrong — try again.';
+          msg.className = 'mt-3 text-sm font-mono text-amd-red-text';
+          msg.classList.remove('hidden');
+          btn.disabled = false;
+          btn.textContent = 'Send It Free';
+        });
+      });
+    })();
 
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(a => {

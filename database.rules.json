@@ -34,6 +34,17 @@
       }
     },
 
+    "pre_approved": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".indexOn": ["email"]
+    },
+
+    "email_queue": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
     "site_analytics": {
       ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
       ".write": true
