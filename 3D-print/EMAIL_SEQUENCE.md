@@ -179,7 +179,7 @@ You're currently on the **STL-only** plan. If you want the full video course wit
 {if tier == 'course'}
 **Want personal guidance?**
 You've got the brains (the course). Now get the shortcut — a **1-on-1 live session** where I audit your prints, optimize your slicer settings, and help you set up your Shopify store in real-time:
-→ [Book 1-on-1 Session ($149) →](https://calendly.com/ajayadesign/3d-print-1on1)
+→ [Book 1-on-1 Session ($149) →](https://calendly.com/ajayadesign/30min)
 {/if}
 
 ---

@@ -33,7 +33,7 @@
   var LESSON_COUNTS = { 1: 7, 2: 7, 3: 7, 4: 8, 5: 7, 6: 7 };
   var TOTAL_LESSONS = 43;
 
-  var CALENDLY_URL = 'https://calendly.com/ajayadesign/3d-print-1on1';
+  var CALENDLY_URL = 'https://calendly.com/ajayadesign/30min';
 
   var app = firebase.initializeApp(window.__firebaseConfig);
   var auth = firebase.auth();
