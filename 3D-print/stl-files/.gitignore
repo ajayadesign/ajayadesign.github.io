@@ -1,0 +1,15 @@
+# STL Files - DO NOT PUSH TO GITHUB
+# These are distributed to paid students via Google Drive
+*.stl
+
+# OpenSCAD source files - also paid content
+*.scad
+
+# Large media files
+*.m4a
+*.mp3
+*.mp4
+*.wav
+
+# OpenSCAD build artifacts
+*.deps
