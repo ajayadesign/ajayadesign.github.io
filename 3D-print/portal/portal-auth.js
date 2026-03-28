@@ -99,21 +99,46 @@
           return;
         }
 
-        // Not approved yet — register as pending and show waiting screen
-        // The Cloud Function will auto-approve if they pre-paid, so listen for changes
-        registerPending(user);
-        showPending(user);
-
-        // Listen for auto-approval (fires when Cloud Function promotes pre_approved → approved)
-        db.ref('approved_users/' + user.uid).on('value', function (liveSnap) {
-          var liveData = liveSnap.val();
-          if (liveData && liveData.tier) {
-            db.ref('approved_users/' + user.uid).off('value');
-            db.ref('courses/' + user.uid + '/progress').once('value').then(function (progSnap) {
-              liveData.progress = progSnap.val() || {};
-              showDashboard(user, liveData);
+        // Not approved yet — check pre_approved by email (covers Stripe pre-pay + manual approvals)
+        db.ref('pre_approved').orderByChild('email').equalTo(user.email).once('value').then(function(preSnap) {
+          var preData = preSnap.val();
+          if (preData) {
+            // Found a pre_approved entry — auto-approve now
+            var preKey = Object.keys(preData)[0];
+            var pre = preData[preKey];
+            db.ref('approved_users/' + user.uid).set({
+              email: user.email,
+              name: user.displayName || '',
+              tier: pre.tier || 'course',
+              approved_at: firebase.database.ServerValue.TIMESTAMP,
+              stripe_session: pre.stripe_session || '',
+              manual: !!pre.manual,
+              sessions_remaining: pre.sessions_remaining !== undefined ? pre.sessions_remaining : (pre.tier === 'bundle' ? 2 : pre.tier === 'session' ? 1 : 0)
+            }).then(function() {
+              db.ref('pre_approved/' + preKey).remove();
+              db.ref('pending_users/' + user.uid).remove();
+              db.ref('courses/' + user.uid + '/progress').once('value').then(function(progSnap) {
+                showDashboard(user, { tier: pre.tier || 'course', progress: progSnap.val() || {} });
+              });
             });
+            return;
           }
+
+          // No pre_approved match — register as pending and wait
+          registerPending(user);
+          showPending(user);
+
+          // Listen for admin approval
+          db.ref('approved_users/' + user.uid).on('value', function (liveSnap) {
+            var liveData = liveSnap.val();
+            if (liveData && liveData.tier) {
+              db.ref('approved_users/' + user.uid).off('value');
+              db.ref('courses/' + user.uid + '/progress').once('value').then(function (progSnap) {
+                liveData.progress = progSnap.val() || {};
+                showDashboard(user, liveData);
+              });
+            }
+          });
         });
       });
     });
@@ -411,7 +436,7 @@
     approvedArr.forEach(function(u) {
       var t = u.data.tier;
       if (tierCounts[t] !== undefined) tierCounts[t]++;
-      totalRevenue += tierPrices[t] || 0;
+      if (!u.data.manual) totalRevenue += tierPrices[t] || 0;
     });
 
     // ── Session Tracking ──
