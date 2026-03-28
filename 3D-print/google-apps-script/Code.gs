@@ -290,7 +290,8 @@ function processApproval(email, tier, sessionId) {
       email: email,
       tier: tier,
       stripe_session: sessionId,
-      approved_at: now
+      approved_at: now,
+      sessions_remaining: tier === 'bundle' ? 2 : tier === 'session' ? 1 : 0
     });
     fbDelete('pending_users/' + uid);
     console.log('Approved: ' + email + ' (' + uid + ') as ' + tier);
@@ -302,7 +303,8 @@ function processApproval(email, tier, sessionId) {
     email: email,
     tier: tier,
     stripe_session: sessionId,
-    approved_at: now
+    approved_at: now,
+    sessions_remaining: tier === 'bundle' ? 2 : tier === 'session' ? 1 : 0
   });
   console.log('Pre-approved: ' + email + ' as ' + tier);
   return { approved: true, method: 'pre_approved' };
@@ -671,7 +673,8 @@ function reconcilePendingUsers() {
         email: pUser.email,
         tier: match.entry.tier,
         stripe_session: match.entry.stripe_session || '',
-        approved_at: Date.now()
+        approved_at: Date.now(),
+        sessions_remaining: match.entry.tier === 'bundle' ? 2 : match.entry.tier === 'session' ? 1 : 0
       });
       fbDelete('pending_users/' + pendingKeys[j]);
       fbDelete('pre_approved/' + match.key);

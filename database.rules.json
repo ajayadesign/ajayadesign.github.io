@@ -4,7 +4,7 @@
     "approved_users": {
       ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
       "$uid": {
-        ".read": "auth != null && auth.uid === $uid",
+        ".read": "auth != null && (auth.uid === $uid || auth.token.email === 'ajayadesign@gmail.com')",
         ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
         ".validate": "newData.hasChildren(['email', 'tier']) && newData.child('tier').isString() && newData.child('tier').val().matches(/^(stl|course|session|bundle)$/)"
       }
@@ -20,6 +20,7 @@
     },
 
     "courses": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",
         ".write": "auth != null && auth.uid === $uid",
