@@ -1,0 +1,170 @@
+COMPREHENSIVE GUIDE: Quality Control & Post-Processing for 3D Printed Magnet Photo Frames
+
+Every frame that goes to a customer must pass rigorous quality checks. One bad frame at a craft fair or one poor Etsy review can tank your reputation. This guide covers the complete post-processing pipeline and the QC checklist every frame must pass before packaging.
+
+SANDING TECHNIQUE — GRIT PROGRESSION:
+The goal is to remove visible layer lines and create a smooth surface for painting. Skip sanding for prototypes but ALWAYS sand retail frames.
+
+Step 1 — 120 grit (coarse):
+- Removes the most prominent layer lines
+- Use firm, straight strokes following the frame edges
+- Focus on the front face and top edges (customer-visible surfaces)
+- Time: 1-2 minutes per frame
+- Tip: Hold the frame up to light at an angle to spot remaining ridges
+
+Step 2 — 220 grit (medium):
+- Smooths out the scratches from 120 grit
+- Lighter pressure than step 1
+- Cover all visible surfaces including sides
+- Time: 1 minute per frame
+
+Step 3 — 400 grit (fine):
+- Creates a surface ready for primer
+- Wet sanding recommended (keep sandpaper damp) for finer results
+- Time: 30-60 seconds per frame
+
+Step 4 — 600 grit (extra fine) — OPTIONAL:
+- Only for premium frames or display pieces
+- Creates near-injection-mold smoothness
+- Always wet sand at this grit
+- Time: 30 seconds per frame
+
+WHAT NOT TO SAND:
+- Interior photo channel (photo slides through here — sanding could make it too loose)
+- Magnet recesses on the back (they're sized precisely)
+- Back surface (nobody sees it, save time)
+- Snap-fit clip details (sanding weakens the clip geometry)
+
+PRIMING WITH FILLER PRIMER:
+Primer serves dual purpose: fills remaining micro-gaps from sanding AND creates a uniform base for paint adhesion.
+
+Recommended product: Rust-Oleum Filler Primer (gray) — about $6 per can = 30+ frames per can.
+
+Application technique:
+1. Hold frame on a paint stick or wire (hang from a clip attached to the back)
+2. Shake can vigorously for 2 full minutes (seriously, time it)
+3. Hold 6-8 inches from frame surface
+4. First pass: light mist coat (should look barely gray)
+5. Wait 5 minutes
+6. Second pass: medium coat (full coverage, slight wet look)
+7. Wait 15 minutes
+8. Third pass: final coat focusing on any missed spots
+9. Let dry completely: minimum 1 hour, ideally 2 hours
+
+After primer cures: Light sand with 400 grit to knock down any primer dust nibs. This creates a glass-smooth surface. The frame should feel like ceramic at this point.
+
+SPRAY PAINTING TECHNIQUE:
+Colors that sell best (in order): Matte White, Matte Black, Rose Gold (metallic), Pastel Pink, Navy Blue, Sage Green, Natural Wood tone.
+
+Application technique:
+1. Same setup as primer — frame suspended or held on a stick
+2. Shake paint can for 2 minutes
+3. Start spraying OFF the frame, sweep ACROSS the frame, end OFF the frame
+4. Never start or stop spraying while pointed at the frame (causes drips)
+5. Apply 3-4 thin coats with 15-20 minutes between each
+6. The paint should look slightly wet but not dripping after each coat
+7. Final dry time: minimum 30 minutes before handling, 24 hours before clear coat
+
+Common paint mistakes and fixes:
+- Runs/drips: Sprayed too close or too much. Let dry, sand with 400 grit, re-spray.
+- Orange peel: Sprayed too far away. Let dry, sand lightly, apply closer next time.
+- Dust nibs: Particles landed in wet paint. Sand when dry, re-coat.
+- Fisheye/craters: Contamination on surface. Sand, clean with IPA, re-prime, re-paint.
+
+CLEAR COATING FOR DURABILITY:
+The clear coat protects paint from scratches, fingerprints, and UV fading. It also adds perceived quality — customers can feel the professional finish.
+
+Options:
+- Matte clear: Modern, fingerprint-resistant, hides minor imperfections. Best seller.
+- Satin clear: Slight sheen, professional look. Good middle ground.
+- Gloss clear: Shiny, premium feel. Shows fingerprints more. Good for metallic paints.
+
+Application: 2-3 light coats, same sweeping technique as paint. Dry 30 minutes between coats. FULL CURE: 24-48 hours before packaging. Frames stacked before full cure will stick together.
+
+MAGNET INSTALLATION — TWO METHODS:
+
+Method 1: Mid-Print Pause (Advanced, Recommended):
+- In your slicer, set a pause command at the exact layer where magnet slot ceilings begin
+- Printer pauses mid-print → you drop magnets into the open slots → resume print
+- The next layers print OVER the magnets, fully encapsulating them
+- Pros: Strongest possible hold, invisible from outside, no glue needed, professional result
+- Cons: Requires accurate pause timing, can't fix wrong polarity after resuming
+- Critical: CHECK POLARITY BEFORE DROPPING IN. Use a marked reference magnet.
+- Cura: Install "Pause at Height" plugin → set to the correct layer
+- PrusaSlicer: Edit G-code at layer → add M0 (pause) command
+
+Method 2: Post-Print Glue (Easy, Beginner-Friendly):
+- Print frame with open magnet recesses on the back
+- Apply 1 small drop of cyanoacrylate (super glue) to each recess
+- Press magnet in with correct polarity — hold for 30 seconds
+- Optional: apply adhesive felt pad over magnets for a clean look
+- Pros: Easy, forgiving (can pry out and reglue wrong polarity)
+- Cons: Magnets slightly visible from back, glue can be messy
+
+POLARITY CHECK PROCEDURE:
+1. Get one reference magnet — mark the "fridge side" with a Sharpie dot
+2. Before inserting each magnet, touch it to the reference
+3. The side that REPELS the marked side = the side facing INTO the frame (away from fridge)
+4. The side that ATTRACTS = the side facing OUT toward the fridge
+5. All magnets in all frames should be oriented the same way
+6. Test: finished frame should snap firmly to any fridge/metal surface
+
+PRE-SHIP QC CHECKLIST — Every frame MUST pass ALL checks:
+
+STRUCTURAL CHECKS:
+□ Frame is flat (no warping) — place on flat surface, should not rock
+□ No visible cracks or layer separation along edges
+□ Photo window dimensions correct — test fit with actual photo of that size
+□ Photo slides in and out smoothly with slight friction (not too loose, not too tight)
+□ Frame edges are smooth — no sharp burrs, blobs, or rough patches
+□ Frame border width is consistent all the way around
+
+MAGNET CHECKS:
+□ All magnets installed with correct polarity — test on a fridge or metal surface
+□ Magnets are secure — shake test, no rattling or movement
+□ Magnets sit flush or slightly recessed (will not scratch fridge surface)
+□ Frame holds on fridge without sliding down (minimum 4 magnets for 4x6+)
+□ Frame holds on fridge with photo inserted (weight test with actual photo)
+□ Frame holds on fridge with slight downward tug (durability check)
+
+FINISH CHECKS (for painted frames):
+□ No bare spots or missed primer/paint areas
+□ No paint runs, drips, or sags
+□ Even color coverage — check in good lighting at multiple angles
+□ Clear coat applied and fully cured (24-48 hours minimum)
+□ No fingerprints embedded in the finish
+□ No dust nibs or particles in the clear coat
+□ Color matches the product listing photo
+
+FINAL CHECKS:
+□ Back cover fits properly — snaps on and off without excessive force
+□ Snap-fit clips engage with a satisfying click and hold firmly
+□ Back cover sits flush (no gaps or rocking)
+□ Overall appearance is "gift-worthy" — would YOU pay $10-15 for this?
+□ Frame weight feels right — substantial but not heavy
+□ No loose threads of filament (trim any stringing remnants)
+
+REJECTION CRITERIA — REPRINT, DO NOT SELL:
+✗ Visible layer shifts (indicates printer mechanical issue)
+✗ Elephant's foot on base affecting flatness
+✗ Stringing that cannot be cleanly removed by hand
+✗ Wrong magnet polarity (embedded magnets can't be fixed)
+✗ Frame cracked during post-processing (sanding or painting)
+✗ Under-extrusion gaps visible in walls
+✗ Warping that can't be corrected
+✗ Paint quality below your standard samples
+
+TIME BUDGET PER FRAME (PRODUCTION PACE):
+| Step | Active Time | Wait Time |
+|------|------------|-----------|
+| Sanding (120→400 grit) | 3 min | — |
+| Primer (3 coats) | 2 min spray | 1 hr dry |
+| Light sand post-primer | 30 sec | — |
+| Paint (3-4 coats) | 2 min spray | 30 min between + 24 hr final |
+| Clear coat (2-3 coats) | 2 min spray | 30 min between + 24 hr cure |
+| Magnet install | 2 min | — |
+| QC check | 1 min | — |
+| Packaging | 1 min | — |
+| TOTAL ACTIVE | ~13 min | ~26 hr (mostly curing) |
+
+The key insight: batch your post-processing! Sand 20 frames, then prime 20, then while those dry, sand the next 20. Assembly-line approach = maximum efficiency. You can post-process 50+ frames per day with just 2-3 hours of active work.

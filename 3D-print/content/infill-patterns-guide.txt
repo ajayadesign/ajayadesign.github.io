@@ -1,0 +1,95 @@
+COMPREHENSIVE GUIDE: Infill Patterns & Print Optimization for 3D Printed Magnet Frames
+
+WHAT IS INFILL:
+Infill is the internal structure of a 3D print. Instead of printing solid objects (which wastes plastic and time), 3D printers create an internal lattice pattern. For magnet photo frames, we don't need extreme strength — they simply hang on a fridge — so infill optimization is about saving time and money.
+
+INFILL PERCENTAGE GUIDE:
+- 0% (completely hollow): Too fragile. The frame will crush under light pressure. Never use this.
+- 10%: Minimum viable for magnet frames. Very lightweight. Works for small wallet-size frames under 65x90mm. Saves the most material and print time.
+- 15%: Our recommended default for most production frames. Excellent balance of strength, weight, speed, and material cost. This is what 90% of your frames should use.
+- 20%: Use for larger frames (4x6 and above) or frames with thin borders under 10mm. Adds minimal time but noticeably more rigidity.
+- 100% (completely solid): Never use for entire frames. Wastes 3-4x the material and takes 2-3x longer. However, use 100% infill selectively around magnet slot areas for maximum magnet hold strength.
+
+INFILL PATTERNS RANKED FOR MAGNET FRAME PRODUCTION:
+1. GRID PATTERN (★★★★★ — Our Default):
+   - Structure: perpendicular lines creating a grid of squares
+   - Speed: Very fast to print (minimal direction changes)
+   - Strength: Good in both X and Y directions (bidirectional)
+   - Why for frames: Fast print + adequate strength = maximum profit per frame
+   - Use this for: All standard production frames
+
+2. GYROID PATTERN (★★★★☆ — Premium Choice):
+   - Structure: Continuous 3D wave pattern (no straight lines)
+   - Speed: 10-15% slower than grid
+   - Strength: Strongest infill per gram of material used
+   - Why for frames: Use for premium/heavy frames like multi-photo collages
+   - Also provides some flexibility (frames bounce instead of crack if dropped)
+   - Visual appeal: If you cut a frame in half for display, gyroid looks incredible
+
+3. LINES PATTERN (★★★☆☆):
+   - Structure: Parallel lines alternating direction each layer
+   - Speed: Fastest infill pattern available
+   - Strength: Strong in one direction only (weak perpendicular)
+   - Use for: Quick draft prints, testing, small single-direction frames
+
+4. HONEYCOMB PATTERN (★★☆☆☆):
+   - Structure: Hexagonal cells (like a beehive)
+   - Speed: Significantly slower (many direction changes)
+   - Strength: Very high but overkill for frames
+   - Skip this: No advantage over gyroid for frames, but much slower
+
+5. TRI-HEXAGONAL (★★☆☆☆):
+   - Beautiful internal geometry but no practical advantage for frames
+   - Print time penalty not justified
+
+WALL COUNT (Shell Thickness):
+- 2 walls (0.8mm total): Absolute minimum. Frame edges may appear slightly translucent with light colors.
+- 3 walls (1.2mm total): Our default recommendation. Solid feel, great surface for sanding and painting. No light bleed-through.
+- 4 walls (1.6mm total): Premium feel. Adds about 10% print time. Worth it for retail frames above $12 price point. The frame feels substantial in hand — customers notice quality.
+
+TOP AND BOTTOM SOLID LAYERS:
+- 3 layers minimum (at 0.2mm layer height = 0.6mm total solid top/bottom)
+- 4 layers recommended (0.8mm — fully opaque, smooth, no infill patterns showing through)
+- The top surface of a frame is what customers see first. Under-layering causes visible infill texture.
+
+VARIABLE INFILL (Advanced — PrusaSlicer Feature):
+This is a game-changer for magnet frames. PrusaSlicer allows "modifier meshes" — invisible zones where you change infill settings:
+- Place a 100% infill modifier around each magnet slot location
+- Keep the rest of the frame at 15% infill
+- Result: Magnets are held in rock-solid plastic, while the frame itself is light and fast to print
+- This saves 40-50% material compared to printing the entire frame at high infill
+- Cura equivalent: Use "support blocker" mesh with per-model settings changed to infill override
+
+MATERIAL SAVINGS COMPARISON (4×6 MAGNET FRAME):
+| Infill % | Material Used | Print Time | Filament Cost | Yearly Savings (at 300/mo) |
+|----------|-------------|------------|---------------|---------------------------|
+| 100%     | 45g         | 2h 15m     | $0.90         | baseline                  |
+| 20%      | 22g         | 1h 20m     | $0.44         | $1,656/year saved         |
+| 15%      | 18g         | 1h 10m     | $0.36         | $1,944/year saved         |
+| 10%      | 15g         | 1h 00m     | $0.30         | $2,160/year saved         |
+
+At 300 frames per month, switching from 100% to 15% infill saves nearly $2,000/year in filament alone, plus hundreds of hours of printer time that you can use for more production.
+
+PRINT SPEED VS QUALITY OPTIMIZATION:
+- 40mm/s: Maximum quality. Use for display/portfolio pieces only.
+- 50mm/s: Safe default. All printers handle this well.
+- 60-80mm/s: Production speed. Slight quality reduction, most printers handle it.
+- 100-150mm/s: High-speed printers only (Bambu Lab, Prusa MK4 with Input Shaping). Quality remains good due to vibration compensation.
+
+RETRACTION SETTINGS FOR FRAME PRODUCTION:
+- Bowden extruder: 5-6mm distance, 45mm/s speed
+- Direct drive extruder: 1-2mm distance, 35mm/s speed
+- Retraction helps eliminate stringing between frame features (magnet slots, text, clip details)
+
+BATCH PRINTING OPTIMIZATION:
+- Arrange multiple frames on one build plate: 9 wallet frames or 4 standard 4x6 frames on a 220mm bed
+- Sequential printing (one-at-a-time): Safer — if one fails, others already completed
+- Simultaneous printing (all-at-once): Faster total time but one failure ruins entire batch
+- Our recommendation: Sequential for expensive filament (PETG, specialty), simultaneous for PLA production runs
+- Per-unit effective time drops from 45 minutes to 28 minutes in batch mode — a 38% time savings
+
+LAYER HEIGHT COMPARISON FOR FRAMES:
+- 0.12mm: Premium quality, almost invisible layer lines. Takes 2.5 hours per 4x6 frame. Use for portfolio pieces only.
+- 0.16mm: High quality, faint layer lines. Takes 1.8 hours. Good for retail over $15.
+- 0.20mm: Our production default. Takes 1.2 hours. Excellent quality-to-speed ratio. Layer lines disappear after light sanding + primer.
+- 0.28mm: Draft quality, visible layer lines. Takes 50 minutes. Use for prototyping and testing designs.

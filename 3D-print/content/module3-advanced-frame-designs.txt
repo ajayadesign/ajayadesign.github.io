@@ -1,0 +1,28 @@
+ADVANCED FRAME DESIGNS — COMPLETE MODULE GUIDE
+The 3D Print Academy Module 3
+
+Take your magnet frame designs to the next level with specialty frames that command premium prices.
+
+MULTI-PIECE MAGNETIC ASSEMBLIES
+Multi-piece frames use magnets to connect sections, allowing modular displays. Design interlocking pieces with 6×2mm magnets at connection points. A 3-piece triptych frame holds three photos that snap together magnetically. Key design principle: alternate magnet polarity (N-S-N-S) so pieces only connect in the correct orientation. Tolerance is critical — 0.1mm gap between pieces when assembled. These sell for 2-3x single frame prices.
+
+RETRO TV FRAME DESIGN
+The retro TV frame is a best-seller at craft fairs. Design a miniature CRT television shape: rounded rectangular body with screen opening for the photo, two cylindrical knob details on the right side, and small antenna stubs on top. Dimensions: approximately 120mm wide × 100mm tall × 30mm deep. The screen opening fits a 3×4 or Instax Mini photo. Print in colors like avocado green, harvest gold, or classic beige for authentic retro vibes. Add a small easel stand on the back for desk display.
+
+POLAROID-STYLE FRAME
+Replicate the iconic Polaroid look. Square body with wider bottom margin — 95mm × 110mm × 8mm. Photo opening: 80 × 80mm centered, positioned higher to create the classic bottom white space. Round the corners with a 3mm fillet. The simplicity makes this very fast to print (under 45 minutes) and wildly popular. Print in white for authenticity, or fun colors for variety.
+
+INSTAX MINI FRAME
+Designed specifically for Fujifilm Instax Mini prints (54 × 86mm). Frame body: 70 × 105mm × 8mm. Photo opening: 55 × 87mm with 0.5mm clearance. Add decorative elements: stars, hearts, flowers, or themed shapes around the border. These pair perfectly with the popularity of instant cameras among younger demographics. Sell as sets of 3-5 in matching colors.
+
+MULTI-PHOTO COLLAGE FRAME
+A single frame holding 3-6 photos creates a premium product. Design a rectangular frame (200 × 150mm) with multiple cutouts arranged in a pleasing grid or staggered layout. Use consistent 5mm borders between photo openings. Reinforce the back with a cross-hatch rib pattern for strength since longer spans can flex. These take longer to print but sell at premium prices, often commanding fifteen to twenty-five dollars each.
+
+CUSTOM TEXT INSERTS
+Add personalization with embossed or debossed text. In TinkerCAD, use the Text shape generator to create raised lettering on frames. Popular personalizations: names, dates, "Family", "Love", pet names. In Fusion 360, use Sketch Text and Extrude to add or subtract lettering. Font choice matters — sans-serif fonts print more reliably at small sizes. Minimum text height for readability: 8mm with 0.4mm nozzle. Charge extra for customization.
+
+PRINTED FRAMES SHOWCASE & QUALITY REVIEW
+Before selling any frame, conduct a quality review. Check: smooth top surface (ironing enabled?), clean magnet holes, consistent layer lines, no visible stringing or blobs, photo fits snugly but removes easily. Compare your frames against the quality benchmarks shown in the course. A premium-quality frame has invisible layer lines from the front viewing angle and magnets that hold firmly to a fridge surface.
+
+MODULE RECAP
+You now have a portfolio of premium frame designs including multi-piece assemblies, retro TV, Polaroid, Instax Mini, collage frames, and custom text personalization. Each design targets different price points and customer preferences. Module 4 will help you optimize print settings for production quality.

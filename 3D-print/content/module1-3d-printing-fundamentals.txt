@@ -1,0 +1,32 @@
+3D PRINTING FUNDAMENTALS — COMPLETE MODULE GUIDE
+The 3D Print Academy Module 1
+
+Welcome to 3D Printing Fundamentals! This module covers everything you need to know to get started with 3D printing for your magnet frame business.
+
+PRINTER ANATOMY — KNOW YOUR MACHINE
+Understanding your 3D printer components is essential. The frame provides structural rigidity. The print bed (build plate) is where your prints form — glass beds offer excellent adhesion with hairspray, while PEI spring steel sheets provide natural adhesion. The extruder assembly consists of the cold end (feeding mechanism with gear teeth that grip filament) and the hot end (where filament melts). The nozzle diameter (typically 0.4mm) determines your minimum feature size. Stepper motors control X, Y, and Z axis movement with precise positioning. The mainboard (often a 32-bit board) runs firmware like Marlin or Klipper. End stops or optical sensors enable homing. The power supply (typically 24V) powers all components.
+
+For magnet frame production, an Ender 3 V3 SE or Bambu Lab A1 mini offers an excellent price-to-performance ratio. Build volume of 220×220×250mm lets you print multiple frames per batch.
+
+BED LEVELING — THE FOUNDATION OF GOOD PRINTS
+Proper bed leveling is the #1 factor in print success. Manual leveling uses the paper test — slide a sheet of paper between nozzle and bed, adjusting each corner until you feel slight friction. Do this at printing temperature (60°C for PLA). The "baby step" Z-offset adjustment fine-tunes the first layer squish. Too close = filament can't flow, too far = spaghetti. Auto bed leveling (ABL) probes like BLTouch or CR-Touch create a mesh map compensating for bed warping. Even with ABL, occasionally check your Z-offset. First layer should look slightly squished, with lines touching but not overlapping.
+
+FILAMENT TYPES — PLA, PLA+, AND PETG
+PLA (Polylactic Acid): Most beginner-friendly. Print temp 190-210°C, bed temp 50-60°C. Biodegradable, low warping, beautiful surface finish. Ideal for magnet frames! Cost: ~$15-20/kg. Drawback: brittle under impact, deforms above 55°C.
+
+PLA+ (Enhanced PLA): Modified PLA with better layer adhesion and impact resistance. Print temp 200-220°C. Slightly more flexible than standard PLA. Costs $2-3 more per kg. Recommended for frames that need extra durability.
+
+PETG: Better heat resistance (up to 80°C), more flexible, excellent layer adhesion. Print temp 220-250°C, bed temp 70-80°C. Strings more than PLA. Cost: ~$18-22/kg. Good for outdoor frames or humid environments.
+
+For magnet frames, PLA+ is the sweet spot — great finish, good durability, easy to print.
+
+SLICER SETUP — CURA AND PRUSASLICER
+Cura is free, widely used, and perfect for beginners. Import your STL, select your printer profile. Key settings for magnet frames: Layer height 0.2mm (good balance of speed and quality), wall count 3 (strong frames), infill 15-20% grid pattern, print speed 50mm/s, supports only if needed for overhangs. Enable "Ironing" for glass-smooth top surfaces on frames.
+
+PrusaSlicer offers excellent profiles and slicing speed. Similar workflow — import STL, select printer, adjust settings. PrusaSlicer's paint-on supports and variable layer height are powerful features. For batch production, use the "multiply" feature to fill your build plate.
+
+YOUR FIRST TEST PRINT
+Start with a calibration cube (20mm XYZ) to verify dimensional accuracy. Then print a Benchy (3D Benchy boat) — the universal test that reveals stringing, overhangs, bridging, and detail quality. Finally, print a simple magnet frame from the course STL files. Inspect your test prints: Are layers consistent? Smooth surfaces? Accurate dimensions (within ±0.2mm)?
+
+MODULE RECAP
+You now understand printer components, bed leveling technique, filament selection (PLA+ recommended), slicer setup in both Cura and PrusaSlicer, and have printed your first test objects. You're ready for Module 2: CAD Design!

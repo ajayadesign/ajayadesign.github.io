@@ -1,0 +1,25 @@
+MAGNET FRAME DESIGN — CAD BASICS
+The 3D Print Academy Module 2
+
+Master the CAD tools needed to design professional magnet frames from scratch.
+
+TINKERCAD INTRODUCTION & INTERFACE
+TinkerCAD (tinkercad.com) is a free, browser-based 3D modeling tool perfect for beginners. The interface has a workplane (grid), shape library (right panel), and viewing controls. Navigation: right-click drag to orbit, scroll to zoom, shift+right-click to pan. The ruler tool sets precise dimensions. Grouping combines shapes into one object. The "Hole" modifier subtracts shapes from solids — essential for creating magnet slots and photo inserts.
+
+DESIGN YOUR FIRST MAGNET FRAME IN TINKERCAD
+Step 1: Create a rectangular body (100mm × 76mm × 8mm for a standard 4×3 frame). Step 2: Create a rectangular hole (90mm × 66mm × 5mm) for the photo insert — position it centered, offset 1mm from the back. Step 3: Create cylindrical holes (6.2mm diameter × 2.5mm deep) for 6×2mm magnets. Place 2-4 magnet slots on the back. Step 4: Add a 1mm lip/ledge for the photo to rest against. Step 5: Group all shapes. Export as STL. The 0.2mm extra diameter on magnet holes provides a press-fit tolerance.
+
+FUSION 360 INTRODUCTION & INTERFACE
+Fusion 360 (free for personal use) offers parametric modeling — change a dimension and the entire model updates. The timeline at the bottom tracks every operation. Sketches define 2D profiles, then Extrude creates 3D bodies. Fillet rounds sharp edges. The "Parameters" feature lets you define variables (magnet_diameter = 6.2, frame_width = 100) and reference them throughout your design. This means one master design can quickly generate different frame sizes.
+
+MAGNET SLOT TOLERANCES & PHOTO INSERT SIZING
+Magnet tolerances are critical. For 6×2mm neodymium magnets: design holes at 6.2mm diameter × 2.1mm depth. This gives 0.1mm radial clearance for press-fit with optional CA glue. Too tight: magnets won't seat. Too loose: they fall out. Photo insert sizing: Standard photo print is 4×6 inches (101.6 × 152.4mm). Design the insert opening at 102mm × 153mm with a 1mm ledge at 0.8mm depth. Instax Mini: 54×86mm (design at 55×87mm). Instax Wide: 99×62mm. Polaroid: 79×79mm (image area).
+
+SNAP-FIT CLIP DESIGN
+Snap-fit clips secure the photo backing without glue. Design a flexible cantilever beam 1.5mm thick × 3mm wide × 8mm long with a 0.5mm hook at the tip. PLA+ provides just enough flex. Place 2 clips on each long side of the frame. The undercut angle should be 30-45 degrees for easy insertion, 90 degrees for permanent hold. Test print clips at different thicknesses to find the sweet spot for your filament and printer.
+
+EXPORT STL & TEST SLICE
+In TinkerCAD: Export → STL → Download. In Fusion 360: Right-click body → Save As Mesh → STL (Binary format, fine refinement). Always check your STL in the slicer's preview before printing. Look for: non-manifold edges (holes in the mesh), inverted normals (inside-out faces), and minimum wall thickness warnings. A good frame STL should be under 5MB.
+
+MODULE RECAP
+You can now design magnet frames in both TinkerCAD (quick prototypes) and Fusion 360 (parametric production designs). You understand magnet tolerances, photo insert sizing for all major formats, snap-fit clip design, and proper STL export. Ready for Module 3: Advanced Designs!

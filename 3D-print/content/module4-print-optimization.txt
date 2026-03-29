@@ -1,0 +1,31 @@
+PRINT OPTIMIZATION & TROUBLESHOOTING — COMPLETE MODULE GUIDE
+The 3D Print Academy Module 4
+
+Fine-tune your printer for production-quality magnet frames and fix common issues fast.
+
+LAYER HEIGHT COMPARISON
+Layer height dramatically affects both appearance and print time. 0.12mm: Ultra-fine, near-invisible layers, 3x longer print time. Best for display models. 0.2mm: The sweet spot for production frames. Good detail, reasonable speed. 0.28mm: Draft quality, visible layers, fastest printing. Good for prototypes only. For magnet frames, 0.2mm gives the best balance. The top surface matters most (that's what customers see), so consider Variable Layer Height — 0.28mm for infill layers, 0.12mm for the top 3 layers.
+
+INFILL PATTERNS & STRENGTH
+Grid: Simple crosshatch pattern. Fast to print, moderate strength. Good default for frames. Gyroid: 3D wave pattern with excellent omnidirectional strength. Slightly slower but significantly stronger. Best for frames with thin walls. Cubic: 3D offset cubes. Good strength in all directions. Lightning: Minimal infill that supports only the top surface. Fastest printing, lowest material use, but weakest. For magnet frames: 15-20% grid infill is sufficient. For larger frames or collage frames, consider 20% gyroid for extra rigidity.
+
+SPEED VS QUALITY TUNING
+Print speed directly correlates with quality. Lower speeds give better layer adhesion and less ringing artifacts. Recommended speeds for magnet frames: perimeters at 40mm/s (visible surfaces), infill at 80mm/s (hidden), first layer at 20mm/s (adhesion), travel at 150mm/s. Acceleration settings matter too — lower acceleration (1000mm/s²) reduces ghosting/ringing on flat frame surfaces. For production runs prioritizing throughput, you can push to 60mm/s perimeters if quality remains acceptable.
+
+TEMPERATURE TOWER TEST
+Print a temperature tower to find the optimal temperature for your specific filament. Most PLAs perform best between 200-210°C. Higher temp: better layer adhesion, more stringing. Lower temp: less stringing, possible under-extrusion. Download or generate a temperature tower in your slicer (Cura: Temp Tower post-processing script, PrusaSlicer: use variable settings). Print the tower and evaluate each section for layer adhesion, stringing, overhang quality, and bridging.
+
+FIX STRINGING
+Stringing creates thin wisps of filament between travel moves. Solutions: Enable retraction (6-7mm retraction distance for Bowden, 1-2mm for direct drive). Reduce nozzle temperature by 5°C increments. Increase travel speed to 150-200mm/s. Enable "Combing" mode in Cura to keep travel moves inside the print. Dry your filament — moisture causes excessive stringing. For PLA, dry at 45°C for 4-6 hours.
+
+FIX WARPING
+Warping happens when bottom layers cool and contract, pulling corners up from the bed. Solutions: Ensure bed is level and at correct temperature (60°C for PLA). Clean bed with IPA (isopropyl alcohol). Use a brim (5-10mm) for extra adhesion on large frames. Ensure no drafts near printer — enclose printer if needed. PLA rarely warps — if it does, suspect bed leveling or bed temperature issues.
+
+FIX ELEPHANT'S FOOT
+Elephant's foot occurs when the first layer squishes outward, creating a bulge at the base. Solutions: Increase Z-offset slightly (raise nozzle 0.02-0.05mm). Reduce bed temperature by 5°C. In your slicer, enable "Elephant foot compensation" (typically 0.1-0.2mm). For magnet frames, elephant's foot affects the bottom edge appearance.
+
+BATCH PRINTING FOR PRODUCTION
+Maximize production with batch printing strategies. Fill your build plate: 4-6 small frames or 2-3 large frames per batch. Use sequential printing when possible — completes one frame fully before starting the next (reduces risk if print fails mid-batch). In Cura: Print Sequence → "One at a time". Consider running overnight prints. Monitor with a camera (OctoPrint + webcam). Use a spreadsheet to track print times, filament usage, and costs per frame.
+
+MODULE RECAP
+You now know how to optimize layer height, choose the right infill pattern, tune speed for quality, calibrate temperature, fix the three most common print defects (stringing, warping, elephant's foot), and run efficient batch production. Module 5 covers post-processing!

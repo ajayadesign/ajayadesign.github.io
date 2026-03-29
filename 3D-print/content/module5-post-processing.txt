@@ -1,0 +1,28 @@
+POST-PROCESSING & FINISHING — COMPLETE MODULE GUIDE
+The 3D Print Academy Module 5
+
+Transform raw 3D prints into professional, retail-ready products with expert finishing techniques.
+
+SANDING TECHNIQUE — GRIT PROGRESSION
+Start with 120-grit to remove layer lines and major imperfections. Move to 220-grit for smoothing. Finish with 400-grit for a silky surface. Always sand in one direction, not circular motions, on flat surfaces. Use wet sanding (sandpaper dipped in water) at 400+ grit to prevent clogging and achieve a smoother finish. For curved surfaces, wrap sandpaper around a dowel. Sand before any painting. Time investment: about 5 minutes per frame at production speed. The grit progression matters — skipping grits leaves scratches visible under paint.
+
+PRIMING WITH FILLER PRIMER
+Filler primer is the secret weapon for hiding layer lines. Use automotive filler primer (Rust-Oleum 2-in-1 or similar). Apply 2-3 light coats from 8-10 inches distance. Let each coat dry 10 minutes. Filler primer literally fills the tiny grooves between layers. After priming, light sand with 400-grit to knock down any dust nibs. This step alone makes a print look injection-molded rather than 3D printed. Cost: about $0.05 per frame in primer.
+
+SPRAY PAINTING TECHNIQUE
+The key to professional-looking spray paint is thin, even coats. Hold the can 10-12 inches from the piece. Use sweeping back-and-forth motions, starting and stopping beyond the edges of your frame. Apply 2-3 light coats rather than one thick coat (which causes runs and drips). Wait 15-20 minutes between coats. For metallic finishes, apply in a consistent one-direction sweep. Temperature matters — paint in 60-80°F conditions, low humidity. Popular colors for frames: matte white, matte black, metallic gold, metallic rose gold, pastel pink, sage green.
+
+CLEAR COATING FOR DURABILITY
+A clear coat protects paint and adds professional sheen. Matte clear coat maintains that modern, understated look. Glossy clear creates a premium, lacquered finish. Satin is in between. Apply 2-3 coats after paint has fully cured (24 hours ideally). Clear coat also protects against scratches and fingerprints — essential for products that customers handle. For frames going on refrigerators, clear coat prevents paint damage from moisture. Cost: about $0.03 per frame.
+
+MAGNET INSTALLATION — MID-PRINT PAUSE METHOD
+The cleanest magnet installation uses a mid-print pause. In your slicer, add a pause command (M600 in Marlin, or Pause at Layer in Cura) just before the slicer prints the layer that would cover the magnet cavity. When the printer pauses: drop the 6x2mm neodymium magnet into the hole, verify polarity with a test magnet, add a tiny drop of CA glue. Resume printing. The remaining layers print directly over the magnet, encapsulating it completely. Result: flush, invisible magnet installation.
+
+MAGNET INSTALLATION — POST-GLUE METHOD
+If mid-print pause isn't feasible, install magnets after printing. Print the frame with open magnet cavities. Apply CA glue (super glue) into the cavity, drop in the magnet, hold 30 seconds. For extra security, print a thin cap piece (0.4mm thick disc) and glue it over the magnet. Always verify polarity before gluing — all frames in a batch should have the same orientation so any frame sticks to any fridge. Mark magnet polarity on your design file so it's consistent.
+
+QUALITY CONTROL CHECKLIST WALKTHROUGH
+Before packaging any frame for sale, run through this QC checklist: Visual inspection — no visible layer lines from front viewing angle, smooth paint finish, no runs or drips. Magnet test — sticks firmly to magnetic surface, holds frame weight plus photo weight. Photo fit test — photo slides in and out smoothly with slight resistance. Dimensional check — verify critical dimensions with calipers (magnet holes, photo opening). Weight test — consistent weight across batch indicates consistent infill and wall count. Reject any frame that doesn't pass all checks. Quality builds your brand reputation.
+
+MODULE RECAP
+You now master the complete post-processing pipeline: sanding progression, filler primer application, spray paint technique, clear coating, both magnet installation methods, and production QC. Your frames now look and feel like professional retail products, not 3D prints. Module 6 covers launching your business!
