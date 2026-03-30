@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Website Audit — Find Out What's Costing You Customers | AjayaDesign</title>
+  <meta name="description" content="Get a free website audit from AjayaDesign. We'll check your PageSpeed, mobile responsiveness, SEO basics, and give you 3 custom recommendations to win more customers." />
+  <meta name="robots" content="index, follow" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://ajayadesign.github.io/free-audit/" />
+
+  <meta property="og:title" content="Free Website Audit — Find Out What's Costing You Customers" />
+  <meta property="og:description" content="Get a free website audit: PageSpeed score, mobile check, SEO basics, and 3 custom recommendations." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/free-audit/" />
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "CLARITY_PROJECT_ID");
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'bg-dark': '#0A0A0F',
+            'surface': '#111118',
+            'surface-light': '#1a1a24',
+            'amd-red': '#ED1C24',
+            'accent-green': '#22c55e',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .glow-green { box-shadow: 0 0 30px rgba(34, 197, 94, 0.3); }
+    .check-item::before { content: '✓'; color: #22c55e; font-weight: bold; margin-right: 0.5rem; }
+  </style>
+</head>
+<body class="bg-bg-dark text-gray-100 min-h-screen">
+
+  <!-- Nav -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-lg border-b border-gray-800">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="/" class="text-xl font-bold text-white">Ajaya<span class="text-amd-red">Design</span></a>
+      <div class="flex gap-6 text-sm">
+        <a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a>
+        <a href="/works/" class="text-gray-400 hover:text-white transition-colors">Works</a>
+        <a href="/contact/" class="text-gray-400 hover:text-white transition-colors">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="pt-32 pb-16 px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="inline-block bg-accent-green/10 text-accent-green text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
+        100% Free — No Strings Attached
+      </div>
+      <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+        Get a Free Website Audit<br />
+        <span class="text-accent-green">Find Out What's Costing You Customers</span>
+      </h1>
+      <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+        We'll analyze your website and deliver a personalized report with actionable fixes — so you can stop losing leads and start converting visitors into paying customers.
+      </p>
+    </div>
+  </section>
+
+  <!-- What You Get -->
+  <section class="pb-16 px-4">
+    <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-12 items-start">
+      <!-- Benefits -->
+      <div>
+        <h2 class="text-2xl font-bold mb-6">What You'll Get</h2>
+        <ul class="space-y-4 text-lg text-gray-300">
+          <li class="check-item">Google PageSpeed score & performance breakdown</li>
+          <li class="check-item">Mobile responsiveness check across devices</li>
+          <li class="check-item">SEO basics audit (meta tags, headings, structure)</li>
+          <li class="check-item">3 custom recommendations tailored to your business</li>
+          <li class="check-item">Competitor comparison snapshot</li>
+        </ul>
+
+        <div class="mt-8 p-4 bg-surface-light rounded-lg border border-gray-700">
+          <p class="text-accent-green font-semibold text-lg">29+ sites built for local businesses</p>
+          <p class="text-gray-400 text-sm mt-1">We've helped businesses across Austin, TX improve their online presence and win more customers.</p>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="bg-surface p-8 rounded-2xl border border-gray-700 glow-green">
+        <h3 class="text-xl font-bold mb-6 text-center">Request Your Free Audit</h3>
+        <form id="audit-form" class="space-y-4" onsubmit="handleSubmit(event)">
+          <div>
+            <label class="block text-sm text-gray-400 mb-1" for="business">Business Name *</label>
+            <input type="text" id="business" name="business" required
+              class="w-full bg-bg-dark border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-accent-green focus:outline-none transition-colors"
+              placeholder="Your Business Name" />
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1" for="website">Website URL <span class="text-gray-600">(optional)</span></label>
+            <input type="url" id="website" name="website"
+              class="w-full bg-bg-dark border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-accent-green focus:outline-none transition-colors"
+              placeholder="https://yourbusiness.com" />
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1" for="email">Email *</label>
+            <input type="email" id="email" name="email" required
+              class="w-full bg-bg-dark border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-accent-green focus:outline-none transition-colors"
+              placeholder="you@email.com" />
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1" for="phone">Phone *</label>
+            <input type="tel" id="phone" name="phone" required
+              class="w-full bg-bg-dark border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-accent-green focus:outline-none transition-colors"
+              placeholder="(512) 555-1234" />
+          </div>
+          <button type="submit" id="submit-btn"
+            class="w-full bg-accent-green hover:bg-green-600 text-black font-bold py-4 rounded-lg text-lg transition-colors mt-2">
+            🚀 Get My Free Audit
+          </button>
+          <p class="text-xs text-gray-500 text-center mt-2">
+            We'll email your audit within 24–48 hours. No spam, ever.
+          </p>
+        </form>
+
+        <!-- Success State -->
+        <div id="success-msg" class="hidden text-center py-8">
+          <div class="text-5xl mb-4">🎉</div>
+          <h3 class="text-2xl font-bold text-accent-green mb-2">Audit Requested!</h3>
+          <p class="text-gray-400">We'll analyze your site and email you the results within 24–48 hours.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust -->
+  <section class="py-16 px-4 border-t border-gray-800">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-2xl font-bold mb-4">Why AjayaDesign?</h2>
+      <div class="grid md:grid-cols-3 gap-8 mt-8">
+        <div class="p-6 bg-surface rounded-xl border border-gray-800">
+          <div class="text-3xl mb-3">⚡</div>
+          <h3 class="font-semibold mb-2">Engineering Precision</h3>
+          <p class="text-gray-400 text-sm">Built by an engineer, not a template jockey. Every site is hand-crafted for speed and conversions.</p>
+        </div>
+        <div class="p-6 bg-surface rounded-xl border border-gray-800">
+          <div class="text-3xl mb-3">📍</div>
+          <h3 class="font-semibold mb-2">Austin Local</h3>
+          <p class="text-gray-400 text-sm">Serving Manor, Round Rock, Pflugerville, Georgetown, and the greater Austin area.</p>
+        </div>
+        <div class="p-6 bg-surface rounded-xl border border-gray-800">
+          <div class="text-3xl mb-3">💰</div>
+          <h3 class="font-semibold mb-2">ROI Focused</h3>
+          <p class="text-gray-400 text-sm">Your website should make money, not just look pretty. We optimize for leads and revenue.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-8 px-4 border-t border-gray-800 text-center text-gray-500 text-sm">
+    <p>&copy; 2025 AjayaDesign. All rights reserved.</p>
+    <p class="mt-1">Austin, Texas — Serving Worldwide</p>
+  </footer>
+
+  <script>
+    // Firebase RTDB submission
+    const FIREBASE_DB_URL = 'https://ajayadesign-default-rtdb.firebaseio.com';
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      const data = {
+        business: document.getElementById('business').value,
+        website: document.getElementById('website').value || 'Not provided',
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        submitted_at: new Date().toISOString(),
+        status: 'new'
+      };
+
+      try {
+        const res = await fetch(`${FIREBASE_DB_URL}/audit-requests.json`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          document.getElementById('audit-form').classList.add('hidden');
+          document.getElementById('success-msg').classList.remove('hidden');
+          // Also track conversion
+          if (typeof gtag === 'function') {
+            gtag('event', 'generate_lead', {
+              event_category: 'free_audit',
+              event_label: data.business,
+              value: 1
+            });
+          }
+        } else {
+          throw new Error('Failed');
+        }
+      } catch (err) {
+        // Fallback to mailto
+        const subject = encodeURIComponent(`Free Audit Request: ${data.business}`);
+        const body = encodeURIComponent(`Business: ${data.business}\nWebsite: ${data.website}\nEmail: ${data.email}\nPhone: ${data.phone}`);
+        window.location.href = `mailto:ajayaconnect@gmail.com?subject=${subject}&body=${body}`;
+      }
+    }
+  </script>
+
+</body>
+</html>
