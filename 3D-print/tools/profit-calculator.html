@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Print Profit Calculator — How Much Can You Make? | 3D Print Academy</title>
+  <meta name="description" content="Calculate your potential profit from selling 3D printed magnet frames. Free calculator — see daily, weekly, monthly, and annual income projections." />
+  <meta name="keywords" content="3D print profit calculator, 3D printing income, magnet frame business profit, how much money 3D printing" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://ajayadesign.github.io/3D-print/tools/profit-calculator.html" />
+  <meta property="og:title" content="3D Print Profit Calculator — How Much Can You Make?" />
+  <meta property="og:description" content="Free calculator: see how much you could earn selling 3D printed magnet frames." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/3D-print/tools/profit-calculator.html" />
+  <meta property="og:image" content="https://ajayadesign.github.io/3D-print/promo-card.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-btn': '#D91920',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+            'neon-green': '#39FF14',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Inter"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    .grid-bg {
+      background-image: linear-gradient(rgba(237,28,36,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(237,28,36,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .bar-animate { transition: height 0.5s ease-out, background-color 0.3s; }
+    .num-animate { transition: opacity 0.2s; }
+    input[type=range] { -webkit-appearance: none; background: transparent; }
+    input[type=range]::-webkit-slider-track { height: 6px; border-radius: 3px; background: #1E1E2A; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #ED1C24; cursor: pointer; margin-top: -7px; }
+    input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: #1E1E2A; border: none; }
+    input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #ED1C24; cursor: pointer; border: none; }
+  </style>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-08QNJSTGZ2"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-08QNJSTGZ2');</script>
+</head>
+<body class="font-sans text-gray-300 antialiased" style="background:#0A0A0F;">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <a href="/3D-print/" class="flex items-center gap-2">
+        <span class="inline-block w-3 h-3 rounded-full bg-amd-red animate-pulse"></span>
+        <span class="font-mono font-bold text-white text-lg tracking-tight">3D Print <span class="text-amd-red">Academy</span></span>
+      </a>
+      <a href="/3D-print/#enroll" class="px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">Enroll Now</a>
+    </div>
+  </nav>
+
+  <main class="pt-28 pb-20 px-4 grid-bg min-h-screen">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <p class="font-mono text-amd-red text-sm tracking-widest uppercase mb-3">// Profit Calculator</p>
+        <h1 class="text-3xl sm:text-5xl font-extrabold text-white leading-tight">
+          How Much Can You <span class="text-neon-green">Make?</span>
+        </h1>
+        <p class="mt-4 text-gray-400 max-w-xl mx-auto">Adjust the sliders below to see your potential income from selling 3D printed magnet frames.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8">
+        <!-- INPUTS -->
+        <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8 space-y-6">
+          <h2 class="font-mono text-white font-bold text-lg mb-2">Your Setup</h2>
+
+          <!-- Printer -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-2 font-mono">Printer</label>
+            <select id="printer" class="w-full px-4 py-3 bg-surface border border-border-dim rounded-lg text-white font-mono text-sm focus:outline-none focus:border-amd-red/50">
+              <option value="200">Ender 3 (~$200)</option>
+              <option value="799">Prusa MK3S+ (~$799)</option>
+              <option value="599" selected>Bambu Lab P1S (~$599)</option>
+              <option value="400">Custom</option>
+            </select>
+          </div>
+
+          <!-- Filament cost -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-2 font-mono">Filament Cost per kg: <span id="filament-val" class="text-white">$20</span></label>
+            <input type="range" id="filament" min="15" max="30" value="20" step="1" class="w-full" />
+          </div>
+
+          <!-- Print time -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-2 font-mono">Print Time per Frame: <span id="time-val" class="text-white">45 min</span></label>
+            <input type="range" id="printTime" min="15" max="120" value="45" step="5" class="w-full" />
+          </div>
+
+          <!-- Selling price -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-2 font-mono">Selling Price per Frame: <span id="price-val" class="text-white">$12</span></label>
+            <input type="range" id="sellPrice" min="5" max="25" value="12" step="0.5" class="w-full" />
+          </div>
+
+          <!-- Hours per day -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-2 font-mono">Hours Printing per Day: <span id="hours-val" class="text-white">4</span></label>
+            <input type="range" id="hoursDay" min="1" max="12" value="4" step="1" class="w-full" />
+          </div>
+
+          <!-- Days per week -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-2 font-mono">Days per Week: <span id="days-val" class="text-white">5</span></label>
+            <input type="range" id="daysWeek" min="1" max="7" value="5" step="1" class="w-full" />
+          </div>
+        </div>
+
+        <!-- OUTPUTS -->
+        <div class="space-y-6">
+          <!-- Numbers -->
+          <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8">
+            <h2 class="font-mono text-white font-bold text-lg mb-6">Your Profit Breakdown</h2>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-4 rounded-xl bg-surface border border-border-dim">
+                <p class="text-xs text-gray-500 font-mono uppercase">Cost/Unit</p>
+                <p id="out-cost" class="text-xl font-bold text-red-400 font-mono mt-1">$0.00</p>
+              </div>
+              <div class="p-4 rounded-xl bg-surface border border-border-dim">
+                <p class="text-xs text-gray-500 font-mono uppercase">Profit/Unit</p>
+                <p id="out-profit-unit" class="text-xl font-bold text-neon-green font-mono mt-1">$0.00</p>
+              </div>
+              <div class="p-4 rounded-xl bg-surface border border-border-dim">
+                <p class="text-xs text-gray-500 font-mono uppercase">Daily Profit</p>
+                <p id="out-daily" class="text-xl font-bold text-neon-green font-mono mt-1">$0</p>
+              </div>
+              <div class="p-4 rounded-xl bg-surface border border-border-dim">
+                <p class="text-xs text-gray-500 font-mono uppercase">Weekly Profit</p>
+                <p id="out-weekly" class="text-xl font-bold text-neon-green font-mono mt-1">$0</p>
+              </div>
+              <div class="p-4 rounded-xl bg-surface border border-border-dim">
+                <p class="text-xs text-gray-500 font-mono uppercase">Monthly Profit</p>
+                <p id="out-monthly" class="text-2xl font-bold text-neon-green font-mono mt-1">$0</p>
+              </div>
+              <div class="p-4 rounded-xl bg-surface border border-border-dim">
+                <p class="text-xs text-gray-500 font-mono uppercase">Annual Projection</p>
+                <p id="out-annual" class="text-2xl font-bold text-neon-green font-mono mt-1">$0</p>
+              </div>
+              <div class="p-4 rounded-xl bg-surface border border-border-dim">
+                <p class="text-xs text-gray-500 font-mono uppercase">Break-Even</p>
+                <p id="out-breakeven" class="text-xl font-bold text-electric-blue font-mono mt-1">0 units</p>
+              </div>
+              <div class="p-4 rounded-xl bg-surface border border-border-dim">
+                <p class="text-xs text-gray-500 font-mono uppercase">ROI (Year 1)</p>
+                <p id="out-roi" class="text-xl font-bold text-electric-blue font-mono mt-1">0%</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bar Chart -->
+          <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8">
+            <h3 class="font-mono text-white font-bold text-sm mb-4">Profit Overview</h3>
+            <div class="flex items-end justify-around gap-4 h-48">
+              <div class="flex flex-col items-center flex-1">
+                <div id="bar-daily" class="bar-animate w-full rounded-t-lg bg-neon-green/80" style="height:10%"></div>
+                <span class="text-xs text-gray-500 font-mono mt-2">Daily</span>
+              </div>
+              <div class="flex flex-col items-center flex-1">
+                <div id="bar-weekly" class="bar-animate w-full rounded-t-lg bg-neon-green" style="height:10%"></div>
+                <span class="text-xs text-gray-500 font-mono mt-2">Weekly</span>
+              </div>
+              <div class="flex flex-col items-center flex-1">
+                <div id="bar-monthly" class="bar-animate w-full rounded-t-lg bg-electric-blue" style="height:10%"></div>
+                <span class="text-xs text-gray-500 font-mono mt-2">Monthly</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTAs -->
+          <div class="flex flex-col sm:flex-row gap-3">
+            <a href="/3D-print/#enroll" class="flex-1 text-center px-6 py-4 bg-amd-red-btn text-white rounded-xl font-mono font-bold text-sm hover:bg-red-800 transition-colors">
+              Start Making Money →
+            </a>
+            <button id="share-btn" class="flex-1 text-center px-6 py-4 border border-neon-green/40 text-neon-green rounded-xl font-mono font-bold text-sm hover:bg-neon-green/10 transition-colors">
+              📤 Share My Results
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-border-dim py-8 text-center text-gray-600 text-sm font-mono">
+    <a href="/3D-print/" class="hover:text-white transition-colors">← Back to 3D Print Academy</a>
+  </footer>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const printerCosts = { '200': 200, '799': 799, '599': 599, '400': 400 };
+    const electricityPerHour = 0.05; // ~$0.05/hr for a 3D printer
+
+    function fmt(n) { return n >= 1000 ? '$' + n.toLocaleString('en-US', {maximumFractionDigits:0}) : '$' + n.toFixed(n < 10 ? 2 : 0); }
+
+    function calculate() {
+      const printerCost = parseInt($('printer').value);
+      const filamentPerKg = parseInt($('filament').value);
+      const printMinutes = parseInt($('printTime').value);
+      const sellPrice = parseFloat($('sellPrice').value);
+      const hoursDay = parseInt($('hoursDay').value);
+      const daysWeek = parseInt($('daysWeek').value);
+
+      // Update labels
+      $('filament-val').textContent = '$' + filamentPerKg;
+      $('time-val').textContent = printMinutes + ' min';
+      $('price-val').textContent = '$' + sellPrice.toFixed(sellPrice % 1 ? 1 : 0);
+      $('hours-val').textContent = hoursDay;
+      $('days-val').textContent = daysWeek;
+
+      // Cost per unit: ~30g filament per frame + electricity
+      const filamentPerFrame = 0.03; // 30g = 0.03kg
+      const filamentCost = filamentPerFrame * filamentPerKg;
+      const electricityCost = (printMinutes / 60) * electricityPerHour;
+      const costPerUnit = filamentCost + electricityCost;
+      const profitPerUnit = sellPrice - costPerUnit;
+
+      // Units per day
+      const unitsPerDay = Math.floor((hoursDay * 60) / printMinutes);
+      const dailyProfit = unitsPerDay * profitPerUnit;
+      const weeklyProfit = dailyProfit * daysWeek;
+      const monthlyProfit = weeklyProfit * 4.33;
+      const annualProfit = weeklyProfit * 52;
+
+      // Break-even
+      const breakeven = profitPerUnit > 0 ? Math.ceil(printerCost / profitPerUnit) : Infinity;
+      const roi = printerCost > 0 ? ((annualProfit - printerCost) / printerCost * 100) : 0;
+
+      // Update outputs
+      $('out-cost').textContent = '$' + costPerUnit.toFixed(2);
+      $('out-cost').className = 'text-xl font-bold text-red-400 font-mono mt-1';
+      $('out-profit-unit').textContent = fmt(profitPerUnit);
+      $('out-profit-unit').className = 'text-xl font-bold font-mono mt-1 ' + (profitPerUnit >= 0 ? 'text-neon-green' : 'text-red-400');
+      $('out-daily').textContent = fmt(dailyProfit);
+      $('out-weekly').textContent = fmt(weeklyProfit);
+      $('out-monthly').textContent = fmt(monthlyProfit);
+      $('out-annual').textContent = fmt(annualProfit);
+      $('out-breakeven').textContent = breakeven === Infinity ? '∞' : breakeven + ' units';
+      $('out-roi').textContent = roi > 0 ? Math.round(roi) + '%' : '—';
+
+      // Bar chart (scale relative to monthly)
+      const maxVal = Math.max(monthlyProfit, 1);
+      $('bar-daily').style.height = Math.max(5, (dailyProfit / maxVal) * 100) + '%';
+      $('bar-weekly').style.height = Math.max(5, (weeklyProfit / maxVal) * 100) + '%';
+      $('bar-monthly').style.height = '100%';
+
+      // Store monthly for share
+      window._monthlyProfit = monthlyProfit;
+    }
+
+    // Bind events
+    ['printer','filament','printTime','sellPrice','hoursDay','daysWeek'].forEach(id => {
+      $(id).addEventListener('input', calculate);
+    });
+
+    // Share
+    $('share-btn').addEventListener('click', () => {
+      const text = `I could make ${fmt(window._monthlyProfit)}/month with a 3D printer! 🖨️💰 Calculate yours:`;
+      const url = 'https://ajayadesign.github.io/3D-print/tools/profit-calculator.html';
+      if (navigator.share) {
+        navigator.share({ title: '3D Print Profit Calculator', text, url });
+      } else {
+        navigator.clipboard.writeText(text + ' ' + url).then(() => {
+          $('share-btn').textContent = '✅ Copied!';
+          setTimeout(() => { $('share-btn').textContent = '📤 Share My Results'; }, 2000);
+        });
+      }
+    });
+
+    // Init
+    calculate();
+  </script>
+</body>
+</html>
