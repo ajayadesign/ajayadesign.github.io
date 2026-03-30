@@ -1,0 +1,29 @@
+# OpenClaw agent state (contains auth tokens, session data)
+.openclaw/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Test / debug
+*.log
+test_*.py
+*_diag*.py
+*.bak
+
+# Binary assets (hosted on Drive & YouTube)
+*.stl
+*.zip
+*.mp4
+*.mp3
+*.webm
+*.m4a
+*.pickle
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env

@@ -40,4 +40,4 @@ __pycache__/
 *.pyc
 3D-print/automation/test_*.py
 3D-print/automation/*_diag*.py
-3D-print/automation/*.bak
+3D-print/automation/*.bak.env.secrets
