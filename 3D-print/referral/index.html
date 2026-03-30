@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Referral Program — 3D Print Academy | AjayaDesign</title>
+  <meta name="description" content="Share the knowledge, earn rewards. Refer friends to 3D Print Academy and earn $10 off or bonus STL packs. New students get 10% off." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta name="theme-color" content="#0A0A0F" />
+  <link rel="canonical" href="https://ajayadesign.github.io/3D-print/referral/" />
+
+  <meta property="og:title" content="Refer & Earn — 3D Print Academy" />
+  <meta property="og:description" content="Share your unique link. Friends get 10% off, you earn $10 credit or bonus STL packs." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/3D-print/referral/" />
+  <meta property="og:image" content="https://ajayadesign.github.io/3D-print/promo-card.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF6B6B',
+            'amd-red-btn': '#D91920',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+            'neon-green': '#39FF14',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
+            sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body { background: #0A0A0F; }
+    .gradient-line { height: 1px; background: linear-gradient(90deg, transparent, #ED1C24, #00D4FF, transparent); }
+    .reveal { opacity: 0; transform: translateY(24px); transition: all 0.6s ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body class="bg-surface text-gray-300 font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- NAV -->
+  <nav class="sticky top-0 z-50 bg-surface/95 backdrop-blur border-b border-border-dim" role="navigation" aria-label="Main navigation">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/3D-print/" class="flex items-center gap-2 group" aria-label="3D Print Academy home">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-amd-red"></span>
+        <span class="font-mono font-bold text-white text-sm">3D Print <span class="text-amd-red-text">Academy</span></span>
+      </a>
+      <div class="flex items-center gap-4 text-sm">
+        <a href="/3D-print/" class="hover:text-white transition-colors">Course</a>
+        <a href="/3D-print/free/" class="hover:text-neon-green transition-colors">Free Lessons</a>
+        <a href="/3D-print/tools/profit-calculator.html" class="hover:text-neon-green transition-colors">Profit Calc</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-1">
+    <!-- HERO -->
+    <section class="py-16 sm:py-24">
+      <div class="max-w-3xl mx-auto px-6 text-center reveal">
+        <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-4">// Referral Program</p>
+        <h1 class="font-mono font-bold text-4xl sm:text-5xl text-white leading-tight mb-6">
+          Share the Knowledge,<br><span class="text-amd-red">Earn Rewards</span>
+        </h1>
+        <p class="text-gray-400 text-lg max-w-xl mx-auto mb-8">
+          Refer friends to 3D Print Academy. They get <strong class="text-neon-green">10% off</strong>, you earn <strong class="text-electric-blue">$10 credit</strong> or a bonus STL pack for every signup.
+        </p>
+      </div>
+    </section>
+
+    <div class="gradient-line"></div>
+
+    <!-- HOW IT WORKS -->
+    <section class="py-16 sm:py-20">
+      <div class="max-w-4xl mx-auto px-6">
+        <h2 class="font-mono font-bold text-2xl text-white text-center mb-12 reveal">How It Works</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="text-center reveal">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-amd-red/10 border border-amd-red/30 flex items-center justify-center">
+              <span class="font-mono font-bold text-2xl text-amd-red">1</span>
+            </div>
+            <h3 class="font-mono font-semibold text-white mb-2">Sign Up</h3>
+            <p class="text-gray-400 text-sm">Enter your email below to get your unique referral link.</p>
+          </div>
+          <div class="text-center reveal">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-electric-blue/10 border border-electric-blue/30 flex items-center justify-center">
+              <span class="font-mono font-bold text-2xl text-electric-blue">2</span>
+            </div>
+            <h3 class="font-mono font-semibold text-white mb-2">Share</h3>
+            <p class="text-gray-400 text-sm">Send your link to friends via social media, email, or DM.</p>
+          </div>
+          <div class="text-center reveal">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-neon-green/10 border border-neon-green/30 flex items-center justify-center">
+              <span class="font-mono font-bold text-2xl text-neon-green">3</span>
+            </div>
+            <h3 class="font-mono font-semibold text-white mb-2">Earn</h3>
+            <p class="text-gray-400 text-sm">Get $10 off your next purchase or a bonus STL pack per referral.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="gradient-line"></div>
+
+    <!-- GET YOUR LINK -->
+    <section class="py-16 sm:py-20" id="get-link">
+      <div class="max-w-lg mx-auto px-6 reveal">
+        <h2 class="font-mono font-bold text-2xl text-white text-center mb-8">Get Your Referral Link</h2>
+        <form id="referral-form" class="space-y-4" aria-label="Referral signup form">
+          <label for="referral-email" class="block font-mono text-sm text-gray-400">Your email address</label>
+          <div class="flex gap-3">
+            <input
+              type="email"
+              id="referral-email"
+              name="email"
+              required
+              placeholder="you@email.com"
+              autocomplete="email"
+              class="flex-1 px-4 py-3 bg-surface-card border border-border-dim rounded-lg text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric-blue/50 transition-colors"
+            />
+            <button type="submit" class="px-6 py-3 bg-amd-red-btn text-white rounded-lg font-mono text-sm font-semibold hover:bg-red-800 transition-colors whitespace-nowrap">
+              Get Link
+            </button>
+          </div>
+          <p id="referral-msg" class="text-sm font-mono hidden" role="status" aria-live="polite"></p>
+        </form>
+
+        <!-- Referral link output (hidden until generated) -->
+        <div id="referral-result" class="hidden mt-8 p-6 rounded-xl bg-surface-card border border-border-dim">
+          <p class="font-mono text-sm text-gray-400 mb-2">Your unique referral link:</p>
+          <div class="flex gap-2">
+            <input
+              type="text"
+              id="referral-link"
+              readonly
+              aria-label="Your referral link"
+              class="flex-1 px-4 py-3 bg-surface border border-border-dim rounded-lg text-electric-blue font-mono text-sm focus:outline-none"
+            />
+            <button id="copy-referral" class="px-4 py-3 bg-electric-blue/10 border border-electric-blue/30 text-electric-blue rounded-lg font-mono text-sm hover:bg-electric-blue/20 transition-colors" aria-label="Copy referral link">
+              Copy
+            </button>
+          </div>
+
+          <!-- Social share -->
+          <div class="mt-6">
+            <p class="font-mono text-sm text-gray-400 mb-3">Share via:</p>
+            <div class="flex gap-3 flex-wrap">
+              <button id="share-twitter" class="px-4 py-2 rounded-lg bg-[#1DA1F2]/10 border border-[#1DA1F2]/30 text-[#1DA1F2] font-mono text-sm hover:bg-[#1DA1F2]/20 transition-colors" aria-label="Share on X (Twitter)">
+                𝕏 Twitter
+              </button>
+              <button id="share-facebook" class="px-4 py-2 rounded-lg bg-[#4267B2]/10 border border-[#4267B2]/30 text-[#4267B2] font-mono text-sm hover:bg-[#4267B2]/20 transition-colors" aria-label="Share on Facebook">
+                Facebook
+              </button>
+              <button id="share-whatsapp" class="px-4 py-2 rounded-lg bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] font-mono text-sm hover:bg-[#25D366]/20 transition-colors" aria-label="Share on WhatsApp">
+                WhatsApp
+              </button>
+              <button id="share-email-btn" class="px-4 py-2 rounded-lg bg-gray-500/10 border border-gray-500/30 text-gray-400 font-mono text-sm hover:bg-gray-500/20 transition-colors" aria-label="Share via email">
+                ✉ Email
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="gradient-line"></div>
+
+    <!-- LEADERBOARD -->
+    <section class="py-16 sm:py-20">
+      <div class="max-w-lg mx-auto px-6 reveal">
+        <h2 class="font-mono font-bold text-2xl text-white text-center mb-8">Top Referrers 🏆</h2>
+        <div id="leaderboard" class="space-y-3" role="list" aria-label="Referral leaderboard">
+          <p class="text-center text-gray-500 font-mono text-sm">Loading leaderboard...</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="gradient-line"></div>
+
+    <!-- FAQ -->
+    <section class="py-16 sm:py-20">
+      <div class="max-w-2xl mx-auto px-6 reveal">
+        <h2 class="font-mono font-bold text-2xl text-white text-center mb-8">Program FAQ</h2>
+        <div class="space-y-4">
+          <details class="group bg-surface-card border border-border-dim rounded-lg">
+            <summary class="px-6 py-4 cursor-pointer font-mono text-sm text-white hover:text-amd-red-text transition-colors list-none flex justify-between items-center">
+              How is my referral code generated?
+              <span class="text-gray-500 group-open:rotate-45 transition-transform text-lg">+</span>
+            </summary>
+            <p class="px-6 pb-4 text-sm text-gray-400">Your code is a short hash derived from your email. It's unique, anonymous, and consistent — you'll always get the same code for the same email.</p>
+          </details>
+          <details class="group bg-surface-card border border-border-dim rounded-lg">
+            <summary class="px-6 py-4 cursor-pointer font-mono text-sm text-white hover:text-amd-red-text transition-colors list-none flex justify-between items-center">
+              When do I get my reward?
+              <span class="text-gray-500 group-open:rotate-45 transition-transform text-lg">+</span>
+            </summary>
+            <p class="px-6 pb-4 text-sm text-gray-400">Once your referral completes a purchase, we'll email you a $10 discount code or bonus STL pack within 48 hours.</p>
+          </details>
+          <details class="group bg-surface-card border border-border-dim rounded-lg">
+            <summary class="px-6 py-4 cursor-pointer font-mono text-sm text-white hover:text-amd-red-text transition-colors list-none flex justify-between items-center">
+              Is there a limit to referrals?
+              <span class="text-gray-500 group-open:rotate-45 transition-transform text-lg">+</span>
+            </summary>
+            <p class="px-6 pb-4 text-sm text-gray-400">No limit! The more you share, the more you earn. Top referrers get featured on our leaderboard.</p>
+          </details>
+          <details class="group bg-surface-card border border-border-dim rounded-lg">
+            <summary class="px-6 py-4 cursor-pointer font-mono text-sm text-white hover:text-amd-red-text transition-colors list-none flex justify-between items-center">
+              What does the new student get?
+              <span class="text-gray-500 group-open:rotate-45 transition-transform text-lg">+</span>
+            </summary>
+            <p class="px-6 pb-4 text-sm text-gray-400">Anyone who signs up through your link gets an automatic 10% discount applied at checkout.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-border-dim py-8">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-amd-red"></span>
+        <span class="font-mono font-bold text-white text-sm">Ajaya<span class="text-amd-red-text">Design</span></span>
+      </div>
+      <div class="flex gap-4 text-sm text-gray-500">
+        <a href="/3D-print/" class="hover:text-white transition-colors">Course</a>
+        <a href="/3D-print/free/" class="hover:text-white transition-colors">Free Lessons</a>
+        <a href="/contact/" class="hover:text-white transition-colors">Contact</a>
+      </div>
+      <p class="text-gray-600 text-xs font-mono">&copy; <script>document.write(new Date().getFullYear())</script> AjayaDesign</p>
+    </div>
+  </footer>
+
+  <script>
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Generate referral code from email (simple hash → 5-char alphanumeric)
+    async function generateRefCode(email) {
+      const data = new TextEncoder().encode(email.toLowerCase().trim());
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no I/O/0/1 for clarity
+      let code = '';
+      for (let i = 0; i < 5; i++) {
+        code += chars[hashArray[i] % chars.length];
+      }
+      return code;
+    }
+
+    // Anonymize email for leaderboard: "m***a@gmail.com" → "M***a"
+    function anonymize(email) {
+      const local = email.split('@')[0];
+      if (local.length <= 2) return local[0].toUpperCase() + '***';
+      return local[0].toUpperCase() + '***' + local[local.length - 1];
+    }
+
+    const FIREBASE_URL = 'https://ajayadesign-6d739-default-rtdb.firebaseio.com';
+    let currentRefLink = '';
+
+    // Referral form
+    document.getElementById('referral-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const emailInput = document.getElementById('referral-email');
+      const email = emailInput.value.trim();
+      if (!email) return;
+
+      const btn = this.querySelector('button');
+      const msg = document.getElementById('referral-msg');
+      btn.disabled = true;
+      btn.textContent = 'Generating...';
+
+      try {
+        const code = await generateRefCode(email);
+        currentRefLink = 'https://ajayadesign.github.io/3D-print/?ref=' + code;
+
+        // Store in Firebase
+        await fetch(FIREBASE_URL + '/referrals/' + code + '.json', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, code: code, ts: Date.now() })
+        });
+
+        // Show result
+        document.getElementById('referral-link').value = currentRefLink;
+        document.getElementById('referral-result').classList.remove('hidden');
+        msg.textContent = '✓ Your referral link is ready! Share it to start earning.';
+        msg.className = 'text-sm font-mono text-neon-green';
+        msg.classList.remove('hidden');
+        btn.textContent = 'Get Link';
+        btn.disabled = false;
+
+        // Scroll to result
+        document.getElementById('referral-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (err) {
+        msg.textContent = 'Something went wrong — try again.';
+        msg.className = 'text-sm font-mono text-amd-red-text';
+        msg.classList.remove('hidden');
+        btn.textContent = 'Get Link';
+        btn.disabled = false;
+      }
+    });
+
+    // Copy link
+    document.getElementById('copy-referral').addEventListener('click', function() {
+      const linkInput = document.getElementById('referral-link');
+      navigator.clipboard.writeText(linkInput.value).then(() => {
+        this.textContent = 'Copied!';
+        setTimeout(() => { this.textContent = 'Copy'; }, 2000);
+      });
+    });
+
+    // Social share buttons
+    document.getElementById('share-twitter').addEventListener('click', function() {
+      const text = "I'm learning 3D printing with @AjayaDesign! Use my link for 10% off 🖨️";
+      window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(currentRefLink), '_blank', 'width=600,height=400');
+    });
+    document.getElementById('share-facebook').addEventListener('click', function() {
+      window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(currentRefLink), '_blank', 'width=600,height=400');
+    });
+    document.getElementById('share-whatsapp').addEventListener('click', function() {
+      const text = "Check out this 3D printing course! Use my link for 10% off: " + currentRefLink;
+      window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+    });
+    document.getElementById('share-email-btn').addEventListener('click', function() {
+      const subject = "Learn 3D Printing — 10% Off For You!";
+      const body = "Hey! I'm taking this awesome 3D printing course and thought you'd love it.\n\nUse my referral link for 10% off:\n" + currentRefLink + "\n\nCheck it out!";
+      window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    });
+
+    // Load leaderboard
+    (async function loadLeaderboard() {
+      const lb = document.getElementById('leaderboard');
+      try {
+        const res = await fetch(FIREBASE_URL + '/referrals.json');
+        const data = await res.json();
+        if (!data) {
+          lb.innerHTML = '<p class="text-center text-gray-500 font-mono text-sm">No referrals yet — be the first! 🚀</p>';
+          return;
+        }
+
+        // Count referrals per code (check for 'count' field or just list entries)
+        const entries = Object.values(data)
+          .filter(e => e && e.email)
+          .map(e => ({ name: anonymize(e.email), count: e.count || 0 }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 10);
+
+        if (entries.length === 0 || entries.every(e => e.count === 0)) {
+          lb.innerHTML = '<p class="text-center text-gray-500 font-mono text-sm">No referrals yet — be the first! 🚀</p>';
+          return;
+        }
+
+        lb.innerHTML = entries
+          .filter(e => e.count > 0)
+          .map((e, i) => {
+            const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '  ';
+            return '<div role="listitem" class="flex items-center justify-between px-4 py-3 bg-surface-card border border-border-dim rounded-lg">' +
+              '<span class="font-mono text-sm text-white">' + medal + ' ' + e.name + '</span>' +
+              '<span class="font-mono text-sm text-electric-blue">' + e.count + ' referred</span></div>';
+          }).join('');
+      } catch {
+        lb.innerHTML = '<p class="text-center text-gray-500 font-mono text-sm">Could not load leaderboard.</p>';
+      }
+    })();
+  </script>
+</body>
+</html>
