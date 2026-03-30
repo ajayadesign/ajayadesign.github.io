@@ -1,0 +1,36 @@
+FIX ELEPHANT'S FOOT — CLEAN FIRST LAYERS
+3D Print Academy — Module 4, Lesson 7
+
+Eliminating the Bulge at the Base of Your Prints
+
+Elephant's foot is a common printing defect where the first few layers of a print squish outward, creating a noticeable bulge or flare at the base. For magnet frames, this means the bottom edge looks unprofessional and the frame may not sit flush against surfaces. This lesson teaches you to diagnose, prevent, and fix elephant's foot.
+
+WHAT IS ELEPHANT'S FOOT
+The first layer of a 3D print is deliberately squished slightly to ensure good bed adhesion. However, the weight of subsequent layers compounds this squish, and the heat from the bed softens the bottom layers further, causing them to deform outward. The result is a flared base that is wider than the design dimensions. On a magnet frame, this appears as a visible ridge around the bottom edge.
+
+CAUSE 1: Z-OFFSET TOO CLOSE
+If the nozzle is too close to the bed, the first layer gets over-squished. This excess squish spreads outward, creating the elephant's foot bulge. The fix: raise the Z-offset (increase the nozzle-to-bed gap) by 0.02 to 0.05mm increments. You want the first layer to be squished enough for adhesion but not so much that it spreads noticeably wider than the design.
+
+CAUSE 2: BED TEMPERATURE TOO HIGH
+Excessive bed temperature keeps the bottom layers soft longer, allowing them to deform under the weight of upper layers. For PLA: reduce bed temperature by 5°C increments. If you are at 65°C, try 60°C. For most PLA, a bed temperature of 55 to 60°C provides good adhesion without excessive softening. Monitor first-layer adhesion as you reduce temperature — find the lowest temperature that still sticks reliably.
+
+CAUSE 3: INITIAL LAYER SETTINGS
+Some slicers have separate first-layer settings. If the initial layer height is too thick or the initial layer flow rate is too high, elephant's foot results. Set initial layer height to 0.2mm (same as other layers) rather than a thicker 0.3mm first layer. Set initial layer flow to 100% unless you specifically need extra adhesion.
+
+SLICER COMPENSATION: ELEPHANT'S FOOT COMPENSATION
+Both Cura and PrusaSlicer have an Elephant's Foot Compensation setting. This intentionally shrinks the first layer perimeter by a specified amount. Typical value: 0.1 to 0.2mm. The first layer prints slightly smaller, and the elephant's foot expansion brings it back to the correct size. Start at 0.1mm and increase by 0.05mm increments until the base matches the upper layers.
+
+HOW TO MEASURE ELEPHANT'S FOOT
+Print a calibration cube (20mm). Measure the base dimensions and compare to dimensions at 10mm height. If the base measures 20.3mm and the middle measures 20.0mm, you have 0.15mm of elephant's foot per side. Use this measurement to set your compensation value.
+
+ELIMINATING ELEPHANT'S FOOT ON MAGNET FRAMES
+For magnet frames specifically: the bottom edge is visible when the frame is on a fridge (it is the edge closest to the viewer). Elephant's foot creates a visible ridge that catches dust and looks unprofessional. After applying slicer compensation, verify with a test frame. Run your finger along the bottom edge — it should feel flush with the upper walls, no ridge.
+
+WHEN ELEPHANT'S FOOT IS NOT A PROBLEM
+If you are post-processing frames with sanding and painting, a slight elephant's foot can be sanded away during the finishing process. The 120-grit sanding pass that removes layer lines also removes a minor elephant's foot bulge. For frames sold without post-processing, slicer compensation is essential.
+
+POST-PRINT FIX
+If you notice elephant's foot on a completed print and do not want to reprint: use a craft knife to carefully trim the protruding edge, or sand the base flat on 120-grit sandpaper laid on a flat surface. Press the frame base against the sandpaper and move in a figure-eight pattern for even removal.
+
+KEY TAKEAWAYS
+Elephant's foot has three main causes: Z-offset too close, bed too hot, and slicer settings. Fix with Z-offset adjustment, reduced bed temperature, and slicer compensation (0.1-0.2mm). Always check the base of your frames during quality control. A clean base edge is part of the professional quality standard your customers expect.

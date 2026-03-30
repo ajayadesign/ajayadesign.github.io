@@ -1,0 +1,36 @@
+QUALITY CONTROL CHECKLIST WALKTHROUGH
+3D Print Academy — Module 5, Lesson 7
+
+The Final Gate Before Packaging and Sale
+
+This lesson walks you through the complete quality control checklist that every magnet frame must pass before reaching a customer. Quality control is not an optional step — it is the final production gate that protects your brand reputation and ensures every customer receives a perfect product.
+
+THE PRODUCTION QC MINDSET
+Think of yourself as a quality inspector on a manufacturing line. Every frame is a product that carries your brand name. One defective frame sent to a customer can generate a negative review that discourages dozens of potential buyers. The few seconds spent on each QC checkpoint prevent hours of dealing with returns, refunds, and reputation repair.
+
+CHECKPOINT 1: VISUAL INSPECTION FROM CUSTOMER VIEWING ANGLE
+Hold the frame at arm's length and examine it from the front — the angle customers will see it most. Look for: visible layer lines that survived sanding and priming, paint runs or drips, uneven paint coverage, dust particles embedded in the paint or clear coat, scratches from handling during the finishing process. Rotate the frame slowly and check all visible edges and surfaces. If any visual defect is visible at arm's length under normal lighting, the frame fails this checkpoint.
+
+CHECKPOINT 2: SURFACE FEEL TEST
+Run your fingers across all surfaces of the frame. The surface should feel uniformly smooth. Detect: rough patches from missed sanding, bumps from dust in the paint, tacky areas where the clear coat did not fully cure, sharp edges from elephant's foot or support removal. The tactile experience should match a commercially manufactured product. Customers will touch your frames before buying.
+
+CHECKPOINT 3: MAGNET FUNCTIONALITY
+Test magnet holding strength by placing the frame on a magnetic surface (fridge door or magnetic board). The frame should hold firmly against gravity with no tendency to slide or fall. If using a fridge, test on both flat and slightly curved surfaces. Insert a photo into the frame while it is on the magnetic surface — the additional weight should not cause the frame to fall. If the frame slides or feels weak, the magnets may be installed too deep, the magnet strength may be insufficient, or the magnets may have been damaged during installation.
+
+CHECKPOINT 4: PHOTO FIT TEST
+Insert the appropriate photo size into the frame. The photo should slide in smoothly without excessive force. Once inserted, the photo should sit flat without buckling or angling. With the frame inverted, the photo should stay in place held by the retention lip. Remove the photo — it should come out easily without tools. The fit should feel intentional and precise, not loose or fighting.
+
+CHECKPOINT 5: DIMENSIONAL VERIFICATION
+Use digital calipers to spot-check critical dimensions. Overall frame dimensions within plus or minus 0.3mm of design. Magnet hole diameter within plus or minus 0.1mm. Photo opening within plus or minus 0.2mm. Frame thickness consistent across the surface. You do not need to measure every frame in a batch, but spot-check every 5th frame to catch systematic issues.
+
+CHECKPOINT 6: WEIGHT CONSISTENCY
+Weigh each frame on a kitchen scale. Frames in the same batch should be within plus or minus 1 gram of each other. A noticeably lighter frame may have under-extrusion or failed infill. A heavier frame may have excess paint buildup or infill issues. Consistent weight indicates consistent manufacturing quality.
+
+REJECT AND REWORK CRITERIA
+Reject immediately: visible cracks, broken features, paint peeling, reversed magnet polarity. Rework possible: minor scratches (re-sand and repaint), dust nibs in paint (sand spot and touch up), slight excess glue (trim with craft knife). Record every rejection and its cause. If reject rate exceeds 5%, investigate and fix the root cause in your production process.
+
+PACKAGING AFTER QC
+Only frames that pass all six checkpoints proceed to packaging. Wrap each frame in a protective layer (tissue paper or clear poly bag) immediately after QC passes. This prevents handling scratches between QC and sale. Label or organize packaged frames by style and color for easy inventory management.
+
+KEY TAKEAWAYS
+Six quality checkpoints gate every frame: visual inspection, surface feel, magnet functionality, photo fit, dimensional spot-check, and weight consistency. QC takes 30 to 45 seconds per frame but prevents returns and negative reviews. Maintain a reject rate log and investigate any spikes. Quality control is the discipline that turns a craft operation into a trusted brand.

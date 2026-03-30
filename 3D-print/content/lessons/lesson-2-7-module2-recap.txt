@@ -1,0 +1,33 @@
+MODULE 2 RECAP — CAD DESIGN BASICS COMPLETE
+3D Print Academy — Module 2, Lesson 7
+
+Your Complete CAD Toolkit for Magnet Frame Design
+
+Congratulations on completing Module 2! You have gone from someone who downloads other people's STL files to a designer who creates original magnet frames from scratch. This recap consolidates everything you have learned about CAD design for magnet frames.
+
+TINKERCAD MASTERY
+You now command the TinkerCAD interface fluently. You know the workplane, shape library, and viewing controls. You can navigate with right-click orbit, scroll zoom, and shift-pan. The Ruler tool gives you precision positioning. The Hole modifier creates magnet slots, photo openings, and retention lips by subtracting shapes from solids. Grouping performs Boolean operations. Align ensures symmetry. Duplicate creates repeating features efficiently.
+
+YOUR FIRST FRAME DESIGN
+You built a complete 4x3 magnet frame from scratch in TinkerCAD: a 112mm by 87mm by 8mm frame body, a centered 102mm by 77mm photo opening at 5mm depth, a 1mm retention lip, and 6.2mm diameter by 2.1mm deep magnet slots. You tested the printed result with actual magnets and photos, iterating on tolerances until everything fit perfectly.
+
+FUSION 360 PARAMETRIC POWER
+You have been introduced to Fusion 360's parametric modeling: sketches define 2D profiles, Extrude creates 3D bodies, Fillet rounds edges, and the Parameters feature creates named variables that update your entire model when changed. One master design can generate frames for every photo size simply by changing parameter values. The Timeline tracks every operation for easy editing.
+
+TOLERANCE ENGINEERING
+You understand that FDM printers produce plus or minus 0.2mm accuracy. Magnet holes are designed at 6.2mm for 6mm magnets (0.2mm diametral clearance). Photo openings have 0.4mm clearance per side. You test tolerances on your specific printer with test pieces at multiple dimensions. You know that holes print slightly smaller and posts print slightly larger than designed.
+
+SNAP-FIT CLIP EXPERTISE
+Your cantilever beam snap-fit clips (8mm long, 3mm wide, 1.5mm thick, 0.5mm hook) secure photo backing plates professionally. You understand entry angle versus retention angle, proper print orientation for layer strength, and the importance of fatigue testing with 20 insertion cycles. Four clips per standard frame provides secure retention.
+
+CLEAN STL EXPORT
+You export clean STL files from both TinkerCAD and Fusion 360. You verify exports in the slicer by previewing every layer, checking magnet holes, photo pockets, and wall continuity. Your file management system keeps designs organized with version numbers and cloud backup.
+
+YOUR DESIGN CAPABILITIES NOW
+Think about what you can now create: any rectangular frame in any photo size, frames with rounded corners, frames with integrated magnet slots at precise tolerances, frames with snap-fit photo retention, and custom text personalization. You have the foundation to design anything the market demands.
+
+WHAT IS NEXT — MODULE 3 PREVIEW
+Module 3 takes your design skills to the next level with advanced frame designs that command premium prices. You will learn multi-piece magnetic assemblies, the best-selling retro TV frame, Polaroid-style frames, Instax Mini frames, multi-photo collage frames, and custom text personalization techniques. These premium designs are where your business profit margins grow biggest.
+
+KEY TAKEAWAYS
+Module 2 has transformed you from a file downloader into a frame designer. You have two powerful tools in your toolkit: TinkerCAD for quick prototyping and Fusion 360 for parametric production designs. Your tolerance knowledge ensures every frame fits perfectly. Your snap-fit clips make your frames feel premium. Every design you create from here forward is uniquely yours.

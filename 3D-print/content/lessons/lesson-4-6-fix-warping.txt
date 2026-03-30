@@ -1,0 +1,36 @@
+FIX WARPING — KEEPING PRINTS FLAT AND STUCK
+3D Print Academy — Module 4, Lesson 6
+
+Preventing Curved Corners and Lifting Prints
+
+Warping occurs when the bottom corners of your print lift off the build plate, curving upward and potentially ruining the entire print. For magnet frames, a warped base means the frame will not sit flat against a fridge. This lesson teaches you every technique to eliminate warping and keep your frames perfectly flat.
+
+THE PHYSICS OF WARPING
+When a layer of molten plastic cools, it contracts slightly. The bottom layers cool first and contract, pulling the edges inward and upward. The effect is cumulative: more bottom surface area means more contraction force. Large flat frames are most susceptible. PLA warps very rarely compared to ABS or PETG, but it can still happen with improper settings or environmental conditions.
+
+SOLUTION 1: PROPER BED LEVELING AND TEMPERATURE
+The most common warping cause is poor first-layer adhesion. If the first layer does not stick firmly, contraction forces pull it up. Ensure your bed is properly leveled with the correct Z-offset (slightly squished first layer). Bed temperature for PLA: 55 to 65°C. Higher bed temperature reduces the thermal gradient between the first layer and the bed, reducing contraction stress.
+
+SOLUTION 2: CLEAN BED SURFACE
+A dirty bed surface is the second most common cause of warping. Fingerprint oils, dust, and filament residue reduce adhesion. Clean your print bed before every session with isopropyl alcohol at 90% or higher concentration. For stubborn contamination, wash with warm water and dish soap, then dry completely. On PEI sheets, occasional cleaning with acetone restores adhesion (but do not use acetone on polycarbonate build plates).
+
+SOLUTION 3: USE A BRIM
+A brim adds a thin, flat extension around the base of your print, increasing the surface area bonded to the bed. For magnet frames prone to warping: use a 5 to 8mm brim width with 3 lines. The brim adds negligible material cost and print time but dramatically improves adhesion. Remove the brim after printing with a craft knife, scoring along the frame edge and peeling.
+
+SOLUTION 4: ADHESION AIDS
+For glass beds: hairspray (Aqua Net or similar) applied in a thin, even coat provides excellent adhesion for PLA. Reapply every 3 to 5 prints. Glue stick (Elmer's purple, the washable kind) works similarly and is easy to clean. For PEI beds: adhesion is usually excellent without any aids. If PEI loses its grip, clean with acetone to renew the surface.
+
+SOLUTION 5: ELIMINATE DRAFTS
+Air movement across the print causes uneven cooling, which promotes warping. Common draft sources: open windows, air conditioning vents, ceiling fans, and nearby foot traffic. Solutions: close the printer in an enclosure (even a simple cardboard box works), orient the printer away from air vents, or move the printer to a more sheltered location.
+
+SOLUTION 6: ENCLOSURE
+A printer enclosure maintains ambient temperature around the print, reducing the thermal gradient that causes warping. For PLA, a simple partial enclosure (cardboard or acrylic panels around three sides and top) is sufficient. Do not fully seal the enclosure for PLA — excessive ambient heat can cause heat creep in the extruder. For PETG, a proper enclosure significantly reduces warping on large prints.
+
+SOLUTION 7: RAFT
+A raft is a thick platform printed under your model. It provides a large adhesion surface and a buffer between the bed and your frame. The downside: rafts waste material, add print time, and can leave a rough bottom surface on your frame. Use rafts only as a last resort when brims and other solutions do not work.
+
+WARPING RISK ASSESSMENT BY FRAME DESIGN
+Low risk: small Polaroid frames, Instax Mini frames — small footprint, quick printing. Medium risk: standard 4x3 and 4x6 frames — moderate footprint. High risk: large collage frames (200mm+ in any dimension) — large footprint, long print time allows more cooling cycles. For high-risk frames, always use a brim and ensure the room is draft-free.
+
+KEY TAKEAWAYS
+Warping is almost always caused by poor adhesion, dirty bed, or drafts. PLA rarely warps when conditions are correct. Level your bed, clean it, use a brim for large frames, eliminate drafts. These preventive measures are simpler and faster than dealing with warped frames. A flat base means your frame sits perfectly against any magnetic surface.

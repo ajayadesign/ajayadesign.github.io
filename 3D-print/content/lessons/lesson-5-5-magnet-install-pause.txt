@@ -1,0 +1,33 @@
+MAGNET INSTALLATION — MID-PRINT PAUSE METHOD
+3D Print Academy — Module 5, Lesson 5
+
+The Professional Way to Embed Magnets Invisibly
+
+The mid-print pause method produces the cleanest, most professional magnet installation. The magnet is placed into its cavity during printing, and subsequent layers print directly over it, completely encapsulating the magnet within the plastic. The result is a flush, invisible magnet installation with zero visual indication that a magnet is inside. This is the method that separates professional frames from amateur ones.
+
+HOW THE MID-PRINT PAUSE METHOD WORKS
+When you slice your frame, the magnet cavity is an open hole for the first portion of the print. At a specific layer, the slicer would normally begin bridging over the cavity (printing the top layers that seal the hole). You insert a pause command just before that bridging layer. When the printer reaches that layer, it pauses. You drop the magnet into the cavity, verify polarity, optionally add a tiny drop of glue, and resume printing. The printer then bridges over the magnet, sealing it inside the frame permanently.
+
+SETTING UP THE PAUSE IN YOUR SLICER
+In Cura: go to Extensions then Post-Processing then Modify G-code. Add a Pause at Height script. Set the pause height to the Z-level just before the magnet cavity closes. Use the layer preview to identify the exact layer. Alternatively, use Pause at Layer and specify the layer number. In PrusaSlicer: right-click on the layer bar at the specific layer height and select Add Pause Print (M601).
+
+CALCULATING THE CORRECT PAUSE LAYER
+A 6x2mm magnet in a 2.1mm deep cavity at 0.2mm layer height: the cavity spans layers 1 through approximately 10 of the base (depending on frame design). The magnet sits in the cavity during layers that are below the frame's back surface. You want to pause at the layer just before the slicer bridges over the cavity opening. In the layer preview, scroll to find the first layer where the slicer prints over the magnet hole — pause one layer before that.
+
+MAGNET INSERTION PROCEDURE
+When the printer pauses: move the extruder out of the way if your pause command does not do this automatically. Use tweezers or your fingers to drop a 6x2mm neodymium magnet into the open cavity. CRITICAL: verify polarity before the magnet touches any glue. Hold a reference magnet against the installed one. It should attract (not repel). All magnets in all your frames should have the same orientation so any frame sticks to any surface from any batch.
+
+VERIFYING POLARITY
+Mark the north-facing side of all your magnets with a permanent marker dot before installation days. Always install with the marked side facing the same direction (for example, marked side always faces the back of the frame). Using a reference magnet taped to your worktable makes this verification instant and foolproof. A frame with reversed polarity will repel from its intended surface instead of sticking.
+
+OPTIONAL CA GLUE
+For absolute security, add a tiny drop of CA glue (super glue, cyanoacrylate) into the cavity before dropping in the magnet. True CA glue cures in seconds. The magnet bonds to the cavity walls permanently. This is optional because the encapsulating layers provide mechanical retention, but the glue adds a safety margin. Use gel CA glue rather than liquid to prevent it from flowing where you do not want it.
+
+RESUMING THE PRINT
+After magnet insertion and polarity verification, resume the print. The printer will print the bridging layer directly over the magnet. The first bridge layer may look slightly rough as it spans the open cavity, but the subsequent solid top layers create a perfectly flat surface. If the magnet is slightly proud of its cavity (sticking up), it may cause a small bump in the first bridge layer that flattens out over 2 to 3 layers.
+
+BATCH PRODUCTION WITH MID-PRINT PAUSE
+When batch printing multiple frames with magnets, the pause affects all frames simultaneously. Prepare all magnets before starting: pre-sort by polarity, have CA glue ready, work quickly during the pause. The printer cools slightly during a long pause, which can affect layer adhesion. Work within 2 to 3 minutes to minimize cooling. For large batches, consider doing pairs rather than filling the entire plate.
+
+KEY TAKEAWAYS
+The mid-print pause method creates professionally embedded magnets that are completely invisible from the outside. Set up a pause command in your slicer at the correct layer. Always verify magnet polarity before installation. Use CA glue for extra security. Work quickly during the pause to minimize cooling. This method is the hallmark of production-quality magnet frames.

@@ -1,0 +1,33 @@
+PRINTED FRAMES SHOWCASE AND QUALITY REVIEW
+3D Print Academy — Module 3, Lesson 7
+
+Quality Standards That Build Your Brand Reputation
+
+Before any magnet frame reaches a customer, it must pass your quality review. This lesson establishes the quality benchmarks your frames must meet and teaches you to evaluate prints with a critical eye. Consistent quality builds brand reputation and generates repeat customers and referrals.
+
+THE QUALITY MINDSET FOR A BUSINESS
+When you are printing frames for yourself, minor imperfections are acceptable. When you are selling frames as a business, every product represents your brand. A customer who receives a perfect frame becomes a repeat buyer and refers friends. A customer who receives a frame with visible defects never returns and may leave a negative review. Quality control is not optional, it is the foundation of your business reputation.
+
+VISUAL INSPECTION CHECKLIST
+Inspect every frame from the customer's viewing angle, which is the front face. Check for: Smooth top surface — ironing should eliminate visible layer lines on the front face. Consistent layers on the sides — no visible layer shifts, gaps, or blobs. Clean corners — sharp where designed, smooth where filleted. No stringing — no thin wisps of filament anywhere. No blobs or zits — no random bumps. Paint finish (if painted) should be even with no runs, drips, or bare spots.
+
+MAGNET FUNCTIONALITY TEST
+Press 6x2mm neodymium magnets into each magnet slot. The magnets should press-fit with moderate finger pressure and hold firmly without glue, or with a tiny drop of CA glue for permanent installation. Place the completed frame on a refrigerator or magnetic surface. The frame should hold firmly against gravity with a photo installed. Test with different photo weights — a single print, a thicker cardstock, even an Instax print. The frame must hold securely in all cases.
+
+PHOTO FIT TEST
+Insert the appropriate photo size into the frame. The photo should slide in smoothly without forcing, sit flat against the retention lip, and stay in place when the frame is inverted. The photo should be easy to remove for swapping. There should be no visible gaps larger than 0.5mm between the photo and frame opening. If the photo rattles loosely, the opening is too large. If it requires force to insert, the opening is too tight.
+
+DIMENSIONAL VERIFICATION
+Use digital calipers to measure critical dimensions. Overall frame length and width should be within plus or minus 0.3mm of design. Magnet hole diameter should be within plus or minus 0.1mm. Photo opening should be within plus or minus 0.2mm. Frame thickness should match the design. Consistent dimensions across a batch verify that your printer is calibrated and settings are locked in.
+
+WEIGHT CONSISTENCY CHECK
+Weigh each frame in a batch. Consistent weight (within plus or minus 1 gram) indicates consistent infill and wall count. If one frame is noticeably lighter, it may have under-extrusion or partially failed infill. If noticeably heavier, it may have an infill error that created solid patches. A kitchen scale accurate to 1 gram is sufficient for this check.
+
+REJECT CRITERIA
+Any frame with these issues should be rejected and reprinted: visible layer shifts (indicates belt slip or mechanical issue), holes in walls (under-extrusion), warped base (adhesion failure), broken or missing features (failed support or print error), stringing that cannot be removed with a quick trim, or any paint defect that is visible at arm's length. Do not sell seconds or imperfect frames — it damages brand perception.
+
+DOCUMENTATION AND BATCH TRACKING
+Label each batch with a date and settings code. Keep records of reject rates. A healthy production process should have less than 5% rejects. If reject rates climb, systematically troubleshoot: check filament moisture, re-level the bed, inspect nozzle for wear, verify slicer settings have not changed. Track quality metrics over time to continuously improve your production process.
+
+KEY TAKEAWAYS
+Quality control is what separates a hobby from a business. Every frame passes visual inspection, magnet functionality test, photo fit test, dimensional verification, and weight consistency check. Reject anything that does not meet standards. Document your quality metrics. Consistent quality builds the brand reputation that drives repeat customers and premium pricing. Your name is on every frame — make it count.

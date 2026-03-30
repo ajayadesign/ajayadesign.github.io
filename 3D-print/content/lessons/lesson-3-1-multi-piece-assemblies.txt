@@ -1,0 +1,30 @@
+MULTI-PIECE MAGNETIC ASSEMBLIES
+3D Print Academy — Module 3, Lesson 1
+
+Creating Modular Frame Systems That Command Premium Prices
+
+Multi-piece magnetic assemblies are frames designed in separate sections that snap together using embedded magnets. These modular systems offer tremendous visual impact, customization options, and significantly higher price points than single-piece frames. A triptych frame that sells for $25 costs only $5 in materials.
+
+THE MODULAR FRAME CONCEPT
+Instead of one rectangular frame, imagine three smaller frames that magnetically connect side-by-side to create a panoramic display. Or four square frames that form a grid. Or hexagonal tiles that tessellate into any pattern the customer desires. Each piece is a standalone frame with its own photo, but together they create something greater. This modularity is the key selling proposition. Customers can start with one piece and add more over time.
+
+DESIGNING INTERLOCKING CONNECTIONS
+Each frame piece needs magnets at its connection edges. Use 6x2mm neodymium magnets positioned 15mm from each corner along the connection edge. A standard connection edge gets 2 magnets. Critical design rule: alternate magnet polarity between connection points. Use a North-South-North-South pattern so pieces can only connect in the correct orientation. This prevents customers from assembling pieces backward with gaps.
+
+ALIGNMENT FEATURES
+Magnets alone allow sliding along the connection edge. Add alignment features: a small peg on one piece (2mm diameter, 3mm tall) that fits into a matching hole on the adjacent piece (2.2mm diameter, 3mm deep). These pegs ensure precise alignment when pieces connect. Place one alignment peg-and-hole pair at the center of each connection edge.
+
+TRIPTYCH FRAME DESIGN
+The triptych is three tall rectangular frames side-by-side. Each panel is 60mm wide by 90mm tall by 8mm deep, holding a 50mm by 80mm photo. Connection edges have 2 magnets each. Total assembled width: 180mm. The center panel can be slightly taller (100mm) for visual hierarchy. This design is a proven best-seller at craft fairs and costs under $5 in materials but commands $20-25 retail.
+
+POLARITY CONSISTENCY IN PRODUCTION
+Color-code or mark your magnet orientation during production. If you install magnets randomly, some pieces from different batches will not connect. Method: always place magnets with the north face toward the frame's back surface. Use a permanent marker to dot the north pole of each magnet before installation. Consistency across your entire production run means any piece connects to any other piece perfectly.
+
+MIXED FRAME SYSTEMS
+Create frame systems where different shapes connect: squares connect to rectangles, or hexagons tile together. Design standard connection edges so any piece with a connection edge can join any other piece. This creates a collector's ecosystem where customers keep buying additional pieces. Market these as an expandable gallery wall system.
+
+PRICING STRATEGY FOR MODULAR FRAMES
+Individual piece: $8-10. Pair: $15. Triptych set of 3: $20-25. Full set of 6: $40-45. The per-piece price decreases with bundles, encouraging larger purchases. Always display the full assembled system at craft fairs so customers see the complete vision and want more pieces.
+
+KEY TAKEAWAYS
+Multi-piece magnetic assemblies multiply your revenue per customer and create a collectible product ecosystem. Proper magnet polarity and alignment features ensure reliable connections. The triptych is your entry product for premium pricing. Design standard connection edges for mix-and-match flexibility. These products transform your frame business from selling impulse items to selling expandable display systems.

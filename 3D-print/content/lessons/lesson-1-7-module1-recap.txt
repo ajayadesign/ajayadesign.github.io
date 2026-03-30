@@ -1,0 +1,30 @@
+MODULE 1 RECAP — 3D PRINTING FUNDAMENTALS COMPLETE
+3D Print Academy — Module 1, Lesson 7
+
+Everything You Have Learned and What Comes Next
+
+Congratulations on completing Module 1 of the 3D Print Academy! This recap consolidates everything you have learned about 3D printing fundamentals and prepares you for the CAD design skills in Module 2.
+
+PRINTER ANATOMY REVIEW
+You now understand every component of your 3D printer: the frame that provides structural rigidity, the print bed where frames are born (PEI spring steel recommended), the extruder assembly with its cold end feeding mechanism and hot end melting zone, the 0.4mm nozzle that determines feature size, stepper motors for precise movement, the mainboard running Marlin or Klipper firmware, end stops for accurate homing, and the power supply that keeps everything running. You know that an Ender 3 V3 SE or Bambu Lab A1 Mini is an excellent starter printer for frame production with a 220 by 220 by 250mm build volume.
+
+BED LEVELING MASTERY
+You have mastered both manual and automatic bed leveling. The paper method provides a tactile reference for proper nozzle-to-bed distance. Baby step Z-offset adjustment fine-tunes the first layer in real-time. Auto bed leveling with BLTouch or CR-Touch creates a mesh compensation map. You know to always level at print temperature, clean the bed with isopropyl alcohol, and re-level periodically. A perfect first layer is the foundation of every successful print.
+
+FILAMENT SELECTION CONFIDENCE
+You understand the three key filament types for magnet frames. PLA is beginner-friendly with excellent surface finish. PLA+ is the production sweet spot with improved layer adhesion and impact resistance. PETG offers superior heat resistance for specialty applications. PLA+ at approximately $0.66 per frame in material cost is the recommended choice for production. You know the importance of proper filament storage with desiccant packs and drying procedures for moisture-compromised filament. Strategic color selection drives sales, with matte white, matte black, pastel pink, and sage green being top performers.
+
+SLICER PROFICIENCY
+You can now slice models in both Cura and PrusaSlicer. Key settings are locked in: 0.2mm layer height, 3 walls, 15-20% grid infill, ironing enabled for glass-smooth top surfaces. In Cura, you know how to use tree supports, brim adhesion, and the Multiply function for batch production. In PrusaSlicer, you can leverage variable layer height for faster prints without sacrificing visible surface quality, paint-on supports for precise support placement, and sequential printing for safer batch runs.
+
+SUCCESSFUL TEST PRINTING
+You have printed and evaluated three test objects: the 20mm calibration cube confirming dimensional accuracy, the 3D Benchy revealing any quality issues, and your first actual magnet frame. You can evaluate prints against quality criteria including surface finish, dimensional accuracy, corner sharpness, and magnet slot fit. You are documenting your print settings for future reference.
+
+YOUR FOUNDATION IS SOLID
+You now have the knowledge and hands-on experience to operate your 3D printer confidently. You understand what every component does, how to calibrate for quality, which materials to use, and how to translate digital designs into physical objects. This foundation supports everything that follows in the course.
+
+WHAT IS NEXT — MODULE 2 PREVIEW
+Module 2 introduces CAD design, teaching you to create your own magnet frame designs from scratch. You will learn TinkerCAD for quick prototyping and Fusion 360 for parametric production designs. You will master magnet slot tolerances, photo insert sizing for all major photo formats, snap-fit clip design, and proper STL export. By the end of Module 2, you will be designing original frames instead of relying on someone else's files.
+
+KEY TAKEAWAYS
+Module 1 has transformed you from a 3D printing beginner into a knowledgeable operator ready for production. Keep your print log updated, maintain your printer, and never skip bed leveling. You are well on your way to building a profitable magnet frame business!

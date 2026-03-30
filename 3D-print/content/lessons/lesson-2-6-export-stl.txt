@@ -1,0 +1,33 @@
+EXPORT STL AND TEST SLICE
+3D Print Academy — Module 2, Lesson 6
+
+From Digital Design to Print-Ready File
+
+The final step before printing any magnet frame is exporting your CAD design as an STL file and verifying it slices correctly. This lesson covers the export process in both TinkerCAD and Fusion 360, common mesh problems you might encounter, and how to validate your files before committing filament.
+
+WHAT IS AN STL FILE
+STL stands for Standard Tessellation Language (or Stereolithography). It describes the surface of your 3D model as a mesh of triangles. Every curved surface becomes a collection of tiny flat triangles. The finer the mesh, the smoother curves appear, but the larger the file. For magnet frames with mostly flat surfaces, STL files are typically small (under 5MB) and represent the geometry very accurately.
+
+EXPORTING FROM TINKERCAD
+In TinkerCAD: click the Export button in the top-right corner. Select .STL format. The file downloads immediately. TinkerCAD always exports clean, watertight meshes with no errors. The triangulation is handled automatically. Name your file descriptively: include the frame type, photo size, and version number. Example: RetroTV_InstaxMini_v2.stl.
+
+EXPORTING FROM FUSION 360
+In Fusion 360: right-click the body in the Browser panel and select Save as Mesh. Choose STL as the format. Select Binary (much smaller file than ASCII format). For Refinement, choose Fine for production files (smoother curves) or Medium for faster export of prototype files. Click OK and choose where to save. Fusion 360 gives you more control over mesh quality compared to TinkerCAD.
+
+COMMON STL PROBLEMS AND HOW TO FIX THEM
+Non-manifold edges: These are edges shared by more than two faces, essentially a hole in your mesh. Caused by overlapping bodies or improper Boolean operations. Fix in Fusion 360 by ensuring all operations clean up properly, or use Meshmixer (free) to repair. Inverted normals: Some triangle faces point inward instead of outward. The slicer may interpret these areas as hollow. Most slicers auto-fix this, but it is best to export clean files. Zero-thickness walls: Walls thinner than one nozzle width cannot be printed. Check minimum wall thickness in your slicer's preview.
+
+TEST SLICING YOUR STL
+Open the STL in Cura or PrusaSlicer and slice it with your production settings. Use the layer preview to scroll through every single layer. Check these critical features: Magnet holes should appear as empty cylinders in the correct layers. Photo pocket should show as a rectangular void. Retention lip should be visible as a step in the cross-section. Walls should be continuous with no gaps. The infill pattern should fill all enclosed spaces properly.
+
+VERIFYING DIMENSIONS IN THE SLICER
+Both Cura and PrusaSlicer display model dimensions when you select the object. Verify: overall frame dimensions match your design, height matches the designed frame thickness. If dimensions seem wrong, check that you exported at the correct scale (1:1 in millimeters). TinkerCAD and Fusion 360 both default to millimeters, but some CAD programs default to inches. A frame designed in inches but sliced as millimeters would be 25 times too small.
+
+FILE MANAGEMENT FOR PRODUCTION
+Organize your STL files in a logical folder structure: use folders for each frame style, with subfolders for different photo sizes. Keep version history by appending version numbers. Store both the source CAD file and the exported STL. The CAD file lets you make changes later, while the STL is your production file. Back up everything to cloud storage. A single frame design represents hours of work.
+
+BATCH EXPORT WORKFLOW
+When you have multiple frame designs to export, batch the process. In TinkerCAD, open each design and export one at a time. In Fusion 360, if you have multiple bodies in one file, you can export each body separately by right-clicking on it. For production efficiency, maintain a master slicer file with your best-selling frames already positioned on the build plate, so you can start a batch print with one click.
+
+KEY TAKEAWAYS
+A clean STL export and thorough test slice prevent wasted prints. Always preview sliced layers before printing to catch problems early. Export in binary STL format for smaller files. Verify dimensions match your design intent. Organize your file library professionally because it is a business asset. You are now ready to print production frames!

@@ -1,0 +1,36 @@
+BATCH PRINTING FOR PRODUCTION
+3D Print Academy — Module 4, Lesson 8
+
+Maximizing Throughput and Minimizing Waste
+
+Batch printing is the foundation of production efficiency. Instead of printing one frame at a time and babysitting each print, you fill the build plate with multiple frames, optimize your workflow, and run prints unattended. This lesson teaches production-level batch printing strategies that maximize your output.
+
+WHY BATCH PRINTING MATTERS
+Single-frame printing wastes time on: bed heating for each print, first-layer setup and verification, and the printer sitting idle between prints. Batch printing amortizes these fixed costs across multiple frames. Printing 4 frames simultaneously takes only about 2.5 times longer than printing one frame, not 4 times. This is because shared layers overlap and travel times are minimal compared to print time.
+
+FILLING THE BUILD PLATE
+For a 220mm by 220mm bed: small Polaroid frames fit 4 per plate. Standard 4x3 frames fit 3 per plate. Larger 4x6 frames fit 2 per plate. Instax Mini frames fit 4 to 6 per plate depending on border size. Leave 5 to 10mm between frames for clearance. In your slicer, use the Multiply and Arrange functions to automatically fill the plate.
+
+SEQUENTIAL PRINTING VS SIMULTANEOUS PRINTING
+Simultaneous: all frames print layer by layer together. The nozzle moves between frames on each layer. Fastest total time. Risk: if the print fails at any layer, all frames are ruined. Sequential: each frame prints completely before the next starts. Requires the printhead to clear the completed frame, so spacing must account for the extruder assembly height. Slower total time but safer — if one frame fails, the completed ones are saved. Use sequential for high-value prints or when your failure rate is above 5%.
+
+SEQUENTIAL PRINTING SETUP IN CURA
+In Cura: Print Settings then Special Modes then Print Sequence set to One at a Time. Cura will show gray exclusion zones around each model indicating the printhead clearance needed. Arrange frames so they do not conflict with these zones. Set the extruder clearance height at your printer's actual printhead height above the bed.
+
+OVERNIGHT AND UNATTENDED PRINTING
+Batch prints often run 3 to 8 hours, making them ideal for overnight runs. Start a batch in the evening, wake up to 4 to 6 completed frames. Before running unattended: verify the first layer of all frames (watch for 5 to 10 minutes), ensure filament spool has enough material for the full batch plus margin, check bed adhesion is holding, and ensure the printer area is clear of fire hazards.
+
+REMOTE MONITORING
+Install OctoPrint on a Raspberry Pi for web-based remote monitoring. A USB webcam connected to OctoPrint lets you watch your prints from your phone. OctoPrint plugins can detect failures and pause the print automatically. Bambu Lab printers have built-in cameras with cloud monitoring. Being able to check on your print from another room or while running errands adds confidence to unattended production.
+
+FILAMENT MANAGEMENT FOR BATCH RUNS
+A standard batch of 4 frames uses 100 to 140 grams of filament. A 1kg spool provides 7 to 10 batches. Track filament usage per batch in a spreadsheet. Weigh your spool before starting a long batch to ensure you will not run out mid-print (running out of filament mid-batch is a production disaster). Keep a spare spool of each production color ready.
+
+PRODUCTION SCHEDULING
+Create a weekly print schedule. Example: Monday and Tuesday batches of best-sellers replenish inventory. Wednesday custom orders. Thursday and Friday specialty designs. Weekend craft fair prep. Track which frame designs sell fastest and prioritize those in your batch schedule. A consistent production routine creates predictable inventory levels.
+
+QUALITY CONTROL FOR BATCH PRINTS
+Inspect every frame in a batch individually. Do not assume that if one frame is good, they all are. The frame closest to the bed edge might have warping. The frame nearest the extruder start point might have extra blobs. Each frame must independently pass your QC checklist before going into inventory.
+
+KEY TAKEAWAYS
+Batch printing transforms your production from one-at-a-time crafting to efficient manufacturing. Fill your build plate, consider sequential printing for safety, run overnight batches, monitor remotely, and maintain quality control on every individual frame. A well-executed batch printing workflow is the engine of a profitable magnet frame business.

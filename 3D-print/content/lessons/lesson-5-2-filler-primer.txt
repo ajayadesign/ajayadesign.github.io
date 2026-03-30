@@ -1,0 +1,36 @@
+PRIMING WITH FILLER PRIMER
+3D Print Academy — Module 5, Lesson 2
+
+The Secret Weapon for Professional-Looking Frames
+
+Filler primer is the single most impactful post-processing product for 3D printed magnet frames. It fills the tiny grooves between layer lines that even thorough sanding cannot completely eliminate, creating a surface that looks injection-molded rather than 3D printed. This lesson teaches you the correct application technique for production-quality results.
+
+WHAT IS FILLER PRIMER
+Filler primer is a thick, sandable primer formulated to fill small surface imperfections. Originally designed for automotive body repair, it is perfect for 3D prints. The thick formula flows into the microscopic valleys between layer lines and dries to a smooth, sandable surface. Popular brands include Rust-Oleum 2-in-1 Filler and Sandable Primer, Dupli-Color Filler Primer, and automotive primer surfacer from any major brand.
+
+WHY FILLER PRIMER IS YOUR SECRET WEAPON
+Compare two frames side by side: one painted directly after sanding, and one primed with filler primer before painting. The filler-primed frame will have an obviously smoother, more professional finish. Layer lines that survived sanding are completely invisible under filler primer. The surface appears factory-made. This is the step that most hobby printers skip, and it is what separates amateur products from professional ones.
+
+APPLICATION TECHNIQUE
+Step 1: Ensure the frame is clean and dust-free from sanding. Blow off dust with compressed air or wipe with a tack cloth. Step 2: Shake the can thoroughly for 60 seconds after the mixing ball rattles. Step 3: Apply from 8 to 10 inches distance. Step 4: Use light, even coats with sweeping back-and-forth motions. Start spraying before the frame edge and stop after passing the opposite edge. Step 5: Apply 2 to 3 light coats rather than one heavy coat. Wait 10 to 15 minutes between coats for flash dry time.
+
+COAT THICKNESS
+Each coat should be thin enough that the primer appears slightly translucent. Heavy coats run, drip, and take much longer to dry. Heavy coats also fill less effectively because the primer puddles instead of flowing into surface defects. Three light coats fill better than one heavy coat. If you see the primer becoming glossy and wet-looking, you have applied too much and should stop for that coat.
+
+DRYING TIME
+Between coats: 10 to 15 minutes at room temperature. Full cure for sanding: 30 minutes to 1 hour. Full cure for topcoat paint: let filler primer cure at least 2 hours, ideally overnight. Rushing the cure leads to paint adhesion failure — the topcoat may peel or wrinkle if applied over uncured primer. In production, prime in the evening and paint the next morning.
+
+SANDING AFTER PRIMING
+After the filler primer dries completely, lightly sand with 400-grit sandpaper to knock down any dust nibs, primer texture, or orange peel. Use very light pressure — you are smoothing the primer surface, not removing it. This final sand creates a perfectly smooth base for your topcoat paint. Wipe clean with a tack cloth after sanding.
+
+COST ANALYSIS
+A single can of filler primer costs approximately $6 to 8 and covers 30 to 50 magnet frames depending on frame size. That is roughly $0.12 to $0.20 per frame. This tiny cost adds enormous perceived value. Customers cannot distinguish a well-primed and painted 3D printed frame from a mass-manufactured product.
+
+WHEN TO SKIP FILLER PRIMER
+If selling natural PLA frames without paint, skip filler primer. If the frame will be printed in a decorative filament like silk or wood-fill and left unfinished, skip primer. Filler primer only makes sense when you are committed to a fully finished, painted frame. For your premium product line, always use filler primer.
+
+SPRAY AREA SETUP
+Spray in a well-ventilated area or outdoors. Lay down a drop cloth or use a cardboard box as a spray booth. A lazy susan turntable lets you rotate the frame during spraying without touching it. Hang small frames from a wire with a binder clip for easy all-around spraying. Wear a respirator or at minimum work in moving air.
+
+KEY TAKEAWAYS
+Filler primer is the most cost-effective quality upgrade for your frames at approximately $0.15 per unit. Apply 2 to 3 light coats from 8 to 10 inches. Let cure before sanding lightly with 400-grit. Let cure again before topcoat painting. This step alone makes your frames look injection-molded. It is the professional's secret weapon.

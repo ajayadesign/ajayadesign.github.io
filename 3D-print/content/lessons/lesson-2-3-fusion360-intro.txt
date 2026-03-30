@@ -1,0 +1,36 @@
+FUSION 360 INTRODUCTION AND INTERFACE
+3D Print Academy — Module 2, Lesson 3
+
+Professional Parametric Design for Production Frames
+
+Fusion 360 is Autodesk's professional CAD software that is free for personal use. Unlike TinkerCAD's shape-combining approach, Fusion 360 uses parametric modeling, which means you can change any dimension and the entire model updates automatically. This is a game-changer for production where you need multiple frame sizes from one design.
+
+DOWNLOADING AND SETTING UP FUSION 360
+Download Fusion 360 from autodesk.com/fusion-360 and select the Personal Use license (free). It requires a desktop installation, unlike TinkerCAD. After installation, sign in with your Autodesk account. The initial setup asks about your experience level. Select beginner for now, as the simplified interface is easier to learn.
+
+THE FUSION 360 WORKSPACE
+The main workspace has several key areas. The Browser Panel on the left shows your design tree (bodies, sketches, construction planes). The Timeline at the bottom records every operation you perform, allowing you to go back and edit any step. The Toolbar at the top houses all tools organized by category: Solid, Surface, Sheet Metal, Mesh. The Design History Timeline is what makes Fusion 360 parametric. You can double-click any step to edit it, and all subsequent operations update.
+
+NAVIGATION IN FUSION 360
+Middle mouse button to orbit. Scroll to zoom. Shift plus middle mouse button to pan. Press the number 1 through 7 keys for standard views (front, back, top, bottom, left, right, isometric). The view cube in the top-right corner works similarly to TinkerCAD. Navigation feels different from TinkerCAD but becomes natural with practice.
+
+SKETCHES — THE FOUNDATION OF PARAMETRIC MODELING
+Everything in Fusion 360 starts with a Sketch. A sketch is a 2D drawing on a plane that defines the shape you want to create in 3D. To create a sketch: click Create Sketch, select a plane (XY, XZ, or YZ), then draw 2D shapes using lines, rectangles, circles, and arcs. Sketches use constraints (horizontal, vertical, coincident, equal) to define geometric relationships. Dimensions lock in exact sizes. A fully constrained sketch turns from blue to black, meaning every point is precisely defined.
+
+EXTRUDE — FROM 2D TO 3D
+The Extrude tool takes a 2D sketch profile and pulls it into 3D. Select a closed sketch profile, specify the distance, and the shape extends in 3D. For a magnet frame body: sketch a rectangle 112mm by 87mm, then Extrude it 8mm. Extrude can also cut material. Change the operation from New Body to Cut, and the extrusion removes material instead of adding it. This is how you create photo pockets and magnet holes.
+
+FILLET — ROUNDING EDGES
+The Fillet tool rounds edges with a specified radius. Select any edge or set of edges, type the radius value, and the sharp edge becomes a smooth curve. For magnet frames, apply a 2-3mm fillet to all visible corners. This creates a professional, finished appearance. Fusion 360 lets you fillet multiple edges at once by selecting them all before applying.
+
+THE PARAMETERS FEATURE — THE REAL POWER
+This is where Fusion 360 shines for frame production. Go to Modify then Change Parameters. Create named variables: magnet_diameter equals 6.2, frame_width equals 112, frame_height equals 87, photo_width equals 102, photo_height equals 77, frame_depth equals 8. Now use these parameter names instead of numbers when dimensioning your sketches and extrusions. Want to make a 5x7 frame? Just change frame_width and frame_height parameters and the entire model updates. One master design generates every frame size.
+
+COMPONENT ORGANIZATION
+For complex designs, use Components to organize different parts. Each component can have its own sketches, bodies, and features. This is useful for multi-piece frame designs where you need to design the frame body and backing plate as separate printable parts.
+
+EXPORT AS STL
+Right-click the body in the Browser panel, select Save as Mesh, choose STL format, select Binary (smaller file size), and choose Fine refinement for smooth curved surfaces. The STL file is ready for your slicer.
+
+KEY TAKEAWAYS
+Fusion 360's parametric approach lets you create one master frame design that generates unlimited size variations. The workflow is: Sketch 2D profiles, Extrude to 3D, Fillet edges, Cut openings, and export STL. The Parameters feature is the key advantage over TinkerCAD for production. Invest time learning Fusion 360 and it will repay you with incredibly efficient design workflow.

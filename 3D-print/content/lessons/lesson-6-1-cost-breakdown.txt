@@ -1,0 +1,33 @@
+COST PER UNIT BREAKDOWN
+3D Print Academy — Module 6, Lesson 1
+
+The Real Numbers Behind Your Magnet Frame Business
+
+Understanding your true cost per unit is the foundation of profitable pricing. This lesson breaks down every cost component of a 3D printed magnet frame so you can price with confidence, knowing exactly how much profit each sale generates. Spoiler: your total cost per frame is approximately $1.63, enabling massive profit margins.
+
+MATERIAL COST: FILAMENT
+A standard 4x3 magnet frame uses approximately 30 grams of PLA+ filament. At $20 per kilogram (a fair price for quality PLA+), that is $0.60 per frame in filament. Larger frames use more: a 4x6 frame uses about 45 grams ($0.90), while a small Instax Mini frame uses only 20 grams ($0.40). The Polaroid-style frame uses about 25 grams ($0.50). Track your actual filament usage by weighing spools before and after printing batches.
+
+MATERIAL COST: MAGNETS
+Two 6x2mm neodymium disc magnets per frame. Bought in bulk (100+ pieces), these cost approximately $0.12 to $0.18 each. Total magnet cost per frame: $0.24 to $0.36. Buy magnets in bulk from Amazon, Apex Magnets, or direct from suppliers. The price per magnet drops significantly at higher quantities. At 500 pieces, expect about $0.10 each.
+
+MATERIAL COST: FINISHING SUPPLIES
+Filler primer per frame: approximately $0.08 to $0.15 (one can covers 30 to 50 frames). Spray paint per frame: approximately $0.10 to $0.15 (one can covers 25 to 40 frames). Clear coat per frame: approximately $0.08 to $0.12. Sandpaper per frame: approximately $0.03 (one sheet of each grit sands 10+ frames). Total finishing cost: approximately $0.30 to $0.45 per frame.
+
+MATERIAL COST: PACKAGING
+Clear poly bag: $0.05. Branded sticker or belly band: $0.05 to $0.10. Thank-you card with QR code: $0.05. Total packaging: approximately $0.15 to $0.20 per frame. For premium packaging with a small gift box, add $0.30 to $0.50.
+
+OPERATIONAL COSTS
+Electricity per print: approximately $0.03 to $0.05 (a 3D printer uses about 100 to 200 watts, roughly the same as a light bulb). Printer wear and tear depreciation: approximately $0.05 to $0.10 per frame (based on a $300 printer producing 3000+ frames over its lifetime). Nozzle replacement: approximately $0.01 per frame. This varies based on filament type and print hours.
+
+TOTAL COST PER FRAME
+Adding it all up for a standard 4x3 painted frame: Filament $0.60 plus Magnets $0.30 plus Finishing $0.35 plus Packaging $0.15 plus Electricity $0.03 plus Wear $0.10 plus Nozzle $0.01 equals approximately $1.54 to $1.73. The commonly cited figure is $1.63 as a representative production cost. This means an $8 retail price yields $6.37 gross profit, a 78% gross margin. A $12 retail price yields $10.37 gross profit, an 86% gross margin.
+
+LABOR COST CONSIDERATION
+The above calculation excludes labor. For a side hustle, your labor is free — you are building business equity with your time. For a scaled business with employees: budget 10 to 15 minutes of labor per frame for post-processing and QC. At $15 per hour, that adds $2.50 to $3.75 per frame. Even including labor at scale, margins remain strong at 50 to 65% on frames priced $10 to $15.
+
+COST TRACKING SPREADSHEET
+Create a simple spreadsheet tracking: date, batch size, filament used (grams), finishing supplies consumed, total cost, cost per frame. Update weekly. This data reveals your true production cost and highlights areas for efficiency improvement. As you scale and buy materials in larger quantities, your per-unit cost decreases.
+
+KEY TAKEAWAYS
+Your total material and operational cost per frame is approximately $1.63. This incredibly low cost enables profit margins of 78 to 86% at retail prices. Track every cost component to maintain accurate pricing. Buy materials in bulk to reduce per-unit costs further. Your magnet frame business has fundamentally strong economics that support growth from hobby to full-time income.

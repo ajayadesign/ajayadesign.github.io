@@ -1,0 +1,122 @@
+{
+  "lesson_id": "2-5",
+  "title": "Snap-Fit Clip Design for Magnet Frames",
+  "start_url": "about:blank",
+  "viewport_width": 1920,
+  "viewport_height": 1080,
+  "description": "Engineering snap-fit clips that hold photos securely in 3D printed frames",
+  "actions": [
+    {
+      "section": "Title Card",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 50%, #16213e 100%); display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:24px; color:#6366f1; letter-spacing:3px; margin-bottom:20px\">3D PRINT ACADEMY — MODULE 2, LESSON 5</div><div style=\"font-size:56px; font-weight:800; color:#fff; margin-bottom:24px; line-height:1.2\">Snap-Fit Clip Design</div><div style=\"font-size:28px; color:#a5b4fc\">Professional Photo Retention Without Glue</div></div>';",
+      "description": "Title card",
+      "pause": 6
+    },
+
+    {
+      "section": "Why Snap-Fit Clips",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 100%); display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"max-width:900px; padding:40px\"><div style=\"font-size:36px; font-weight:700; color:#22c55e; margin-bottom:30px\">🔒 Why Snap-Fit Clips?</div><div style=\"display:grid; grid-template-columns:1fr 1fr; gap:20px\"><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"font-size:36px; margin-bottom:8px\">📸</div><div style=\"color:#fff; font-size:20px; font-weight:600\">Easy Photo Swap</div><div style=\"color:#94a3b8; font-size:16px; margin-top:8px\">Customers swap photos in and out without tools</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"font-size:36px; margin-bottom:8px\">✨</div><div style=\"color:#fff; font-size:20px; font-weight:600\">Premium Feel</div><div style=\"color:#94a3b8; font-size:16px; margin-top:8px\">Frames with clips feel professional, not DIY</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"font-size:36px; margin-bottom:8px\">🔁</div><div style=\"color:#fff; font-size:20px; font-weight:600\">More Usage</div><div style=\"color:#94a3b8; font-size:16px; margin-top:8px\">Easy swapping = more use = more word-of-mouth</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"font-size:36px; margin-bottom:8px\">🚫</div><div style=\"color:#fff; font-size:20px; font-weight:600\">No Glue or Tape</div><div style=\"color:#94a3b8; font-size:16px; margin-top:8px\">Pure mechanical retention — no consumables needed</div></div></div></div>';",
+      "description": "Benefits overview",
+      "pause": 8
+    },
+
+    {
+      "section": "Cantilever Beam Concept",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center; max-width:900px\"><div style=\"font-size:36px; font-weight:700; color:#6366f1; margin-bottom:30px\">📐 Cantilever Beam Design</div><div style=\"background:rgba(255,255,255,0.05); padding:40px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); text-align:left\"><div style=\"font-size:20px; color:#fff; line-height:2\">A snap-fit clip is a <span style=\"color:#f59e0b; font-weight:700\">flexible cantilever beam</span> with a hook<br><br>1️⃣ Object pushes past the hook<br>2️⃣ Beam deflects (bends slightly)<br>3️⃣ Hook snaps back to retain the object<br><br><div style=\"margin-top:16px; padding:16px; background:rgba(99,102,241,0.15); border-radius:8px; border-left:3px solid #6366f1\"><span style=\"color:#a5b4fc\">Key Parameters:</span><br>Beam length • Beam thickness • Hook height • Entry angle</div></div></div></div>';",
+      "description": "Cantilever beam explanation",
+      "pause": 10
+    },
+
+    {
+      "section": "Exact Dimensions",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"max-width:1000px; padding:40px\"><div style=\"font-size:36px; font-weight:700; color:#f59e0b; margin-bottom:30px\">📏 Exact Dimensions for PLA Clips</div><div style=\"display:grid; grid-template-columns:repeat(3, 1fr); gap:16px\"><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(245,158,11,0.3); text-align:center\"><div style=\"color:#f59e0b; font-size:16px; margin-bottom:8px\">Beam Length</div><div style=\"color:#fff; font-size:32px; font-weight:700\">8mm</div><div style=\"color:#94a3b8; font-size:14px; margin-top:4px\">Base to tip</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(245,158,11,0.3); text-align:center\"><div style=\"color:#f59e0b; font-size:16px; margin-bottom:8px\">Beam Width</div><div style=\"color:#fff; font-size:32px; font-weight:700\">3mm</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(245,158,11,0.3); text-align:center\"><div style=\"color:#f59e0b; font-size:16px; margin-bottom:8px\">Beam Thickness</div><div style=\"color:#fff; font-size:32px; font-weight:700\">1.5mm</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(245,158,11,0.3); text-align:center\"><div style=\"color:#f59e0b; font-size:16px; margin-bottom:8px\">Hook Height</div><div style=\"color:#fff; font-size:32px; font-weight:700\">0.5mm</div><div style=\"color:#94a3b8; font-size:14px; margin-top:4px\">Undercut</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(245,158,11,0.3); text-align:center\"><div style=\"color:#f59e0b; font-size:16px; margin-bottom:8px\">Entry Angle</div><div style=\"color:#fff; font-size:32px; font-weight:700\">30-45°</div><div style=\"color:#94a3b8; font-size:14px; margin-top:4px\">Chamfer face</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(245,158,11,0.3); text-align:center\"><div style=\"color:#f59e0b; font-size:16px; margin-bottom:8px\">Retention Angle</div><div style=\"color:#fff; font-size:32px; font-weight:700\">90°</div><div style=\"color:#94a3b8; font-size:14px; margin-top:4px\">Vertical face</div></div></div></div>';",
+      "description": "Dimensions grid",
+      "pause": 10
+    },
+
+    {
+      "section": "TinkerCAD Demo - Navigate",
+      "type": "navigate",
+      "url": "https://www.tinkercad.com",
+      "description": "Open TinkerCAD"
+    },
+    {
+      "type": "wait",
+      "seconds": 3
+    },
+    {
+      "type": "text_overlay",
+      "text": "Building snap-fit clips in TinkerCAD — 8mm beam with 0.5mm hook",
+      "x": 50,
+      "y": 30,
+      "font_size": 24,
+      "duration": 5000,
+      "description": "TinkerCAD overview"
+    },
+    {
+      "type": "move",
+      "x": 1800,
+      "y": 400,
+      "steps": 30,
+      "description": "Point to shapes panel",
+      "pause": 2
+    },
+    {
+      "type": "text_overlay",
+      "text": "Use rectangular shapes to build the beam → Add a protruding hook at the tip",
+      "x": 50,
+      "y": 950,
+      "font_size": 22,
+      "duration": 5000,
+      "description": "Building instruction"
+    },
+    {
+      "type": "wait",
+      "seconds": 3
+    },
+
+    {
+      "section": "Clip Placement",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center; max-width:800px\"><div style=\"font-size:36px; font-weight:700; color:#6366f1; margin-bottom:30px\">📍 Clip Placement Strategy</div><div style=\"background:rgba(255,255,255,0.05); padding:40px; border-radius:16px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"font-size:20px; color:#fff; line-height:2; text-align:left\">Standard 4×3 Frame: <span style=\"color:#22c55e; font-weight:700\">4 clips</span> (2 per long side)<br>Orientation: Grip backing plate from the back<br>Spacing: Max 40mm unsupported edge per clip<br><br>Larger collage frames → proportionally more clips<br><br><div style=\"margin-top:16px; padding:16px; background:rgba(34,197,94,0.15); border-radius:8px; border-left:3px solid #22c55e\">💡 Position clips so users can easily press + release when swapping photos</div></div></div></div>';",
+      "description": "Placement strategy",
+      "pause": 8
+    },
+
+    {
+      "section": "Backing Plate",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"max-width:800px; padding:40px\"><div style=\"font-size:36px; font-weight:700; color:#a5b4fc; margin-bottom:30px\">🔲 Backing Plate Design</div><div style=\"display:grid; grid-template-columns:1fr 1fr; gap:20px\"><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#a5b4fc; font-size:16px; margin-bottom:8px\">Clearance</div><div style=\"color:#fff; font-size:20px\">1mm smaller on each side</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#a5b4fc; font-size:16px; margin-bottom:8px\">Thickness</div><div style=\"color:#fff; font-size:20px\">1.2mm – 1.5mm</div></div></div><div style=\"margin-top:20px; background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#f59e0b; font-size:18px; margin-bottom:8px\">💡 Pro Tip</div><div style=\"color:#fff; font-size:20px\">Add a finger notch cutout on one edge so users can pry the backing plate out when changing photos</div></div></div>';",
+      "description": "Backing plate specs",
+      "pause": 8
+    },
+
+    {
+      "section": "Print Orientation",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center; max-width:800px\"><div style=\"font-size:36px; font-weight:700; color:#ef4444; margin-bottom:30px\">⚠️ Print Orientation — Critical!</div><div style=\"background:rgba(239,68,68,0.1); padding:40px; border-radius:16px; border:1px solid rgba(239,68,68,0.3)\"><div style=\"font-size:20px; color:#fff; line-height:2; text-align:left\">Clips MUST flex <span style=\"color:#22c55e; font-weight:700\">perpendicular</span> to layer lines<br><br><span style=\"color:#ef4444\">❌ Flex along layer lines → delamination → snap off</span><br><span style=\"color:#22c55e\">✅ Flex across layer lines → strong, reliable</span><br><br>Print frames flat on bed with clips pointing upward<br>→ Correct orientation is automatic!</div></div></div>';",
+      "description": "Print orientation warning",
+      "pause": 8
+    },
+
+    {
+      "section": "Testing Protocol",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"max-width:800px; padding:40px\"><div style=\"font-size:36px; font-weight:700; color:#f59e0b; margin-bottom:30px\">🧪 Testing Protocol: 20 Cycles</div><div style=\"display:grid; gap:16px\"><div style=\"background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:16px\"><div style=\"color:#ef4444; font-size:24px; font-weight:700; min-width:120px\">Break?</div><div style=\"color:#fff; font-size:18px\">→ Increase thickness to 1.8mm or length to 10mm</div></div><div style=\"background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:16px\"><div style=\"color:#f59e0b; font-size:24px; font-weight:700; min-width:120px\">Too loose?</div><div style=\"color:#fff; font-size:18px\">→ Decrease slot width or increase hook to 0.6mm</div></div><div style=\"background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:16px\"><div style=\"color:#3b82f6; font-size:24px; font-weight:700; min-width:120px\">Too stiff?</div><div style=\"color:#fff; font-size:18px\">→ Decrease thickness to 1.2mm or increase length</div></div></div></div>';",
+      "description": "Testing and iteration",
+      "pause": 8
+    },
+
+    {
+      "section": "Outro",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 50%, #16213e 100%); display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:48px; font-weight:800; color:#fff; margin-bottom:20px\">Professional Frame<br>Retention 🔒</div><div style=\"font-size:24px; color:#a5b4fc; margin-bottom:40px\">8mm beam • 3mm wide • 1.5mm thick • 0.5mm hook</div><div style=\"font-size:20px; color:#6366f1\">3D Print Academy — AJ DESIGN</div></div>';",
+      "description": "Outro card",
+      "pause": 6
+    }
+  ]
+}

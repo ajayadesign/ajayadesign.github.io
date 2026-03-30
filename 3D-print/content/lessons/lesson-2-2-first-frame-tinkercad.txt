@@ -1,0 +1,39 @@
+DESIGN YOUR FIRST MAGNET FRAME IN TINKERCAD
+3D Print Academy — Module 2, Lesson 2
+
+Step-by-Step Frame Construction from Scratch
+
+This is the lesson where you create your first original magnet frame design. Follow along step-by-step as we build a standard 4x3 photo frame with integrated magnet slots, photo insert opening, and retention lip.
+
+DESIGN PLANNING
+Before placing a single shape, plan your frame dimensions. A standard 4x3 inch photo measures 101.6mm by 76.2mm. Our frame body will be 112mm by 87mm by 8mm, giving a generous border around the photo. The photo opening will be 102mm by 77mm (with 0.4mm clearance on each side). Magnet slots will be designed for standard 6mm by 2mm neodymium disc magnets. Having a plan saves time and prevents mistakes.
+
+STEP 1: CREATE THE FRAME BODY
+Drag a Box shape onto the workplane. Set dimensions to 112mm (width) by 87mm (height) by 8mm (depth/thickness). This is the main body of your magnet frame. The 8mm thickness provides enough depth for the photo insert pocket and magnet slots while keeping material usage reasonable.
+
+STEP 2: CREATE THE PHOTO INSERT OPENING
+Drag another Box shape onto the workplane. Set it to 102mm by 77mm by 5mm. Change this box to a Hole using the Inspector panel. Now position it centered on the frame body. Use the Align tool to center it horizontally and vertically. Then manually adjust the Z position so the hole starts 1mm from the back face, leaving a 1mm wall at the back and creating a 5mm deep pocket for the photo. This pocket holds the photo insert securely.
+
+STEP 3: CREATE THE PHOTO RETENTION LIP
+The retention lip is a subtle but important feature. Create a thin rectangular Hole shape: 100mm by 75mm by 1mm. Position it so that it sits at the back surface of the frame, centered. When grouped, this creates a stepped lip that prevents the photo from falling backward through the frame. The 1mm lip is enough to hold the photo without making insertion difficult.
+
+STEP 4: CREATE MAGNET SLOTS
+Drag a Cylinder shape onto the workplane. Set diameter to 6.2mm and height to 2.1mm. The 0.2mm extra diameter provides press-fit tolerance for 6mm magnets. Change the cylinder to a Hole. Position it on the back face of the frame, offset toward one corner. Duplicate (Ctrl+D) and position the second magnet slot on the opposite corner. For a 4x3 frame, two magnets provide sufficient holding force. For larger frames, use four magnets (one in each corner).
+
+STEP 5: ADD CORNER FILLETS (OPTIONAL)
+Round the frame corners for a more polished look. Place small cylinders (radius 3mm) at each corner, set to Hole, positioned to round off the sharp 90-degree corners. Alternatively, you can create a rounded rectangle frame body using the community shape generators in TinkerCAD. Rounded corners are more attractive and feel better in the hand.
+
+STEP 6: GROUP ALL SHAPES
+Select all shapes: the frame body, photo opening hole, retention lip hole, and all magnet slot holes. Click Group or press Ctrl+G. TinkerCAD performs the Boolean operations: solid shapes combine, hole shapes subtract. The result is a single solid object that is your complete magnet frame with photo pocket and magnet slots.
+
+STEP 7: INSPECT YOUR DESIGN
+Orbit around your grouped frame and inspect every feature. Check: Is the photo opening centered? Are magnet slots visible on the back face? Is the retention lip creating a visible step? Try ungrouping temporarily to adjust any misaligned features, then re-group.
+
+STEP 8: EXPORT AS STL
+Click Export, select STL. Name the file descriptively: MagnetFrame_4x3_v1.stl. Open the STL in your slicer to verify it slices correctly. Preview the sliced layers to confirm the photo pocket, magnet slots, and lip all appear as expected.
+
+TESTING YOUR DESIGN
+Print the frame using the settings from Module 1. After printing: test magnet fit by pressing 6x2mm magnets into the slots. Test photo fit with a 4x3 print. Test fridge adhesion with magnets installed. If the magnets are too tight, increase hole diameter to 6.3mm. If too loose, decrease to 6.1mm. This iterative testing is how you dial in perfect tolerances for your specific printer.
+
+KEY TAKEAWAYS
+You have designed a complete, production-ready magnet frame from scratch in TinkerCAD. The process follows a clear sequence: body, photo opening, retention lip, magnet slots, optional details, group, export. This same workflow applies to every frame design you will ever create. Modify dimensions for different photo sizes and styles. You are now a frame designer!

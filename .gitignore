@@ -27,3 +27,17 @@ Thumbs.db
 
 data/
 monument-pilates/old-site-assets
+
+# 3D Print Academy — binary/proprietary assets (hosted on Drive & YouTube)
+*.stl
+*.zip
+*.mp4
+*.mp3
+*.webm
+*.m4a
+*.pickle
+__pycache__/
+*.pyc
+3D-print/automation/test_*.py
+3D-print/automation/*_diag*.py
+3D-print/automation/*.bak

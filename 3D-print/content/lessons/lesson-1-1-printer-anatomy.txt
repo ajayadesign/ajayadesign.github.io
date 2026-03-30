@@ -1,0 +1,36 @@
+PRINTER ANATOMY — KNOW YOUR MACHINE
+3D Print Academy — Module 1, Lesson 1
+
+Understanding Your 3D Printer Components
+
+Welcome to the very first lesson of the 3D Print Academy! Before you can produce beautiful magnet photo frames, you need to understand the machine that makes it all possible. This lesson breaks down every critical component of a modern FDM (Fused Deposition Modeling) 3D printer.
+
+THE FRAME AND STRUCTURE
+The frame provides structural rigidity and determines print quality. Most hobby printers use aluminum extrusion frames (2020 or 2040 profiles). A rigid frame means less vibration, which translates to cleaner prints with fewer artifacts. When shopping for a printer, shake the frame — wobble equals poor quality. Premium printers like the Bambu Lab series use die-cast aluminum frames for maximum rigidity.
+
+THE PRINT BED (BUILD PLATE)
+The print bed is where your magnet frames are born. Glass beds offer excellent adhesion when used with hairspray or glue stick, and provide a mirror-smooth bottom surface. PEI (Polyetherimide) spring steel sheets are the modern gold standard — they provide natural adhesion when warm and parts pop off when cooled. Flexible magnetic beds allow you to flex the plate to release prints. For magnet frame production, PEI sheets are ideal because they give a professional matte finish on the bottom of your frames.
+
+THE EXTRUDER ASSEMBLY
+The extruder has two parts. The Cold End is the feeding mechanism with gear teeth (either single or dual-drive) that grip the filament and push it forward. Dual-drive extruders like the BMG-style are highly recommended because they grip filament from both sides, preventing slippage. The Hot End is where filament melts — it includes a heat break, heat block, and nozzle. The PTFE-lined hot end works well for PLA. All-metal hot ends handle higher temperatures for PETG or other materials.
+
+THE NOZZLE
+The nozzle diameter (typically 0.4mm) determines your minimum feature size. A 0.4mm nozzle is the standard and provides excellent detail for magnet frame production. For faster large frames, a 0.6mm nozzle reduces print time by 40%. Brass nozzles are standard and work perfectly for PLA and PLA+. Hardened steel nozzles are needed for abrasive filaments like carbon fiber or glow-in-the-dark.
+
+STEPPER MOTORS AND MOTION SYSTEM
+Stepper motors control X, Y, and Z axis movement with precise positioning. NEMA 17 stepper motors are standard on most printers. The motion system can be Cartesian (bed moves Y, head moves X), CoreXY (bed stays still, head moves XY — faster and more precise), or Delta (three towers with a hanging effector). For magnet frame production, CoreXY printers offer the best speed-to-quality ratio.
+
+THE MAINBOARD AND FIRMWARE
+The mainboard (typically a 32-bit board like the SKR series or proprietary boards) runs firmware that controls all printer operations. Marlin is the most popular open-source firmware. Klipper is an advanced option that runs processing on a Raspberry Pi for higher speeds. The mainboard receives G-code instructions from your slicer and translates them into stepper motor movements.
+
+END STOPS AND HOMING
+End stops or optical sensors enable homing — the process of establishing the zero position on all three axes. Mechanical end stops click when the axis reaches its limit. Optical sensors use light interruption. Proper homing ensures dimensional accuracy — critical when your magnet slots need to be exactly 6.2mm.
+
+THE POWER SUPPLY
+The power supply (typically 24V for modern printers) powers the hot end, heated bed, stepper motors, and mainboard. A quality PSU provides stable voltage, which means consistent extrusion and heating. Mean Well brand PSUs are the gold standard. Never use a printer with a dodgy power supply — it's a fire risk.
+
+RECOMMENDED PRINTERS FOR MAGNET FRAME PRODUCTION
+For beginners: Ender 3 V3 SE ($200 range) — excellent value, huge community support, auto bed leveling. Bambu Lab A1 Mini ($300 range) — fast, reliable, excellent out-of-box experience. Build volume of 220×220×250mm lets you print multiple frames per batch. For scaling up: Bambu Lab P1S ($600 range) — enclosed, multi-color capability, production-ready. Artillery Sidewinder X4 Plus ($350 range) — large build volume for collage frames.
+
+KEY TAKEAWAYS
+Your 3D printer is a precision manufacturing tool. Understanding each component helps you troubleshoot issues, upgrade strategically, and maintain consistent quality. The frame, bed, extruder, nozzle, motion system, and electronics all work together. Now that you know your machine inside and out, you're ready for Lesson 2: Bed Leveling!

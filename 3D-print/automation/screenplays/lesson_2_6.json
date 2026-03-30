@@ -1,0 +1,105 @@
+{
+  "lesson_id": "2-6",
+  "title": "Export STL & Test Slice",
+  "start_url": "about:blank",
+  "viewport_width": 1920,
+  "viewport_height": 1080,
+  "description": "From digital design to print-ready file — exporting, fixing, and verifying STL files",
+  "actions": [
+    {
+      "section": "Title Card",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 50%, #16213e 100%); display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:24px; color:#6366f1; letter-spacing:3px; margin-bottom:20px\">3D PRINT ACADEMY — MODULE 2, LESSON 6</div><div style=\"font-size:56px; font-weight:800; color:#fff; margin-bottom:24px; line-height:1.2\">Export STL &<br>Test Slice</div><div style=\"font-size:28px; color:#a5b4fc\">From Digital Design to Print-Ready File</div></div>';",
+      "description": "Title card",
+      "pause": 6
+    },
+
+    {
+      "section": "What is STL",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center; max-width:800px\"><div style=\"font-size:36px; font-weight:700; color:#6366f1; margin-bottom:30px\">📄 What is an STL File?</div><div style=\"background:rgba(255,255,255,0.05); padding:40px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); text-align:left\"><div style=\"font-size:20px; color:#fff; line-height:2\"><span style=\"color:#a5b4fc; font-weight:600\">STL = Standard Tessellation Language</span><br><br>Describes your 3D model as a mesh of triangles<br>Every curve → collection of tiny flat triangles<br><br>Finer mesh = smoother curves (bigger file)<br>For flat magnet frames: files are small, under 5MB<br><br><div style=\"margin-top:16px; padding:16px; background:rgba(99,102,241,0.15); border-radius:8px; border-left:3px solid #6366f1\">The universal format every 3D printer slicer understands</div></div></div></div>';",
+      "description": "STL explanation",
+      "pause": 8
+    },
+
+    {
+      "section": "Export from TinkerCAD",
+      "type": "navigate",
+      "url": "https://www.tinkercad.com",
+      "description": "Navigate to TinkerCAD"
+    },
+    {
+      "type": "wait",
+      "seconds": 3
+    },
+    {
+      "type": "text_overlay",
+      "text": "TinkerCAD Export: Click Export → Select .STL → Downloads immediately",
+      "x": 50,
+      "y": 30,
+      "font_size": 24,
+      "duration": 5000,
+      "description": "TinkerCAD export instructions"
+    },
+    {
+      "type": "move",
+      "x": 1750,
+      "y": 80,
+      "steps": 30,
+      "description": "Point to export button area",
+      "pause": 2
+    },
+    {
+      "type": "text_overlay",
+      "text": "TinkerCAD always exports clean, watertight meshes — no errors!",
+      "x": 50,
+      "y": 950,
+      "font_size": 22,
+      "duration": 4000
+    },
+    {
+      "type": "wait",
+      "seconds": 2
+    },
+
+    {
+      "section": "Export from Fusion 360",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center; max-width:800px\"><div style=\"font-size:36px; font-weight:700; color:#f59e0b; margin-bottom:30px\">⚙️ Export from Fusion 360</div><div style=\"background:rgba(255,255,255,0.05); padding:40px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); text-align:left\"><div style=\"font-size:20px; color:#fff; line-height:2\">1. Right-click body in Browser → <span style=\"color:#f59e0b\">Save as Mesh</span><br>2. Format: <span style=\"color:#22c55e; font-weight:600\">STL (Binary)</span> — much smaller than ASCII<br>3. Refinement: <span style=\"color:#22c55e\">Fine</span> for production, Medium for prototypes<br>4. Click OK and save<br><br><div style=\"padding:16px; background:rgba(245,158,11,0.15); border-radius:8px; border-left:3px solid #f59e0b\">Fusion 360 gives more control over mesh quality than TinkerCAD</div></div></div></div>';",
+      "description": "Fusion 360 export",
+      "pause": 8
+    },
+
+    {
+      "section": "Common Problems",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"max-width:900px; padding:40px\"><div style=\"font-size:36px; font-weight:700; color:#ef4444; margin-bottom:30px\">⚠️ Common STL Problems</div><div style=\"display:grid; gap:16px\"><div style=\"background:rgba(239,68,68,0.1); padding:24px; border-radius:12px; border:1px solid rgba(239,68,68,0.3)\"><div style=\"color:#ef4444; font-size:20px; font-weight:600; margin-bottom:8px\">Non-Manifold Edges</div><div style=\"color:#fff; font-size:18px\">Holes in mesh from overlapping bodies or bad Booleans.<br><span style=\"color:#22c55e\">Fix: Repair in Meshmixer (free)</span></div></div><div style=\"background:rgba(239,68,68,0.1); padding:24px; border-radius:12px; border:1px solid rgba(239,68,68,0.3)\"><div style=\"color:#ef4444; font-size:20px; font-weight:600; margin-bottom:8px\">Inverted Normals</div><div style=\"color:#fff; font-size:18px\">Faces point inward — slicer may see hollow areas.<br><span style=\"color:#22c55e\">Fix: Most slicers auto-fix, but export clean is best</span></div></div><div style=\"background:rgba(239,68,68,0.1); padding:24px; border-radius:12px; border:1px solid rgba(239,68,68,0.3)\"><div style=\"color:#ef4444; font-size:20px; font-weight:600; margin-bottom:8px\">Zero-Thickness Walls</div><div style=\"color:#fff; font-size:18px\">Walls thinner than one nozzle width cannot print.<br><span style=\"color:#22c55e\">Fix: Check minimum wall in slicer preview</span></div></div></div></div>';",
+      "description": "Common problems",
+      "pause": 10
+    },
+
+    {
+      "section": "Test Slicing",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"max-width:800px; padding:40px\"><div style=\"font-size:36px; font-weight:700; color:#22c55e; margin-bottom:30px\">✅ Test Slicing Checklist</div><div style=\"background:rgba(255,255,255,0.05); padding:40px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); text-align:left\"><div style=\"font-size:20px; color:#fff; line-height:2.2\">Open STL in Cura or PrusaSlicer → Slice → Layer Preview<br><br>☐ Magnet holes → empty cylinders in correct layers<br>☐ Photo pocket → rectangular void visible<br>☐ Retention lip → visible step in cross-section<br>☐ Walls → continuous, no gaps<br>☐ Infill → fills all enclosed spaces<br>☐ Overall dimensions match your design</div></div></div>';",
+      "description": "Slicing checklist",
+      "pause": 10
+    },
+
+    {
+      "section": "File Management",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"max-width:800px; padding:40px\"><div style=\"font-size:36px; font-weight:700; color:#a5b4fc; margin-bottom:30px\">📁 File Management for Production</div><div style=\"background:rgba(255,255,255,0.05); padding:40px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); text-align:left\"><div style=\"font-size:20px; color:#fff; line-height:2\"><span style=\"color:#a5b4fc\">📂</span> Organize by frame style → photo size subfolders<br><span style=\"color:#a5b4fc\">📝</span> Append version numbers: RetroTV_InstaxMini_v2.stl<br><span style=\"color:#a5b4fc\">💾</span> Keep both source CAD + exported STL<br><span style=\"color:#a5b4fc\">☁️</span> Back up everything to cloud storage<br><br><div style=\"margin-top:16px; padding:16px; background:rgba(165,180,252,0.15); border-radius:8px; border-left:3px solid #a5b4fc\">Each frame design represents hours of work — treat your STL library as a business asset!</div></div></div></div>';",
+      "description": "File management tips",
+      "pause": 8
+    },
+
+    {
+      "section": "Outro",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 50%, #16213e 100%); display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:48px; font-weight:800; color:#fff; margin-bottom:20px\">Ready to Print! 🖨️</div><div style=\"font-size:24px; color:#a5b4fc; margin-bottom:16px\">Clean export → Test slice → Verify layers → Print</div><div style=\"font-size:20px; color:#94a3b8; margin-bottom:40px\">Always preview before committing filament</div><div style=\"font-size:20px; color:#6366f1\">3D Print Academy — AJ DESIGN</div></div>';",
+      "description": "Outro card",
+      "pause": 6
+    }
+  ]
+}

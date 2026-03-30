@@ -1,0 +1,33 @@
+MAGNET INSTALLATION — POST-GLUE METHOD
+3D Print Academy — Module 5, Lesson 6
+
+The Faster Alternative for Production Flexibility
+
+The post-glue method installs magnets after printing is complete. While it does not produce the invisible encapsulation of the mid-print pause method, it offers significant production advantages: no printer interruption, faster batch processing, and the flexibility to install magnets during post-processing rather than during printing. This lesson teaches the technique for secure, reliable post-glue magnet installation.
+
+WHEN TO USE THE POST-GLUE METHOD
+Use post-glue when: you are printing overnight unattended and cannot babysit for the pause, your batch printing workflow does not accommodate pauses, you prefer to separate printing and assembly into different production phases, or you are retrofitting magnets into frames that were printed without the pause setup.
+
+FRAME DESIGN FOR POST-GLUE
+Design the magnet cavity as an open pocket on the back of the frame. The cavity should be 6.2mm diameter by 2.1mm deep for 6x2mm magnets. Unlike the mid-print method, the cavity remains open after printing. You can print a separate thin cap disc (6mm diameter by 0.4mm thick) to glue over the magnet if you want a finished look.
+
+GLUE OPTIONS
+CA Glue (Super Glue / Cyanoacrylate): the primary choice. Sets in 10 to 30 seconds. Gel formula preferred over liquid to prevent running. Create a permanent bond between the magnet and the PLA cavity walls. Epoxy: two-part adhesive that provides the strongest possible bond. 5-minute epoxy is practical for production. Overkill for most applications but useful for premium products or large, heavy magnets. Hot glue: NOT recommended. It does not bond well to PLA, softens in warm environments, and looks unprofessional.
+
+INSTALLATION PROCEDURE
+Step 1: Clean the magnet cavity with a quick puff of compressed air to remove any dust or debris. Step 2: Apply a thin ring of gel CA glue around the inside wall of the cavity. Do not overfill — excess glue that squeezes out looks messy. Step 3: Drop the magnet into the cavity with the correct polarity facing up. Press firmly for 10 seconds. Step 4: Verify polarity immediately by testing with a reference magnet before the glue fully cures. If the polarity is wrong, you have about 5 seconds to pop the magnet out and flip it. Step 5: Hold the magnet in place for 30 seconds total or use CA activator spray for instant cure.
+
+POLARITY CONSISTENCY — CRITICAL STEP
+Exactly as with the mid-print pause method, every magnet must be installed with the same polarity orientation. Mark one pole of all your magnets with a Sharpie. Always install marked-side-down (or marked-side-up — just be consistent). Test every single frame against a reference surface before the glue cures. One reversed magnet means one returned product and one unhappy customer.
+
+THE CAP DISC OPTION
+For a more finished appearance on post-glue installations, print thin cap discs: 6mm diameter by 0.4mm thick circles. After the magnet is glued in and cured, apply a small amount of CA glue to the top of the magnet and press the cap disc onto it. The cap creates a flush surface over the magnet. This is cosmetic only — the magnet holds just as well without the cap since the holding force comes from the magnet through any nonmagnetic material.
+
+PRODUCTION WORKFLOW FOR POST-GLUE
+Batch production assembly line: Line up all sanded and primed frames back-side-up. Pre-sort magnets by polarity. Have CA glue and reference magnet ready. Move down the line: glue, insert, verify, press, next frame. An experienced hand installs magnets at about 15 to 20 seconds per magnet, meaning 30 to 40 seconds per frame for two magnets. A batch of 20 frames takes about 10 to 15 minutes for magnet installation.
+
+TROUBLESHOOTING POST-GLUE INSTALLATION
+Magnet too tight in cavity: sand the cavity with a small round file or increase design diameter to 6.3mm. Magnet too loose (falls out without glue): reduce cavity diameter to 6.1mm or use more glue. Glue squeeze-out: trim with a craft knife after curing, or scrape with a razor blade. Fingerprints on glued surfaces: wear nitrile gloves during installation. Magnet stuck at wrong polarity: apply CA debonder to dissolve the glue, remove magnet, clean cavity, reinstall correctly.
+
+KEY TAKEAWAYS
+The post-glue method is the production-friendly alternative to mid-print pause. It separates printing from assembly for more flexible workflows. Use gel CA glue for reliable bonds. Always verify polarity before glue cures. Consider cap discs for a finished appearance. Master both installation methods and choose the one that best fits your production workflow and customer expectations.

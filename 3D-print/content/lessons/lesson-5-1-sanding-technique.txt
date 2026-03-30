@@ -1,0 +1,36 @@
+SANDING TECHNIQUE — GRIT PROGRESSION
+3D Print Academy — Module 5, Lesson 1
+
+Transforming Layer Lines into Smooth Surfaces
+
+Sanding is the first and most fundamental post-processing technique. It transforms a visibly 3D printed object into something that looks and feels like a factory-produced product. This lesson teaches the complete sanding workflow including grit progression, technique, tools, and time management for production efficiency.
+
+WHY SANDING MATTERS FOR YOUR BUSINESS
+Customers judge products by feel and appearance within seconds. A frame with visible layer lines screams DIY project. A frame with smooth, sanded surfaces says professional product. The few minutes spent sanding each frame directly translate to higher prices, fewer returns, and stronger brand perception. Sanding is your first step in the post-processing chain.
+
+THE GRIT PROGRESSION SYSTEM
+Grit numbers indicate abrasive particle density. Lower numbers are coarser (more aggressive), higher numbers are finer (smoother). The progression for 3D printed frames is: Start 120-grit to remove layer lines and major imperfections. Progress to 220-grit for overall smoothing and surface preparation. Finish with 400-grit for a silky, paint-ready surface. Never skip a grit level. Going directly from 120 to 400 leaves deep scratches from the 120-grit visible under paint.
+
+120-GRIT — THE HEAVY LIFTER
+120-grit sandpaper is aggressive enough to remove visible layer lines quickly. Use it on flat surfaces with firm, consistent strokes. Sand in one direction (not circles) on flat surfaces to prevent uneven material removal. Sand until individual layer lines are no longer visible and the surface has a consistent, uniformly scratched appearance. Typical time: 1 to 2 minutes per frame surface.
+
+220-GRIT — THE SMOOTHER
+220-grit removes the scratches left by 120-grit and creates an evenly smooth surface. The surface should feel smooth to the hand but still have a slight roughness that helps paint adhesion. This is the grit where the frame starts feeling like a finished product. Continue sanding until 120-grit scratch patterns are gone. Typical time: 1 minute per surface.
+
+400-GRIT — THE FINISHER
+400-grit (and optionally 600 or 800-grit) creates a very smooth surface suitable for direct painting or priming. Use light pressure. For the best results, use wet sanding: dip the sandpaper in water periodically. Water flushes away plastic particles and prevents clogging. The surface should feel silky smooth. Typical time: 30 seconds to 1 minute per surface.
+
+WET SANDING TECHNIQUE
+After 400-grit dry sanding, dip waterproof sandpaper in water and continue sanding with light pressure. Water acts as a lubricant and particle flush, preventing the sandpaper from clogging with plastic dust. Wet sanding at 400 to 600 grit creates an incredibly smooth surface that primer flows over perfectly. Dry the frame completely before priming.
+
+SANDING TOOLS AND AIDS
+Flat sanding block: wrap sandpaper around a flat rigid block for consistent pressure on frame surfaces. Sponge sanding pads: flexible pads that conform to curved surfaces like retro TV frames. Needle files: for tight corners and magnet slot cleanup. Small dowel with wrapped sandpaper: for sanding inside rounded features. A dust mask is essential when dry sanding PLA.
+
+PRODUCTION SANDING WORKFLOW
+For efficiency, batch sand all frames at the same grit level before moving to the next grit. Line up 10 frames, sand all at 120, then all at 220, then all at 400. This assembly-line approach is faster than completing each frame individually because you maintain rhythm and tool setup time is amortized. Target production time: 3 to 5 minutes total sanding per standard frame.
+
+WHEN TO SKIP SANDING
+If your frames are printed with ironing enabled and you are selling unpainted natural PLA frames, the top surface may not need sanding. Customers who buy natural-finish frames expect some layer line visibility. In this case, a quick pass with 400-grit on just the visible edges is sufficient. For painted frames, always sand through the full grit progression.
+
+KEY TAKEAWAYS
+Sanding transforms your frames from obviously 3D printed to smooth and professional. Follow the 120, 220, 400-grit progression without skipping steps. Sand flat surfaces in one direction. Use wet sanding at 400-grit for the best results. Batch sand for production efficiency. Budget 3 to 5 minutes per frame. The quality difference is immediately visible and directly supports premium pricing.

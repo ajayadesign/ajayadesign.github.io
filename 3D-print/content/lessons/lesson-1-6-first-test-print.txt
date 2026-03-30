@@ -1,0 +1,30 @@
+YOUR FIRST TEST PRINT — FROM CALIBRATION TO FRAMES
+3D Print Academy — Module 1, Lesson 6
+
+Printing Your First Objects and Evaluating Quality
+
+This is the hands-on lesson where theory meets practice. You will print three progressively complex test objects, learn to evaluate print quality, and produce your very first magnet frame. Every successful 3D printing business starts with that first print.
+
+THE CALIBRATION CUBE — YOUR FIRST PRINT
+The calibration cube is a 20mm cube with XYZ markings on each face. Download the standard XYZ calibration cube from Thingiverse or use the one included in the course files. Slice it with your optimized settings from the previous lessons. Print it and then measure with digital calipers. Each side should measure 20mm plus or minus 0.2mm. If X or Y dimensions are off, adjust steps per millimeter in firmware. If Z is off, check Z-offset. This cube tells you if your printer produces dimensionally accurate parts, which is critical for magnet slot sizing.
+
+THE BENCHY — THE UNIVERSAL BENCHMARK
+The 3D Benchy boat is the universal 3D printing test print that has been used by millions of makers. This small tugboat tests almost every printing challenge: overhangs (the hull), bridging (the cabin roof), small details (the chimney), stringing (travels between features), first layer quality (the flat bottom). Print the Benchy and compare it against reference images. A good Benchy indicates your printer is ready for production. Look for: smooth hull, clean overhangs, no stringing between features, sharp chimney hole, flat bottom.
+
+YOUR FIRST MAGNET FRAME
+Now print the simple 4x3 magnet frame STL included in the course files. This is a standard-sized frame designed for a 4x3 inch photo with two 6x2mm neodymium magnet slots on the back. Slice with your optimized settings: 0.2mm layer height, 3 walls, 15% infill, ironing enabled. Expected print time: about 60-75 minutes. Watch the first few layers carefully to ensure proper bed adhesion. Let the printer complete the entire print before removing.
+
+EVALUATING PRINT QUALITY
+After printing your frame, evaluate these quality criteria: Surface finish — are layer lines visible on the top face? If ironing is enabled, the top should be very smooth. Dimensional accuracy — measure the overall dimensions and magnet slot diameter with calipers. Magnet slots should be 6.2mm plus or minus 0.1mm. Bottom surface — should be flat and smooth from the bed surface. Corners — should be square and crisp, not rounded or blobby. Bridging — any areas where the printer bridges open space should be flat, not saggy.
+
+TROUBLESHOOTING YOUR FIRST PRINTS
+If the calibration cube is dimensionally off: Recalibrate steps/mm. If Benchy has stringing: Lower temperature by 5 degrees or increase retraction. If Benchy has rough overhangs: Slow down print speed or improve part cooling. If the magnet frame has warped corners: Re-level bed, increase bed temperature, add brim. If layer adhesion is poor: Increase print temperature by 5 degrees. These are common first-print issues and all are easily solvable.
+
+BUILDING CONFIDENCE THROUGH PRACTICE
+Print 3-5 test frames before committing to production. Try different orientations. Try different colors. Test magnet fit by pressing a 6x2mm magnet into each slot. The magnet should press-fit snugly without falling out. Practice removing prints from the bed without damaging them. This repetition builds muscle memory and confidence.
+
+DOCUMENTING YOUR SETTINGS
+Keep a print log noting: date, filament brand and color, print temperature, bed temperature, print time, and quality score out of 10. This log becomes invaluable as you scale up. You can quickly reference what works and what does not. Over time, you will build a database of optimal settings for every frame design and filament combination.
+
+KEY TAKEAWAYS
+Your first three prints — calibration cube, Benchy, and magnet frame — validate that your printer is properly calibrated and capable of producing quality magnet frames. Evaluate every print against specific quality criteria. Document your settings. With these test prints under your belt, you are ready to move forward with confidence. Congratulations on entering the world of 3D printing!

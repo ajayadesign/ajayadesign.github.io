@@ -1,0 +1,121 @@
+{
+  "lesson_id": "3-2",
+  "title": "Retro TV Frame Design",
+  "start_url": "about:blank",
+  "viewport_width": 1920,
+  "viewport_height": 1080,
+  "description": "Designing the best-selling retro TV magnet frame in TinkerCAD",
+  "actions": [
+    {
+      "section": "Title Card",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 50%, #16213e 100%); display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:24px; color:#6366f1; letter-spacing:3px; margin-bottom:20px\">3D PRINT ACADEMY — MODULE 3, LESSON 2</div><div style=\"font-size:56px; font-weight:800; color:#fff; margin-bottom:24px; line-height:1.2\">Retro TV Frame</div><div style=\"font-size:28px; color:#a5b4fc\">Your Best-Selling Design 📺</div></div>';",
+      "description": "Title card",
+      "pause": 6
+    },
+
+    {
+      "section": "Why Retro TV",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 100%); display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"max-width:900px; padding:40px\"><div style=\"font-size:36px; font-weight:700; color:#f59e0b; margin-bottom:30px\">📺 Why Retro TV Frames Sell</div><div style=\"display:grid; grid-template-columns:1fr 1fr; gap:20px\"><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"font-size:32px; margin-bottom:8px\">😍</div><div style=\"color:#fff; font-size:20px; font-weight:600\">Nostalgia Factor</div><div style=\"color:#94a3b8; font-size:16px; margin-top:8px\">Triggers warm memories of childhood TV</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"font-size:32px; margin-bottom:8px\">👀</div><div style=\"color:#fff; font-size:20px; font-weight:600\">Instantly Recognizable</div><div style=\"color:#94a3b8; font-size:16px; margin-top:8px\">Visible from across a craft fair booth</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"font-size:32px; margin-bottom:8px\">💬</div><div style=\"color:#fff; font-size:20px; font-weight:600\">Conversation Starter</div><div style=\"color:#94a3b8; font-size:16px; margin-top:8px\">People pick it up and say — oh that is so cute!</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"font-size:32px; margin-bottom:8px\">💰</div><div style=\"color:#fff; font-size:20px; font-weight:600\">Premium Pricing</div><div style=\"color:#94a3b8; font-size:16px; margin-top:8px\">Novelty item justifies $12-15 retail</div></div></div></div>';",
+      "description": "Sales appeal",
+      "pause": 8
+    },
+
+    {
+      "section": "Overall Dimensions",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"max-width:900px; padding:40px\"><div style=\"font-size:36px; font-weight:700; color:#6366f1; margin-bottom:30px\">📐 Dimensions & Proportions</div><div style=\"display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px\"><div style=\"background:rgba(99,102,241,0.15); padding:24px; border-radius:12px; border:1px solid rgba(99,102,241,0.3); text-align:center\"><div style=\"color:#a5b4fc; font-size:16px\">Width</div><div style=\"color:#fff; font-size:36px; font-weight:700\">120mm</div></div><div style=\"background:rgba(99,102,241,0.15); padding:24px; border-radius:12px; border:1px solid rgba(99,102,241,0.3); text-align:center\"><div style=\"color:#a5b4fc; font-size:16px\">Height</div><div style=\"color:#fff; font-size:36px; font-weight:700\">100mm</div></div><div style=\"background:rgba(99,102,241,0.15); padding:24px; border-radius:12px; border:1px solid rgba(99,102,241,0.3); text-align:center\"><div style=\"color:#a5b4fc; font-size:16px\">Depth</div><div style=\"color:#fff; font-size:36px; font-weight:700\">30mm</div></div></div><div style=\"background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#94a3b8; font-size:18px\">Mimics a classic 1970s portable television. The chunky 30mm depth suggests quality. Screen opening fits 3×4 or Instax Mini prints.</div></div></div>';",
+      "description": "Dimensions overview",
+      "pause": 8
+    },
+
+    {
+      "section": "Body Shell",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center; max-width:800px\"><div style=\"font-size:36px; font-weight:700; color:#22c55e; margin-bottom:30px\">🏗️ The Body Shell</div><div style=\"background:rgba(255,255,255,0.05); padding:40px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); text-align:left\"><div style=\"font-size:20px; color:#fff; line-height:2\">Start with a rounded rectangular body<br><br>Top corners: <span style=\"color:#22c55e; font-weight:600\">15mm radius</span> (large, classic TV curve)<br>Bottom corners: <span style=\"color:#22c55e; font-weight:600\">5mm radius</span> (smaller, stable base)<br><br>Front face: <span style=\"color:#f59e0b; font-weight:600\">3-5° draft angle</span><br>→ Slightly narrower at back (like real TV)<br><br><span style=\"color:#a5b4fc\">TinkerCAD:</span> Approximate with stacked shapes<br><span style=\"color:#a5b4fc\">Fusion 360:</span> Loft between two rectangles</div></div></div>';",
+      "description": "Body shell details",
+      "pause": 10
+    },
+
+    {
+      "section": "TinkerCAD Demo",
+      "type": "navigate",
+      "url": "https://www.tinkercad.com",
+      "description": "Open TinkerCAD"
+    },
+    {
+      "type": "wait",
+      "seconds": 3
+    },
+    {
+      "type": "text_overlay",
+      "text": "Building the Retro TV Body — Rounded Rectangle + Draft Angle",
+      "x": 50,
+      "y": 30,
+      "font_size": 24,
+      "duration": 5000,
+      "description": "TinkerCAD building context"
+    },
+    {
+      "type": "move",
+      "x": 1800,
+      "y": 300,
+      "steps": 30,
+      "description": "Point to shapes panel",
+      "pause": 2
+    },
+    {
+      "type": "text_overlay",
+      "text": "Use Round Roof shape for the TV body → Adjust corner radii",
+      "x": 50,
+      "y": 950,
+      "font_size": 22,
+      "duration": 5000
+    },
+    {
+      "type": "wait",
+      "seconds": 3
+    },
+
+    {
+      "section": "Screen Opening",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center; max-width:800px\"><div style=\"font-size:36px; font-weight:700; color:#3b82f6; margin-bottom:30px\">📺 The Screen Opening</div><div style=\"display:grid; grid-template-columns:1fr 1fr; gap:20px\"><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#3b82f6; font-size:16px; margin-bottom:8px\">Position</div><div style=\"color:#fff; font-size:20px\">Left ⅔ of front face</div><div style=\"color:#94a3b8; font-size:14px\">Right side reserved for knobs</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#3b82f6; font-size:16px; margin-bottom:8px\">Dimensions</div><div style=\"color:#fff; font-size:20px\">65mm × 55mm</div><div style=\"color:#94a3b8; font-size:14px\">2mm border radius — rounded screen</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#3b82f6; font-size:16px; margin-bottom:8px\">Photo Pocket</div><div style=\"color:#fff; font-size:20px\">3mm deep with retention lip</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#3b82f6; font-size:16px; margin-bottom:8px\">Orientation</div><div style=\"color:#fff; font-size:20px\">Landscape photos</div></div></div></div>';",
+      "description": "Screen opening specs",
+      "pause": 8
+    },
+
+    {
+      "section": "Decorative Details",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center; max-width:800px\"><div style=\"font-size:36px; font-weight:700; color:#f59e0b; margin-bottom:30px\">✨ The Details That Sell It</div><div style=\"text-align:left; background:rgba(255,255,255,0.05); padding:40px; border-radius:16px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"font-size:20px; color:#fff; line-height:2\"><span style=\"color:#f59e0b; font-weight:700\">Channel Knobs:</span><br>• 10mm diameter × 3mm protruding<br>• 6mm inner circle embossed 0.5mm<br>• Positioned vertically, 20mm apart<br><br><span style=\"color:#f59e0b; font-weight:700\">Speaker Grille:</span><br>• 15mm × 2mm horizontal slot below knobs<br><br><span style=\"color:#f59e0b; font-weight:700\">Antennas:</span><br>• 3mm diameter × 15mm tall, angled 15° outward<br>• 10mm apart at top center<br><br><div style=\"padding:16px; background:rgba(245,158,11,0.15); border-radius:8px; border-left:3px solid #f59e0b; margin-top:8px\">These little details make customers pick it up!</div></div></div></div>';",
+      "description": "Decorative details",
+      "pause": 10
+    },
+
+    {
+      "section": "Easel + Magnets",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"max-width:900px; padding:40px\"><div style=\"font-size:36px; font-weight:700; color:#a5b4fc; margin-bottom:30px\">🧲 Dual-Use: Fridge + Desk</div><div style=\"display:grid; grid-template-columns:1fr 1fr; gap:20px\"><div style=\"background:rgba(255,255,255,0.05); padding:30px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"font-size:28px; margin-bottom:12px\">🧲</div><div style=\"color:#a5b4fc; font-size:20px; font-weight:600; margin-bottom:8px\">Magnet Placement</div><div style=\"color:#fff; font-size:18px; line-height:1.6\">Two magnets on back, behind screen area (thickest part). 6×2mm neodymium discs with plenty of room in 30mm depth.</div></div><div style=\"background:rgba(255,255,255,0.05); padding:30px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"font-size:28px; margin-bottom:12px\">📐</div><div style=\"color:#a5b4fc; font-size:20px; font-weight:600; margin-bottom:8px\">Easel Stand</div><div style=\"color:#fff; font-size:18px; line-height:1.6\">Angled wedge on back: 40mm × 25mm × 2mm at 70°. Folds flat on fridge, props up on desk. Dual-use = more value!</div></div></div></div>';",
+      "description": "Magnets and easel",
+      "pause": 8
+    },
+
+    {
+      "section": "Color Recommendations",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #0A0A0F; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center; max-width:900px\"><div style=\"font-size:36px; font-weight:700; color:#fff; margin-bottom:30px\">🎨 Retro Color Palette</div><div style=\"display:flex; gap:16px; justify-content:center; flex-wrap:wrap\"><div style=\"width:120px; text-align:center\"><div style=\"width:120px; height:120px; background:#6B8E23; border-radius:16px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; font-size:36px\">👑</div><div style=\"color:#fff; font-size:16px\">Avocado Green</div><div style=\"color:#22c55e; font-size:14px\">#1 Seller</div></div><div style=\"width:120px; text-align:center\"><div style=\"width:120px; height:120px; background:#DAA520; border-radius:16px; margin-bottom:8px\"></div><div style=\"color:#fff; font-size:16px\">Harvest Gold</div></div><div style=\"width:120px; text-align:center\"><div style=\"width:120px; height:120px; background:#CC5500; border-radius:16px; margin-bottom:8px\"></div><div style=\"color:#fff; font-size:16px\">Burnt Orange</div></div><div style=\"width:120px; text-align:center\"><div style=\"width:120px; height:120px; background:#FFFDD0; border-radius:16px; margin-bottom:8px\"></div><div style=\"color:#fff; font-size:16px\">Cream White</div></div><div style=\"width:120px; text-align:center\"><div style=\"width:120px; height:120px; background:#87CEEB; border-radius:16px; margin-bottom:8px\"></div><div style=\"color:#fff; font-size:16px\">Sky Blue</div></div><div style=\"width:120px; text-align:center\"><div style=\"width:120px; height:120px; background:#DC143C; border-radius:16px; margin-bottom:8px\"></div><div style=\"color:#fff; font-size:16px\">Cherry Red</div></div></div></div>';",
+      "description": "Color palette showcase",
+      "pause": 8
+    },
+
+    {
+      "section": "Outro",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 50%, #16213e 100%); display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:56px; margin-bottom:20px\">📺</div><div style=\"font-size:48px; font-weight:800; color:#fff; margin-bottom:20px\">Your Best-Selling<br>Design</div><div style=\"font-size:24px; color:#a5b4fc; margin-bottom:16px\">120mm × 100mm × 30mm — Iconic retro TV charm</div><div style=\"font-size:20px; color:#f59e0b; margin-bottom:40px\">$12-15 retail pricing — crowd favorite at craft fairs</div><div style=\"font-size:20px; color:#6366f1\">3D Print Academy — AJ DESIGN</div></div>';",
+      "description": "Outro card",
+      "pause": 6
+    }
+  ]
+}

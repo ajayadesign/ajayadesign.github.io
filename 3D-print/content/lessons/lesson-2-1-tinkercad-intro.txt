@@ -1,0 +1,39 @@
+TINKERCAD INTRODUCTION AND INTERFACE
+3D Print Academy — Module 2, Lesson 1
+
+Your Gateway to 3D Design for Magnet Frames
+
+TinkerCAD is a free, browser-based 3D modeling tool from Autodesk that is perfect for beginners and surprisingly powerful for production design. This lesson gives you a complete tour of the interface and teaches you the fundamental skills needed to design magnet frames.
+
+GETTING STARTED WITH TINKERCAD
+Navigate to tinkercad.com and create a free account. TinkerCAD runs entirely in your web browser, so there is nothing to download or install. It works on any computer with a modern web browser, including Chromebooks. This makes it accessible to everyone regardless of operating system or hardware specifications.
+
+THE TINKERCAD WORKSPACE
+When you create a new design, you see a blue grid workplane. This is your virtual table where you build 3D objects. The grid squares are 1mm by default. The right panel contains the Shape Library with hundreds of premade shapes: basic shapes like boxes, cylinders, cones, spheres, plus specialized generators for text, polygons, and community-submitted shapes.
+
+NAVIGATION CONTROLS
+Right-click and drag to orbit around your design and view it from any angle. Scroll the mouse wheel to zoom in and out. Shift plus right-click and drag to pan the view (slide the camera). Use the home button in the top-left to reset the camera to the default view. The view cube in the top-right lets you quickly snap to top, front, side, or isometric views. Mastering navigation is essential because you need to inspect your magnet frames from every angle.
+
+PLACING AND MANIPULATING SHAPES
+Drag a shape from the library onto the workplane to place it. Click a shape to select it. White corner handles resize the shape. The small white square on top changes the height. The curved arrows rotate the shape. You can type exact dimensions in the dimension boxes that appear. For magnet frames, precision matters, so always type exact values rather than dragging handles. 
+
+THE RULER TOOL FOR PRECISION
+The ruler tool is your most important tool for magnet frame design. Drag it onto the workplane, and every shape snaps to precise dimensions relative to the ruler origin. When you select a shape with the ruler active, you see exact position dimensions. This lets you place magnet slots at exactly the right coordinates on your frame. For professional frame design, always use the ruler.
+
+THE HOLE MODIFIER — YOUR MOST POWERFUL TOOL
+Any shape can be switched from Solid to Hole using the Inspector panel. A Hole shape subtracts material from any solid it overlaps when you Group them together. This is how you create magnet cavities, photo insert openings, and any other pocket or cutout in your frame. Example: place a cylinder (set to Hole) on the back of a rectangular solid (your frame body), size it to 6.2mm diameter and 2.1mm tall, position it precisely, then Group. The cylinder disappears and leaves a perfectly sized magnet hole.
+
+GROUPING AND UNGROUPING
+Select multiple shapes and click Group (or press Ctrl+G) to merge them into one object. Solid shapes combine. Hole shapes subtract from solids. This is the fundamental Boolean operation that creates complex geometry from simple shapes. You can Ungroup (Ctrl+Shift+G) to separate shapes later for editing. Smart use of grouping is how you build intricate frame designs from basic primitives.
+
+THE ALIGN TOOL
+Select two or more shapes and use the Align button (or press L). Alignment handles appear on all edges and centers. Clicking a handle aligns all selected shapes to that reference point. This is essential for centering photo insert holes in frames, centering text on frames, and ensuring symmetry in your designs. Always use Align rather than trying to position shapes by eye.
+
+DUPLICATING AND MIRRORING
+Select a shape and press Ctrl+D to duplicate it in place. Then move the copy to create multiple identical features, like multiple magnet slots placed symmetrically on a frame back. The Mirror tool flips a shape across an axis, perfect for creating symmetric frame designs efficiently.
+
+EXPORTING YOUR DESIGN
+When your frame design is complete, click Export from the top-right menu. Select STL format. The STL file downloads to your computer, ready to open in your slicer. TinkerCAD always exports watertight, manifold meshes, meaning the STL files are clean and ready to print without error fixing.
+
+KEY TAKEAWAYS
+TinkerCAD is free, web-based, and deceptively powerful. Master the Hole modifier for creating magnet slots and photo cutouts. Use the Ruler for precision. Use Align for symmetry. Group and Ungroup to build complex shapes from simple ones. You are now ready to design your first magnet frame in the next lesson!

@@ -1,0 +1,30 @@
+FILAMENT TYPES — PLA, PLA+, AND PETG FOR MAGNET FRAMES
+3D Print Academy — Module 1, Lesson 3
+
+Choosing the Right Material for Your Magnet Frame Business
+
+The filament you choose determines the look, feel, durability, and cost of your magnet frames. This lesson covers the three most important filament types for frame production and helps you choose the best one for your business.
+
+PLA (POLYLACTIC ACID) — THE BEGINNER'S BEST FRIEND
+PLA is a plant-based, biodegradable thermoplastic and the most popular 3D printing filament worldwide. Print temperature: 190-210°C. Bed temperature: 50-60°C. Properties: Very low warping, excellent surface finish, easy to print, wide color selection. Cost: $15-20 per kilogram. A standard magnet frame uses about 30 grams, so one spool makes 30+ frames. Drawbacks: PLA is relatively brittle under sharp impact and softens above 55°C. For magnet frames, the heat concern is minimal since fridge surfaces stay cool. PLA gives a beautiful semi-glossy finish straight off the printer.
+
+PLA+ (ENHANCED PLA) — THE PRODUCTION SWEET SPOT
+PLA+ is standard PLA modified with additives that improve layer-to-layer adhesion and impact resistance. Print temperature: 200-220°C. Bed temperature: 55-65°C. PLA+ is slightly more flexible than standard PLA, meaning frames are less likely to crack if dropped. The surface finish is equally excellent. Cost: typically $2-3 more per kilogram than standard PLA. For a magnet frame business, PLA+ is the recommended choice. The improved durability means fewer customer complaints and returns. Brands: eSun PLA+, Polymaker PolyLite PLA Pro, and Overture PLA+ are top choices.
+
+PETG (POLYETHYLENE TEREPHTHALATE GLYCOL) — THE DURABLE OPTION
+PETG offers superior heat resistance (up to 80°C), more flexibility, and excellent layer adhesion. Print temperature: 220-250°C. Bed temperature: 70-80°C. PETG is more ding-resistant than PLA, making it ideal for frames that might be handled roughly. However: PETG strings more, is harder to achieve smooth finishes, and requires higher temperatures. Cost: $18-22 per kilogram. Use PETG for: outdoor frames, frames in hot environments (near stoves), premium frames marketed as extra-durable. For standard fridge frames, PLA+ is still preferred due to easier printing and smoother finish.
+
+COLOR SELECTION FOR YOUR BUSINESS
+Strategic color choices boost sales. The top sellers for magnet frames: Matte White (timeless, goes with any decor). Matte Black (modern, premium feel). Pastel Pink (baby products, gifts). Sage Green (trending, nature aesthetic). Natural Wood PLA (craft market appeal). Metallic Gold/Silver PLA (premium, holiday market). Keep 3-4 core colors in stock, plus 1-2 seasonal offerings. Leftover seasonal colors become clearance items.
+
+FILAMENT STORAGE AND MOISTURE
+Filament absorbs moisture from the air, degrading print quality. Symptoms of wet filament: popping sounds during printing, increased stringing, rough surface texture, bubbles in the extruded line. Prevention: Store filament in sealed bags with desiccant packs. Use a filament dry box or airtight container during printing. If filament gets wet, dry it in a filament dryer or food dehydrator: PLA at 45°C for 4-6 hours, PETG at 65°C for 4-6 hours. Proper storage ensures consistent quality across every batch of frames you produce.
+
+COST ANALYSIS PER FRAME BY FILAMENT TYPE
+PLA: 30g × $0.018/g = $0.54 per frame in filament. PLA+: 30g × $0.022/g = $0.66 per frame. PETG: 30g × $0.020/g = $0.60 per frame. The filament cost difference between PLA and PLA+ is only 12 cents per frame — well worth the improved durability. Even at PETG pricing, material cost is under $1 per frame. This incredibly low material cost is what makes the magnet frame business so profitable.
+
+SPECIALTY FILAMENTS FOR PREMIUM PRODUCTS
+Silk PLA: Creates a stunning metallic sheen without painting. Silk Gold and Silk Copper are gorgeous for premium frames. Wood-fill PLA: Contains real wood fibers, can be sanded and stained like real wood. Commands premium pricing. Marble PLA: Swirled pattern that looks like natural stone. Glow-in-the-dark PLA: Fun novelty frames, popular with kids. Note: glow PLA is abrasive — use a hardened steel nozzle.
+
+KEY TAKEAWAYS
+PLA+ is your production workhorse — great finish, good durability, easy to print, affordable. Stock multiple colors strategically. Store filament properly to ensure consistent quality. Specialty filaments create premium product lines that command higher prices. Your filament choice directly impacts both product quality and profit margins.

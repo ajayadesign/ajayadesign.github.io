@@ -1,0 +1,36 @@
+RETRO TV FRAME DESIGN
+3D Print Academy — Module 3, Lesson 2
+
+Designing the Best-Selling Magnet Frame Style
+
+The retro TV frame is consistently the top seller at craft fairs and online. Its nostalgic charm, recognizable shape, and conversation-starting design make it irresistible. This lesson teaches you to design a detailed, print-optimized retro television magnet frame that customers love.
+
+WHY RETRO TV FRAMES SELL
+Nostalgia is a powerful purchasing motivator. The miniature CRT television shape triggers warm memories of childhood for older buyers and curiosity for younger ones. It is instantly recognizable from across a booth. It starts conversations. It looks amazing on a fridge with a family photo in the screen. Most importantly, it justifies premium pricing because it is a novelty item, not just another picture frame.
+
+OVERALL DIMENSIONS AND PROPORTIONS
+Target dimensions: 120mm wide by 100mm tall by 30mm deep. These proportions mimic a classic 1970s portable television. The deeper 30mm depth gives a chunky, substantial feel that suggests quality. The screen opening accommodates a 3x4 inch photo or Instax Mini print. The wider-than-tall proportion matches how old CRT screens were shaped.
+
+THE BODY SHELL
+Start with a rounded rectangular body. Round the top corners with a large 15mm radius and the bottom corners with a smaller 5mm radius for the classic TV shape. The front face should have a 3-5 degree draft angle — slightly narrower at the back than the front — mimicking how real TVs narrowed toward the back. In TinkerCAD, approximate this with stacked shapes. In Fusion 360, use a lofted shape between two different-sized rectangles.
+
+THE SCREEN OPENING
+Position the screen opening on the left two-thirds of the front face. The right side is reserved for decorative knobs and details. Screen opening dimensions: 65mm by 55mm with a 2mm border radius for rounded screen corners. The photo pocket behind the screen should be 3mm deep with a retention lip. Orient the opening for landscape photos.
+
+DECORATIVE KNOBS AND DETAILS
+On the right panel, add two cylindrical knobs — these are purely decorative but add immense character. Create cylinders 10mm diameter by 3mm protruding from the surface, with a smaller 6mm inner circle embossed 0.5mm for a channel-dial look. Position them vertically, one above the other, with 20mm spacing. Below the knobs, add a small horizontal slot (15mm by 2mm) suggesting a speaker grille. These details are what make customers pick up the frame and say "oh that is so cute."
+
+ANTENNA STUBS
+Two small antenna stubs on top complete the look. Design thin cylinders 3mm diameter by 15mm tall, angled outward at 15 degrees. Position them 10mm apart at the top center. These print easily with proper support settings and add the iconic TV silhouette. For a simpler print, make the antennas 5mm diameter and straight vertical.
+
+EASEL STAND ON THE BACK
+Add a foldable or fixed easel foot on the back so the TV frame can stand on a desk as well as stick to a fridge. A simple angled wedge 40mm wide by 25mm tall by 2mm thick at a 70 degree angle works well. When on the fridge, the easel lays flat against the surface. When on a desk, it props the frame upright. Dual-use design increases the value proposition.
+
+MAGNET PLACEMENT
+Place two magnets on the back of the frame, positioned behind the screen area where the frame is thickest. Avoid placing magnets behind the knob area where the wall might be thinner. The 30mm depth gives plenty of room for 6x2mm magnets embedded below the surface.
+
+COLOR RECOMMENDATIONS
+Print in retro colors for maximum appeal: avocado green, harvest gold, burnt orange, cream white, sky blue, or cherry red. These colors evoke the 1970s aesthetic and stand out on a fridge. Offer a selection of colors at your booth and online. The avocado green is consistently the top seller in the retro TV category.
+
+KEY TAKEAWAYS
+The retro TV frame is your best-selling design. The recognizable shape, nostalgic charm, and conversation-starting appeal justify premium $12-15 pricing. Focus on proportions, decorative details like knobs and antennas, and retro color options. This single design can anchor your entire product line and draw customers to your booth.

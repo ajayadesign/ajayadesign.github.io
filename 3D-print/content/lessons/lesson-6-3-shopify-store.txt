@@ -1,0 +1,36 @@
+SHOPIFY STORE SETUP — FULL WALKTHROUGH
+3D Print Academy — Module 6, Lesson 3
+
+Building Your Professional Online Store
+
+A Shopify store gives your magnet frame business 24/7 global reach. While craft fairs are excellent for local sales, an online store generates revenue while you sleep and dramatically scales your business potential. This lesson walks you through the complete setup from account creation to your first product listing.
+
+WHY SHOPIFY FOR MAGNET FRAMES
+Shopify is the most popular e-commerce platform for small businesses. It handles payment processing, inventory tracking, shipping labels, and tax calculation. The monthly cost starts at $39. Shopify Payments eliminates per-transaction fees for US sellers. The professional appearance builds customer trust. Shopify is where serious small product businesses sell online.
+
+ACCOUNT SETUP
+Sign up at shopify.com with a free trial. Choose a store name that matches your brand. For magnet frames, consider names incorporating your niche: "FrameCraft Studio", "Magnet Memories Co", or your own name brand. Verify your email and set your currency and country. Connect your bank account for payouts.
+
+THEME SELECTION
+Choose the Dawn theme — it is free, fast, and professional with a clean, modern design. Clean design lets your product photography shine without distraction. Customize colors to match your brand: use neutral backgrounds that do not compete with your colorful frames. Upload your logo. Set fonts that feel handcrafted but readable (like Montserrat or Open Sans).
+
+CREATING PRODUCT LISTINGS
+Each frame style gets its own product listing. Title format: descriptive and keyword-rich. Example: "Retro TV Magnet Photo Frame - Vintage Avocado Green - Fits 3x4 Photos". Description: write engaging copy that sells the experience. Mention it is handmade, the material, photo size it holds, that it is magnetic, and includes magnets ready to display. Use bullet points for key features. Include care instructions.
+
+PRODUCT PHOTOGRAPHY
+Upload 4 to 5 photos per product listing. Photo 1 (hero): clean front view on white background. Photo 2: angle view showing depth and quality. Photo 3: lifestyle shot on a fridge with a photo inside. Photo 4: detail close-up showing surface quality. Photo 5: size reference (frame next to a common object or in someone's hand). High-quality photography is the number one factor in online sales conversion. Natural window light and a smartphone in portrait mode produce excellent results.
+
+SETTING VARIANTS
+Use Shopify's variant system for color options. One product listing for "Retro TV Frame" with color variants: Avocado Green, Harvest Gold, Cream White, Cherry Red. This keeps your product catalog clean and organized. Each variant can have its own inventory count and photos. Set price and compare-at price for each variant.
+
+COLLECTIONS AND NAVIGATION
+Create logical product collections: All Frames, Best Sellers, Retro Collection, Instax Frames, Personalized Frames, Gift Sets, New Arrivals. Add these collections to your main navigation menu. Collections help customers browse and discover products they might not have searched for directly. Feature Best Sellers and New Arrivals on your homepage.
+
+SHIPPING SETUP
+Configure shipping rates based on your actual costs. USPS First Class Package (under 16oz) is typically $4 to $6 for magnet frames. Options: flat rate shipping ($4.99), free shipping over a threshold ($25 is standard), or calculated live rates from the carrier. Free shipping over $25 encourages customers to add another frame to their cart. Use Pirate Ship for discounted USPS label printing.
+
+PAYMENT AND CHECKOUT
+Enable Shopify Payments to accept all major credit cards with no per-transaction fee. Also enable PayPal and Shop Pay for additional payment methods. Enable the abandoned checkout recovery feature, which automatically emails customers who add items to cart but do not complete purchase. This feature alone recovers 5 to 15 percent of otherwise lost sales.
+
+KEY TAKEAWAYS
+Shopify gives your magnet frame business professional online presence and 24/7 sales capability. Use the free Dawn theme, take excellent product photos, write compelling descriptions, and organized collections. Set up shipping that encourages higher order values. Enable abandoned checkout recovery. Your online store works around the clock to grow your business.

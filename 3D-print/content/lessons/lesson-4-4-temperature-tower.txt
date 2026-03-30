@@ -1,0 +1,33 @@
+TEMPERATURE TOWER TEST
+3D Print Academy — Module 4, Lesson 4
+
+Dialing In the Perfect Nozzle Temperature for Your Filament
+
+Every brand and even every color of filament has a slightly different optimal printing temperature. A temperature tower is a calibration print that tests multiple temperatures in one print, allowing you to visually determine the best temperature for your specific filament. This is a must-do test for every new roll of filament.
+
+WHY TEMPERATURE CALIBRATION MATTERS
+Printing too hot causes: excessive stringing between travel moves, blobby surfaces where filament oozes, poor overhang quality as molten plastic sags, and potential nozzle jams from heat creep. Printing too cold causes: poor layer adhesion that weakens the frame, visible under-extrusion where layers are thin or gapped, rough surfaces from incompletely melted filament, and potential extruder clicking from back-pressure.
+
+WHAT IS A TEMPERATURE TOWER
+A temperature tower is a tall print with multiple sections, each printed at a different temperature. Typically it has 5 sections covering a 20 to 30 degree range. Each section includes features that test different quality aspects: a flat wall for surface quality, small bridging spans, overhanging surfaces, and thin stringing pillars.
+
+HOW TO GENERATE A TEMPERATURE TOWER
+In Cura: install the TempTower post-processing script via Extensions then Post-Processing then Modify G-code. Set start temperature, end temperature, and temperature change every N layers. In PrusaSlicer: use the variable temperature feature in the filament settings tab or manually insert temperature change G-code (M104 S205 for example) at specific layer heights. Download pre-made temperature tower STL files from Thingiverse or Printables.
+
+PRINTING THE TEMPERATURE TOWER
+For PLA and PLA+, test from 190°C to 220°C in 5°C increments (7 sections). For PETG, test from 220°C to 250°C. Print at your standard speed settings — do not slow down, as the test should reflect real production conditions. Use a standard 0.2mm layer height. The print takes about 30 to 45 minutes.
+
+EVALUATING THE RESULTS
+After printing, examine each section. Layer adhesion: try to break each section by hand. Well-bonded layers are very difficult to separate. The temperature where layers bond strongly is the minimum acceptable temperature. Surface quality: look for smooth, consistent surfaces without blobs or blemishes. Stringing: check the gaps between features for thin strings. The temperature where stringing disappears or is minimal is the upper quality limit. Overhang quality: examine the underside of overhanging features for drooping.
+
+THE SWEET SPOT
+Your optimal temperature is where you get good layer adhesion, smooth surfaces, minimal stringing, and clean overhangs. For most PLA and PLA+ filaments, this is between 200°C and 210°C. Some brands prefer 195°C, others 215°C. Once you find the sweet spot, record it with the filament brand, color, and date. Retest when you switch to a new brand or even a new batch of the same brand.
+
+BED TEMPERATURE OPTIMIZATION
+While you are testing nozzle temperature, also verify your bed temperature. For PLA: 55 to 65°C is the standard range. Too cool and the first layer does not adhere. Too hot and the bottom surface gets elephant foot or the print becomes difficult to remove. For PEI sheets, 55°C is usually ideal. For glass beds, 60°C with hairspray works well.
+
+DOCUMENTING YOUR TEMPERATURE SETTINGS
+Create a simple spreadsheet or notebook entry for each filament you use. Record: brand, material type, color, nozzle temperature, bed temperature, date tested, and any notes. When you reorder the same filament, you can start with your documented temperature and verify with a quick test. This saves calibration time on every new spool.
+
+KEY TAKEAWAYS
+A temperature tower is a 30-minute investment that prevents hours of frustration from poor print quality. Test every new filament brand and color. Aim for the temperature that balances adhesion, surface quality, stringing, and overhang performance. Document your results. This calibration discipline ensures consistent frame quality across every spool of filament you use.

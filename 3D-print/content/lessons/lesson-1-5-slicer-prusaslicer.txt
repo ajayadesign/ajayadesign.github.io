@@ -1,0 +1,36 @@
+SLICER SETUP — PRUSASLICER FOR MAGNET FRAME PRODUCTION
+3D Print Academy — Module 1, Lesson 5
+
+Complete PrusaSlicer Guide for 3D Printed Magnet Frames
+
+PrusaSlicer is a powerful, free slicing software developed by Prusa Research. It offers excellent profiles, fast slicing, and advanced features like paint-on supports and variable layer height that make it ideal for magnet frame production.
+
+DOWNLOADING AND SETTING UP PRUSASLICER
+Download PrusaSlicer from prusa3d.com/prusaslicer. Free for Windows, macOS, and Linux. During the configuration wizard, select your printer model. PrusaSlicer supports hundreds of printers beyond just Prusa. If your specific printer is not listed, select a generic profile and enter your build volume and nozzle size manually. The default print profiles are excellent starting points.
+
+PRUSASLICER INTERFACE AND WORKFLOW
+The interface has three main views: 3D Editor (arrange and orient your models), Slice Preview (inspect layers), and G-code viewer. Import STL files by dragging onto the plate or using the Add button. The right panel shows all print settings organized by category: Print Settings, Filament Settings, and Printer Settings. The three dropdown menus at the top let you quickly switch between saved profiles.
+
+OPTIMAL SETTINGS FOR MAGNET FRAMES
+Layer Height: 0.2mm for production, 0.15mm for premium display frames. Perimeters: 3 (equivalent to Cura wall count of 3). Top Solid Layers: 5. Bottom Solid Layers: 3. Fill Density: 15-20%. Fill Pattern: Grid or Gyroid. Perimeter Speed: 45mm/s. Infill Speed: 80mm/s. External Perimeter Speed: 25mm/s (slower for smoother visible surfaces). Bridge Speed: 25mm/s.
+
+VARIABLE LAYER HEIGHT — ADVANCED TECHNIQUE
+PrusaSlicer's Variable Layer Height feature lets you use different layer heights at different parts of your model. For magnet frames: use 0.28mm layers for the middle infill sections that nobody sees, and switch to 0.12mm for the top 1-2mm for a super smooth visible surface. This can reduce print time by 20-30% while actually improving surface quality where it matters. Access it via the layer height slider in the right panel or the adaptive quality setting.
+
+PAINT-ON SUPPORTS
+PrusaSlicer's paint-on supports give you surgical control over where supports are placed. Instead of automatic supports everywhere, you paint exactly which overhangs need support. This reduces material waste, cleanup time, and surface scarring. Especially useful for retro TV frames where only specific features like antennas need support, while the main body prints fine without it.
+
+IRONING IN PRUSASLICER
+Enable Ironing under Print Settings, then Ironing. Ironing Type: Top surfaces only. Ironing Flow: 15%. Ironing Spacing: 0.1mm. This creates a glass-smooth top surface on your frames — the face that customers see and touch. The result is a professional finish that rivals injection-molded products.
+
+MULTIPLY AND ARRANGE FOR BATCH PRODUCTION
+For production runs, use the Multiply function (right-click the model and select Add Instance). PrusaSlicer auto-arranges models on the plate. You can also use the Arrange function with custom spacing. PrusaSlicer handles multi-object plates intelligently and provides accurate time estimates for batch jobs.
+
+SEQUENTIAL PRINTING IN PRUSASLICER
+Under Print Settings, find Complete Individual Objects. When enabled, the printer completes one frame fully before moving to the next. This is safer for batch printing because if one frame fails, the others are already complete. PrusaSlicer calculates the clearance needed between objects based on your extruder geometry.
+
+SAVING CUSTOM PROFILES
+Create custom profiles for your most common frame types. Save them by clicking the floppy disk icon next to each settings dropdown. Name them descriptively: "MagnetFrame_Standard_PLA+_0.2mm" or "MagnetFrame_Premium_0.15mm". This lets you switch between production speed and premium quality with one click.
+
+KEY TAKEAWAYS
+PrusaSlicer offers variable layer height, paint-on supports, and excellent profiles that make it ideal for professional magnet frame production. Master both Cura and PrusaSlicer so you can choose the best tool for each job. PrusaSlicer's variable layer height feature alone can save you significant time while improving quality.

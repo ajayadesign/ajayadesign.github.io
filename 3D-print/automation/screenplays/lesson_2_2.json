@@ -1,0 +1,220 @@
+{
+  "lesson_id": "2-2",
+  "title": "Design Your First Magnet Frame in TinkerCAD",
+  "start_url": "https://www.tinkercad.com",
+  "viewport_width": 1920,
+  "viewport_height": 1080,
+  "description": "Step-by-step TinkerCAD tutorial: building a 4x3 photo magnet frame with integrated magnet slots",
+  "actions": [
+    {
+      "section": "Title Card",
+      "type": "navigate",
+      "url": "about:blank",
+      "description": "Start with blank page for title"
+    },
+    {
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 50%, #16213e 100%); display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:24px; color:#6366f1; letter-spacing:3px; margin-bottom:20px\">3D PRINT ACADEMY — MODULE 2, LESSON 2</div><div style=\"font-size:56px; font-weight:800; color:#fff; margin-bottom:24px; line-height:1.2\">Design Your First<br>Magnet Frame</div><div style=\"font-size:28px; color:#a5b4fc\">Step-by-Step TinkerCAD Tutorial</div></div>';",
+      "description": "Show title card",
+      "pause": 6
+    },
+
+    {
+      "section": "Navigate to TinkerCAD",
+      "type": "navigate",
+      "url": "https://www.tinkercad.com",
+      "description": "Open TinkerCAD homepage"
+    },
+    {
+      "type": "wait",
+      "seconds": 3,
+      "description": "Let page load fully"
+    },
+    {
+      "type": "text_overlay",
+      "text": "Step 1: Open TinkerCAD and Create a New Design",
+      "x": 50,
+      "y": 30,
+      "font_size": 24,
+      "duration": 4000,
+      "description": "Show step 1 label"
+    },
+
+    {
+      "section": "Explore the Interface",
+      "type": "text_overlay",
+      "text": "The TinkerCAD workspace — your 3D design canvas",
+      "x": 50,
+      "y": 30,
+      "font_size": 24,
+      "duration": 4000,
+      "description": "Intro to workspace"
+    },
+    {
+      "type": "move",
+      "x": 960,
+      "y": 540,
+      "steps": 30,
+      "description": "Move to center of workspace",
+      "pause": 1
+    },
+
+    {
+      "section": "Design Planning Overlay",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 100%); display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"max-width:900px; padding:40px\"><div style=\"font-size:36px; font-weight:700; color:#6366f1; margin-bottom:30px\">📐 Design Planning</div><div style=\"display:grid; grid-template-columns:1fr 1fr; gap:20px\"><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#a5b4fc; font-size:18px; margin-bottom:8px\">Frame Body</div><div style=\"color:#fff; font-size:24px; font-weight:600\">112mm × 87mm × 8mm</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#a5b4fc; font-size:18px; margin-bottom:8px\">Photo Opening</div><div style=\"color:#fff; font-size:24px; font-weight:600\">102mm × 77mm × 5mm</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#a5b4fc; font-size:18px; margin-bottom:8px\">Magnet Slots</div><div style=\"color:#fff; font-size:24px; font-weight:600\">6.2mm ⌀ × 2.1mm deep</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#a5b4fc; font-size:18px; margin-bottom:8px\">Photo Size</div><div style=\"color:#fff; font-size:24px; font-weight:600\">4×3 inch (101.6 × 76.2mm)</div></div></div></div>';",
+      "description": "Show design planning dimensions",
+      "pause": 8
+    },
+
+    {
+      "section": "Step 1 — Frame Body",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #1a1a2e; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:20px; color:#6366f1; letter-spacing:2px; margin-bottom:16px\">STEP 1</div><div style=\"font-size:48px; font-weight:700; color:#fff; margin-bottom:20px\">Create the Frame Body</div><div style=\"font-size:22px; color:#94a3b8; max-width:700px; margin:0 auto\">Drag a Box shape onto the workplane.<br>Set dimensions: 112mm × 87mm × 8mm</div></div>';",
+      "description": "Step 1 slide",
+      "pause": 6
+    },
+    {
+      "type": "navigate",
+      "url": "https://www.tinkercad.com",
+      "description": "Return to TinkerCAD"
+    },
+    {
+      "type": "wait",
+      "seconds": 2
+    },
+    {
+      "type": "text_overlay",
+      "text": "Drag a Box from the shapes panel → Set 112mm × 87mm × 8mm",
+      "x": 50,
+      "y": 950,
+      "font_size": 22,
+      "duration": 5000,
+      "description": "Box instruction overlay"
+    },
+    {
+      "type": "move",
+      "x": 1800,
+      "y": 300,
+      "steps": 30,
+      "description": "Point to shapes panel area",
+      "pause": 2
+    },
+    {
+      "type": "move",
+      "x": 960,
+      "y": 540,
+      "steps": 40,
+      "description": "Drag to center of workplane",
+      "pause": 2
+    },
+
+    {
+      "section": "Step 2 — Photo Opening",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #1a1a2e; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:20px; color:#6366f1; letter-spacing:2px; margin-bottom:16px\">STEP 2</div><div style=\"font-size:48px; font-weight:700; color:#fff; margin-bottom:20px\">Photo Insert Opening</div><div style=\"font-size:22px; color:#94a3b8; max-width:700px; margin:0 auto\">Create a Hole box: 102mm × 77mm × 5mm<br>Center it on the frame body using Align tool<br>Position 1mm from the back face</div></div>';",
+      "description": "Step 2 slide",
+      "pause": 7
+    },
+    {
+      "type": "navigate",
+      "url": "https://www.tinkercad.com",
+      "description": "Return to TinkerCAD"
+    },
+    {
+      "type": "wait",
+      "seconds": 2
+    },
+    {
+      "type": "text_overlay",
+      "text": "Create another Box → Change to Hole → 102mm × 77mm × 5mm → Align Center",
+      "x": 50,
+      "y": 950,
+      "font_size": 20,
+      "duration": 6000,
+      "description": "Photo opening instruction"
+    },
+    {
+      "type": "wait",
+      "seconds": 4
+    },
+
+    {
+      "section": "Step 3 — Retention Lip",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #1a1a2e; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:20px; color:#6366f1; letter-spacing:2px; margin-bottom:16px\">STEP 3</div><div style=\"font-size:48px; font-weight:700; color:#fff; margin-bottom:20px\">Photo Retention Lip</div><div style=\"font-size:22px; color:#94a3b8; max-width:700px; margin:0 auto\">Add a thin Hole: 100mm × 75mm × 1mm<br>at the back surface — prevents photo from falling through<br>The 1mm lip holds the photo securely</div></div>';",
+      "description": "Step 3 slide",
+      "pause": 7
+    },
+
+    {
+      "section": "Step 4 — Magnet Slots",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #1a1a2e; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:20px; color:#6366f1; letter-spacing:2px; margin-bottom:16px\">STEP 4</div><div style=\"font-size:48px; font-weight:700; color:#fff; margin-bottom:20px\">Magnet Slots</div><div style=\"font-size:22px; color:#94a3b8; max-width:700px; margin:0 auto\">Cylinder → 6.2mm diameter × 2.1mm height<br>Change to Hole → Position on back face corners<br>Duplicate (Ctrl+D) for second magnet slot<br><br><span style=\"color:#f59e0b\">💡 The 0.2mm extra provides press-fit tolerance</span></div></div>';",
+      "description": "Step 4 slide",
+      "pause": 8
+    },
+    {
+      "type": "navigate",
+      "url": "https://www.tinkercad.com",
+      "description": "Return to TinkerCAD"
+    },
+    {
+      "type": "wait",
+      "seconds": 2
+    },
+    {
+      "type": "text_overlay",
+      "text": "Add Cylinder holes for magnet slots → 6.2mm ⌀ × 2.1mm → Position at corners",
+      "x": 50,
+      "y": 950,
+      "font_size": 20,
+      "duration": 5000,
+      "description": "Magnet slot instruction"
+    },
+    {
+      "type": "wait",
+      "seconds": 3
+    },
+
+    {
+      "section": "Step 5 — Corner Fillets",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #1a1a2e; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:20px; color:#6366f1; letter-spacing:2px; margin-bottom:16px\">STEP 5 (OPTIONAL)</div><div style=\"font-size:48px; font-weight:700; color:#fff; margin-bottom:20px\">Corner Fillets</div><div style=\"font-size:22px; color:#94a3b8; max-width:700px; margin:0 auto\">Round the corners with 3mm radius cylinders<br>set as Holes at each corner<br><br>Rounded corners look more professional<br>and feel better in the hand</div></div>';",
+      "description": "Step 5 slide",
+      "pause": 6
+    },
+
+    {
+      "section": "Step 6 — Group All",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #1a1a2e; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:20px; color:#6366f1; letter-spacing:2px; margin-bottom:16px\">STEP 6</div><div style=\"font-size:48px; font-weight:700; color:#fff; margin-bottom:20px\">Group All Shapes</div><div style=\"font-size:22px; color:#94a3b8; max-width:700px; margin:0 auto\">Select all shapes → Press Ctrl+G to Group<br><br>Solid shapes combine • Hole shapes subtract<br>Result: One solid frame with all cutouts</div></div>';",
+      "description": "Step 6 slide",
+      "pause": 6
+    },
+
+    {
+      "section": "Step 7 — Export STL",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: #1a1a2e; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:20px; color:#6366f1; letter-spacing:2px; margin-bottom:16px\">STEP 7</div><div style=\"font-size:48px; font-weight:700; color:#fff; margin-bottom:20px\">Export as STL</div><div style=\"font-size:22px; color:#94a3b8; max-width:700px; margin:0 auto\">Click Export → Select .STL format<br>Name: MagnetFrame_4x3_v1.stl<br><br>Open in your slicer to verify it slices correctly</div></div>';",
+      "description": "Step 7 slide",
+      "pause": 6
+    },
+
+    {
+      "section": "Testing Dimensions",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 100%); display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"max-width:900px; padding:40px\"><div style=\"font-size:36px; font-weight:700; color:#f59e0b; margin-bottom:30px\">🧪 Testing Your Design</div><div style=\"display:grid; grid-template-columns:1fr 1fr; gap:20px\"><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#a5b4fc; font-size:16px; margin-bottom:8px\">Magnet Fit</div><div style=\"color:#fff; font-size:20px\">Press 6×2mm magnets into slots<br><span style=\"color:#22c55e\">✓ Snug press-fit = perfect</span></div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#a5b4fc; font-size:16px; margin-bottom:8px\">Photo Fit</div><div style=\"color:#fff; font-size:20px\">Insert 4×3 photo print<br><span style=\"color:#22c55e\">✓ Slides in easily, stays put</span></div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#a5b4fc; font-size:16px; margin-bottom:8px\">Too Tight?</div><div style=\"color:#fff; font-size:20px\">Increase hole to 6.3mm</div></div><div style=\"background:rgba(255,255,255,0.05); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.1)\"><div style=\"color:#a5b4fc; font-size:16px; margin-bottom:8px\">Too Loose?</div><div style=\"color:#fff; font-size:20px\">Decrease to 6.1mm</div></div></div></div>';",
+      "description": "Testing dimensions summary",
+      "pause": 8
+    },
+
+    {
+      "section": "Outro",
+      "type": "eval",
+      "script": "document.body.style.cssText = 'margin:0; background: linear-gradient(135deg, #0A0A0F 0%, #1a1a2e 50%, #16213e 100%); display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Inter, Segoe UI, sans-serif;'; document.body.innerHTML = '<div style=\"text-align:center\"><div style=\"font-size:48px; font-weight:800; color:#fff; margin-bottom:20px\">You Are Now a<br>Frame Designer! 🎉</div><div style=\"font-size:24px; color:#a5b4fc; margin-bottom:40px\">Same workflow for every frame: Body → Opening → Lip → Magnets → Group → Export</div><div style=\"font-size:20px; color:#6366f1\">3D Print Academy — AJ DESIGN</div></div>';",
+      "description": "Show outro card",
+      "pause": 6
+    }
+  ]
+}

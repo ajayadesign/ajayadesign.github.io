@@ -1,0 +1,33 @@
+SPEED VERSUS QUALITY TUNING
+3D Print Academy — Module 4, Lesson 3
+
+Finding Your Printer's Sweet Spot for Production Efficiency
+
+Every 3D printer has a speed-quality curve: print faster and quality decreases, print slower and quality improves. Finding the sweet spot where you achieve acceptable quality at maximum speed is the key to profitable production. This lesson teaches you to tune speed settings systematically.
+
+THE SPEED-QUALITY TRADEOFF
+Print speed affects quality through several mechanisms. At higher speeds: the extruder must melt filament faster (potentially causing under-extrusion), sudden direction changes create ringing and ghosting artifacts, layer adhesion decreases as each layer has less time to bond, and vibration from rapid movement shows as surface artifacts. Slower speeds eliminate these issues but reduce throughput.
+
+SPEED SETTINGS BREAKDOWN
+Modern slicers have multiple speed settings. Perimeter speed controls the outer visible walls. Infill speed controls the hidden internal structure. First layer speed controls bed adhesion. Travel speed controls non-printing movement. Each should be tuned independently to optimize both quality and time.
+
+RECOMMENDED SPEEDS FOR MAGNET FRAMES
+External perimeters: 30 to 40mm per second. These are the visible surfaces customers see. Slow for quality. Internal perimeters: 50 to 60mm per second. Hidden behind external walls, so faster is fine. Infill: 80 to 100mm per second. Completely hidden, print as fast as your printer handles without causing vibration. First layer: 20mm per second. Slow for reliable bed adhesion. Top layer: 30mm per second when ironing is off, or the ironing pass handles smoothing. Travel: 150 to 200mm per second for fast non-printing moves that reduce stringing.
+
+ACCELERATION AND JERK SETTINGS
+Speed settings are the maximum, but acceleration determines how quickly the printer reaches that speed. Lower acceleration equals smoother motion but slower effective speed. For magnet frames: XY acceleration at 1000 to 1500mm per second squared reduces ringing on flat frame surfaces. Higher acceleration (3000+) causes visible ghosting, especially at corners. Jerk (or junction deviation) controls speed changes at direction changes. Lower jerk settings produce cleaner corners at the cost of slightly longer print times.
+
+RINGING AND GHOSTING ARTIFACTS
+Ringing appears as wavy patterns on flat surfaces, usually near sharp corners or text. It is caused by the printer's inertia at high speeds. Ghosting is a shadow of features echoing across flat surfaces. To diagnose: print a cube at your current speed settings and inspect flat faces near corners. If you see waves: reduce acceleration or add input shaper calibration (on printers that support it).
+
+TESTING METHODOLOGY
+Print the same frame at three different speed profiles. Profile 1 (Quality): 30mm per second perimeters, 60mm per second infill. Profile 2 (Balanced): 45mm per second perimeters, 80mm per second infill. Profile 3 (Speed): 60mm per second perimeters, 100mm per second infill. Compare print time, surface quality, and dimensional accuracy. The balanced profile is often the production sweet spot.
+
+PRINTER-SPECIFIC OPTIMIZATION
+Every printer has different capabilities. Cheap printers with flexible frames top out at 40 to 50mm per second before quality degrades. Rigid CoreXY printers like Bambu Lab can maintain quality at 100mm per second or higher. Direct drive extruders handle speed better than Bowden setups. Know your printer's limits through testing, not by copying someone else's settings.
+
+OVERNIGHT PRODUCTION RUNS
+For unattended overnight prints, reduce speed by 10 to 15% from your tested sweet spot. The small time penalty provides a safety margin against print failures that waste hours of unattended time. A failed 6-hour overnight print that must be reprinted wastes more time than printing 15 minutes slower in the first place.
+
+KEY TAKEAWAYS
+Treat speed tuning as a systematic process: test multiple profiles on your specific printer, compare results, and document the sweet spot. External perimeters are the quality bottleneck — keep them at 30 to 45mm per second. Push infill speed high since it is hidden. Lower acceleration reduces ringing. Your printer's sweet spot is where throughput is maximized without compromising the quality your customers expect.

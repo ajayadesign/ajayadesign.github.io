@@ -1,0 +1,33 @@
+MULTI-PHOTO COLLAGE FRAME DESIGN
+3D Print Academy — Module 3, Lesson 5
+
+Designing Large Format Frames for Premium Sales
+
+Multi-photo collage frames hold 3 to 6 photos in a single frame, creating a stunning visual display and commanding your highest price points. These large-format designs require careful structural engineering and smart printing strategies. A single collage frame can sell for $15-25 while costing just $3-4 in materials.
+
+THE PREMIUM VALUE PROPOSITION
+A collage frame does what no single-photo frame can: it tells a story. A set of vacation photos, a baby's first year highlights, or a pet's greatest moments all come together in one eye-catching display. Customers see collage frames as art pieces, not just magnets. This perception shift justifies premium pricing. Position collage frames as your flagship product at the top of your display.
+
+DESIGN CONSIDERATIONS FOR LARGE FRAMES
+A 200mm by 150mm frame pushes the limits of most printer build volumes. Key structural challenges: longer spans flex more easily, large flat surfaces are prone to warping during printing, and more material means more print time and cost. Design solutions: use reinforcing ribs on the back, increase wall count to 4, and consider breaking very large designs into magnetic sections.
+
+GRID LAYOUT DESIGNS
+Simple grid: 3 photos in a row (3-up landscape) — frame is 200mm by 80mm. Classic grid: 6 photos in a 3 by 2 arrangement — frame is 200mm by 130mm. Staggered: 5 photos with 3 on top and 2 on bottom — visually interesting asymmetric layout. Each photo opening has a consistent 5mm border between them and a 8mm outer border.
+
+STAGGERED AND CREATIVE LAYOUTS
+Break from the grid for visual interest. Offset rows create a brick-like pattern. Mix photo sizes: two large and three small in one frame. Create a timeline layout: photos arranged left to right with small arrow details between them. These creative layouts differentiate your product from cheap mass-produced magnetic frames.
+
+STRUCTURAL REINFORCEMENT
+The back of a large collage frame needs reinforcement ribs to prevent flexing. Design cross-shaped ribs 2mm wide by 3mm tall on the back surface, connecting the edges of the frame. Position ribs behind the borders between photo openings where they provide maximum reinforcement without adding visible bulk. In your slicer, these ribs also serve as bridges between photo openings, improving print quality.
+
+MAGNET PLACEMENT FOR LARGE FRAMES
+Large collage frames need more magnets to support their weight plus photos. Use 4 to 6 magnets distributed across the back surface. Place magnets near the edges and at least one in the center. For a 200mm by 150mm frame, use 6 magnets: 4 at the corners and 2 at the center of the long edges. This distribution prevents the frame from peeling away from the fridge at any point.
+
+PRINTING STRATEGY FOR LARGE FRAMES
+Print orientation: flat on the bed for best surface quality. Consider printing in two halves with magnetic connection if the frame exceeds your build volume. Use a brim for adhesion insurance on large surface areas. Increase infill to 20% gyroid for extra rigidity. Expected print time: 3 to 5 hours depending on size. Plan these as overnight or unattended prints.
+
+PRICING COLLAGE FRAMES
+Three-photo frame: $12-15. Four-photo frame: $15-18. Six-photo frame: $20-25. Custom layouts: add a $3-5 premium. These prices reflect the size, material cost, and perceived value. At craft fairs, display collage frames at eye level with photos installed to show the full visual impact. Customers who were planning to buy a $5 single frame often upgrade to a $15 collage frame when they see it in person.
+
+KEY TAKEAWAYS
+Collage frames are your premium product line with the highest price points and perceived value. Design with structural reinforcement for large formats. Use creative layouts beyond simple grids. Place more magnets for heavier frames. Price for the artful display experience, not just the material cost. One great collage frame design can become your signature product.

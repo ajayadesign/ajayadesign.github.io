@@ -1,0 +1,33 @@
+SLICER SETUP — CURA FOR MAGNET FRAME PRODUCTION
+3D Print Academy — Module 1, Lesson 4
+
+Mastering Cura Slicer for Perfect Magnet Frames
+
+Cura is the most popular free slicing software in the world, and it is the perfect tool for turning your magnet frame STL files into printable G-code. This lesson walks you through the complete Cura setup process optimized for magnet frame production.
+
+DOWNLOADING AND INSTALLING CURA
+Download UltiMaker Cura from ultimaker.com. It is free and runs on Windows, macOS, and Linux. After installation, the setup wizard asks you to select your printer. Cura has built-in profiles for hundreds of printers including Ender 3, Bambu Lab, Prusa, and many more. Selecting the correct printer profile automatically configures build volume, nozzle size, and basic settings.
+
+IMPORTING YOUR STL FILES
+Drag and drop your magnet frame STL file onto the Cura build plate, or use File then Open. The model appears on the virtual build plate. Use the Move tool to center your frame. Use Rotate to orient the frame flat-side-down on the build plate. Scale should remain at 100% unless you want to resize. For batch production, use the Multiply function to place multiple frames on the plate.
+
+KEY PRINT SETTINGS FOR MAGNET FRAMES
+Layer Height: 0.2mm is the golden standard for frames. It balances detail with speed. Wall Count: 3 walls (1.2mm total wall thickness) provides excellent structural strength for frames. Top Layers: 5 layers minimum for a smooth top surface. Bottom Layers: 3-4 layers for a solid base. Infill Density: 15-20% provides sufficient strength while saving material. Infill Pattern: Grid is fast and effective. Print Speed: 50mm/s for quality, can push to 60-70mm/s once dialed in.
+
+THE IRONING FEATURE — SECRET TO SMOOTH TOPS
+Enable Ironing under the Experimental or Top/Bottom settings. Ironing passes the hot nozzle over the top surface a second time without extruding, literally melting and smoothing the surface. The result is a glass-smooth top that looks almost injection-molded. Ironing Settings: Speed 40mm/s, Line Spacing 0.1mm, Flow 10%. This adds a few minutes per frame but the quality improvement is dramatic. For magnet frames where the top surface is the face customers see, ironing is essential.
+
+SUPPORT SETTINGS
+Most magnet frame designs print without supports since they have flat bases and simple geometries. However, retro TV frames or frames with antenna details may need supports. Use Tree Supports in Cura for easier removal and less surface scarring. Support Overhang Angle: 50 degrees. Support Density: 5% is sufficient. Support Z-Distance: 0.2mm for easy removal.
+
+ADHESION HELPERS
+Brim: Adds extra material around the base perimeter for better adhesion. Use 3-5mm brim width for large frames. Easy to remove with craft knife. Raft: Full platform under the print. Rarely needed for PLA frames. Wastes material. Skirt: Just a line around the print for priming — no adhesion benefit but helps verify first layer quality. Recommendation: Use a skirt for daily production, brim only when printing new designs or on a new bed surface.
+
+PREVIEW AND LAYER INSPECTION
+Before printing, always Preview your slice. Use the layer slider to scroll through every layer. Check for: thin walls that might not print properly, areas without support that need it, the overall print time and filament usage. For a standard magnet frame, expect about 45-90 minutes print time and 25-35 grams of filament.
+
+SAVING AND SENDING G-CODE
+Save to your SD card, USB drive, or send directly over WiFi if your printer supports it. Name files descriptively: "MagnetFrame_4x3_PLA_02mm.gcode". For production, keep a master folder of dialed-in G-code files so you can reprint bestsellers instantly.
+
+KEY TAKEAWAYS
+Cura is free and powerful. Use 0.2mm layer height, 3 walls, 15-20% grid infill, and enable Ironing for professional results. Always preview before printing. Save optimized profiles for your most common frame sizes so you can slice and print quickly in production mode.

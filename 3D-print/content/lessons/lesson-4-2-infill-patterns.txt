@@ -1,0 +1,36 @@
+INFILL PATTERNS AND STRENGTH FOR MAGNET FRAMES
+3D Print Academy — Module 4, Lesson 2
+
+Understanding What is Inside Your Prints
+
+Infill is the internal structure printed inside your frame's walls. It provides structural support for top layers, determines frame rigidity and weight, and significantly affects print time and material usage. This lesson explores every common infill pattern and teaches you which to use for different frame designs.
+
+WHAT IS INFILL AND WHY IT MATTERS
+When you slice a model, the slicer creates solid outer walls (perimeters) and a partially filled interior (infill). A 100% infill frame would be completely solid, using maximum material and time. A 0% infill frame would be hollow with only walls and top/bottom layers. The sweet spot for magnet frames is 15 to 20%, meaning 80 to 85% of the internal volume is air. This saves material while providing enough internal structure to support flat top surfaces.
+
+GRID INFILL — THE RELIABLE DEFAULT
+Grid creates a simple crosshatch pattern of perpendicular lines. It is fast to print, uses material efficiently, and provides moderate strength in all horizontal directions. Grid is the default choice for standard magnet frames. At 15% density, it provides excellent support for top layers while keeping print time minimal. The regular pattern slices quickly and prints predictably.
+
+GYROID INFILL — THE STRENGTH CHAMPION
+Gyroid creates a continuous 3D wave pattern that provides excellent strength in all directions, not just horizontal. It is slightly slower to print than grid because of the complex toolpath, but significantly stronger per gram of material. Use gyroid at 15 to 20% density for frames that need extra rigidity: large collage frames, thin-walled designs, or frames that will be handled frequently. Gyroid also distributes stress more evenly, reducing the chance of cracking.
+
+CUBIC INFILL — THREE-DIMENSIONAL STRUCTURE
+Cubic creates tilted cube structures that provide balanced strength in all three axes. It is a good middle ground between grid's speed and gyroid's strength. At 15%, cubic provides good top layer support and decent impact resistance. Less common than grid or gyroid but worth considering for thick frame designs.
+
+LIGHTNING INFILL — MAXIMUM SPEED
+Lightning infill creates tree-like support structures that only generate material where needed to support top surfaces. It is the fastest infill pattern and uses the least material. However, it provides minimal structural strength in the frame body. Use lightning only for frames that are heavily post-processed and where internal strength is not critical. Not recommended for frames with magnet slots, as the area around magnetic holes needs solid material.
+
+LINES AND RECTILINEAR INFILL
+Lines prints parallel lines alternating direction each layer (0 degrees then 90 degrees). Similar to grid but slightly faster. Good for general use. Rectilinear is essentially the same pattern. Either works well as a grid alternative with marginally faster print times.
+
+INFILL DENSITY GUIDELINES
+10%: Minimum viable for small frames with thick walls. Very fast but may show pillowing on top surfaces if top layer count is too low. 15%: The recommended density for standard magnet frames. Good balance of support, speed, and material usage. 20%: Extra rigidity for large frames, collage frames, or frames with thin walls. Adds about 10% more material and time. 25% and above: Rarely needed for frames. Use only for very large or structurally demanding designs.
+
+INFILL AND TOP SURFACE QUALITY
+Infill density directly affects top surface quality. If you see pillowing (slight bumps between infill lines on the top surface), either increase infill density by 5%, increase top layer count to 6, or both. With 15% grid infill and 5 top solid layers, most frames have perfectly flat top surfaces. Adding ironing eliminates any remaining surface artifacts.
+
+COMBINING INFILL WITH WALL COUNT
+The walls (perimeters) provide most of the frame's structural strength. Three walls at 0.4mm nozzle equals 1.2mm of solid material on every outer surface. Combined with 15% infill, this creates a frame that is strong enough for daily use, lightweight, material-efficient, and fast to print. Increasing to 4 walls adds more strength than increasing infill density.
+
+KEY TAKEAWAYS
+Grid at 15% is your default production infill. Gyroid at 20% is your choice for large or premium frames needing extra strength. Lightning is only for speed-critical prints with no structural requirements. Infill density affects top surface quality, so balance speed with appearance. Three walls at 15% infill is the optimal combination for most magnet frames.

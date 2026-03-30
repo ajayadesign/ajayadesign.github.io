@@ -1,0 +1,36 @@
+FIX STRINGING — CLEAN TRAVEL MOVES
+3D Print Academy — Module 4, Lesson 5
+
+Eliminating Those Annoying Thin Wisps of Filament
+
+Stringing is one of the most common 3D printing defects. Those thin wisps of filament stretched between features of your print look unprofessional and require extra cleanup time. For magnet frame production where clean surfaces mean premium pricing, eliminating stringing is essential. This lesson covers every solution.
+
+WHAT CAUSES STRINGING
+Stringing occurs when the print head travels between two points without printing, and molten filament oozes from the nozzle during the travel move. The oozing filament stretches into a thin string that sticks to the print. It is caused by: too-high nozzle temperature (filament too liquid), insufficient retraction (filament not pulled back during travel), slow travel speed (more time for oozing), and wet filament (moisture creates steam that pushes filament out).
+
+SOLUTION 1: RETRACTION SETTINGS
+Retraction pulls filament backward into the nozzle during travel moves, creating negative pressure that prevents oozing. For Bowden tube extruders (like Ender 3): use 5 to 7mm retraction distance at 40 to 50mm per second retraction speed. For direct drive extruders: use 0.5 to 2mm retraction distance at 25 to 35mm per second. Too much retraction causes other problems like clicking, grinding, or clogs. Start at the recommended values and adjust by 0.5mm increments.
+
+SOLUTION 2: LOWER NOZZLE TEMPERATURE
+Reducing temperature by 5°C increments makes the filament more viscous and less prone to oozing. Start from your temperature tower sweet spot and decrease by 5°C. Test with a stringing test print (two towers with a gap between them). Continue reducing until stringing disappears or until you see under-extrusion. The optimal temperature for zero stringing might be 5 to 10 degrees below the optimal temperature for maximum adhesion, so find the best compromise.
+
+SOLUTION 3: INCREASE TRAVEL SPEED
+Faster travel moves give filament less time to ooze. Set travel speed to 150 to 200mm per second. This is limited by your printer's maximum speed capability and frame rigidity. Faster travel also reduces overall print time since non-printing moves are completed more quickly.
+
+SOLUTION 4: COMBING MODE IN CURA
+Combing mode routes travel moves to stay inside the print perimeter rather than crossing open air. If the nozzle is always above solid material during travels, any oozing drops onto the interior where it is invisible. Enable Combing Mode and set to Within Infill. This dramatically reduces visible stringing without touching temperature or retraction settings.
+
+SOLUTION 5: DRY YOUR FILAMENT
+Wet filament is a hidden cause of stringing. Moisture in the filament turns to steam in the hot end, creating pressure that pushes filament out during travel moves. Symptoms: popping or crackling sounds during printing, excessive stringing even with optimized settings, rough surface texture. Solution: dry filament in a filament dryer at 45°C for PLA for 4 to 6 hours, or use a food dehydrator. Store filament with desiccant packs in sealed bags.
+
+SOLUTION 6: WIPE AND COAST SETTINGS
+Wipe: the nozzle moves along the perimeter at the end of a loop, wiping off any excess filament before traveling. Coast: the extruder stops extruding slightly before the end of a loop, allowing pressure to equalize rather than building up for a potential ooze. Both settings fine-tune filament flow to prevent oozing at travel start points.
+
+STRINGING TEST PRINTS
+Download a stringing test model (two thin towers 10mm apart) and print it at your current settings. If strings appear, adjust one setting at a time and reprint. This systematic approach identifies the exact cause of stringing on your specific printer. Most stringing issues resolve with proper retraction plus a 5°C temperature decrease.
+
+CLEANING UP MINOR STRINGING
+Even with optimized settings, occasional fine strings may appear. Quick cleanup: use a heat gun on low setting (hold 6 inches away, sweep quickly) to melt away thin strings without damaging the print. Or use a craft knife or flush cutters to trim visible strings. For production, spend 15 seconds per frame on string cleanup rather than adding 30 minutes to find the absolute perfect settings.
+
+KEY TAKEAWAYS
+Stringing is solved through a combination of proper retraction, moderate temperature, fast travel speed, combing mode, and dry filament. Address each factor systematically using stringing test prints. For production efficiency, optimize settings to minimize stringing and budget a few seconds of cleanup time per frame. Clean frames mean premium prices and happy customers.

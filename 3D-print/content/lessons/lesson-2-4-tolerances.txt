@@ -1,0 +1,33 @@
+MAGNET SLOT TOLERANCES AND PHOTO INSERT SIZING
+3D Print Academy — Module 2, Lesson 4
+
+The Engineering Precision Behind Perfect-Fitting Frames
+
+Tolerances are the difference between a professional product and a frustrating one. This lesson dives deep into the exact measurements and clearances needed for magnet slots, photo inserts, and component fits. Getting these right means magnets stay in place, photos slide in smoothly, and every frame feels premium.
+
+UNDERSTANDING TOLERANCE IN 3D PRINTING
+Tolerance is the acceptable range of variation in a dimension. FDM 3D printers typically achieve plus or minus 0.2mm dimensional accuracy. This means a hole designed at 6.0mm might print anywhere from 5.8mm to 6.2mm. Holes tend to print slightly smaller than designed because the extruded plastic has width. Pegs or posts tend to print slightly larger. For production consistency, always design with these tendencies in mind and test on your specific printer.
+
+MAGNET SLOT TOLERANCES — THE CRITICAL DIMENSIONS
+For standard 6mm diameter by 2mm height neodymium disc magnets: Design hole diameter at 6.2mm (0.2mm diametral clearance). Design hole depth at 2.1mm (0.1mm depth clearance). This provides enough room for the magnet to insert while being tight enough for a friction fit. The 0.1mm wall of extra space around the magnet allows for slight printing variations while maintaining a snug fit. If using CA glue for permanent installation, you can increase to 6.3mm diameter for easier insertion.
+
+TESTING MAGNET FIT
+Print a test piece with magnet holes at three diameters: 6.1mm, 6.2mm, and 6.3mm. Test with actual magnets, not just measurements. The ideal fit: the magnet pushes in with moderate finger pressure and stays in place without glue. If it is too tight (magnet distorts the plastic), increase diameter by 0.05mm. If too loose (magnet falls out), decrease by 0.05mm. Each printer has slightly different characteristics, so this test is essential before starting production.
+
+MAGNET DEPTH CONSIDERATIONS
+The depth tolerance affects how flush the magnet sits. At 2.1mm depth, the magnet sits 0.1mm below the surface, which is ideal because the remaining slicer layers can print over it during mid-print pause installation. If the magnet protrudes above the surface, the frame will not sit flat against the fridge. If the magnet is too deep, holding strength decreases because magnetic force drops rapidly with distance.
+
+PHOTO INSERT SIZING — STANDARD FORMATS
+Standard print sizes and recommended opening dimensions. For 4 by 6 inch photos (101.6mm by 152.4mm): design the opening at 102mm by 153mm with 0.4mm clearance per side. For 4 by 3 inch photos (101.6mm by 76.2mm): opening at 102mm by 77mm. For Instax Mini (54mm by 86mm): opening at 55mm by 87mm with 0.5mm clearance per side. For Instax Wide (99mm by 62mm): opening at 100mm by 63mm. For Polaroid (79mm by 79mm image area): opening at 80mm by 80mm. Always add 0.4 to 0.5mm per side for easy insertion and removal.
+
+PHOTO POCKET DEPTH
+The frame needs a pocket deep enough to hold the photo without the frame being excessively thick. Standard photo paper is about 0.3mm thick. Glossy prints can be up to 0.5mm. Instax prints are about 0.8mm including the white border. Design the pocket depth at 1.5mm for standard photos, 2.0mm for Instax. This provides clearance for the photo plus backing material if used.
+
+THE RETENTION LIP
+The retention lip prevents the photo from sliding backward out of the frame. Design a step of 1mm width at 0.8mm depth around the inner perimeter of the photo opening. This creates a ledge the photo rests against. The lip should be narrow enough that it does not interfere with the visible photo area. Test: insert a photo and turn the frame upside down. The photo should stay in place with just the lip holding it.
+
+SNAP-FIT COMPONENT TOLERANCES
+For multi-piece frames with snap-fit connections: design the male tab 0.2mm smaller than the female slot. The PLA flex provides the snap action. For example, a 2.0mm tab fits into a 2.2mm slot. The tab should have a 30-45 degree entry chamfer for easy assembly and a 90 degree retention face to resist disassembly. Test snap-fit connections at least five times to verify they do not fatigue and break.
+
+KEY TAKEAWAYS
+Precise tolerances transform your frames from hobby projects to professional products. Magnet holes at 6.2mm diameter and 2.1mm depth for 6x2mm magnets. Photo openings with 0.4mm clearance per side. Always test tolerances on your specific printer before production. Document your printer-specific adjustments so every frame is consistently perfect.

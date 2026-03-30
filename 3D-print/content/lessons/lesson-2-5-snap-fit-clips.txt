@@ -1,0 +1,33 @@
+SNAP-FIT CLIP DESIGN FOR MAGNET FRAMES
+3D Print Academy — Module 2, Lesson 5
+
+Engineering Clips That Hold Photos Securely Without Glue
+
+Snap-fit clips are the professional way to secure a photo backing in your magnet frame without requiring glue, tape, or external hardware. This lesson teaches you the engineering principles and exact design dimensions for reliable, repeatable snap-fit mechanisms that work with 3D printed PLA frames.
+
+WHY SNAP-FIT CLIPS MATTER
+Think about how a premium picture frame works. The photo slides in and clips hold the backing in place. Your 3D printed magnet frames should work the same way. Snap-fit clips let customers easily swap photos in and out, which means they will use the frame more and tell friends about it. Frames with snap-fits feel more premium than frames that rely on friction alone.
+
+CANTILEVER BEAM DESIGN BASICS
+A snap-fit clip is essentially a flexible cantilever beam with a hook at the end. When something is pushed past the hook, the beam deflects, then snaps back to hold the item in place. The key design parameters are beam length, beam thickness, hook height, and entry angle. Longer beams flex more easily. Thicker beams are stiffer. The hook catches the edge of whatever you are retaining.
+
+EXACT DIMENSIONS FOR PLA MAGNET FRAME CLIPS
+Beam length: 8mm from base to tip. Beam width: 3mm. Beam thickness: 1.5mm. Hook height (undercut): 0.5mm — how far the hook protrudes to catch the backing plate. Entry angle: 30 to 45 degrees — the chamfered face that pushes the beam aside during insertion. Retention angle: 90 degrees — the vertical face that resists removal. These dimensions work for PLA and PLA+ filament, which has just enough flexibility for reliable snap action without breaking.
+
+CLIP PLACEMENT ON FRAMES
+For a standard 4x3 frame, place 2 clips on each long side (4 clips total) evenly spaced. The clips should be oriented so they grip the photo backing plate from the back of the frame. Position clips so they are accessible for the user to press and release when swapping photos. For larger collage frames, add more clips proportionally. Each clip should support no more than 40mm of unsupported edge.
+
+DESIGNING THE BACKING PLATE
+The backing plate is a thin, flat piece that covers the back of the frame, holding the photo in place. Design it 1mm smaller than the internal frame dimensions on each side for clearance. Thickness: 1.2mm to 1.5mm, which is thin enough to flex slightly during snap insertion but rigid enough to hold flat. Add a finger notch cutout on one edge so users can pry the backing plate out when changing photos.
+
+PRINTING ORIENTATION FOR CLIPS
+Clips must be printed in the correct orientation for strength. The beam should flex perpendicular to layer lines, not parallel. If clips flex along layer lines, they will delaminate and snap off. This means the clip beam should be oriented so that layers stack across the beam thickness, not along its length. In practice, this is automatically correct when printing frames flat on the bed with clips pointing upward or inward.
+
+TESTING AND ITERATION
+Print your clip design and test it at least 20 times — insert and remove the backing plate 20 times to check for fatigue. If clips break: increase beam thickness to 1.8mm or increase beam length to 10mm. If clips are too loose: decrease the slot width or increase hook height to 0.6mm. If clips are too stiff: decrease beam thickness to 1.2mm or increase beam length. Keep a log of your test results.
+
+ALTERNATIVE RETENTION METHODS
+If snap-fit clips prove difficult for your printer's tolerances, consider these alternatives: Press-fit backing (friction holds the backing in the photo pocket), magnetic backing (embed magnets in both frame and backing plate), or sliding channels (the backing slides in from one side). Each method has tradeoffs in ease of use, material cost, and design complexity. Snap-fits are the most professional when executed well.
+
+KEY TAKEAWAYS
+Snap-fit clips elevate your magnet frames from hobby projects to professional products. Use the cantilever beam design with 8mm length, 3mm width, 1.5mm thickness, and 0.5mm hook. Place 4 clips on a standard frame. Always test 20 cycles before committing to production. The right clip design makes your frames feel premium and keeps customers coming back.

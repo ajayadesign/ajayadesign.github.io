@@ -1,0 +1,33 @@
+BED LEVELING — THE FOUNDATION OF GOOD PRINTS
+3D Print Academy — Module 1, Lesson 2
+
+Why Bed Leveling is Critical for Magnet Frame Production
+
+Proper bed leveling is the single most important factor in print success. If your bed isn't level, your first layer won't adhere properly, leading to failed prints, wasted filament, and frustration. This lesson teaches you both manual and automatic leveling techniques.
+
+THE FIRST LAYER IS EVERYTHING
+The first layer is the foundation of your entire print. For magnet frames, the first layer forms the bottom surface — the side customers see when the frame is on the fridge. A perfect first layer is slightly squished (about 80% of layer height), with lines that touch without overlapping. Too far from bed: filament doesn't stick, creates spaghetti. Too close: filament can't flow, nozzle scrapes, blocks extrusion.
+
+MANUAL BED LEVELING — THE PAPER METHOD
+The classic technique uses a standard sheet of paper (about 0.1mm thick) as a feeler gauge. Steps: 1) Heat the bed to printing temperature (60°C for PLA) — thermal expansion changes the level. 2) Home all axes. 3) Disable steppers so you can move the head manually. 4) Move the nozzle to each of the four corners. 5) Slide the paper between nozzle and bed. 6) Adjust the corner knob until you feel slight friction — the paper should slide with resistance but not be pinched hard. 7) Repeat all four corners 2-3 times, as adjusting one corner affects others. 8) Check the center point last.
+
+BABY STEP Z-OFFSET ADJUSTMENT
+After manual leveling, fine-tune with Z-offset (also called baby stepping). During the first layer of a print, watch carefully and adjust the Z-offset in real-time. Most printers allow 0.01mm increments via the LCD menu. If the first layer looks transparent and too thin, raise the Z-offset (increase). If there are gaps between lines, lower the Z-offset (decrease). The perfect first layer has a slightly textured finish with no gaps between lines.
+
+AUTO BED LEVELING (ABL)
+Auto bed leveling probes create a mesh map of slight variations in your bed surface. BLTouch is the most popular — a small probe that physically taps the bed at multiple points (usually 9, 16, or 25 points) and maps the surface topology. CR-Touch is Creality's version, equally reliable. Inductive probes detect metal beds without physical contact. ABL compensates for bed warping by adjusting Z-height in real-time during printing. Even with ABL, you still need to set the correct initial Z-offset.
+
+MESH BED LEVELING
+Firmware mesh leveling creates a detailed map of your bed surface. In Marlin: use G29 to probe the bed, then M500 to save the mesh. Klipper has built-in mesh leveling with BED_MESH_CALIBRATE. A 5x5 mesh (25 probe points) is ideal for most printers. The firmware then adjusts the nozzle height for every point during the first few layers, ensuring perfect adhesion even on slightly warped beds.
+
+BED SURFACE PREPARATION
+Even a perfectly leveled bed needs a clean surface. Wipe the bed with isopropyl alcohol (IPA 90%+) before every print session. Fingerprints leave oils that prevent adhesion. For glass beds: apply a thin layer of hairspray (Aqua Net) or glue stick (Elmer's). For PEI sheets: IPA cleaning is usually sufficient, but occasional soap-and-water cleaning restores adhesion. Never touch the printing area with bare fingers after cleaning.
+
+COMMON BED LEVELING MISTAKES
+Mistake 1: Leveling with a cold bed — always level at print temperature. Mistake 2: Not re-checking corners after adjustment — corners interact with each other. Mistake 3: Using ABL as a crutch — if your bed is severely warped, mesh leveling can only compensate so much. Mistake 4: Forgetting to re-level after moving the printer — any bump can shift the bed. Mistake 5: Using too-thick paper as a feeler — standard copy paper is correct thickness.
+
+FIRST LAYER ADHESION FOR MAGNET FRAMES
+Magnet frames often have large flat bottom surfaces, which need excellent first-layer adhesion across the entire area. Use a brim (3-5mm, 3 lines) for extra adhesion insurance on new bed surfaces. The brim is easy to remove — score along the frame edge with a craft knife and peel. For production runs where you've dialed in your leveling, you can skip the brim for faster cleanup.
+
+KEY TAKEAWAYS
+Bed leveling is not a one-time task — it's an ongoing calibration that ensures every print starts perfectly. Master both manual and automatic methods. Always level at print temperature. Keep your bed surface clean. A perfect first layer means a perfect print. Next up: Filament Types!

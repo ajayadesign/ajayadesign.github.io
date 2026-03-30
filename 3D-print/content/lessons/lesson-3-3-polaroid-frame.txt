@@ -1,0 +1,33 @@
+POLAROID-STYLE FRAME DESIGN
+3D Print Academy — Module 3, Lesson 3
+
+Capturing the Iconic Instant Camera Aesthetic
+
+The Polaroid-style frame recreates the most recognized photo format in history. Its clean, minimal design prints fast, uses minimal material, and appeals to a wide demographic. This lesson covers the exact design specifications for a print-optimized Polaroid magnet frame.
+
+THE POLAROID AESTHETIC
+The iconic Polaroid photo has a distinctive shape: a square image area with equal borders on three sides and a wider bottom border. This wider bottom margin originally served as a chemical development area but has become an iconic visual element. The classic white border is the defining feature. Your 3D printed version captures this aesthetic perfectly.
+
+DIMENSIONS AND PROPORTIONS
+Overall frame: 95mm wide by 110mm tall by 8mm thick. Photo opening: 80mm by 80mm, centered horizontally, positioned with 7.5mm border on left, right, and top, leaving a 22.5mm border at the bottom. This wider bottom border is essential to the Polaroid look. The 8mm thickness is standard for durability while keeping material usage low.
+
+DESIGN IN TINKERCAD
+Step 1: Box shape 95mm by 110mm by 8mm for the body. Step 2: Box Hole 80mm by 80mm by 5mm for the photo opening, positioned 7.5mm from left edge, 7.5mm from top edge, and 2mm from the back face. Step 3: Smaller Box Hole 78mm by 78mm by 1mm for the retention lip at the back surface. Step 4: Two cylinder holes for magnets on the back. Step 5: Add 3mm corner fillets to all four corners for the soft, rounded Polaroid look. Group everything.
+
+DESIGN IN FUSION 360
+Create a sketch on the XY plane with a 95mm by 110mm rounded rectangle (3mm corner radius). Extrude 8mm. Create a new sketch on the front face with the 80mm by 80mm photo opening, offset from top and sides. Extrude Cut 5mm deep. Add 2.1mm deep cylinder cuts for magnets on the back face. Use Parameters so you can quickly resize for different Polaroid sizes.
+
+PRINT SPEED ADVANTAGE
+The Polaroid frame is one of the fastest frames to print. With 0.2mm layers, 15% infill, and 50mm per second speed, a single frame prints in 35 to 45 minutes. This speed makes it your highest-throughput design for batch production. On a 220 by 220mm bed, you can fit 4 Polaroid frames per batch, producing 16 frames per 3-hour print session.
+
+COLOR STRATEGY
+White is the classic and best-selling color — it matches the original Polaroid aesthetic. However, offer bold color options for younger buyers: pastel pink, baby blue, mint green, lavender, and sunny yellow. Metallic filaments like silk gold create a premium variant. Print in white PLA for the authentic look, or use colored PLA for the trendy modern interpretation.
+
+ADDING PERSONALIZATION
+The wide bottom border is perfect for adding embossed text: names, dates, or phrases like "Best Day Ever" or "Family." In TinkerCAD, use the Text shape generator at 6mm height. In Fusion 360, use Sketch Text and then extrude 0.5mm for a raised effect. Personalized Polaroid frames command a two to three dollar premium and customers love them.
+
+DISPLAYING AT CRAFT FAIRS
+Display Polaroid frames in a color rainbow arrangement on a magnetic board. The uniform shape and varying colors create an eye-catching gradient display. Price: $5-8 for plain, $8-10 for personalized. Bundle: set of 4 in matching or gradient colors for $18-25. The fast print time and low material cost make these your highest margin product.
+
+KEY TAKEAWAYS
+The Polaroid frame is your speed champion — fast to print, low material cost, universally appealing design. The wider bottom border defines the aesthetic. White is classic, colors are trendy. Personalization adds value. Display in color gradients for maximum visual impact. This design should be a permanent staple in your product line.

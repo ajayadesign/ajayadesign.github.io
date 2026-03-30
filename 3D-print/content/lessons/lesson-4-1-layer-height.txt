@@ -1,0 +1,36 @@
+LAYER HEIGHT COMPARISON FOR MAGNET FRAMES
+3D Print Academy — Module 4, Lesson 1
+
+Choosing the Perfect Layer Height for Quality and Speed
+
+Layer height is the single most impactful setting in your slicer. It affects surface finish, print time, structural strength, and material usage. This lesson provides a comprehensive comparison of different layer heights and teaches you exactly when to use each one for maximum efficiency in your magnet frame production.
+
+WHAT IS LAYER HEIGHT
+Layer height is the thickness of each horizontal slice your printer deposits. With a standard 0.4mm nozzle, you can print layers from 0.08mm (ultra-fine) to 0.32mm (maximum). Each layer is a ring of plastic deposited on top of the previous one. Thinner layers are less visible, creating smoother surfaces. Thicker layers print faster but show visible stepping on angled surfaces.
+
+0.12MM ULTRA-FINE LAYERS
+At 0.12mm, layer lines are nearly invisible to the naked eye. Surfaces look almost injection-molded. This setting is ideal for display-quality frames, photography portfolio pieces, or premium customer orders. The tradeoff: print time increases approximately 3 times compared to 0.2mm. A frame that takes 60 minutes at 0.2mm takes approximately 150 minutes at 0.12mm. Use this for special orders or competition pieces, not daily production.
+
+0.16MM FINE LAYERS
+A good compromise between ultra-fine quality and reasonable speed. Layer lines are visible only on close inspection. Print time is about 1.5 times longer than 0.2mm. This setting works well for premium-priced frames where customers expect noticeably better quality. Consider offering a premium tier of frames printed at 0.16mm with a corresponding price increase.
+
+0.2MM STANDARD — THE PRODUCTION SWEET SPOT
+The 0.2mm layer height is the universal recommendation for magnet frame production. It provides good visual quality, reasonable print speed, and reliable layer adhesion. At typical print speeds, a standard magnet frame takes 45-90 minutes. Layer lines are visible on close inspection but smooth over with a single coat of filler primer. This is your default production setting.
+
+0.24MM FAST DRAFT
+Visible layer lines, but prints about 20% faster than 0.2mm. Acceptable for frames that will be heavily post-processed with sanding and painting, since the finishing process removes layer artifacts anyway. Also useful for prototype testing where you want to quickly check fit and dimensions without waiting for a full-quality print.
+
+0.28MM AND ABOVE — ROUGH DRAFT
+Very visible layer stepping. Acceptable only for prototypes, fit testing, and design iteration. Do not sell frames printed at this resolution unless they are specifically post-processed. The speed gain is significant — about 30% faster than 0.2mm — making it valuable for rapid prototyping during the design phase.
+
+VARIABLE LAYER HEIGHT — THE ADVANCED TECHNIQUE
+Variable layer height uses different heights at different Z-positions. Configure your slicer to print internal layers at 0.28mm (fast, hidden) and the top 3 to 5 layers at 0.12mm (smooth, visible). This combines speed with surface quality. In PrusaSlicer, use the variable layer height tool. In Cura, use the Adaptive Layer Height feature. Total print time reduces 20-30% compared to uniformly fine layers while maintaining excellent top surface quality.
+
+LAYER HEIGHT AND STRUCTURAL STRENGTH
+Thinner layers produce slightly stronger parts due to better inter-layer bonding from the higher temperature ratio between new and previous layer. However, for magnet frames, even 0.28mm layers provide more than sufficient structural strength. The difference is primarily aesthetic, not functional.
+
+MATCHING LAYER HEIGHT TO FRAME DESIGN
+Frames with lots of flat surfaces (Polaroid style): 0.2mm is sufficient since flat tops look good at any height with ironing enabled. Frames with curved surfaces (retro TV): consider 0.16mm for smoother curves. Frames with fine text details: use 0.12mm to 0.16mm for crisp letter edges. Collage frames: 0.2mm is fine since the visual focus is the photos, not the frame surface.
+
+KEY TAKEAWAYS
+0.2mm is your production workhorse. Variable layer height is your speed-quality optimizer. 0.12mm is reserved for premium orders. Match layer height to the specific frame design and customer expectation. The right layer height choice saves you hours of production time without sacrificing the quality your customers expect.

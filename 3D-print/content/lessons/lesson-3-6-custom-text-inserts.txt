@@ -1,0 +1,33 @@
+CUSTOM TEXT INSERTS AND PERSONALIZATION
+3D Print Academy — Module 3, Lesson 6
+
+Adding Text and Custom Elements That Command Premium Prices
+
+Personalization transforms a standard magnet frame into a unique, meaningful gift. Adding names, dates, quotes, or custom text to your frames lets you charge $2-5 more per unit and creates products that customers cannot find anywhere else. This lesson teaches the exact techniques for adding text to 3D printed frames.
+
+WHY PERSONALIZATION SELLS
+A magnet frame with "Smith Family" or "Baby Emma — Born March 2026" is no longer just a product — it is a keepsake. Personalized items have higher perceived value, lower return rates (they were made just for the customer), and generate word-of-mouth referrals. At craft fairs, offering on-the-spot personalization draws crowds and creates a premium service experience.
+
+EMBOSSED TEXT (RAISED LETTERING)
+Embossed text protrudes from the frame surface, creating a tactile, premium feel. In TinkerCAD: use the Text shape generator, set text height to 8mm minimum with a 0.4mm nozzle, set the text body depth to 0.5 to 0.8mm. Position the text block on the frame surface and Group. The text becomes part of the frame body. In Fusion 360: create a sketch on the frame face, use Sketch Text to type the message, then Extrude the text profile 0.5mm outward.
+
+DEBOSSED TEXT (ENGRAVED LETTERING)
+Debossed text is recessed into the frame surface. This is more subtle and easier to print cleanly. In TinkerCAD: create your text shape, convert it to a Hole, position it on the frame surface at 0.5mm depth, and Group. In Fusion 360: use Sketch Text and Extrude Cut 0.5mm into the surface. Debossed text catches light beautifully and can be filled with contrasting paint for a premium look.
+
+FONT SELECTION FOR 3D PRINTING
+Not all fonts print well at small sizes. Sans-serif fonts like Arial, Helvetica, or Futura are the best for 3D printing because they have consistent stroke widths and no thin serifs that break off. Minimum recommended text height: 8mm for embossed text, 6mm for debossed text, with a 0.4mm nozzle. Cursive and script fonts look elegant but are difficult to print below 12mm height. Test your chosen font at your target size before offering it to customers.
+
+TEXT PLACEMENT ON FRAMES
+The best locations for text on magnet frames: the bottom border of Polaroid-style frames, across the top of wider frames, or along one side of the frame. Avoid placing text that interferes with the photo viewing area. For retro TV frames, text works great on the wide right panel or across the bottom edge. Ensure text is centered and properly aligned using the Align tool.
+
+CREATING A CUSTOM ORDER WORKFLOW
+For craft fair personalization: use TinkerCAD on a laptop at your booth. Keep a template frame file open with placeholder text. When a customer orders a custom frame, change the text, export STL in seconds, slice, and start printing. You can have a personalized frame ready in under an hour. Charge a $3-5 personalization fee. For online orders, accept custom text through your Shopify order form and batch-produce personalized frames at the end of each day.
+
+DECORATIVE DESIGN ELEMENTS BEYOND TEXT
+Expand beyond text with small decorative elements. Hearts and love symbols for couples frames. Paw prints for pet frames. Stars and moons for nursery frames. Sports balls for athletes. Musical notes for musicians. In TinkerCAD, the shape generators and community shapes provide hundreds of options. Place these as 0.5mm embossed elements around text for enhanced visual appeal.
+
+MULTI-COLOR TEXT OPTIONS
+For elevated personalization, use multi-color printing. Method 1: Filament swap at the text layer. Design text to start at a specific Z-height, insert a filament change command in your slicer at that layer. Method 2: Print the frame in one color, pause, print text in a contrasting color. Method 3: Print the frame normally and hand-paint the embossed or debossed text with acrylic craft paint using a fine brush.
+
+KEY TAKEAWAYS
+Personalization is your highest-margin upgrade. Embossed text adds a tactile premium feel. Debossed text is easier to print and catches light beautifully. Use sans-serif fonts at 8mm minimum height. Set up a fast custom order workflow for craft fairs using TinkerCAD templates. Charge $3-5 extra for personalization. Decorative elements enhance the personal touch beyond just text.
