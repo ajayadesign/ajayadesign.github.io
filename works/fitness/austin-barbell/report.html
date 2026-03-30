@@ -1065,5 +1065,54 @@
     // Console fingerprint
     console.log('%cReport by AjayaDesign — Demo Purposes Only', 'color:#e63946;font-size:14px;font-weight:bold;');
   </script>
+
+<!-- ═══ Before & After Comparison ═══ -->
+<section style="max-width:900px;margin:3rem auto;padding:0 1rem">
+  <h2 style="text-align:center;font-size:1.75rem;font-weight:800;margin-bottom:.5rem;color:#fff;font-family:Inter,system-ui,sans-serif">Before &amp; After</h2>
+  <p style="text-align:center;color:rgba(255,255,255,.6);font-size:.95rem;margin-bottom:2rem;font-family:Inter,system-ui,sans-serif">Drag the slider to see the transformation</p>
+  <div class="ba-slider" data-before="img/old-site-top.png" data-after="img/new-site-top.png" data-before-label="BEFORE" data-after-label="AFTER"></div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:2rem 0">
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1.25rem;text-align:center">
+      <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:.5rem;font-family:ui-monospace,monospace">Performance</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:.5rem">
+        <span style="font-size:1.3rem;font-weight:800;color:#ef4444;text-decoration:line-through;opacity:.6">31</span>
+        <span style="color:rgba(255,255,255,.4)">→</span>
+        <span style="font-size:1.5rem;font-weight:800;color:#10b981">97</span>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1.25rem;text-align:center">
+      <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:.5rem;font-family:ui-monospace,monospace">Mobile</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:.5rem">
+        <span style="font-size:1.3rem;font-weight:800;color:#ef4444;text-decoration:line-through;opacity:.6">Fail</span>
+        <span style="color:rgba(255,255,255,.4)">→</span>
+        <span style="font-size:1.5rem;font-weight:800;color:#10b981">Pass</span>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1.25rem;text-align:center">
+      <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:.5rem;font-family:ui-monospace,monospace">SEO Score</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:.5rem">
+        <span style="font-size:1.3rem;font-weight:800;color:#ef4444;text-decoration:line-through;opacity:.6">45</span>
+        <span style="color:rgba(255,255,255,.4)">→</span>
+        <span style="font-size:1.5rem;font-weight:800;color:#10b981">99</span>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1.25rem;text-align:center">
+      <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:.5rem;font-family:ui-monospace,monospace">Load Time</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:.5rem">
+        <span style="font-size:1.3rem;font-weight:800;color:#ef4444;text-decoration:line-through;opacity:.6">7.1s</span>
+        <span style="color:rgba(255,255,255,.4)">→</span>
+        <span style="font-size:1.5rem;font-weight:800;color:#10b981">0.9s</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:2rem">
+    <a href="/contact/" style="display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 2rem;background:#e11d48;color:#fff;border-radius:8px;font-weight:700;font-size:.95rem;text-decoration:none;font-family:Inter,system-ui,sans-serif;transition:background .2s" onmouseover="this.style.background='#be123c'" onmouseout="this.style.background='#e11d48'">Want results like this? →</a>
+  </div>
+</section>
+<script src="/js/before-after-slider.js"><\/script>
+<script>BeforeAfterSlider.init();<\/script>
+
 </body>
 </html>
