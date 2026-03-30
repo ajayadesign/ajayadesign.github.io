@@ -58,6 +58,7 @@
   function initChatbot() {
     // FAB
     const fab = ce('button', 'chatbot-fab', '<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/><path d="M7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg>');
+    fab.setAttribute('aria-label', 'Open chat');
     document.body.appendChild(fab);
 
     // Panel
@@ -66,7 +67,7 @@
       <div class="chatbot-header">
         <div class="dot"></div>
         <span>AjayaDesign Chat</span>
-        <button class="chatbot-close">&times;</button>
+        <button class="chatbot-close" aria-label="Close chat">&times;</button>
       </div>
       <div class="chatbot-messages"></div>
       <div class="cb-quick"></div>
@@ -186,7 +187,7 @@
     const overlay = ce('div', 'exit-overlay');
     overlay.innerHTML = `
       <div class="exit-modal">
-        <button class="exit-close">&times;</button>
+        <button class="exit-close" aria-label="Close popup">&times;</button>
         <h2>Wait! Your website might be losing you customers.</h2>
         <p>Find out in 30 seconds with our free instant audit.</p>
         <a href="/grader/" class="exit-cta">Get Free Instant Audit →</a>
