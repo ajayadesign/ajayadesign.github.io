@@ -74,10 +74,43 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Prepare site directory
+        run: |
+          mkdir _site
+          # Copy all site content, exclude non-site files
+          rsync -a --exclude='.git' \
+                   --exclude='.github' \
+                   --exclude='.venv' \
+                   --exclude='node_modules' \
+                   --exclude='automation' \
+                   --exclude='skills' \
+                   --exclude='playwright-report' \
+                   --exclude='test-results' \
+                   --exclude='.openclaw' \
+                   --exclude='data' \
+                   --exclude='__pycache__' \
+                   --exclude='*.py' \
+                   --exclude='*.pyc' \
+                   --exclude='*.pickle' \
+                   --exclude='*.log' \
+                   --exclude='AGENTS.md' \
+                   --exclude='BOOTSTRAP.md' \
+                   --exclude='HEARTBEAT.md' \
+                   --exclude='IDENTITY.md' \
+                   --exclude='SOUL.md' \
+                   --exclude='TOOLS.md' \
+                   --exclude='USER.md' \
+                   --exclude='MEMORY.md' \
+                   --exclude='.env' \
+                   --exclude='.env.*' \
+                   --exclude='_site' \
+                   ./ _site/
+          touch _site/.nojekyll
+
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
