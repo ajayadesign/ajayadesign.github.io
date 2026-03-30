@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Etsy Listing Optimizer for 3D Printed Magnet Frames | 3D Print Academy</title>
+  <meta name="description" content="Generate SEO-optimized Etsy listings for your 3D printed magnet frames. Auto-generate titles, descriptions, and tags that rank." />
+  <meta name="keywords" content="Etsy listing optimizer, Etsy SEO, 3D print Etsy, magnet frame listing, Etsy tags generator" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://ajayadesign.github.io/3D-print/tools/etsy-optimizer.html" />
+  <meta property="og:title" content="Etsy Listing Optimizer — 3D Print Academy" />
+  <meta property="og:description" content="Free tool: generate perfect Etsy listings for your 3D printed magnet frames in seconds." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/3D-print/tools/etsy-optimizer.html" />
+  <meta property="og:image" content="https://ajayadesign.github.io/3D-print/promo-card.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-btn': '#D91920',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+            'neon-green': '#39FF14',
+            'etsy-orange': '#F1641E',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Inter"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    .grid-bg {
+      background-image: linear-gradient(rgba(237,28,36,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(237,28,36,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .copy-btn { position: relative; }
+    .copy-btn.copied::after {
+      content: '✓ Copied!';
+      position: absolute; top: -2rem; left: 50%; transform: translateX(-50%);
+      background: #39FF14; color: #0A0A0F; padding: 2px 10px; border-radius: 4px;
+      font-size: 0.75rem; font-weight: 600; white-space: nowrap;
+      animation: fadeOut 1.5s forwards;
+    }
+    @keyframes fadeOut { 0%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
+    input[type=range] { -webkit-appearance: none; background: transparent; }
+    input[type=range]::-webkit-slider-track { height: 6px; border-radius: 3px; background: #1E1E2A; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #F1641E; cursor: pointer; margin-top: -7px; }
+    input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: #1E1E2A; border: none; }
+    input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #F1641E; cursor: pointer; border: none; }
+    .output-section { transition: opacity 0.3s; }
+  </style>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-08QNJSTGZ2"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-08QNJSTGZ2');</script>
+</head>
+<body class="font-sans text-gray-300 antialiased" style="background:#0A0A0F;">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <a href="/3D-print/" class="flex items-center gap-2">
+        <span class="inline-block w-3 h-3 rounded-full bg-amd-red animate-pulse"></span>
+        <span class="font-mono font-bold text-white text-lg tracking-tight">3D Print <span class="text-amd-red">Academy</span></span>
+      </a>
+      <div class="flex items-center gap-4">
+        <a href="/3D-print/tiktok/" class="hidden sm:inline text-sm text-gray-400 hover:text-white transition-colors font-mono">TikTok Templates</a>
+        <a href="/3D-print/#enroll" class="px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">Enroll Now</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pt-28 pb-20 px-4 grid-bg min-h-screen">
+    <div class="max-w-6xl mx-auto">
+
+      <!-- HEADER -->
+      <div class="text-center mb-12">
+        <p class="font-mono text-etsy-orange text-sm tracking-widest uppercase mb-3">// Etsy Listing Optimizer</p>
+        <h1 class="text-3xl sm:text-5xl font-extrabold text-white leading-tight">
+          Generate Perfect<br><span class="text-etsy-orange">Etsy Listings</span>
+        </h1>
+        <p class="mt-4 text-gray-400 max-w-2xl mx-auto">Fill in your frame details below. Get an SEO-optimized title, description, tags, pricing tip, and shipping advice — instantly.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8">
+
+        <!-- INPUTS -->
+        <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8 space-y-6">
+          <h2 class="font-mono text-white font-bold text-lg mb-2">Your Frame Details</h2>
+
+          <!-- Frame Type -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-2 font-mono">Frame Type</label>
+            <select id="frameType" class="w-full px-4 py-3 bg-surface border border-border-dim rounded-lg text-white font-mono text-sm focus:outline-none focus:border-etsy-orange/50">
+              <option value="instax-mini">Instax Mini</option>
+              <option value="instax-wide">Instax Wide</option>
+              <option value="polaroid">Polaroid</option>
+              <option value="4x6">Standard 4x6</option>
+              <option value="custom">Custom Size</option>
+            </select>
+          </div>
+
+          <!-- Colors -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-2 font-mono">Color Options</label>
+            <div class="flex flex-wrap gap-3">
+              <label class="flex items-center gap-2 px-3 py-2 bg-surface rounded-lg cursor-pointer hover:bg-surface-alt transition-colors">
+                <input type="checkbox" id="colorWhite" checked class="accent-etsy-orange">
+                <span class="text-sm text-gray-300">White</span>
+              </label>
+              <label class="flex items-center gap-2 px-3 py-2 bg-surface rounded-lg cursor-pointer hover:bg-surface-alt transition-colors">
+                <input type="checkbox" id="colorBlack" checked class="accent-etsy-orange">
+                <span class="text-sm text-gray-300">Black</span>
+              </label>
+              <label class="flex items-center gap-2 px-3 py-2 bg-surface rounded-lg cursor-pointer hover:bg-surface-alt transition-colors">
+                <input type="checkbox" id="colorCustom" class="accent-etsy-orange">
+                <span class="text-sm text-gray-300">Custom Colors</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Style -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-2 font-mono">Style</label>
+            <select id="frameStyle" class="w-full px-4 py-3 bg-surface border border-border-dim rounded-lg text-white font-mono text-sm focus:outline-none focus:border-etsy-orange/50">
+              <option value="minimalist">Minimalist</option>
+              <option value="retro">Retro</option>
+              <option value="heart">Heart</option>
+              <option value="ornate">Ornate</option>
+              <option value="modern">Modern</option>
+            </select>
+          </div>
+
+          <!-- Price -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-2 font-mono">Selling Price: <span id="priceVal" class="text-white">$12</span></label>
+            <input type="range" id="price" min="5" max="25" value="12" step="0.5" class="w-full" />
+          </div>
+
+          <button id="generateBtn" class="w-full py-4 bg-etsy-orange text-white rounded-xl font-mono font-bold text-lg hover:bg-orange-700 transition-colors">
+            Generate Listing ✨
+          </button>
+        </div>
+
+        <!-- OUTPUTS -->
+        <div class="space-y-6" id="outputPanel">
+
+          <!-- Title -->
+          <div class="output-section bg-surface-card border border-border-dim rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-mono text-etsy-orange font-bold text-sm">OPTIMIZED TITLE</h3>
+              <button class="copy-btn px-3 py-1 bg-surface border border-border-dim rounded text-xs font-mono text-gray-400 hover:text-white transition-colors" data-copy-from="titleOutput">Copy</button>
+            </div>
+            <p id="titleOutput" class="text-white text-sm leading-relaxed">Magnetic Photo Frame for Fridge | 3D Printed Instax Mini Frame | Custom Colors | Refrigerator Magnet | Photo Display | Gift for Her</p>
+            <p id="titleCount" class="text-gray-600 text-xs mt-2 font-mono">140 / 140 characters</p>
+          </div>
+
+          <!-- Description -->
+          <div class="output-section bg-surface-card border border-border-dim rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-mono text-etsy-orange font-bold text-sm">DESCRIPTION</h3>
+              <button class="copy-btn px-3 py-1 bg-surface border border-border-dim rounded text-xs font-mono text-gray-400 hover:text-white transition-colors" data-copy-from="descOutput">Copy</button>
+            </div>
+            <div id="descOutput" class="text-gray-400 text-sm leading-relaxed whitespace-pre-line"></div>
+          </div>
+
+          <!-- Tags -->
+          <div class="output-section bg-surface-card border border-border-dim rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-mono text-etsy-orange font-bold text-sm">TAGS <span class="text-gray-600">(13 tags)</span></h3>
+              <button class="copy-btn px-3 py-1 bg-surface border border-border-dim rounded text-xs font-mono text-gray-400 hover:text-white transition-colors" data-copy-from="tagsOutput">Copy</button>
+            </div>
+            <div id="tagsOutput" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <!-- Pricing Suggestion -->
+          <div class="output-section bg-surface-card border border-border-dim rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-mono text-neon-green font-bold text-sm">💰 PRICING INSIGHT</h3>
+            </div>
+            <p id="pricingOutput" class="text-gray-400 text-sm leading-relaxed"></p>
+          </div>
+
+          <!-- Shipping Tip -->
+          <div class="output-section bg-surface-card border border-border-dim rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-mono text-electric-blue font-bold text-sm">📦 SHIPPING TIP</h3>
+            </div>
+            <p id="shippingOutput" class="text-gray-400 text-sm leading-relaxed"></p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <section class="mt-16 text-center">
+        <div class="bg-gradient-to-r from-etsy-orange/10 via-surface-card to-neon-green/10 border border-border-dim rounded-2xl p-8 sm:p-12">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-4">Need the STL Files to Get Started?</h2>
+          <p class="text-gray-400 max-w-lg mx-auto mb-8">The course includes 15+ ready-to-print magnet frame designs, slicer profiles, and a commercial license to sell everything you print.</p>
+          <a href="/3D-print/#enroll" class="inline-block px-8 py-4 bg-amd-red-btn text-white rounded-xl font-mono font-bold text-lg hover:bg-red-800 transition-colors">
+            Get the STL Files + Full Course →
+          </a>
+          <p class="text-gray-600 text-xs mt-4">Also check out our <a href="/3D-print/tiktok/" class="text-etsy-orange hover:underline">TikTok Marketing Templates</a> to promote your listings.</p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-border-dim py-8 px-4 text-center">
+    <p class="text-gray-600 text-sm font-mono">© 2025 AjayaDesign · <a href="/3D-print/" class="hover:text-white transition-colors">3D Print Academy</a></p>
+  </footer>
+
+  <script>
+    const DATA = {
+      frameTypes: {
+        'instax-mini': { name: 'Instax Mini', size: '2.1" x 3.4"', keywords: ['instax mini frame', 'instax frame', 'fujifilm instax'], weight: '15g', ship: 'Fits in a padded envelope (USPS First Class, ~$3.50). Lightweight — ship as a letter for maximum savings. Wrap in bubble wrap to protect corners.' },
+        'instax-wide': { name: 'Instax Wide', size: '3.4" x 4.3"', keywords: ['instax wide frame', 'instax wide', 'fujifilm wide'], weight: '22g', ship: 'Padded envelope or small box. USPS First Class at ~$4.00. Consider offering 2-pack bundles to increase order value while shipping stays flat.' },
+        'polaroid': { name: 'Polaroid', size: '3.1" x 3.1"', keywords: ['polaroid frame', 'polaroid display', 'square photo frame'], weight: '20g', ship: 'Padded envelope works great. Square format means easy packaging. USPS First Class ~$3.50. Great for multi-pack bundles.' },
+        '4x6': { name: 'Standard 4x6', size: '4" x 6"', keywords: ['4x6 photo frame', '4x6 frame', 'standard photo frame'], weight: '35g', ship: 'Small flat rate box or padded mailer. USPS First Class ~$4.50. Heavier than mini frames — factor shipping into pricing or offer free shipping over $20.' },
+        'custom': { name: 'Custom Size', size: 'Custom', keywords: ['custom photo frame', 'custom size frame', 'made to order frame'], weight: '25g', ship: 'Varies by size. Measure and weigh each design. Offer calculated shipping or pad your price to include "free" shipping — Etsy buyers love free shipping.' }
+      },
+      styles: {
+        'minimalist': { name: 'Minimalist', keywords: ['minimalist frame', 'simple frame', 'clean design'], desc: 'clean, minimalist design with smooth edges and a modern aesthetic' },
+        'retro': { name: 'Retro', keywords: ['retro frame', 'vintage style', 'retro decor'], desc: 'retro-inspired design with vintage vibes and nostalgic charm' },
+        'heart': { name: 'Heart', keywords: ['heart frame', 'heart photo frame', 'love frame'], desc: 'charming heart-shaped accent design, perfect for couples and gifts' },
+        'ornate': { name: 'Ornate', keywords: ['ornate frame', 'decorative frame', 'detailed frame'], desc: 'beautifully detailed ornate design with intricate patterns' },
+        'modern': { name: 'Modern', keywords: ['modern frame', 'contemporary frame', 'modern decor'], desc: 'sleek modern design with contemporary geometric lines' }
+      },
+      priceRanges: {
+        low: { min: 5, max: 8, msg: "You're pricing on the low end. Great for getting initial reviews and sales velocity, but you might be leaving money on the table. Most successful sellers price single frames at $10-15. Consider starting at $8-10 and raising as reviews come in." },
+        mid: { min: 8.5, max: 15, msg: "Sweet spot pricing! This range has the highest conversion rate for single magnet frames on Etsy. You're competitive but profitable. Pro tip: offer a 3-pack at a slight discount (e.g., 3 for $30 instead of $36) to increase average order value." },
+        high: { min: 15.5, max: 20, msg: "Premium pricing — this works if you have great photos, 50+ reviews, or unique designs competitors don't offer. Make sure your listing photos look professional. Consider offering free shipping at this price point (bake it into the cost)." },
+        premium: { min: 20.5, max: 25, msg: "Top-tier pricing. At this range, you need exceptional product photos, a strong brand, and ideally a unique design or customization option. Consider bundling (e.g., set of 4 frames) rather than selling singles at this price." }
+      }
+    };
+
+    const els = {
+      frameType: document.getElementById('frameType'),
+      colorWhite: document.getElementById('colorWhite'),
+      colorBlack: document.getElementById('colorBlack'),
+      colorCustom: document.getElementById('colorCustom'),
+      frameStyle: document.getElementById('frameStyle'),
+      price: document.getElementById('price'),
+      priceVal: document.getElementById('priceVal'),
+      generateBtn: document.getElementById('generateBtn'),
+      titleOutput: document.getElementById('titleOutput'),
+      titleCount: document.getElementById('titleCount'),
+      descOutput: document.getElementById('descOutput'),
+      tagsOutput: document.getElementById('tagsOutput'),
+      pricingOutput: document.getElementById('pricingOutput'),
+      shippingOutput: document.getElementById('shippingOutput'),
+    };
+
+    els.price.addEventListener('input', () => {
+      els.priceVal.textContent = '$' + parseFloat(els.price.value).toFixed(els.price.value % 1 === 0 ? 0 : 2);
+    });
+
+    function getColors() {
+      const c = [];
+      if (els.colorWhite.checked) c.push('White');
+      if (els.colorBlack.checked) c.push('Black');
+      if (els.colorCustom.checked) c.push('Custom Colors');
+      return c.length ? c : ['White'];
+    }
+
+    function generateTitle(frame, style, colors) {
+      const colorStr = colors.length > 1 ? 'Custom Colors' : colors[0];
+      const parts = [
+        `Magnetic Photo Frame for Fridge`,
+        `3D Printed ${frame.name} Frame`,
+        colorStr,
+        `Refrigerator Magnet`,
+        `Photo Display`,
+        `Gift for Her`
+      ];
+      let title = parts.join(' | ');
+      if (title.length > 140) title = title.substring(0, 137) + '...';
+      return title;
+    }
+
+    function generateDesc(frame, style, colors, price) {
+      const colorList = colors.join(', ');
+      return `✨ ${style.name} Magnetic Photo Frame — ${frame.name} Size
+
+Display your favorite memories right on your fridge! This ${style.desc}. Made with premium PLA filament on a professional 3D printer for a smooth, high-quality finish.
+
+📸 PERFECT FOR:
+• ${frame.name} photos (${frame.size})
+• Fridge, filing cabinet, or any magnetic surface
+• Gifts for mom, friends, couples, dorm rooms
+• Kitchen decor, office cubicles, lockers
+
+🧲 HOW IT WORKS:
+Built-in neodymium magnets hold the frame securely to any magnetic surface. Simply slide your photo in from the top — no tools, no tape, no damage. Swap photos anytime in seconds.
+
+📏 DETAILS:
+• Fits: ${frame.name} photos (${frame.size})
+• Material: Premium PLA (eco-friendly, plant-based plastic)
+• Magnets: Strong neodymium — holds firm, won't slide
+• Colors available: ${colorList}
+• Weight: ~${frame.weight}
+• Finish: Smooth, clean edges
+
+🎁 MAKES A GREAT GIFT:
+Perfect for birthdays, holidays, housewarming, Mother's Day, Valentine's Day, graduation, or "just because." Everyone has photos they love — give them a beautiful way to display them.
+
+💡 BUNDLE & SAVE:
+Check our shop for multi-pack discounts! Mix and match colors to create a gallery wall on your fridge.
+
+📦 SHIPPING:
+Each frame is carefully packaged with bubble wrap to ensure it arrives in perfect condition. Ships within 1-3 business days.
+
+🖨️ Designed and 3D printed with care by a small maker business. Each frame is made to order — thank you for supporting small!
+
+Have a custom size or color request? Message us — we love custom orders!
+
+Tags: magnetic photo frame, fridge magnet, ${frame.name.toLowerCase()} frame, 3D printed, refrigerator magnet, photo display, ${style.name.toLowerCase()} frame, kitchen decor, gift idea`;
+    }
+
+    function generateTags(frame, style) {
+      const baseTags = ['magnetic photo frame', 'fridge magnet frame', '3d printed frame', 'refrigerator magnet', 'photo display', 'magnet frame', 'kitchen decor', 'gift for mom'];
+      const frameTags = frame.keywords;
+      const styleTags = style.keywords;
+      const all = [...new Set([...baseTags, ...frameTags, ...styleTags])];
+      return all.slice(0, 13);
+    }
+
+    function getPricingInsight(price) {
+      const p = parseFloat(price);
+      if (p <= 8) return DATA.priceRanges.low.msg;
+      if (p <= 15) return DATA.priceRanges.mid.msg;
+      if (p <= 20) return DATA.priceRanges.high.msg;
+      return DATA.priceRanges.premium.msg;
+    }
+
+    function generate() {
+      const frame = DATA.frameTypes[els.frameType.value];
+      const style = DATA.styles[els.frameStyle.value];
+      const colors = getColors();
+      const price = els.price.value;
+
+      // Title
+      const title = generateTitle(frame, style, colors);
+      els.titleOutput.textContent = title;
+      els.titleCount.textContent = `${title.length} / 140 characters`;
+      els.titleCount.className = title.length > 130 ? 'text-etsy-orange text-xs mt-2 font-mono' : 'text-gray-600 text-xs mt-2 font-mono';
+
+      // Description
+      els.descOutput.textContent = generateDesc(frame, style, colors, price);
+
+      // Tags
+      const tags = generateTags(frame, style);
+      els.tagsOutput.innerHTML = tags.map(t =>
+        `<span class="px-3 py-1.5 bg-surface rounded-lg text-sm font-mono text-etsy-orange">${t}</span>`
+      ).join('');
+      els.tagsOutput.dataset.copyText = tags.join(', ');
+
+      // Pricing
+      els.pricingOutput.textContent = getPricingInsight(price);
+
+      // Shipping
+      els.shippingOutput.textContent = frame.ship;
+    }
+
+    // Copy buttons
+    document.querySelectorAll('[data-copy-from]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const src = document.getElementById(this.dataset.copyFrom);
+        const text = src.dataset.copyText || src.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          this.classList.add('copied');
+          setTimeout(() => this.classList.remove('copied'), 1500);
+        });
+      });
+    });
+
+    // Generate on load and on any input change
+    els.generateBtn.addEventListener('click', generate);
+    [els.frameType, els.frameStyle, els.price, els.colorWhite, els.colorBlack, els.colorCustom].forEach(el => {
+      el.addEventListener('change', generate);
+      el.addEventListener('input', generate);
+    });
+
+    // Initial generation
+    generate();
+  </script>
+</body>
+</html>
