@@ -43,32 +43,39 @@ def _get_jinja_env() -> Environment:
 import random
 
 # Multiple subject patterns per step for A/B rotation
+# Subject lines optimized for deliverability + open rate:
+# - Personalized with business name (avoids generic spam feel)
+# - Conversational tone (not salesy)
+# - No ALL CAPS, no exclamation marks, no spam trigger words
+#   (free, guarantee, act now, limited time, etc.)
+# - Short (under 50 chars when possible)
+# - Lowercase "re:" only on follow-ups (mimics real replies)
 SUBJECT_VARIANTS = {
     1: [
-        "quick note about {{business_name}}",
-        "{{business_name}} — something I noticed",
-        "question about {{business_name}}'s site",
-        "thought about {{business_name}}",
-        "{{business_name}} online presence",
+        "{{business_name}} website",
+        "{{owner_first_name}}, quick question",
+        "found something on {{business_name}}'s site",
+        "{{business_name}} — noticed this",
+        "{{owner_first_name}} — 2 min read about your site",
     ],
     2: [
         "re: {{business_name}}",
-        "following up — {{business_name}}",
-        "one more thought for {{business_name}}",
+        "{{owner_first_name}}, forgot to mention",
+        "one more thing about {{business_name}}",
     ],
     3: [
-        "last note — {{business_name}}",
-        "one more thing for {{business_name}}",
-        "quick mockup for {{business_name}}",
+        "{{owner_first_name}} — built you something",
+        "re: {{business_name}} site",
+        "mockup for {{business_name}}",
     ],
     4: [
         "closing the loop",
-        "last note from me",
-        "all good — {{business_name}}",
+        "no worries, {{owner_first_name}}",
+        "{{business_name}} — last note",
     ],
     5: [
-        "{{business_name}} — quick check-in",
-        "checking in — {{business_name}}",
+        "{{owner_first_name}}, still thinking about this",
+        "{{business_name}} — circling back",
     ],
 }
 
@@ -87,9 +94,9 @@ STEP1_NO_WEBSITE_OPTIONS = [
 
 NO_WEBSITE_SUBJECT_VARIANTS = [
     "{{business_name}} — quick question",
-    "noticed something about {{business_name}}",
-    "{{business_name}} on google maps",
-    "thought for {{business_name}} team",
+    "{{owner_first_name}}, noticed something about {{business_name}}",
+    "{{business_name}} on Google — thought you should know",
+    "{{owner_first_name}}, your competitors have websites",
 ]
 
 def _pick_subject(step: int, no_website: bool = False) -> str:

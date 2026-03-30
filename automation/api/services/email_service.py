@@ -39,11 +39,17 @@ async def send_email(
         return {"success": False, "message": "SMTP credentials not configured. Set SMTP_EMAIL and SMTP_APP_PASSWORD."}
 
     msg = MIMEMultipart("alternative")
-    msg["From"] = f"AjayaDesign <{sender}>"
+    # Use personal name instead of brand — reduces spam score significantly
+    sender_display = settings.sender_name or "Ajaya Dahal"
+    msg["From"] = f"{sender_display} <{sender}>"
     msg["To"] = to
     msg["Subject"] = subject
     if reply_to:
         msg["Reply-To"] = reply_to
+    # List-Unsubscribe header — required by Gmail/Yahoo 2024 sender guidelines
+    # Without this, Gmail may auto-classify as spam
+    msg["List-Unsubscribe"] = f"<mailto:{sender}?subject=unsubscribe>"
+    msg["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
 
     # Plain-text fallback
     plain_text = body_html.replace("<br>", "\n").replace("<br/>", "\n")

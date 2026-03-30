@@ -173,11 +173,16 @@ async def _send_via_provider(
         return {"success": False, "message": f"No from_email for provider {provider.name}"}
 
     msg = MIMEMultipart("alternative")
-    msg["From"] = f"{sender_name} <{sender}>"
+    # Use personal name for cold outreach — brand names trigger spam filters
+    display_name = settings.sender_name or sender_name
+    msg["From"] = f"{display_name} <{sender}>"
     msg["To"] = to
     msg["Subject"] = subject
     if reply_to:
         msg["Reply-To"] = reply_to
+    # List-Unsubscribe header — required by Gmail/Yahoo 2024 sender guidelines
+    msg["List-Unsubscribe"] = f"<mailto:{sender}?subject=unsubscribe>"
+    msg["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
 
     # Plain text fallback
     plain_text = re.sub(r"<[^>]+>", "", body_html.replace("<br>", "\n").replace("<br/>", "\n"))
