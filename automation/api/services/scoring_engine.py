@@ -394,30 +394,43 @@ def calculate_wp_score(prospect: Prospect, audit: Optional[WebsiteAudit] = None)
 
     wp_score = need + ability + timing
 
-    # ── Priority bonuses (2025-03-30) ──
+    # ── Priority bonuses (2025-03-30, updated 2026-03-30) ──
     # Boost prospects matching highest-conversion profile
+    # Use graduated scales to break score ties within clusters
     priority_bonus = 0
     priority_signals = []
 
-    # High Google reviews (social proof = real business)
+    # Google reviews — graduated scale (social proof = real business)
     reviews = prospect.google_reviews or 0
-    if reviews >= 50:
+    if reviews >= 200:
+        priority_bonus += 10
+        priority_signals.append(f"high_reviews_{reviews}:+10")
+    elif reviews >= 50:
+        priority_bonus += 7
+        priority_signals.append(f"good_reviews_{reviews}:+7")
+    elif reviews >= 20:
         priority_bonus += 5
-        priority_signals.append(f"high_reviews_{reviews}:+5")
+        priority_signals.append(f"some_reviews_{reviews}:+5")
+    elif reviews >= 5:
+        priority_bonus += 3
+        priority_signals.append(f"few_reviews_{reviews}:+3")
 
     # No website = highest need
     if not prospect.has_website:
         priority_bonus += 5
         priority_signals.append("no_website_priority:+5")
 
-    # Local (Austin/Manor/Round Rock/Georgetown/Cedar Park/Pflugerville area)
+    # Local (Austin metro area) — graduated by proximity
     city = (prospect.city or "").lower()
-    austin_area = ["austin", "manor", "round rock", "georgetown", "cedar park",
-                   "pflugerville", "leander", "hutto", "taylor", "elgin",
-                   "kyle", "buda", "dripping springs", "bee cave", "lakeway"]
-    if city in austin_area:
-        priority_bonus += 5
-        priority_signals.append(f"local_{city}:+5")
+    austin_core = ["austin", "manor", "pflugerville", "round rock", "cedar park"]
+    austin_metro = ["georgetown", "leander", "hutto", "taylor", "elgin",
+                    "kyle", "buda", "dripping springs", "bee cave", "lakeway"]
+    if city in austin_core:
+        priority_bonus += 7
+        priority_signals.append(f"local_core_{city}:+7")
+    elif city in austin_metro:
+        priority_bonus += 4
+        priority_signals.append(f"local_metro_{city}:+4")
 
     # High-conversion business types
     bt = (prospect.business_type or "").lower()
@@ -441,15 +454,17 @@ def calculate_wp_score(prospect: Prospect, audit: Optional[WebsiteAudit] = None)
     need_signals.extend(priority_signals)
 
     # Tier classification — calibrated for real data distribution
-    # Most prospects score 15-45, so thresholds must reflect that
-    if wp_score >= 55:
-        tier = "hot"
-    elif wp_score >= 35:
-        tier = "warm"
-    elif wp_score >= 20:
-        tier = "cool"
+    # Most contractor prospects cluster at score=53 (no_website + entity_type).
+    # Prospects with ANY additional signals (reviews, local, ads, hiring)
+    # score higher and deserve prioritization.
+    if wp_score >= 58:
+        tier = "hot"       # ~15% — has multiple positive signals
+    elif wp_score >= 54:
+        tier = "warm"      # ~5% — has at least one differentiating signal
+    elif wp_score >= 48:
+        tier = "cool"      # ~75% — baseline no-website contractors
     else:
-        tier = "cold"
+        tier = "cold"      # ~5% — has website OR very low data
 
     return {
         "wp_score": wp_score,
