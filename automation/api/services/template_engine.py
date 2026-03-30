@@ -435,39 +435,59 @@ async def compose_email(
             # the initial_audit template (the one that gets replies).
             # Only fall back to contractor_intro for prospects with NO website.
             if prospect.has_website and prospect.website_url and audit:
-                # Use the proven initial_audit template with real data
-                template_name = "initial_audit.html"
-                subject_template = "question about {{business_name}}'s website"
-                logger.info(
-                    "Contractor %s has website + audit → using initial_audit template",
-                    prospect.business_name,
-                )
+                # Has website + audit → rotate among data-driven templates
+                wp_override = _select_wp_template(prospect, audit)
+                if wp_override:
+                    template_name = wp_override["template"]
+                    subject_template = wp_override["subject"]
+                    logger.info(
+                        "Contractor %s wp_score override → %s",
+                        prospect.business_name, template_name,
+                    )
+                else:
+                    template_name = random.choice(STEP1_TEMPLATE_OPTIONS)
+                    subject_template = _pick_subject(1, no_website=False)
+                    logger.info(
+                        "Contractor %s has website + audit → rotated to %s",
+                        prospect.business_name, template_name,
+                    )
             elif not prospect.has_website or not prospect.website_url:
-                # No website at all → contractor intro (the pitch template)
-                contractor_step = min(sequence_step, 3)
-                cstep = CONTRACTOR_TEMPLATES.get(contractor_step)
-                if cstep:
-                    step_config = cstep
-                    template_name = cstep["template"]
-                    subject_template = cstep["subject"]
+                if sequence_step == 1:
+                    # No website → rotate among no-website templates
+                    template_name = random.choice(STEP1_NO_WEBSITE_OPTIONS + ["contractor_intro.html"])
+                    subject_template = random.choice(NO_WEBSITE_SUBJECT_VARIANTS)
+                    logger.info(
+                        "Contractor %s no website → rotated to %s",
+                        prospect.business_name, template_name,
+                    )
                 else:
-                    template_name = step_config["template"]
-                    subject_template = step_config["subject"]
+                    contractor_step = min(sequence_step, 3)
+                    cstep = CONTRACTOR_TEMPLATES.get(contractor_step)
+                    if cstep:
+                        step_config = cstep
+                        template_name = cstep["template"]
+                        subject_template = cstep["subject"]
+                    else:
+                        template_name = step_config["template"]
+                        subject_template = step_config["subject"]
             else:
-                # Has website but no audit yet → queue for audit, use
-                # contractor intro as fallback for now
-                contractor_step = min(sequence_step, 3)
-                cstep = CONTRACTOR_TEMPLATES.get(contractor_step)
-                if cstep:
-                    step_config = cstep
-                    template_name = cstep["template"]
-                    subject_template = cstep["subject"]
+                # Has website but no audit yet → rotate
+                if sequence_step == 1:
+                    template_name = random.choice(["contractor_intro.html", "curiosity.html"])
+                    subject_template = random.choice(NO_WEBSITE_SUBJECT_VARIANTS)
                 else:
-                    template_name = step_config["template"]
-                    subject_template = step_config["subject"]
+                    contractor_step = min(sequence_step, 3)
+                    cstep = CONTRACTOR_TEMPLATES.get(contractor_step)
+                    if cstep:
+                        step_config = cstep
+                        template_name = cstep["template"]
+                        subject_template = cstep["subject"]
+                    else:
+                        template_name = step_config["template"]
+                        subject_template = step_config["subject"]
                 logger.info(
-                    "Contractor %s has website but no audit yet — using contractor_intro fallback",
-                    prospect.business_name,
+                    "Contractor %s has website but no audit yet — rotated to %s",
+                    prospect.business_name, template_name,
                 )
         else:
             # Render subject line — use no-website variant if applicable
@@ -531,7 +551,7 @@ async def compose_email(
             "body_html": body_html,
             "body_text": body_text,
             "variables": variables,
-            "template_id": step_config["template"],
+            "template_id": template_name,
             "sequence_step": sequence_step,
         }
 
@@ -565,11 +585,11 @@ def _is_real_person_name(name: str) -> bool:
     common-first-names list.  This catches all garbage (business names,
     scraped HTML, articles like 'The', etc.) without maintaining a blacklist.
     """
-    if not name or name.lower() == "there":
+    if not name or name.lower() in ("there", "n/a", "unknown", "owner"):
         return False
     words = name.split()
-    # Must be 2-4 words (first + last, maybe middle)
-    if len(words) < 2 or len(words) > 4:
+    # Accept single first names (e.g. "Maria") and full names (1-4 words)
+    if len(words) < 1 or len(words) > 4:
         return False
     first_word = words[0]
     # Must start with uppercase letter

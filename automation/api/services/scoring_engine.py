@@ -423,7 +423,10 @@ def calculate_wp_score(prospect: Prospect, audit: Optional[WebsiteAudit] = None)
     bt = (prospect.business_type or "").lower()
     high_conversion = ["law_firm", "dental_office", "dentist", "medical", "doctor",
                        "restaurant", "veterinarian", "chiropractor", "orthodontist",
-                       "dermatologist", "physical_therapy", "optometrist"]
+                       "dermatologist", "physical_therapy", "optometrist",
+                       "plumber", "electrician", "hvac", "roofer",
+                       "general_contractor", "residential_builder",
+                       "auto_repair", "beauty_salon", "landscaper"]
     if bt in high_conversion:
         priority_bonus += 5
         priority_signals.append(f"high_conversion_{bt}:+5")
@@ -437,12 +440,13 @@ def calculate_wp_score(prospect: Prospect, audit: Optional[WebsiteAudit] = None)
     wp_score = min(wp_score + priority_bonus, 100)
     need_signals.extend(priority_signals)
 
-    # Tier classification
-    if wp_score >= 80:
+    # Tier classification — calibrated for real data distribution
+    # Most prospects score 15-45, so thresholds must reflect that
+    if wp_score >= 55:
         tier = "hot"
-    elif wp_score >= 60:
+    elif wp_score >= 35:
         tier = "warm"
-    elif wp_score >= 40:
+    elif wp_score >= 20:
         tier = "cool"
     else:
         tier = "cold"
