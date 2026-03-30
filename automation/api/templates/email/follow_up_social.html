@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; font-size: 15px;">
-<p>{{ owner_first_name }},</p>
 
-<p>Thought you might find this interesting — I recently helped {{ nearby_client }} (about {{ distance_between }} miles from you in {{ nearby_city }}) with their website. Since the update, their organic traffic is up about {{ traffic_increase }}% and their site loads in {{ new_speed }}s instead of {{ old_speed }}s.</p>
+{% if owner_first_name != 'there' %}
+<p>Hey {{ owner_first_name }},</p>
+{% else %}
+<p>Hey {{ business_name }} team,</p>
+{% endif %}
 
-<p>Not trying to sell you anything — but if you're ever curious about how your site stacks up, I'm always happy to take a look. Just a neighbor who does this for a living.</p>
+<p>Last thing from me — I put together a quick mockup of what a site could look like for {{ business_name }}. Took me about 15 minutes, just based on your Google listing.</p>
+
+<p>Want to see it? Just reply "sure" and I'll send it over. Either way, good luck with everything.</p>
 
 <p style="margin-top: 28px;">— {{ sender_name }}</p>
-<p style="color: #888; font-size: 13px;">Web developer in Manor, TX · <a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
+<p style="color: #888; font-size: 13px;"><a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
 
 <p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a></p>
 <img src="__TRACKING_PIXEL_URL__" width="1" height="1" alt="" style="display:none;">

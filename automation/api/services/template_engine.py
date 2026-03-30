@@ -40,6 +40,64 @@ def _get_jinja_env() -> Environment:
 
 # ─── Sequence Step → Template Mapping ─────────────────────────────────
 
+import random
+
+# Multiple subject patterns per step for A/B rotation
+SUBJECT_VARIANTS = {
+    1: [
+        "quick note about {{business_name}}",
+        "{{business_name}} — something I noticed",
+        "question about {{business_name}}'s site",
+        "thought about {{business_name}}",
+        "{{business_name}} online presence",
+    ],
+    2: [
+        "re: {{business_name}}",
+        "following up — {{business_name}}",
+        "one more thought for {{business_name}}",
+    ],
+    3: [
+        "last note — {{business_name}}",
+        "one more thing for {{business_name}}",
+        "quick mockup for {{business_name}}",
+    ],
+    4: [
+        "closing the loop",
+        "last note from me",
+        "all good — {{business_name}}",
+    ],
+    5: [
+        "{{business_name}} — quick check-in",
+        "checking in — {{business_name}}",
+    ],
+}
+
+# Step-1 template rotation: randomly assign one of several angles
+STEP1_TEMPLATE_OPTIONS = [
+    "initial_audit.html",
+    "value_first.html",
+    "social_proof.html",
+    "free_audit.html",
+]
+
+STEP1_NO_WEBSITE_OPTIONS = [
+    "no_website_intro.html",
+    "curiosity.html",
+]
+
+NO_WEBSITE_SUBJECT_VARIANTS = [
+    "{{business_name}} — quick question",
+    "noticed something about {{business_name}}",
+    "{{business_name}} on google maps",
+    "thought for {{business_name}} team",
+]
+
+def _pick_subject(step: int, no_website: bool = False) -> str:
+    if no_website and step == 1:
+        return random.choice(NO_WEBSITE_SUBJECT_VARIANTS)
+    variants = SUBJECT_VARIANTS.get(step, ["quick note about {{business_name}}"])
+    return random.choice(variants)
+
 SEQUENCE_TEMPLATES = {
     1: {"template": "initial_audit.html", "subject": "question about {{business_name}}'s website"},
     2: {"template": "follow_up_value.html", "subject": "re: {{business_name}} website"},
@@ -50,7 +108,7 @@ SEQUENCE_TEMPLATES = {
 
 # ─── Contractor Registry Templates (3-touch drip) ────────────────────
 CONTRACTOR_TEMPLATES = {
-    1: {"template": "contractor_intro.html", "subject": "{{owner_first_name}}, your {{registration_type}} license is public — your website should be too"},
+    1: {"template": "contractor_intro.html", "subject": "quick question about {{business_name}}"},
     2: {"template": "contractor_followup.html", "subject": "re: quick question about {{business_name}}"},
     3: {"template": "contractor_breakup.html", "subject": "closing the loop — {{business_name}}"},
 }
@@ -127,8 +185,8 @@ WEBSITE_DOWN_SUBJECTS = {
 SEQUENCE_TIMING = {
     1: 0,    # Immediate
     2: 3,    # Day 3
-    3: 7,    # Day 7
-    4: 14,   # Day 14
+    3: 5,    # Day 5 (was 7)
+    4: 7,    # Day 7 breakup (was 14)
     5: 90,   # Day 90 (resurrection)
 }
 
@@ -354,29 +412,56 @@ async def compose_email(
         # Build variable map from real data
         variables = _build_variables(prospect, audit)
 
-        # ── Contractor Registry → dedicated 3-touch templates ──
+        # ── Contractor Registry → decide template based on data ──
         is_contractor = prospect.source == "contractor_registry"
         if is_contractor:
-            # Contractor-specific variables
+            # Contractor-specific variables (needed by both templates)
             bt = prospect.business_type or "contractor"
             info = CONTRACTOR_INDUSTRY_INFO.get(bt, ("contractor", "contracting", "contractor"))
             variables["industry_noun"] = info[0]
             variables["service_example"] = info[1]
             variables["portfolio_industry"] = info[2]
-            # Use first tag as registration_type display
             tags = prospect.tags or []
             variables["registration_type"] = tags[0].split(" (")[0] if tags else bt.replace("_", " ")
 
-            # Map to 3-step contractor sequence
-            contractor_step = min(sequence_step, 3)
-            cstep = CONTRACTOR_TEMPLATES.get(contractor_step)
-            if cstep:
-                step_config = cstep
-                template_name = cstep["template"]
-                subject_template = cstep["subject"]
+            # KEY FIX: If contractor has a website AND audit data, use
+            # the initial_audit template (the one that gets replies).
+            # Only fall back to contractor_intro for prospects with NO website.
+            if prospect.has_website and prospect.website_url and audit:
+                # Use the proven initial_audit template with real data
+                template_name = "initial_audit.html"
+                subject_template = "question about {{business_name}}'s website"
+                logger.info(
+                    "Contractor %s has website + audit → using initial_audit template",
+                    prospect.business_name,
+                )
+            elif not prospect.has_website or not prospect.website_url:
+                # No website at all → contractor intro (the pitch template)
+                contractor_step = min(sequence_step, 3)
+                cstep = CONTRACTOR_TEMPLATES.get(contractor_step)
+                if cstep:
+                    step_config = cstep
+                    template_name = cstep["template"]
+                    subject_template = cstep["subject"]
+                else:
+                    template_name = step_config["template"]
+                    subject_template = step_config["subject"]
             else:
-                template_name = step_config["template"]
-                subject_template = step_config["subject"]
+                # Has website but no audit yet → queue for audit, use
+                # contractor intro as fallback for now
+                contractor_step = min(sequence_step, 3)
+                cstep = CONTRACTOR_TEMPLATES.get(contractor_step)
+                if cstep:
+                    step_config = cstep
+                    template_name = cstep["template"]
+                    subject_template = cstep["subject"]
+                else:
+                    template_name = step_config["template"]
+                    subject_template = step_config["subject"]
+                logger.info(
+                    "Contractor %s has website but no audit yet — using contractor_intro fallback",
+                    prospect.business_name,
+                )
         else:
             # Render subject line — use no-website variant if applicable
             subject_template = step_config["subject"]
@@ -402,6 +487,22 @@ async def compose_email(
                         "wp_score template override: %s → %s (wp=%d)",
                         prospect.business_name, template_name, prospect.wp_score,
                     )
+        # ── Subject line rotation ──
+        # Override subject with random variant unless wp_score already picked one
+        is_no_website = not prospect.has_website
+        if not is_contractor:
+            rotated_subject = _pick_subject(sequence_step, no_website=is_no_website)
+            # Only use rotated subject if we haven't already picked a wp_score override
+            if subject_template == step_config['subject']:
+                subject_template = rotated_subject
+
+            # ── Template rotation for step 1 (non-contractor, non-wp-override) ──
+            if sequence_step == 1 and template_name == step_config['template']:
+                if is_no_website:
+                    template_name = random.choice(STEP1_NO_WEBSITE_OPTIONS)
+                elif audit:
+                    template_name = random.choice(STEP1_TEMPLATE_OPTIONS)
+
         subject = simple_render(subject_template, variables)
 
         # Render HTML body using Jinja2
@@ -486,6 +587,7 @@ def _build_variables(prospect: Prospect, audit: Optional[WebsiteAudit]) -> dict:
     else:
         owner_name = "there"
         first_name = "there"
+        # Note: templates now use 'Hey {business_name} team' when first_name is 'there'
 
     # Google data presence — guard against "N/A-star rating across 0 reviews"
     has_google_rating = prospect.google_rating is not None and float(prospect.google_rating) > 0

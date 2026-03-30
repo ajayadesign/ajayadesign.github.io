@@ -1,34 +1,26 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; font-size: 15px;">
-{% if owner_first_name == 'there' %}
-<p>Hi there,</p>
+
+{% if owner_first_name != 'there' %}
+<p>Hey {{ owner_first_name }},</p>
 {% else %}
-<p>Hi {{ owner_first_name }},</p>
+<p>Hey {{ business_name }} team,</p>
 {% endif %}
 
 {% if has_google_presence %}
-<p>I found {{ business_name }} on Google Maps — {{ google_rating }} stars across {{ google_reviews }} reviews tells me you're doing something right. That's a hard thing to earn.</p>
+<p>Saw {{ business_name }} on Google Maps — {{ google_rating }} stars across {{ google_reviews }} reviews is impressive. But when I searched "{{ business_type }} in {{ city }}", you didn't show up in regular results because there's no website for Google to index.</p>
 {% else %}
-<p>I found {{ business_name }} on Google Maps — it's clear from your listing that you've built something solid. That's a hard thing to do.</p>
+<p>Found {{ business_name }} on Google Maps but noticed there's no website. When people search "{{ business_type }} in {{ city }}", they're finding competitors who do have one — even if your service is better.</p>
 {% endif %}
 
-<p>One thing I noticed is you don't seem to have a website yet. Right now, someone searching "{{ business_type }} in {{ city }}" on Google will mostly see competitors like {{ competitor_name }} who do have one — even if you have better reviews.</p>
-
-<p>A simple, well-built website would let Google show you in search results (not just Maps), give people a place to see your hours, services, and all those great reviews — and honestly, for a business with your reputation, it could make a real difference.</p>
-
-<p>Little context on me — I'm a web developer, born in Nepal, and Manor is home now. I'm building my business here doing websites for local shops, restaurants, and service businesses. I don't have 50 clients. I have a handful, and I give each one my full attention.</p>
-
-<p>If you're ever curious what a site could look like for {{ business_name }}, I'm happy to sketch something out. No cost, and absolutely no pressure.</p>
+<p>Just something I noticed while researching the area. If you ever want to chat about it, I'm around.</p>
 
 <p style="margin-top: 28px;">— {{ sender_name }}</p>
-<p style="color: #888; font-size: 13px;">Web developer in Manor, TX · <a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
+<p style="color: #888; font-size: 13px;">Web developer in {{ sender_location }} · <a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
 
-<p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a> if you'd rather not hear from me.</p>
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a></p>
 <img src="__TRACKING_PIXEL_URL__" width="1" height="1" alt="" style="display:none;">
 </body>
 </html>

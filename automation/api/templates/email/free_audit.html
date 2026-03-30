@@ -9,15 +9,9 @@
 <p>Hey {{ business_name }} team,</p>
 {% endif %}
 
-<p>Wanted to follow up on my note from a few days ago. I know you're busy running {{ business_name }} — just wanted to make sure it didn't get buried.</p>
+<p>I ran a quick check on {{ business_name }}'s online presence and found 3 things that could help you get more customers from Google.</p>
 
-{% if has_google_presence %}
-<p>With {{ google_reviews }} reviews and a {{ google_rating }}-star rating, you've clearly earned trust. A website would make it easier for new customers to find and choose you over competitors.</p>
-{% else %}
-<p>A simple website could help new customers find {{ business_name }} when they search online — right now they're mostly finding competitors.</p>
-{% endif %}
-
-<p>Happy to chat if you're interested. If not, no worries at all.</p>
+<p>Want me to send the report? Takes 2 minutes to read — no strings attached.</p>
 
 <p style="margin-top: 28px;">— {{ sender_name }}</p>
 <p style="color: #888; font-size: 13px;"><a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>

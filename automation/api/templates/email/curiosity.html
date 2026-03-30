@@ -9,15 +9,13 @@
 <p>Hey {{ business_name }} team,</p>
 {% endif %}
 
-<p>Wanted to follow up on my note from a few days ago. I know you're busy running {{ business_name }} — just wanted to make sure it didn't get buried.</p>
-
 {% if has_google_presence %}
-<p>With {{ google_reviews }} reviews and a {{ google_rating }}-star rating, you've clearly earned trust. A website would make it easier for new customers to find and choose you over competitors.</p>
+<p>Saw {{ business_name }} on Google Maps — {{ google_rating }} stars with {{ google_reviews }} reviews but no website? That reputation deserves to be found when people search "{{ business_type }} in {{ city }}".</p>
 {% else %}
-<p>A simple website could help new customers find {{ business_name }} when they search online — right now they're mostly finding competitors.</p>
+<p>Saw {{ business_name }} on Google Maps but no website. People searching "{{ business_type }} in {{ city }}" are finding your competitors instead.</p>
 {% endif %}
 
-<p>Happy to chat if you're interested. If not, no worries at all.</p>
+<p>Just something I noticed — thought it was worth mentioning.</p>
 
 <p style="margin-top: 28px;">— {{ sender_name }}</p>
 <p style="color: #888; font-size: 13px;"><a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>

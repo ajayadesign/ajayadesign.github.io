@@ -394,6 +394,49 @@ def calculate_wp_score(prospect: Prospect, audit: Optional[WebsiteAudit] = None)
 
     wp_score = need + ability + timing
 
+    # ── Priority bonuses (2025-03-30) ──
+    # Boost prospects matching highest-conversion profile
+    priority_bonus = 0
+    priority_signals = []
+
+    # High Google reviews (social proof = real business)
+    reviews = prospect.google_reviews or 0
+    if reviews >= 50:
+        priority_bonus += 5
+        priority_signals.append(f"high_reviews_{reviews}:+5")
+
+    # No website = highest need
+    if not prospect.has_website:
+        priority_bonus += 5
+        priority_signals.append("no_website_priority:+5")
+
+    # Local (Austin/Manor/Round Rock/Georgetown/Cedar Park/Pflugerville area)
+    city = (prospect.city or "").lower()
+    austin_area = ["austin", "manor", "round rock", "georgetown", "cedar park",
+                   "pflugerville", "leander", "hutto", "taylor", "elgin",
+                   "kyle", "buda", "dripping springs", "bee cave", "lakeway"]
+    if city in austin_area:
+        priority_bonus += 5
+        priority_signals.append(f"local_{city}:+5")
+
+    # High-conversion business types
+    bt = (prospect.business_type or "").lower()
+    high_conversion = ["law_firm", "dental_office", "dentist", "medical", "doctor",
+                       "restaurant", "veterinarian", "chiropractor", "orthodontist",
+                       "dermatologist", "physical_therapy", "optometrist"]
+    if bt in high_conversion:
+        priority_bonus += 5
+        priority_signals.append(f"high_conversion_{bt}:+5")
+
+    # High rating (4.5+) signals quality business
+    rating = float(prospect.google_rating) if prospect.google_rating else 0
+    if rating >= 4.5 and reviews >= 20:
+        priority_bonus += 3
+        priority_signals.append(f"quality_biz_{rating}:+3")
+
+    wp_score = min(wp_score + priority_bonus, 100)
+    need_signals.extend(priority_signals)
+
     # Tier classification
     if wp_score >= 80:
         tier = "hot"

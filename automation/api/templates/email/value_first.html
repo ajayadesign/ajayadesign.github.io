@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; font-size: 15px;">
+
+{% if owner_first_name != 'there' %}
+<p>Hey {{ owner_first_name }},</p>
+{% else %}
+<p>Hey {{ business_name }} team,</p>
+{% endif %}
+
+<p>I checked out {{ business_name }}'s site and noticed
+{% if not speed_good %}
+it takes about {{ load_time }} to load — that's costing you visitors on mobile.
+{% elif ssl_expired %}
+your SSL certificate is expired, so browsers show a security warning before your site even loads.
+{% elif not mobile_good %}
+it's tough to navigate on a phone, and about {{ industry_mobile_pct }}% of {{ business_type }} searches are mobile.
+{% else %}
+a few things that could help you show up higher in local search.
+{% endif %}
+</p>
+
+<p>Quick thought: {% if not speed_good %}compressing your images alone could cut that load time in half.{% elif ssl_expired %}most hosts will renew your SSL for free — worth a 5-minute fix.{% elif not mobile_good %}a responsive layout would make a big difference for those mobile visitors.{% else %}adding structured data markup would help Google understand your business better.{% endif %}</p>
+
+<p>No pitch — just wanted to share since I was looking at {{ business_type_plural }} in {{ city }}.</p>
+
+<p style="margin-top: 28px;">— {{ sender_name }}</p>
+<p style="color: #888; font-size: 13px;"><a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
+
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a></p>
+<img src="__TRACKING_PIXEL_URL__" width="1" height="1" alt="" style="display:none;">
+</body>
+</html>

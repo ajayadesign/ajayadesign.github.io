@@ -1,45 +1,37 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; font-size: 15px;">
-{% if owner_first_name == 'there' %}
-<p>Hi there,</p>
+
+{% if owner_first_name != 'there' %}
+<p>Hey {{ owner_first_name }},</p>
 {% else %}
-<p>Hi {{ owner_first_name }},</p>
+<p>Hey {{ business_name }} team,</p>
 {% endif %}
 
-{% if has_google_presence %}
-<p>I came across {{ business_name }} while looking at {{ business_type }}s in {{ city }} — {{ google_rating }} stars with {{ google_reviews }} reviews, that's really impressive. Your customers clearly love what you do.</p>
-{% else %}
-<p>I came across {{ business_name }} while looking at {{ business_type }}s in {{ city }}. Your customers clearly appreciate what you do.</p>
+<p>I ran a quick audit on {{ business_name }}'s website and found a few things worth knowing:</p>
+
+<ul style="padding-left: 20px;">
+{% if not speed_good %}
+<li>Load time is {{ load_time }} — Google recommends under 2.5s</li>
 {% endif %}
-
-<p>I'm a web developer here in Manor and I ran a quick check on your website out of curiosity. Here's what I found:</p>
-
-<p style="padding-left: 12px; border-left: 3px solid #ddd; margin: 16px 0;">
-{% if speed_good %}✅{% else %}⚠️{% endif %} <b>Speed:</b> {{ load_time }} load time{% if not speed_good %} (Google prefers under 2s){% endif %}<br>
-{% if mobile_good %}✅{% else %}⚠️{% endif %} <b>Mobile:</b> {{ mobile_score }}/100{% if not mobile_good %} — most of your customers are probably on their phones{% endif %}<br>
-{% if seo_good %}✅{% else %}⚠️{% endif %} <b>SEO:</b> {% if seo_good %}Basics look good{% else %}Missing {{ missing_seo }}{% endif %}
-{% if ssl_expired %}<br>⚠️ <b>Security:</b> SSL {{ ssl_status }} — browsers show a "Not Secure" warning{% endif %}
-</p>
-
-{% if any_bad %}
-<p>Some of these things can make it harder for people to find you on Google — especially versus {{ competitor_name }} nearby who scores {{ competitor_score }}/100.</p>
-{% else %}
-<p>You're in good shape overall. {{ competitor_name }} nearby scores {{ competitor_score }}/100, so worth keeping an eye on.</p>
+{% if not mobile_good %}
+<li>Mobile experience needs work ({{ industry_mobile_pct }}% of your visitors are on phones)</li>
 {% endif %}
+{% if ssl_expired %}
+<li>SSL certificate issue — browsers are showing a warning to visitors</li>
+{% endif %}
+{% if not seo_good %}
+<li>Missing some SEO basics: {{ missing_seo }}</li>
+{% endif %}
+</ul>
 
-<p>Little context on me — I'm a web developer, born in Nepal, and Manor is home now. I'm building my business here doing websites for local shops, restaurants, and service businesses. I don't have 50 clients. I have a handful, and I give each one my full attention.</p>
-
-<p>If you'd ever want to chat about it, I'm happy to walk you through a more detailed report — no charge, no sales pitch. I just genuinely enjoy helping local businesses with this stuff.</p>
+<p>Want me to send the full report? Takes 2 minutes to read.</p>
 
 <p style="margin-top: 28px;">— {{ sender_name }}</p>
-<p style="color: #888; font-size: 13px; margin-top: 4px;">Web developer in Manor, TX · <a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
+<p style="color: #888; font-size: 13px;"><a href="https://{{ sender_url }}" style="color: #555;">{{ sender_url }}</a></p>
 
-<p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a> if you'd rather not hear from me.</p>
+<p style="font-size: 11px; color: #bbb; margin-top: 24px;"><a href="__UNSUBSCRIBE_URL__" style="color: #bbb;">Unsubscribe</a></p>
 <img src="__TRACKING_PIXEL_URL__" width="1" height="1" alt="" style="display:none;">
 </body>
 </html>
