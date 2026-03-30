@@ -87,9 +87,9 @@
         <span class="font-bold text-white text-lg tracking-tight">Ajaya<span class="text-amd-red-text">Design</span></span>
       </a>
       <div class="flex items-center gap-6 text-sm">
-        <a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a>
-        <a href="/works/" class="text-gray-400 hover:text-white transition-colors">Works</a>
-        <a href="/contact/" class="text-gray-400 hover:text-white transition-colors">Contact</a>
+        <a href="/" class="text-gray-300 hover:text-white transition-colors">Home</a>
+        <a href="/works/" class="text-gray-300 hover:text-white transition-colors">Works</a>
+        <a href="/contact/" class="text-gray-300 hover:text-white transition-colors">Contact</a>
       </div>
     </div>
   </nav>
@@ -101,7 +101,7 @@
       <div class="text-center mb-12">
         <p class="text-xs tracking-widest uppercase text-amd-red-text mb-3">// Proposal Generator</p>
         <h1 class="text-3xl md:text-5xl font-bold text-white mb-4">Your Custom Proposal in <span class="text-amd-red-text">Seconds</span></h1>
-        <p class="text-gray-400 max-w-2xl mx-auto">Fill in your business details below. We'll generate a professional, PDF-ready proposal tailored to your needs — no sales call required.</p>
+        <p class="text-gray-300 max-w-2xl mx-auto">Fill in your business details below. We'll generate a professional, PDF-ready proposal tailored to your needs — no sales call required.</p>
       </div>
 
       <!-- FORM SECTION (dark) -->
@@ -112,11 +112,11 @@
             <legend class="text-white font-bold text-lg mb-4">Business Details</legend>
             <div class="grid md:grid-cols-2 gap-4">
               <div>
-                <label for="pg-business-name" class="block text-sm text-gray-400 mb-1">Business Name <span class="text-amd-red-text">*</span></label>
+                <label for="pg-business-name" class="block text-sm text-gray-300 mb-1">Business Name <span class="text-amd-red-text">*</span></label>
                 <input type="text" id="pg-business-name" required class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white focus:border-electric-blue focus:outline-none transition" placeholder="Acme Corp" />
               </div>
               <div>
-                <label for="pg-business-type" class="block text-sm text-gray-400 mb-1">Business Type <span class="text-amd-red-text">*</span></label>
+                <label for="pg-business-type" class="block text-sm text-gray-300 mb-1">Business Type <span class="text-amd-red-text">*</span></label>
                 <select id="pg-business-type" required class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white focus:border-electric-blue focus:outline-none transition">
                   <option value="">Select...</option>
                   <option value="Local Service Business">Local Service Business</option>
@@ -131,15 +131,15 @@
                 </select>
               </div>
               <div>
-                <label for="pg-contact-name" class="block text-sm text-gray-400 mb-1">Your Name <span class="text-amd-red-text">*</span></label>
+                <label for="pg-contact-name" class="block text-sm text-gray-300 mb-1">Your Name <span class="text-amd-red-text">*</span></label>
                 <input type="text" id="pg-contact-name" required class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white focus:border-electric-blue focus:outline-none transition" placeholder="Jane Doe" />
               </div>
               <div>
-                <label for="pg-email" class="block text-sm text-gray-400 mb-1">Email <span class="text-amd-red-text">*</span></label>
+                <label for="pg-email" class="block text-sm text-gray-300 mb-1">Email <span class="text-amd-red-text">*</span></label>
                 <input type="email" id="pg-email" required class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white focus:border-electric-blue focus:outline-none transition" placeholder="jane@acme.com" />
               </div>
               <div class="md:col-span-2">
-                <label for="pg-current-site" class="block text-sm text-gray-400 mb-1">Current Website <span class="text-gray-300">(optional)</span></label>
+                <label for="pg-current-site" class="block text-sm text-gray-300 mb-1">Current Website <span class="text-gray-300">(optional)</span></label>
                 <input type="url" id="pg-current-site" class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white focus:border-electric-blue focus:outline-none transition" placeholder="https://example.com" />
               </div>
             </div>
@@ -179,7 +179,7 @@
           <button id="send-email-btn" class="bg-surface-card border border-border-dim text-white font-bold py-3 px-8 rounded-xl hover:border-electric-blue transition-all">
             ✉️ Send to My Email
           </button>
-          <button id="edit-proposal" class="bg-surface-card border border-border-dim text-gray-400 py-3 px-8 rounded-xl hover:text-white transition-all">
+          <button id="edit-proposal" class="bg-surface-card border border-border-dim text-gray-300 py-3 px-8 rounded-xl hover:text-white transition-all">
             ✏️ Edit Details
           </button>
         </div>
@@ -188,11 +188,11 @@
         <div id="email-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 no-print" role="dialog" aria-label="Send proposal to email">
           <div class="bg-surface-card border border-border-dim rounded-2xl p-8 max-w-md w-full mx-4">
             <h3 class="text-white font-bold text-lg mb-4">Send Proposal Link</h3>
-            <label for="send-email-input" class="block text-sm text-gray-400 mb-2">Your email address</label>
+            <label for="send-email-input" class="block text-sm text-gray-300 mb-2">Your email address</label>
             <input type="email" id="send-email-input" class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white mb-4 focus:border-electric-blue focus:outline-none" placeholder="jane@acme.com" />
             <div class="flex gap-3">
               <button id="confirm-send-email" class="flex-1 bg-amd-red hover:bg-amd-red-btn text-white font-bold py-3 rounded-xl transition">Send</button>
-              <button id="cancel-send-email" class="flex-1 bg-surface border border-border-dim text-gray-400 py-3 rounded-xl hover:text-white transition">Cancel</button>
+              <button id="cancel-send-email" class="flex-1 bg-surface border border-border-dim text-gray-300 py-3 rounded-xl hover:text-white transition">Cancel</button>
             </div>
           </div>
         </div>
@@ -205,14 +205,14 @@
                 <span class="inline-block w-3 h-3 rounded-full bg-[#D41920] mr-2" aria-hidden="true"></span>
                 <span class="font-bold text-xl tracking-tight">Ajaya<span class="text-[#FF4654]">Design</span></span>
               </div>
-              <div class="text-right text-sm text-gray-400">
+              <div class="text-right text-sm text-gray-300">
                 <div>Proposal #<span id="prop-id">—</span></div>
                 <div id="prop-date">—</div>
               </div>
             </div>
             <h2 class="text-3xl md:text-4xl font-bold mb-2">Website Proposal</h2>
             <p class="text-lg text-gray-300">Prepared for <span id="prop-business" class="text-white font-semibold">—</span></p>
-            <p class="text-sm text-gray-400 mt-1">Prepared by AjayaDesign — Austin, Texas · Serving Worldwide</p>
+            <p class="text-sm text-gray-300 mt-1">Prepared by AjayaDesign — Austin, Texas · Serving Worldwide</p>
           </div>
 
           <!-- Body -->
@@ -220,7 +220,7 @@
             <!-- Project Overview -->
             <section>
               <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#D41920] pb-2 mb-4">Project Overview</h3>
-              <p id="prop-overview" class="text-gray-400 leading-relaxed">—</p>
+              <p id="prop-overview" class="text-gray-300 leading-relaxed">—</p>
             </section>
 
             <!-- Recommended Features -->
@@ -250,7 +250,7 @@
             <!-- What's Included -->
             <section>
               <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#D41920] pb-2 mb-4">What's Included</h3>
-              <ul id="prop-included" class="grid md:grid-cols-2 gap-2 text-gray-400">
+              <ul id="prop-included" class="grid md:grid-cols-2 gap-2 text-gray-300">
                 <!-- filled by JS -->
               </ul>
             </section>
@@ -258,26 +258,26 @@
             <!-- Portfolio -->
             <section>
               <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#D41920] pb-2 mb-4">Our Work</h3>
-              <p class="text-gray-400 mb-4">We've built high-performance websites for businesses across industries. Here are a few highlights:</p>
+              <p class="text-gray-300 mb-4">We've built high-performance websites for businesses across industries. Here are a few highlights:</p>
               <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div class="bg-gray-100 rounded-lg p-4 text-center">
                   <div class="font-bold text-[#1a1a2e]">Apex Auto</div>
-                  <div class="text-xs text-gray-400">Collision Center</div>
+                  <div class="text-xs text-gray-300">Collision Center</div>
                 </div>
                 <div class="bg-gray-100 rounded-lg p-4 text-center">
                   <div class="font-bold text-[#1a1a2e]">Austin Barbell</div>
-                  <div class="text-xs text-gray-400">Fitness Studio</div>
+                  <div class="text-xs text-gray-300">Fitness Studio</div>
                 </div>
                 <div class="bg-gray-100 rounded-lg p-4 text-center">
                   <div class="font-bold text-[#1a1a2e]">Velvet Bloom</div>
-                  <div class="text-xs text-gray-400">Beauty Brand</div>
+                  <div class="text-xs text-gray-300">Beauty Brand</div>
                 </div>
                 <div class="bg-gray-100 rounded-lg p-4 text-center">
                   <div class="font-bold text-[#1a1a2e]">Monument Pilates</div>
-                  <div class="text-xs text-gray-400">Wellness Studio</div>
+                  <div class="text-xs text-gray-300">Wellness Studio</div>
                 </div>
               </div>
-              <p class="text-sm text-gray-400 mt-3">View our full portfolio at <a href="https://ajayadesign.github.io/works/" class="text-[#D41920] underline">ajayadesign.github.io/works</a></p>
+              <p class="text-sm text-gray-300 mt-3">View our full portfolio at <a href="https://ajayadesign.github.io/works/" class="text-[#D41920] underline">ajayadesign.github.io/works</a></p>
             </section>
 
             <!-- CTA -->
@@ -289,7 +289,7 @@
           </div>
 
           <!-- Footer -->
-          <div class="bg-gray-50 px-8 md:px-14 py-6 text-center text-sm text-gray-400">
+          <div class="bg-gray-50 px-8 md:px-14 py-6 text-center text-sm text-gray-300">
             <p>This proposal is valid for 30 days from the date above.</p>
             <p class="mt-1">© <span id="prop-year">2026</span> AjayaDesign · Austin, Texas · <a href="https://ajayadesign.github.io" class="text-[#D41920]">ajayadesign.github.io</a></p>
           </div>
@@ -368,8 +368,8 @@
       div.innerHTML = `
         <div class="text-2xl font-bold text-white mb-1">${t.priceLabel}</div>
         <div class="text-amd-red-text font-bold text-lg mb-2">${t.name}</div>
-        <div class="text-xs text-gray-400 mb-3">${t.pages} · ${t.timeline}</div>
-        <div class="text-xs text-gray-400">${t.desc}</div>
+        <div class="text-xs text-gray-300 mb-3">${t.pages} · ${t.timeline}</div>
+        <div class="text-xs text-gray-300">${t.desc}</div>
       `;
       div.addEventListener('click', () => selectTier(t.id));
       div.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectTier(t.id); } });
@@ -433,7 +433,7 @@
       featContainer.innerHTML = allFeatures.map(f => `
         <div class="bg-gray-50 rounded-lg p-4">
           <div class="font-semibold text-[#1a1a2e]">${f.icon} ${f.label}</div>
-          <div class="text-sm text-gray-400 mt-1">${f.desc}</div>
+          <div class="text-sm text-gray-300 mt-1">${f.desc}</div>
         </div>
       `).join('');
 
@@ -442,11 +442,11 @@
         <div class="flex items-center justify-between mb-4">
           <div>
             <div class="font-bold text-xl text-[#1a1a2e]">${tier.name} Package</div>
-            <div class="text-sm text-gray-400">${tier.pages} · ${tier.revisions} revisions</div>
+            <div class="text-sm text-gray-300">${tier.pages} · ${tier.revisions} revisions</div>
           </div>
           <div class="text-3xl font-bold text-[#D41920]">${tier.priceLabel}</div>
         </div>
-        <div class="text-sm text-gray-400">
+        <div class="text-sm text-gray-300">
           <div class="flex justify-between py-2 border-b border-gray-200"><span>Design & Development</span><span class="font-semibold text-[#1a1a2e]">Included</span></div>
           <div class="flex justify-between py-2 border-b border-gray-200"><span>SEO & Analytics Setup</span><span class="font-semibold text-[#1a1a2e]">Included</span></div>
           <div class="flex justify-between py-2 border-b border-gray-200"><span>Mobile Optimization</span><span class="font-semibold text-[#1a1a2e]">Included</span></div>
@@ -467,8 +467,8 @@
         <div class="flex gap-4 items-start">
           <div class="w-8 h-8 rounded-full bg-[#D41920] text-white flex items-center justify-center text-sm font-bold flex-shrink-0">${i + 1}</div>
           <div>
-            <div class="font-semibold text-[#1a1a2e]">${p.phase} <span class="text-sm text-gray-400 font-normal">— ${p.duration}</span></div>
-            <div class="text-sm text-gray-400">${p.desc}</div>
+            <div class="font-semibold text-[#1a1a2e]">${p.phase} <span class="text-sm text-gray-300 font-normal">— ${p.duration}</span></div>
+            <div class="text-sm text-gray-300">${p.desc}</div>
           </div>
         </div>
       `).join('');
