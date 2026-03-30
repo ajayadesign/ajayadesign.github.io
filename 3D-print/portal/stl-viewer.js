@@ -90,9 +90,20 @@
     grid.position.y = -1;
     scene.add(grid);
 
-    // Load STL
+    // Load STL — handle Google Drive URLs (which don't support CORS)
+    // For Drive URLs, use Google's preview-compatible URL format
+    let fetchUrl = stlUrl;
+    if (stlUrl.indexOf('drive.google.com') !== -1) {
+      // Extract file ID from Drive download URL
+      const match = stlUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if (match) {
+        // Use the Google Drive direct content URL (works cross-origin)
+        fetchUrl = 'https://drive.usercontent.google.com/download?id=' + match[1] + '&export=download';
+      }
+    }
+
     const loader = new STLLoader();
-    loader.load(stlUrl, function (geometry) {
+    loader.load(fetchUrl, function (geometry) {
       geometry.computeVertexNormals();
       geometry.center();
 

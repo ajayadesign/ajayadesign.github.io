@@ -317,7 +317,108 @@
     if (/^module-[1-6]$/.test(moduleId)) {
       initLessonTracking(moduleId, data.progress || {});
       initVideoPlayers(moduleId);
+      initSTLViewers();
     }
+    // Populate download links on the downloads page
+    if (moduleId === 'downloads') {
+      initDownloadLinks();
+    }
+  }
+
+  /* ── Fetch STL config from Firebase and init 3D viewers + download links ── */
+  function initSTLViewers() {
+    db.ref('course_content/stl/lessons').once('value').then(function(snap) {
+      var lessons = snap.val() || {};
+      var driveUrl = function(id) { return 'https://drive.google.com/uc?export=download&id=' + id; };
+
+      // Populate download links on module pages (e.g. #dl-lesson-2-2)
+      Object.keys(lessons).forEach(function(k) {
+        var l = lessons[k];
+        if (!l || !l.driveId) return;
+        var el = document.getElementById('dl-' + k);
+        if (el) {
+          el.href = driveUrl(l.driveId);
+          el.target = '_blank';
+          el.rel = 'noopener';
+        }
+      });
+
+      // Init 3D viewers if any .stl-viewer elements exist
+      var viewers = document.querySelectorAll('.stl-viewer[data-lesson]');
+      if (viewers.length === 0) return;
+
+      // Build config object for stl-viewer.js
+      window.STL_CONFIG = { lessons: {}, driveUrl: driveUrl };
+      Object.keys(lessons).forEach(function(k) {
+        var l = lessons[k];
+        window.STL_CONFIG.lessons[k] = {
+          file: l.file,
+          label: l.label,
+          desc: l.desc,
+          driveId: l.driveId,
+          localPath: driveUrl(l.driveId),
+        };
+      });
+      // Trigger stl-viewer.js init if it's loaded
+      if (window.STLViewer && window.STLViewer.init) {
+        window.STLViewer.init();
+      }
+    });
+  }
+
+  /* ── Populate download links from Firebase (no hardcoded URLs in HTML) ── */
+  function initDownloadLinks() {
+    db.ref('course_content/stl').once('value').then(function(snap) {
+      var stl = snap.val() || {};
+      var driveUrl = function(id) { return 'https://drive.google.com/uc?export=download&id=' + id; };
+
+      // ZIP bundle links
+      if (stl.bundles) {
+        var babyZip = document.getElementById('dl-baby-zip');
+        var generalZip = document.getElementById('dl-general-zip');
+        if (babyZip && stl.bundles['baby-milestone-frames-zip']) babyZip.href = driveUrl(stl.bundles['baby-milestone-frames-zip'].driveId);
+        if (generalZip && stl.bundles['general-magnet-frames-zip']) generalZip.href = driveUrl(stl.bundles['general-magnet-frames-zip'].driveId);
+      }
+
+      // Individual file links — populate containers
+      var containers = {
+        'dl-lessons': stl.lessons || {},
+        'dl-general': stl.generalFrames || {},
+        'dl-baby': stl.babyMilestones || {},
+        'dl-thingiverse': {},
+      };
+
+      // Separate thingiverse from general
+      if (stl.generalFrames) {
+        Object.keys(stl.generalFrames).forEach(function(k) {
+          if (k.indexOf('thingiverse') === 0) {
+            containers['dl-thingiverse'][k] = stl.generalFrames[k];
+            delete containers['dl-general'][k];
+          }
+        });
+      }
+
+      Object.keys(containers).forEach(function(containerId) {
+        var el = document.getElementById(containerId);
+        if (!el) return;
+        var items = containers[containerId];
+        var html = '';
+        Object.keys(items).forEach(function(k) {
+          var item = items[k];
+          if (!item || !item.driveId) return;
+          html += '<a href="' + driveUrl(item.driveId) + '" target="_blank" rel="noopener" '
+            + 'class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">'
+            + '<p class="text-white font-mono text-xs">' + escapeHtml(item.label || k) + '</p>'
+            + '<p class="text-gray-600 text-[10px]">' + escapeHtml(item.desc || k) + ' <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">\u2b07</span></p>'
+            + '</a>';
+        });
+        el.innerHTML = html;
+      });
+
+      // Show the details section
+      var details = document.getElementById('dl-details');
+      if (details) details.open = true;
+    });
   }
 
   /* ── Per-Lesson Progress Tracking ── */
@@ -380,24 +481,27 @@
   /* ── YouTube Video Player Initialization ── */
   function initVideoPlayers(moduleId) {
     var moduleNum = parseInt(moduleId.replace('module-', ''), 10);
-    var config = window.VIDEO_CONFIG || {};
-    var placeholders = document.querySelectorAll('.video-placeholder');
-    for (var i = 0; i < placeholders.length; i++) {
-      var lessonId = 'lesson-' + moduleNum + '-' + (i + 1);
-      var videoId = config[lessonId];
-      if (videoId && /^[\w-]{11}$/.test(videoId)) {
-        var iframe = document.createElement('iframe');
-        iframe.className = 'w-full h-full rounded-b-2xl';
-        iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?rel=0&modestbranding=1';
-        iframe.setAttribute('frameborder', '0');
-        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-        iframe.setAttribute('allowfullscreen', '');
-        iframe.setAttribute('loading', 'lazy');
-        placeholders[i].innerHTML = '';
-        placeholders[i].appendChild(iframe);
-        placeholders[i].style.border = 'none';
+    // Fetch video config from Firebase (auth-gated) instead of static JS
+    db.ref('course_content/videos').once('value').then(function(snap) {
+      var config = snap.val() || {};
+      var placeholders = document.querySelectorAll('.video-placeholder');
+      for (var i = 0; i < placeholders.length; i++) {
+        var lessonId = 'lesson-' + moduleNum + '-' + (i + 1);
+        var videoId = config[lessonId];
+        if (videoId && /^[\w-]{11}$/.test(videoId)) {
+          var iframe = document.createElement('iframe');
+          iframe.className = 'w-full h-full rounded-b-2xl';
+          iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?rel=0&modestbranding=1';
+          iframe.setAttribute('frameborder', '0');
+          iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+          iframe.setAttribute('allowfullscreen', '');
+          iframe.setAttribute('loading', 'lazy');
+          placeholders[i].innerHTML = '';
+          placeholders[i].appendChild(iframe);
+          placeholders[i].style.border = 'none';
+        }
       }
-    }
+    });
   }
 
   /* ── Certificate of Completion ── */

@@ -41,6 +41,11 @@
       ".indexOn": ["email"]
     },
 
+    "course_content": {
+      ".read": "auth != null && root.child('approved_users').child(auth.uid).exists()",
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
     "email_queue": {
       ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
       ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"

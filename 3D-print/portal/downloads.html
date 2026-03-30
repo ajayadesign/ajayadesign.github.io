@@ -51,9 +51,9 @@
           <span class="text-electric-blue">01</span> STL Files — Magnet Frames
         </h2>
 
-        <!-- Download Bundles -->
+        <!-- Download Bundles (links injected by JS after auth) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-          <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="group p-5 bg-gradient-to-br from-surface-card to-surface-alt border border-electric-blue/30 rounded-xl hover:border-electric-blue/60 transition-all">
+          <a id="dl-baby-zip" href="#" class="group p-5 bg-gradient-to-br from-surface-card to-surface-alt border border-electric-blue/30 rounded-xl hover:border-electric-blue/60 transition-all">
             <div class="flex items-center gap-3 mb-2">
               <span class="text-3xl">👶</span>
               <div class="flex-1">
@@ -66,7 +66,7 @@
               <span class="text-electric-blue font-mono text-xs group-hover:translate-x-1 transition-transform">Download ZIP →</span>
             </div>
           </a>
-          <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="group p-5 bg-gradient-to-br from-surface-card to-surface-alt border border-electric-blue/30 rounded-xl hover:border-electric-blue/60 transition-all">
+          <a id="dl-general-zip" href="#" class="group p-5 bg-gradient-to-br from-surface-card to-surface-alt border border-electric-blue/30 rounded-xl hover:border-electric-blue/60 transition-all">
             <div class="flex items-center gap-3 mb-2">
               <span class="text-3xl">🖼️</span>
               <div class="flex-1">
@@ -81,129 +81,33 @@
           </a>
         </div>
 
-        <!-- Browse All Files on Drive -->
+        <!-- Browse All Files link (folder ID is not sensitive — it's a shared folder) -->
         <a href="https://drive.google.com/drive/folders/1gVuFT9NDA5DNvZ_AfoTVxALHwpmrWrsr?usp=sharing" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-4 py-2 bg-surface-card border border-border-dim rounded-lg font-mono text-xs text-gray-400 hover:text-white hover:border-electric-blue/40 transition-colors mb-4">
           <span>📂</span> Browse all files on Google Drive →
         </a>
 
-        <!-- What's Included List -->
-        <details class="mt-2" open>
+        <!-- Individual files (populated by JS after auth) -->
+        <details id="dl-details" class="mt-2">
           <summary class="text-gray-500 text-xs font-mono cursor-pointer hover:text-gray-300 transition-colors">Show all included STL files (27 individual + 2 ZIPs)</summary>
 
-          <!-- Lesson Exports -->
           <h4 class="text-white font-mono text-sm mt-4 mb-2">🎓 Lesson Exports</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Lesson 2.2 — Basic Magnet Frame</p>
-              <p class="text-gray-600 text-[10px]">112×87×8mm, TinkerCAD export <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Lesson 3.3 — Polaroid Frame</p>
-              <p class="text-gray-600 text-[10px]">88×107×6mm, Polaroid-style <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Lesson 3.4 — Instax Mini Frame</p>
-              <p class="text-gray-600 text-[10px]">72×56×5mm, Fuji Instax Mini <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Lesson 3.5 — Collage Frame</p>
-              <p class="text-gray-600 text-[10px]">200×80×6mm, 3-photo collage <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Lesson 3.6 — Text Insert Frame</p>
-              <p class="text-gray-600 text-[10px]">112×87×8mm, personalization text area <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
+          <div id="dl-lessons" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+            <p class="text-gray-600 font-mono text-xs col-span-full">Loading…</p>
           </div>
 
-          <!-- General Frames -->
           <h4 class="text-white font-mono text-sm mb-2">🖼️ General Frames</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">4×6 Photo Frame</p>
-              <p class="text-gray-600 text-[10px]">102×152mm insert, 4× magnet slots <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Instax Mini Frame</p>
-              <p class="text-gray-600 text-[10px]">62×46mm insert, 2× magnet slots <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Hexagon Frame</p>
-              <p class="text-gray-600 text-[10px]">Unique geometry, 3× magnet slots <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Heart Frame</p>
-              <p class="text-gray-600 text-[10px]">Heart-shaped, 2× magnet slots <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Circle Frame</p>
-              <p class="text-gray-600 text-[10px]">Round design, 3× magnet slots <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Star Frame</p>
-              <p class="text-gray-600 text-[10px]">5-point star, 3× magnet slots <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">3-Photo Collage Frame</p>
-              <p class="text-gray-600 text-[10px]">Grid layout, 3× photo windows <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
+          <div id="dl-general" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+            <p class="text-gray-600 font-mono text-xs col-span-full">Loading…</p>
           </div>
 
-          <!-- Baby Milestone Frames -->
           <h4 class="text-white font-mono text-sm mb-2">👶 Baby Milestone Frames</h4>
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-4">
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-2 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors text-center group">
-              <p class="text-white font-mono text-xs">Month 1</p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-2 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors text-center group">
-              <p class="text-white font-mono text-xs">Month 2</p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-2 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors text-center group">
-              <p class="text-white font-mono text-xs">Month 3</p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-2 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors text-center group">
-              <p class="text-white font-mono text-xs">Month 4</p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-2 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors text-center group">
-              <p class="text-white font-mono text-xs">Month 5</p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-2 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors text-center group">
-              <p class="text-white font-mono text-xs">Month 6</p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-2 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors text-center group">
-              <p class="text-white font-mono text-xs">Month 7</p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-2 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors text-center group">
-              <p class="text-white font-mono text-xs">Month 8</p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-2 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors text-center group">
-              <p class="text-white font-mono text-xs">Month 9</p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-2 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors text-center group">
-              <p class="text-white font-mono text-xs">Month 10</p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-2 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors text-center group">
-              <p class="text-white font-mono text-xs">Month 11</p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-2 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors text-center group">
-              <p class="text-white font-mono text-xs">Month 12</p>
-            </a>
+          <div id="dl-baby" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-4">
+            <p class="text-gray-600 font-mono text-xs col-span-full">Loading…</p>
           </div>
 
-          <!-- Thingiverse Bonus -->
           <h4 class="text-white font-mono text-sm mb-2">🎁 Thingiverse Bonus</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Customizable Fridge Magnet Frame</p>
-              <p class="text-gray-600 text-[10px]">Community design by Thing:158157 <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Floating Photo Frame</p>
-              <p class="text-gray-600 text-[10px]">Community design by Thing:581117 <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
-            <a href="https://drive.google.com/uc?export=download&id=REDACTED" target="_blank" rel="noopener" class="p-3 bg-surface-card/50 border border-border-dim/50 rounded-lg hover:border-electric-blue/40 transition-colors group">
-              <p class="text-white font-mono text-xs">Instax Photo Frame</p>
-              <p class="text-gray-600 text-[10px]">Community design <span class="text-electric-blue opacity-0 group-hover:opacity-100 transition-opacity">⬇</span></p>
-            </a>
+          <div id="dl-thingiverse" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <p class="text-gray-600 font-mono text-xs col-span-full">Loading…</p>
           </div>
         </details>
       </section>
