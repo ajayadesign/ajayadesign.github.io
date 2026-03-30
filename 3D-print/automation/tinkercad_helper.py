@@ -460,9 +460,9 @@ def set_material(page: Page, material: str):
 
 # ── Dimension Operations ────────────────────────────────────────────────
 
-def set_dimension(page: Page, label: str, value):
-    """Set a dimension (Width/Length/Height) via click+type on slider text."""
-    info = page.evaluate("""(label) => {
+def _find_dim_slider(page: Page, label: str):
+    """Locate the slider-text element for a dimension label. Returns {x, y} or None."""
+    return page.evaluate("""(label) => {
         const items = document.querySelectorAll('.editor__inspector__item');
         for (const item of items) {
             const lbl = item.querySelector('.editor__inspector__item__label');
@@ -474,14 +474,62 @@ def set_dimension(page: Page, label: str, value):
                 }
             }
         }
+        return null;
     }""", label)
-    if info:
+
+
+def _read_dim_value(page: Page, label: str):
+    """Read a single dimension's current value. Returns float or None."""
+    val = page.evaluate("""(label) => {
+        const items = document.querySelectorAll('.editor__inspector__item');
+        for (const item of items) {
+            const lbl = item.querySelector('.editor__inspector__item__label');
+            if (lbl && lbl.textContent.trim() === label) {
+                const slider = item.querySelector('.editor__inspector__item__ui-slider-text');
+                if (slider) return slider.textContent.trim();
+            }
+        }
+        return null;
+    }""", label)
+    if val is not None:
+        try:
+            return float(val)
+        except ValueError:
+            return None
+    return None
+
+
+def set_dimension(page: Page, label: str, value, retries: int = 3):
+    """Set a dimension (Width/Length/Height) via click+type on slider text.
+    Verifies the value was accepted and retries if needed."""
+    target = float(value)
+    for attempt in range(retries):
+        info = _find_dim_slider(page, label)
+        if not info:
+            time.sleep(0.5)
+            continue
+        # Click the slider text to focus it
         page.mouse.click(info['x'], info['y'])
         time.sleep(0.3)
+        # Triple-click to select all text in the field
+        page.mouse.click(info['x'], info['y'], click_count=3)
+        time.sleep(0.2)
         page.keyboard.press("Control+a")
-        page.keyboard.type(str(value))
+        time.sleep(0.1)
+        page.keyboard.press("Backspace")
+        time.sleep(0.1)
+        page.keyboard.type(str(value), delay=50)
+        time.sleep(0.2)
         page.keyboard.press("Enter")
+        time.sleep(0.8)
+        # Verify the value was accepted
+        actual = _read_dim_value(page, label)
+        if actual is not None and abs(actual - target) < 1.0:
+            return True
+        print(f"  ⚠ Dimension {label}={value} attempt {attempt+1}: got {actual}, retrying...")
         time.sleep(0.5)
+    print(f"  ❌ Failed to set {label}={value} after {retries} attempts")
+    return False
 
 
 def read_dimensions(page: Page) -> dict:

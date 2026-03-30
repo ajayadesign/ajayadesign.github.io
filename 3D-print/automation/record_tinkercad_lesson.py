@@ -20,7 +20,7 @@ from tinkercad_helper import (
     get_material_state, set_material, set_dimension, read_dimensions,
     drag_shape_to_workplane, select_all, group_shapes, export_stl_download,
     show_step_overlay, show_mouse_highlight, orbit_view, zoom_view,
-    get_inspector_title, EDITOR
+    get_inspector_title, EDITOR, _read_dim_value,
 )
 
 # ── Paths ────────────────────────────────────────────────────────────────
@@ -280,7 +280,7 @@ LESSONS = {
                 "detail": "First of three photo cutouts",
                 "narration": "Now we place three photo openings. First, prepare the Hole mode with our set and undo trick. Then place the first opening on the left side of the frame.",
                 "action": "place_hole_at",
-                "offset": (-60, 0),
+                "offset_mm": (-57, 0),
             },
             {
                 "overlay": "Set Hole Dimensions",
@@ -294,7 +294,7 @@ LESSONS = {
                 "detail": "Center photo cutout",
                 "narration": "Place the second opening at the center of the frame. Use the same set and undo trick before each placement.",
                 "action": "place_hole_at",
-                "offset": (0, 0),
+                "offset_mm": (0, 0),
             },
             {
                 "overlay": "Set Center Dimensions",
@@ -305,17 +305,10 @@ LESSONS = {
             },
             {
                 "overlay": "Place Third Opening (Right)",
-                "detail": "Right photo cutout",
+                "detail": "Duplicate center opening and move right",
                 "narration": "Place the third opening on the right side. Three evenly spaced openings with five millimeter gaps between them.",
-                "action": "place_hole_at",
-                "offset": (60, 0),
-            },
-            {
-                "overlay": "Set Right Dimensions",
-                "detail": "52mm × 52mm × 8mm",
-                "narration": "Set the final opening dimensions. Fifty two by fifty two by eight.",
-                "action": "set_hole_dims",
-                "dims": {"Width": 52, "Length": 52, "Height": 8},
+                "action": "duplicate_and_move",
+                "offset_mm": (57, 0),
             },
             {
                 "overlay": "Select All & Group",
@@ -537,6 +530,8 @@ def record_lesson(lesson_id: str):
 
     # Execute each step
     step_num = 0
+    last_placed_pos = (cx, cy)  # Track where the last shape was placed
+    shape_selected = False  # Track if a shape is already selected
     for step in lesson["steps"]:
         step_num += 1
         action = step["action"]
@@ -553,13 +548,25 @@ def record_lesson(lesson_id: str):
         elif action == "place_body":
             drag_shape_to_workplane(page, "87", (cx, cy))
             page.mouse.click(cx, cy)
+            last_placed_pos = (cx, cy)
+            shape_selected = True
             time.sleep(1)
 
         elif action == "set_body_dims":
             dims = step["dims"]
             for label, value in dims.items():
-                set_dimension(page, label, value)
+                ok = set_dimension(page, label, value)
+                if not ok:
+                    # Fallback: click shape to re-select, retry
+                    page.mouse.click(cx, cy)
+                    time.sleep(0.5)
+                    set_dimension(page, label, value)
                 time.sleep(0.5)
+            # Verify all dimensions were accepted
+            for label, value in dims.items():
+                actual = _read_dim_value(page, label)
+                if actual is None or abs(actual - float(value)) >= 1.0:
+                    print(f"  ⚠ VERIFY FAIL: {label} expected={value}, actual={actual}")
             time.sleep(1)
 
         elif action == "set_solid":
@@ -584,6 +591,8 @@ def record_lesson(lesson_id: str):
             # Place new shape (auto-inherits Hole)
             drag_shape_to_workplane(page, "87", (cx, cy))
             page.mouse.click(cx, cy)
+            last_placed_pos = (cx, cy)
+            shape_selected = True
             time.sleep(1)
 
         elif action == "set_hole":
@@ -596,12 +605,24 @@ def record_lesson(lesson_id: str):
             time.sleep(1)
 
         elif action == "set_hole_dims":
-            page.mouse.click(cx, cy)
-            time.sleep(0.3)
+            # Click on the last-placed shape if not already selected
+            if not shape_selected:
+                click_x, click_y = last_placed_pos
+                page.mouse.click(click_x, click_y)
+                time.sleep(0.3)
+            shape_selected = False
             dims = step["dims"]
             for label, value in dims.items():
-                set_dimension(page, label, value)
+                ok = set_dimension(page, label, value)
+                if not ok:
+                    page.mouse.click(last_placed_pos[0], last_placed_pos[1])
+                    time.sleep(0.5)
+                    set_dimension(page, label, value)
                 time.sleep(0.5)
+            # Debug: verify dims were set
+            dims_after = read_dimensions(page)
+            mat_state = get_material_state(page)
+            print(f"    → set_hole_dims: dims={dims_after}, material={mat_state}")
             time.sleep(1)
 
         elif action == "align_hole":
@@ -659,35 +680,159 @@ def record_lesson(lesson_id: str):
             time.sleep(2)
 
         elif action == "place_hole_at":
-            # Place a hole at an offset from center (for multi-opening frames)
-            offset = step.get("offset", (0, 0))
-            target_x = cx + offset[0]
-            target_y = cy + offset[1]
-            # Set Hole mode via set+undo trick
-            page.mouse.click(cx, cy)
-            time.sleep(0.3)
-            set_material(page, "Hole")
-            time.sleep(0.3)
-            page.keyboard.press("Control+z")
-            time.sleep(0.5)
+            # Place a hole then move it to exact mm position using arrow keys.
+            # Drop each hole at the center of the workplane (cx, cy) since
+            # arrow keys provide absolute mm movement from there.
+            # The shape is auto-selected after drag (no click needed).
+            offset_mm = step.get("offset_mm", (0, 0))
+            dx_mm, dy_mm = offset_mm
+            # Deselect everything first
             page.mouse.click(200, 800)
             time.sleep(0.5)
-            # Place shape at offset position
-            drag_shape_to_workplane(page, "87", (target_x, target_y))
-            page.mouse.click(target_x, target_y)
-            time.sleep(1)
+            # Drop at center — TinkerCAD creates new shapes even with overlaps
+            drag_shape_to_workplane(page, "87", (cx, cy))
+            time.sleep(1.5)
+            # Set to Hole (shape is auto-selected after drag)
+            set_material(page, "Hole")
+            time.sleep(0.5)
+            # Verify it's a Hole
+            state = get_material_state(page)
+            if not state.get('Hole'):
+                print(f"  ⚠ Hole mode not set, retrying... state={state}")
+                set_material(page, "Hole")
+                time.sleep(0.5)
+            # Move shape using arrow keys (1 press = 1mm in TinkerCAD)
+            dx_mm, dy_mm = offset_mm
+            if dx_mm != 0:
+                key = "ArrowRight" if dx_mm > 0 else "ArrowLeft"
+                for _ in range(abs(int(dx_mm))):
+                    page.keyboard.press(key)
+                    time.sleep(0.05)
+                time.sleep(0.3)
+            if dy_mm != 0:
+                key = "ArrowUp" if dy_mm > 0 else "ArrowDown"
+                for _ in range(abs(int(dy_mm))):
+                    page.keyboard.press(key)
+                    time.sleep(0.05)
+                time.sleep(0.3)
+            last_placed_pos = (cx, cy)
+            shape_selected = True
+            # Debug: verify shape placement
+            dims_after = read_dimensions(page)
+            mat_state = get_material_state(page)
+            print(f"    → Placed hole at offset_mm={offset_mm}, dims={dims_after}, material={mat_state}")
+            time.sleep(0.5)
+
+        elif action == "duplicate_and_move":
+            # Duplicate the currently selected shape and move the copy
+            # This is more reliable than placing a new shape when shapes overlap
+            offset_mm = step.get("offset_mm", (0, 0))
+            dx_mm, dy_mm = offset_mm
+            page.keyboard.press("Control+d")
+            time.sleep(1.5)
+            # The duplicate is auto-selected and placed at a ~10mm offset
+            # Move it to the target position: need to go from current (near prev shape)
+            # to the absolute target offset from workplane center
+            # The duplicate starts near the previous shape. We need to move it
+            # (target_offset - prev_offset) mm. Since prev was at 0 (center hole),
+            # we move by target_offset mm from wherever the duplicate landed.
+            # Use a large movement to ensure we overshoot, then fine-tune:
+            if dx_mm != 0:
+                key = "ArrowRight" if dx_mm > 0 else "ArrowLeft"
+                for _ in range(abs(int(dx_mm))):
+                    page.keyboard.press(key)
+                    time.sleep(0.05)
+                time.sleep(0.3)
+            if dy_mm != 0:
+                key = "ArrowUp" if dy_mm > 0 else "ArrowDown"
+                for _ in range(abs(int(dy_mm))):
+                    page.keyboard.press(key)
+                    time.sleep(0.05)
+                time.sleep(0.3)
+            shape_selected = True
+            dims_after = read_dimensions(page)
+            mat_state = get_material_state(page)
+            print(f"    → Duplicated+moved offset_mm={offset_mm}, dims={dims_after}, material={mat_state}")
+            time.sleep(0.5)
 
         elif action == "place_text":
-            # Switch to Text category and place a text shape
+            # Switch to Text & Numbers category and place a Text shape
             from tinkercad_helper import EDITOR as ED
             cat_x, cat_y = ED["cat_text"]
             page.mouse.click(cat_x, cat_y)
-            time.sleep(1.5)
-            # First text shape in the panel (same grid as basic shapes row 1)
-            shape_x, shape_y = ED["shape_box"]  # same position in text category
-            drag_shape_to_workplane(page, (shape_x, shape_y), (cx, cy + 30))
+            time.sleep(2)
+            # Find the Text shape by communication attribute (shape type "Text")
+            # TinkerCAD Text category: first item is typically the Text shape
+            # Try comm attribute first, fall back to grid position
+            text_shape = page.evaluate("""() => {
+                // Look for shapes in the panel with text-related comm IDs
+                const candidates = document.querySelectorAll('[communication]');
+                for (const el of candidates) {
+                    const title = el.getAttribute('title') || el.textContent || '';
+                    if (title.toLowerCase().includes('text')) {
+                        const r = el.getBoundingClientRect();
+                        if (r.width > 20 && r.height > 20)
+                            return {x: r.x + r.width/2, y: r.y + r.height/2};
+                    }
+                }
+                // Also check shape panel thumbnails
+                const thumbs = document.querySelectorAll('.shapePanelItem, .shape-panel-item, [data-shape-type]');
+                for (const el of thumbs) {
+                    const t = (el.getAttribute('title') || el.getAttribute('data-shape-type') || '').toLowerCase();
+                    if (t.includes('text')) {
+                        const r = el.getBoundingClientRect();
+                        return {x: r.x + r.width/2, y: r.y + r.height/2};
+                    }
+                }
+                return null;
+            }""")
+            if text_shape:
+                drag_shape_to_workplane(page, (text_shape['x'], text_shape['y']),
+                                       (cx, cy + 30))
+            else:
+                # Fallback: first shape position in text category panel
+                # Row 1, Col 1 of shape panel (same grid, different category content)
+                drag_shape_to_workplane(page, (1695, 276), (cx, cy + 30))
+            time.sleep(2)
+            # Click on the placed text shape to select it
             page.mouse.click(cx, cy + 30)
-            time.sleep(1.5)
+            time.sleep(1)
+            # Type the text — TinkerCAD Text shape has an editable text field
+            # Look for text input in the inspector
+            text_input = page.evaluate("""() => {
+                const inputs = document.querySelectorAll('input[type="text"], textarea, [contenteditable="true"]');
+                for (const inp of inputs) {
+                    const r = inp.getBoundingClientRect();
+                    if (r.width > 50 && r.height > 10 && r.y > 100)
+                        return {x: r.x + r.width/2, y: r.y + r.height/2};
+                }
+                // Check inspector for text content field
+                const items = document.querySelectorAll('.editor__inspector__item');
+                for (const item of items) {
+                    const lbl = item.querySelector('.editor__inspector__item__label');
+                    if (lbl && lbl.textContent.trim().toLowerCase() === 'text') {
+                        const inp = item.querySelector('input, textarea, [contenteditable]');
+                        if (inp) {
+                            const r = inp.getBoundingClientRect();
+                            return {x: r.x + r.width/2, y: r.y + r.height/2};
+                        }
+                    }
+                }
+                return null;
+            }""")
+            if text_input:
+                page.mouse.click(text_input['x'], text_input['y'])
+                time.sleep(0.3)
+                page.keyboard.press("Control+a")
+                time.sleep(0.1)
+                page.keyboard.type("BABY", delay=100)
+                page.keyboard.press("Enter")
+                time.sleep(1)
+            else:
+                print("  ⚠ No text input field found — trying keyboard type directly")
+                page.keyboard.type("BABY", delay=100)
+                page.keyboard.press("Enter")
+                time.sleep(1)
             # Switch back to basic shapes
             cat_bx, cat_by = ED["cat_basic_shapes"]
             page.mouse.click(cat_bx, cat_by)
@@ -742,8 +887,8 @@ def record_lesson(lesson_id: str):
     ctx.close()
     p.stop()
 
-    # Find recorded video file
-    video_files = sorted(Path(video_dir).glob("*.webm"))
+    # Find recorded video file (most recently modified)
+    video_files = sorted(Path(video_dir).glob("*.webm"), key=lambda f: f.stat().st_mtime)
     if video_files:
         raw_video = video_files[-1]
         print(f"  Raw recording: {raw_video} ({raw_video.stat().st_size / 1024 / 1024:.1f}MB)")
@@ -841,7 +986,7 @@ def main():
 
     if args.merge_only:
         video_dir = OUTPUT_DIR / f"recording-{args.lesson}"
-        videos = sorted(video_dir.glob("*.webm"))
+        videos = sorted(video_dir.glob("*.webm"), key=lambda f: f.stat().st_mtime)
         audio = OUTPUT_DIR / f"{lesson['filename']}-narration.mp3"
         if videos and audio.exists():
             merge_video_audio(args.lesson, str(videos[-1]), str(audio))
