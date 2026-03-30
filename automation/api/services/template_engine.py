@@ -596,7 +596,10 @@ def _is_real_person_name(name: str) -> bool:
     if not first_word[0].isupper():
         return False
     # The key check: first word must be a known first name
-    if first_word.lower() not in _COMMON_FIRST_NAMES:
+    import unicodedata
+    normalized = unicodedata.normalize('NFKD', first_word.lower())
+    ascii_name = ''.join(c for c in normalized if not unicodedata.combining(c))
+    if ascii_name not in _COMMON_FIRST_NAMES:
         return False
     # Each word should be 2+ chars and start with a letter
     if not all(len(w) >= 2 and w[0].isalpha() for w in words):
