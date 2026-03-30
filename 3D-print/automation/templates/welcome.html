@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to 3D Print Academy!</title>
+<style>
+  body { margin: 0; padding: 0; background: #0A0A0F; color: #e5e7eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  .container { max-width: 600px; margin: 0 auto; background: #111118; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 40px 30px; text-align: center; border-bottom: 3px solid #e53e3e; }
+  .header h1 { color: #fff; font-family: monospace; font-size: 22px; margin: 0; }
+  .header .accent { color: #e53e3e; }
+  .body { padding: 30px; }
+  .body h2 { color: #fff; font-family: monospace; font-size: 18px; margin-top: 0; }
+  .body p { color: #9ca3af; line-height: 1.7; font-size: 15px; }
+  .cta { display: inline-block; background: #e53e3e; color: #fff !important; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-family: monospace; font-weight: bold; font-size: 14px; margin: 20px 0; }
+  .tip-box { background: #1a1a2e; border-left: 3px solid #22c55e; padding: 15px 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+  .tip-box p { color: #a3e635; margin: 0; font-size: 14px; }
+  .footer { padding: 20px 30px; text-align: center; border-top: 1px solid #1f2937; }
+  .footer p { color: #6b7280; font-size: 12px; margin: 5px 0; }
+  .footer a { color: #6b7280; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <p style="color:#e53e3e;font-family:monospace;font-size:12px;margin:0 0 10px;letter-spacing:3px;">// 3D PRINT ACADEMY</p>
+    <h1>Welcome to Your <span class="accent">3D Printing Journey</span> 🎉</h1>
+  </div>
+  <div class="body">
+    <h2>Hey {{NAME}},</h2>
+    <p>You just took the first step toward mastering 3D printed magnet frames — and we're pumped to have you.</p>
+    <p>Your <strong style="color:#fff;">free mini-course</strong> is ready. Lesson 1 covers everything you need to get started: printer setup, your first test print, and what makes magnet frames such a killer product.</p>
+
+    <div class="tip-box">
+      <p>💡 <strong>Pro tip:</strong> Watch Lesson 1 with your printer nearby. Pause, print, repeat. That's how the best students learn.</p>
+    </div>
+
+    <p style="text-align:center;">
+      <a href="https://ajayadesign.github.io/3D-print/free/" class="cta">▶ Watch Lesson 1 Now</a>
+    </p>
+
+    <p>Over the next two weeks, we'll send you the remaining lessons plus tips that took us months to figure out. No spam — just actionable stuff.</p>
+
+    <p>Talk soon,<br><strong style="color:#fff;">— AJ @ AjayaDesign</strong></p>
+  </div>
+  <div class="footer">
+    <p>AjayaDesign • 3D Print Academy</p>
+    <p><a href="{{UNSUBSCRIBE_URL}}">Unsubscribe</a> · <a href="https://ajayadesign.github.io/3D-print/">Visit Academy</a></p>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Still thinking about it?</title>
+<style>
+  body { margin: 0; padding: 0; background: #0A0A0F; color: #e5e7eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  .container { max-width: 600px; margin: 0 auto; background: #111118; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 40px 30px; text-align: center; border-bottom: 3px solid #e53e3e; }
+  .header h1 { color: #fff; font-family: monospace; font-size: 22px; margin: 0; }
+  .header .accent { color: #e53e3e; }
+  .body { padding: 30px; }
+  .body h2 { color: #fff; font-family: monospace; font-size: 18px; margin-top: 0; }
+  .body p { color: #9ca3af; line-height: 1.7; font-size: 15px; }
+  .cta { display: inline-block; background: #e53e3e; color: #fff !important; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-family: monospace; font-weight: bold; font-size: 14px; margin: 20px 0; }
+  .math-box { background: #1a1a2e; border: 1px solid #374151; padding: 20px; margin: 20px 0; border-radius: 8px; font-family: monospace; font-size: 14px; }
+  .math-box .line { display: flex; justify-content: space-between; padding: 4px 0; color: #9ca3af; }
+  .math-box .line.total { border-top: 1px solid #374151; margin-top: 8px; padding-top: 8px; color: #22c55e; font-weight: bold; }
+  .discount { background: #0f172a; border: 2px dashed #e53e3e; padding: 15px; margin: 20px 0; border-radius: 8px; text-align: center; }
+  .discount .code { font-family: monospace; font-size: 22px; color: #e53e3e; font-weight: bold; letter-spacing: 3px; }
+  .footer { padding: 20px 30px; text-align: center; border-top: 1px solid #1f2937; }
+  .footer p { color: #6b7280; font-size: 12px; margin: 5px 0; }
+  .footer a { color: #6b7280; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <p style="color:#e53e3e;font-family:monospace;font-size:12px;margin:0 0 10px;letter-spacing:3px;">// 3D PRINT ACADEMY</p>
+    <h1>Still Thinking? <span class="accent">Let's Do the Math</span> 🧮</h1>
+  </div>
+  <div class="body">
+    <h2>Hey {{NAME}},</h2>
+    <p>It's been two weeks since you started the free course. No pressure — but before you decide, look at the numbers:</p>
+
+    <div class="math-box">
+      <div class="line"><span>Cost per magnet frame (filament)</span><span>~$0.50</span></div>
+      <div class="line"><span>Selling price (avg)</span><span>$8.00</span></div>
+      <div class="line"><span>Profit per frame</span><span>$7.50</span></div>
+      <div class="line"><span>Frames per day (easy pace)</span><span>×20</span></div>
+      <div class="line total"><span>Daily profit potential</span><span>$150/day</span></div>
+    </div>
+
+    <p>That's <strong style="color:#fff;">$4,500/month</strong> from a printer that costs $200. The full course teaches you exactly how to get there — from design to Shopify store to your first sale.</p>
+
+    <p style="text-align:center;">
+      <a href="https://ajayadesign.github.io/3D-print/tools/profit-calculator.html" class="cta" style="background:#374151;">📊 Try the Profit Calculator</a>
+    </p>
+
+    <div class="discount">
+      <p style="color:#9ca3af;margin:0 0 5px;font-size:12px;">YOUR CODE STILL WORKS</p>
+      <div class="code">MAKER10</div>
+      <p style="color:#fff;font-size:14px;margin:5px 0 0;">10% off — but it won't last much longer</p>
+    </div>
+
+    <p style="text-align:center;">
+      <a href="https://ajayadesign.github.io/3D-print/#enroll" class="cta">🚀 Enroll Now — 10% Off →</a>
+    </p>
+
+    <p>Either way, thanks for checking out the free course. If 3D printing isn't your thing, no hard feelings. But if it is — don't let this sit in your "I'll do it someday" pile.</p>
+
+    <p>Your move,<br><strong style="color:#fff;">— AJ @ AjayaDesign</strong></p>
+  </div>
+  <div class="footer">
+    <p>AjayaDesign • 3D Print Academy</p>
+    <p><a href="{{UNSUBSCRIBE_URL}}">Unsubscribe</a> · <a href="https://ajayadesign.github.io/3D-print/">Visit Academy</a></p>
+    <p style="color:#4b5563;font-size:11px;">This is the last email in this series. We won't email you again unless you enroll.</p>
+  </div>
+</div>
+</body>
+</html>

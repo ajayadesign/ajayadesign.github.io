@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You finished the free course! Here's what's next</title>
+<style>
+  body { margin: 0; padding: 0; background: #0A0A0F; color: #e5e7eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  .container { max-width: 600px; margin: 0 auto; background: #111118; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 40px 30px; text-align: center; border-bottom: 3px solid #e53e3e; }
+  .header h1 { color: #fff; font-family: monospace; font-size: 22px; margin: 0; }
+  .header .accent { color: #e53e3e; }
+  .body { padding: 30px; }
+  .body h2 { color: #fff; font-family: monospace; font-size: 18px; margin-top: 0; }
+  .body p { color: #9ca3af; line-height: 1.7; font-size: 15px; }
+  .cta { display: inline-block; background: #e53e3e; color: #fff !important; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-family: monospace; font-weight: bold; font-size: 14px; margin: 20px 0; }
+  .discount { background: linear-gradient(135deg, #1a1a2e 0%, #0f172a 100%); border: 2px dashed #e53e3e; padding: 25px; margin: 25px 0; border-radius: 12px; text-align: center; }
+  .discount .code { font-family: monospace; font-size: 28px; color: #e53e3e; font-weight: bold; letter-spacing: 4px; }
+  .discount p { margin: 8px 0 0; }
+  .modules { margin: 20px 0; }
+  .modules li { color: #9ca3af; padding: 6px 0; font-size: 14px; }
+  .modules li strong { color: #fff; }
+  .footer { padding: 20px 30px; text-align: center; border-top: 1px solid #1f2937; }
+  .footer p { color: #6b7280; font-size: 12px; margin: 5px 0; }
+  .footer a { color: #6b7280; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <p style="color:#e53e3e;font-family:monospace;font-size:12px;margin:0 0 10px;letter-spacing:3px;">// 3D PRINT ACADEMY</p>
+    <h1>You Did It! 🏆 Ready for the <span class="accent">Full Course</span>?</h1>
+  </div>
+  <div class="body">
+    <h2>Hey {{NAME}},</h2>
+    <p>Congrats — you've completed all 3 free lessons! You now know more about 3D printing magnet frames than 99% of people. But here's the thing...</p>
+    <p>The free course was just <strong style="color:#fff;">Module 1</strong>. The full academy has <strong style="color:#fff;">7 modules, 43 lessons, and 16+ hours</strong> of content that takes you from "I can print stuff" to "I run a magnet business."</p>
+
+    <ul class="modules">
+      <li>🔰 <strong>Module 1</strong> — First Print Setup (✅ you did this!)</li>
+      <li>🎯 <strong>Module 2</strong> — TinkerCAD Design Mastery</li>
+      <li>⚡ <strong>Module 3</strong> — Advanced Print Optimization</li>
+      <li>💰 <strong>Module 4</strong> — Pricing & Cost Breakdown</li>
+      <li>🏪 <strong>Module 5</strong> — Selling on Shopify & Craft Fairs</li>
+      <li>🎓 <strong>Module 6</strong> — Scaling Your Business</li>
+      <li>🚀 <strong>Module 7</strong> — Advanced Techniques & Community</li>
+    </ul>
+
+    <div class="discount">
+      <p style="color:#9ca3af;margin:0 0 8px;font-size:13px;">YOUR EXCLUSIVE DISCOUNT CODE</p>
+      <div class="code">MAKER10</div>
+      <p style="color:#fff;font-size:15px;"><strong>10% off</strong> any plan — because you showed up and did the work.</p>
+    </div>
+
+    <p style="text-align:center;">
+      <a href="https://ajayadesign.github.io/3D-print/#enroll" class="cta">🚀 Unlock All 43 Lessons →</a>
+    </p>
+
+    <p>This code won't last forever. If you're serious about turning 3D printing into income, now's the time.</p>
+
+    <p>Let's build something,<br><strong style="color:#fff;">— AJ @ AjayaDesign</strong></p>
+  </div>
+  <div class="footer">
+    <p>AjayaDesign • 3D Print Academy</p>
+    <p><a href="{{UNSUBSCRIBE_URL}}">Unsubscribe</a> · <a href="https://ajayadesign.github.io/3D-print/">Visit Academy</a></p>
+  </div>
+</div>
+</body>
+</html>

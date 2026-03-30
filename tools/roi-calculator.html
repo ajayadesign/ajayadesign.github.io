@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROI Calculator | AjayaDesign — See What Your Website Could Earn</title>
+  <meta name="description" content="Calculate the ROI of a professional website for your business. See estimated revenue increase, payback period, and cost of not having a web presence." />
+  <meta name="robots" content="index, follow" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://ajayadesign.github.io/tools/roi-calculator.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ROI Calculator | AjayaDesign" />
+  <meta property="og:description" content="See how much revenue a professional website could generate for your business." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/tools/roi-calculator.html" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'surface': '#0A0A0F',
+            'surface-card': '#12121A',
+            'border-dim': '#1E1E2E',
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF4654',
+            'amd-red-btn': '#C41E3A',
+            'electric-blue': '#00D4FF',
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'JetBrains Mono', monospace; background: #0A0A0F; color: #e5e7eb; }
+    .gradient-line { height: 1px; background: linear-gradient(90deg, transparent, #ED1C24, #00D4FF, transparent); }
+    input[type="range"] { -webkit-appearance: none; background: transparent; cursor: pointer; }
+    input[type="range"]::-webkit-slider-track { height: 6px; background: #1E1E2E; border-radius: 3px; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #ED1C24; margin-top: -7px; box-shadow: 0 0 10px rgba(237,28,36,0.5); }
+    input[type="range"]::-moz-range-track { height: 6px; background: #1E1E2E; border-radius: 3px; border: none; }
+    input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #ED1C24; border: none; box-shadow: 0 0 10px rgba(237,28,36,0.5); }
+    .counter { transition: all 0.3s ease; }
+    .stat-card { background: linear-gradient(135deg, #12121A 0%, #1a1a2e 100%); }
+    .pulse-red { animation: pulseRed 2s ease-in-out infinite; }
+    @keyframes pulseRed { 0%,100% { box-shadow: 0 0 0 0 rgba(237,28,36,0.4); } 50% { box-shadow: 0 0 20px 10px rgba(237,28,36,0.1); } }
+    .chart-bar { transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <a href="/" class="flex items-center gap-2 group">
+        <span class="inline-block w-3 h-3 rounded-full bg-amd-red animate-pulse"></span>
+        <span class="font-bold text-white text-lg tracking-tight">Ajaya<span class="text-amd-red-text">Design</span></span>
+      </a>
+      <div class="flex items-center gap-6 text-sm">
+        <a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a>
+        <a href="/works/" class="text-gray-400 hover:text-white transition-colors">Works</a>
+        <a href="/contact/" class="text-gray-400 hover:text-white transition-colors">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pt-24 pb-20 px-4">
+    <div class="max-w-5xl mx-auto">
+
+      <!-- HEADER -->
+      <div class="text-center mb-12">
+        <p class="text-xs tracking-widest uppercase text-amd-red-text mb-3">// ROI Calculator</p>
+        <h1 class="text-3xl md:text-5xl font-bold text-white mb-4">What's Your Website <span class="text-amd-red-text">Really</span> Worth?</h1>
+        <p class="text-gray-400 max-w-2xl mx-auto">Enter your business details below. We'll show you how much revenue you're leaving on the table — and what a professional website could change.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8">
+
+        <!-- INPUTS -->
+        <div class="space-y-6">
+          <div class="stat-card rounded-2xl border border-border-dim p-6 space-y-6">
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="text-amd-red">▸</span> Your Business Info
+            </h2>
+
+            <!-- Business Type -->
+            <div>
+              <label class="block text-xs text-gray-400 mb-2">Business Type</label>
+              <select id="businessType" class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white text-sm focus:border-amd-red focus:outline-none">
+                <option value="restaurant">Restaurant / Food & Bev</option>
+                <option value="auto">Auto Shop / Mechanic</option>
+                <option value="salon">Salon / Barbershop</option>
+                <option value="retail">Retail Store</option>
+                <option value="professional">Professional Services</option>
+                <option value="contractor">Contractor / Trades</option>
+                <option value="other">Other Local Business</option>
+              </select>
+            </div>
+
+            <!-- Monthly Customers -->
+            <div>
+              <label class="block text-xs text-gray-400 mb-2">Monthly Customers / Foot Traffic</label>
+              <div class="flex items-center gap-4">
+                <input type="range" id="customers" min="50" max="5000" value="500" step="50" class="flex-1" />
+                <span id="customersVal" class="text-white font-bold w-16 text-right">500</span>
+              </div>
+            </div>
+
+            <!-- Avg Transaction -->
+            <div>
+              <label class="block text-xs text-gray-400 mb-2">Average Transaction Value</label>
+              <div class="flex items-center gap-4">
+                <input type="range" id="avgTransaction" min="10" max="500" value="75" step="5" class="flex-1" />
+                <span id="avgTransactionVal" class="text-white font-bold w-16 text-right">$75</span>
+              </div>
+            </div>
+
+            <!-- Current Website -->
+            <div>
+              <label class="block text-xs text-gray-400 mb-2">Current Website Status</label>
+              <select id="websiteStatus" class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white text-sm focus:border-amd-red focus:outline-none">
+                <option value="none">No Website</option>
+                <option value="diy">DIY / Template (Wix, Squarespace, etc.)</option>
+                <option value="outdated">Outdated Professional Site (3+ years old)</option>
+              </select>
+            </div>
+
+            <!-- Marketing Budget -->
+            <div>
+              <label class="block text-xs text-gray-400 mb-2">Monthly Marketing Budget</label>
+              <div class="flex items-center gap-4">
+                <input type="range" id="marketingBudget" min="0" max="5000" value="500" step="100" class="flex-1" />
+                <span id="marketingBudgetVal" class="text-white font-bold w-20 text-right">$500</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OUTPUTS -->
+        <div class="space-y-6">
+
+          <!-- Lost Revenue Callout -->
+          <div id="lostRevenueCard" class="pulse-red rounded-2xl border-2 border-amd-red/50 bg-amd-red/5 p-6 text-center">
+            <p class="text-xs text-amd-red-text uppercase tracking-widest mb-1">⚠ You're Leaving Money on the Table</p>
+            <p class="text-4xl md:text-5xl font-bold text-amd-red-text counter" id="lostRevenue">$0</p>
+            <p class="text-xs text-gray-400 mt-1">estimated lost revenue per month</p>
+          </div>
+
+          <!-- Revenue Stats -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="stat-card rounded-xl border border-border-dim p-4 text-center">
+              <p class="text-xs text-gray-400 mb-1">Monthly Revenue Increase</p>
+              <p class="text-2xl font-bold text-electric-blue counter" id="monthlyIncrease">$0</p>
+            </div>
+            <div class="stat-card rounded-xl border border-border-dim p-4 text-center">
+              <p class="text-xs text-gray-400 mb-1">Annual Projection</p>
+              <p class="text-2xl font-bold text-green-400 counter" id="annualProjection">$0</p>
+            </div>
+            <div class="stat-card rounded-xl border border-border-dim p-4 text-center">
+              <p class="text-xs text-gray-400 mb-1">Lost Customers / Month</p>
+              <p class="text-2xl font-bold text-amd-red-text counter" id="lostCustomers">0</p>
+            </div>
+            <div class="stat-card rounded-xl border border-border-dim p-4 text-center">
+              <p class="text-xs text-gray-400 mb-1">Payback Period</p>
+              <p class="text-2xl font-bold text-yellow-400 counter" id="paybackPeriod">0 mo</p>
+            </div>
+          </div>
+
+          <!-- Revenue Chart -->
+          <div class="stat-card rounded-2xl border border-border-dim p-6">
+            <p class="text-xs text-gray-400 mb-4">12-Month Revenue Projection</p>
+            <div class="flex items-end justify-between gap-1 h-32" id="revenueChart">
+              <!-- Bars injected by JS -->
+            </div>
+            <div class="flex justify-between text-[10px] text-gray-500 mt-2">
+              <span>Month 1</span><span>Month 6</span><span>Month 12</span>
+            </div>
+          </div>
+
+          <!-- Industry Stat -->
+          <div class="stat-card rounded-xl border border-border-dim p-4 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-electric-blue/10 flex items-center justify-center text-electric-blue text-xl font-bold shrink-0">2.5×</div>
+            <p class="text-sm text-gray-300">Businesses with professional websites generate <span class="text-white font-bold">2.5× more leads</span> than those without. <span class="text-gray-500 text-xs">(Source: Google/Ipsos)</span></p>
+          </div>
+
+          <!-- ROI -->
+          <div class="stat-card rounded-xl border border-border-dim p-4 text-center">
+            <p class="text-xs text-gray-400 mb-1">Estimated First-Year ROI</p>
+            <p class="text-3xl font-bold text-green-400 counter" id="roiPercent">0%</p>
+            <p class="text-xs text-gray-500 mt-1">Based on a $1,500–$3,000 one-time investment</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="mt-12 text-center space-y-4">
+        <p class="text-lg text-white font-bold">Your potential: <span class="text-green-400" id="ctaRevenue">$0/year</span> in new revenue.</p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="/contact/" class="inline-flex items-center gap-2 px-8 py-3 bg-amd-red-btn text-white rounded-lg font-bold text-sm hover:bg-red-800 transition-colors">
+            Let's Talk → Get a Free Quote
+          </a>
+          <a href="/grader/" class="inline-flex items-center gap-2 px-8 py-3 bg-surface border border-electric-blue/40 text-electric-blue rounded-lg font-bold text-sm hover:bg-electric-blue/10 transition-colors">
+            Get a Free Audit of Your Current Site →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-border-dim py-8">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <p class="text-xs text-gray-500">© <script>document.write(new Date().getFullYear())</script> AjayaDesign · Built with engineering precision in Austin, Texas</p>
+      <p class="text-[10px] text-gray-600 mt-2">*Estimates are based on industry averages and conversion data. Actual results may vary based on market, location, and execution.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Industry conversion multipliers (how much a pro website improves conversions)
+    const industryData = {
+      restaurant:    { conversionLift: 0.15, onlineDiscovery: 0.72, avgLostRate: 0.35 },
+      auto:          { conversionLift: 0.18, onlineDiscovery: 0.68, avgLostRate: 0.30 },
+      salon:         { conversionLift: 0.20, onlineDiscovery: 0.75, avgLostRate: 0.40 },
+      retail:        { conversionLift: 0.22, onlineDiscovery: 0.80, avgLostRate: 0.45 },
+      professional:  { conversionLift: 0.25, onlineDiscovery: 0.85, avgLostRate: 0.50 },
+      contractor:    { conversionLift: 0.20, onlineDiscovery: 0.70, avgLostRate: 0.38 },
+      other:         { conversionLift: 0.17, onlineDiscovery: 0.65, avgLostRate: 0.32 }
+    };
+
+    // Website status multipliers
+    const statusMultiplier = {
+      none: 1.0,      // Full lift
+      diy: 0.55,      // Half the lift (already have something)
+      outdated: 0.65  // Moderate lift
+    };
+
+    const fmt = (n) => '$' + Math.round(n).toLocaleString();
+
+    function calculate() {
+      const type = document.getElementById('businessType').value;
+      const customers = parseInt(document.getElementById('customers').value);
+      const avgTx = parseInt(document.getElementById('avgTransaction').value);
+      const status = document.getElementById('websiteStatus').value;
+      const budget = parseInt(document.getElementById('marketingBudget').value);
+
+      // Update display values
+      document.getElementById('customersVal').textContent = customers.toLocaleString();
+      document.getElementById('avgTransactionVal').textContent = '$' + avgTx;
+      document.getElementById('marketingBudgetVal').textContent = '$' + budget.toLocaleString();
+
+      const data = industryData[type];
+      const mult = statusMultiplier[status];
+
+      // Marketing amplifier (more budget = more potential customers to convert)
+      const marketingAmp = 1 + (budget / 5000) * 0.3;
+
+      // Monthly revenue increase from better web presence
+      const monthlyIncrease = customers * avgTx * data.conversionLift * mult * marketingAmp;
+
+      // Annual projection (with compounding growth from SEO over 12 months)
+      const annualProjection = monthlyIncrease * 12 * 1.15;
+
+      // Lost customers per month without a good website
+      const lostCustomers = Math.round(customers * data.avgLostRate * mult * data.onlineDiscovery);
+
+      // Lost revenue
+      const lostRevenue = lostCustomers * avgTx;
+
+      // Investment & payback
+      const investment = 2250; // midpoint of $1500-$3000
+      const paybackMonths = Math.max(1, Math.ceil(investment / monthlyIncrease));
+
+      // ROI
+      const roi = ((annualProjection - investment) / investment * 100);
+
+      // Update DOM
+      document.getElementById('monthlyIncrease').textContent = fmt(monthlyIncrease);
+      document.getElementById('annualProjection').textContent = fmt(annualProjection);
+      document.getElementById('lostCustomers').textContent = lostCustomers.toLocaleString();
+      document.getElementById('lostRevenue').textContent = fmt(lostRevenue) + '/mo';
+      document.getElementById('paybackPeriod').textContent = paybackMonths <= 1 ? '< 1 mo' : paybackMonths + ' mo';
+      document.getElementById('roiPercent').textContent = Math.round(roi) + '%';
+      document.getElementById('ctaRevenue').textContent = fmt(annualProjection) + '/year';
+
+      // Build chart
+      const chart = document.getElementById('revenueChart');
+      chart.innerHTML = '';
+      for (let i = 1; i <= 12; i++) {
+        const seoGrowth = 1 + (i / 12) * 0.3;
+        const monthRev = monthlyIncrease * seoGrowth;
+        const maxRev = monthlyIncrease * 1.3;
+        const pct = Math.min(100, (monthRev / maxRev) * 100);
+        const bar = document.createElement('div');
+        bar.className = 'chart-bar flex-1 rounded-t';
+        bar.style.height = pct + '%';
+        bar.style.background = i <= paybackMonths
+          ? 'linear-gradient(to top, #C41E3A, #ED1C24)'
+          : 'linear-gradient(to top, #059669, #10B981)';
+        bar.title = `Month ${i}: ${fmt(monthRev)}`;
+        chart.appendChild(bar);
+      }
+    }
+
+    // Bind all inputs
+    document.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('input', calculate);
+      el.addEventListener('change', calculate);
+    });
+
+    // Initial calc
+    calculate();
+  </script>
+</body>
+</html>
