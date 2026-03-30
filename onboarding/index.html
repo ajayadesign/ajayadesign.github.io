@@ -23,7 +23,7 @@
             'surface': '#0A0A0F',
             'surface-card': '#12121A',
             'border-dim': '#1E1E2E',
-            'amd-red': '#ED1C24',
+            'amd-red': '#D41920',
             'amd-red-text': '#FF4654',
             'amd-red-btn': '#C41E3A',
             'electric-blue': '#00D4FF',
@@ -43,11 +43,11 @@
   </script>
   <style>
     body { font-family: 'JetBrains Mono', monospace; background: #0A0A0F; color: #e5e7eb; }
-    .gradient-line { height: 1px; background: linear-gradient(90deg, transparent, #ED1C24, #00D4FF, transparent); }
+    .gradient-line { height: 1px; background: linear-gradient(90deg, transparent, #D41920, #00D4FF, transparent); }
 
     /* Progress bar */
     .progress-track { height: 4px; background: #1E1E2E; border-radius: 2px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, #ED1C24, #00D4FF); border-radius: 2px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #D41920, #00D4FF); border-radius: 2px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
 
     /* Step transitions */
     .step-panel { display: none; animation: stepIn 0.4s ease-out; }
@@ -63,18 +63,18 @@
 
     /* Option cards */
     .option-card { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border: 1px solid #1E1E2E; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
-    .option-card:hover { border-color: #ED1C24; }
-    .option-card:has(input:checked) { border-color: #ED1C24; background: rgba(237,28,36,0.1); }
-    .option-card input { accent-color: #ED1C24; }
+    .option-card:hover { border-color: #D41920; }
+    .option-card:has(input:checked) { border-color: #D41920; background: rgba(237,28,36,0.1); }
+    .option-card input { accent-color: #D41920; }
 
     /* Voice selector */
     .voice-btn { padding: 10px 20px; border: 1px solid #1E1E2E; border-radius: 10px; cursor: pointer; transition: all 0.2s; text-align: center; }
-    .voice-btn:hover { border-color: #ED1C24; }
-    .voice-btn.selected { border-color: #ED1C24; background: rgba(237,28,36,0.1); }
+    .voice-btn:hover { border-color: #D41920; }
+    .voice-btn.selected { border-color: #D41920; background: rgba(237,28,36,0.1); }
 
     /* File upload area */
     .upload-area { border: 2px dashed #1E1E2E; border-radius: 12px; padding: 32px; text-align: center; cursor: pointer; transition: all 0.3s; }
-    .upload-area:hover { border-color: #ED1C24; background: rgba(237,28,36,0.03); }
+    .upload-area:hover { border-color: #D41920; background: rgba(237,28,36,0.03); }
     .upload-area.dragover { border-color: #00D4FF; background: rgba(0,212,255,0.05); }
 
     /* Summary */
@@ -153,7 +153,7 @@
                 <textarea id="ob-target-audience" required class="ob-input" placeholder="Who are your ideal customers? (age range, location, interests)"></textarea>
               </div>
               <div>
-                <label for="ob-competitors" class="block text-sm text-gray-400 mb-1">Competitors <span class="text-gray-400">(optional)</span></label>
+                <label for="ob-competitors" class="block text-sm text-gray-400 mb-1">Competitors <span class="text-gray-300">(optional)</span></label>
                 <textarea id="ob-competitors" class="ob-input" placeholder="List 2-3 competitor websites you admire or compete with"></textarea>
               </div>
             </div>
@@ -164,15 +164,15 @@
             <h2 class="text-xl font-bold text-white mb-6">🎨 Brand Identity</h2>
             <div class="space-y-5">
               <div>
-                <label for="ob-brand-colors" class="block text-sm text-gray-400 mb-1">Brand Colors <span class="text-gray-400">(optional)</span></label>
+                <label for="ob-brand-colors" class="block text-sm text-gray-400 mb-1">Brand Colors <span class="text-gray-300">(optional)</span></label>
                 <input type="text" id="ob-brand-colors" class="ob-input" placeholder="e.g., Navy blue, gold, white — or 'no preference'" />
               </div>
               <div>
-                <label for="ob-fonts" class="block text-sm text-gray-400 mb-1">Font Preferences <span class="text-gray-400">(optional)</span></label>
+                <label for="ob-fonts" class="block text-sm text-gray-400 mb-1">Font Preferences <span class="text-gray-300">(optional)</span></label>
                 <input type="text" id="ob-fonts" class="ob-input" placeholder="e.g., Modern/clean, serif/classic, playful — or 'no preference'" />
               </div>
               <div>
-                <label for="ob-logo-upload" class="block text-sm text-gray-400 mb-2">Logo Upload <span class="text-gray-400">(optional)</span></label>
+                <label for="ob-logo-upload" class="block text-sm text-gray-400 mb-2">Logo Upload <span class="text-gray-300">(optional)</span></label>
                 <div class="upload-area" id="logo-upload-area" role="button" tabindex="0" aria-label="Upload logo file">
                   <input type="file" id="ob-logo-upload" accept="image/*,.svg,.pdf" class="hidden" />
                   <div class="text-gray-400 text-sm">
@@ -233,7 +233,7 @@
                 </div>
               </div>
               <div>
-                <label for="ob-content-notes" class="block text-sm text-gray-400 mb-1">Additional Notes <span class="text-gray-400">(optional)</span></label>
+                <label for="ob-content-notes" class="block text-sm text-gray-400 mb-1">Additional Notes <span class="text-gray-300">(optional)</span></label>
                 <textarea id="ob-content-notes" class="ob-input" placeholder="Any specific pages, features, or content requirements?"></textarea>
               </div>
             </div>
@@ -256,7 +256,7 @@
                 <input type="text" id="ob-domain" class="ob-input" placeholder="e.g., mybusiness.com" />
               </div>
               <div>
-                <label for="ob-hosting" class="block text-sm text-gray-400 mb-1">Hosting Preference <span class="text-gray-400">(optional)</span></label>
+                <label for="ob-hosting" class="block text-sm text-gray-400 mb-1">Hosting Preference <span class="text-gray-300">(optional)</span></label>
                 <select id="ob-hosting" class="ob-input">
                   <option value="">No preference</option>
                   <option>GitHub Pages (free)</option>
@@ -268,7 +268,7 @@
                 </select>
               </div>
               <div>
-                <label for="ob-integrations" class="block text-sm text-gray-400 mb-1">Integrations Needed <span class="text-gray-400">(optional)</span></label>
+                <label for="ob-integrations" class="block text-sm text-gray-400 mb-1">Integrations Needed <span class="text-gray-300">(optional)</span></label>
                 <textarea id="ob-integrations" class="ob-input" placeholder="e.g., Google Calendar, Stripe payments, Mailchimp, social media feeds"></textarea>
               </div>
             </div>
@@ -304,11 +304,11 @@
                 <input type="email" id="ob-email" required class="ob-input" placeholder="you@business.com" />
               </div>
               <div>
-                <label for="ob-phone" class="block text-sm text-gray-400 mb-1">Phone <span class="text-gray-400">(optional)</span></label>
+                <label for="ob-phone" class="block text-sm text-gray-400 mb-1">Phone <span class="text-gray-300">(optional)</span></label>
                 <input type="tel" id="ob-phone" class="ob-input" placeholder="(512) 555-1234" />
               </div>
               <div>
-                <label for="ob-anything-else" class="block text-sm text-gray-400 mb-1">Anything else we should know? <span class="text-gray-400">(optional)</span></label>
+                <label for="ob-anything-else" class="block text-sm text-gray-400 mb-1">Anything else we should know? <span class="text-gray-300">(optional)</span></label>
                 <textarea id="ob-anything-else" class="ob-input" placeholder="Special requests, deadlines, inspirations..."></textarea>
               </div>
             </div>
@@ -383,7 +383,7 @@
     GOALS.forEach(g => {
       const label = document.createElement('label');
       label.className = 'option-card';
-      label.innerHTML = `<input type="checkbox" value="${g.id}" name="goals" class="accent-[#ED1C24]" /><span class="text-gray-300 text-sm">${g.icon} ${g.label}</span>`;
+      label.innerHTML = `<input type="checkbox" value="${g.id}" name="goals" class="accent-[#D41920]" /><span class="text-gray-300 text-sm">${g.icon} ${g.label}</span>`;
       goalsList.appendChild(label);
     });
 

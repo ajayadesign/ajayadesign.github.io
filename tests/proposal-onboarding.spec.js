@@ -230,8 +230,8 @@ test.describe('Client Onboarding', () => {
     await page.selectOption('#ob-industry', 'Other');
     await page.fill('#ob-target-audience', 'Everyone');
 
-    // Navigate to step 6 and fill required fields
-    for (let i = 0; i < 4; i++) await page.click('#next-btn');
+    // Navigate to step 6 (Timeline & Budget) and fill required fields
+    for (let i = 0; i < 5; i++) await page.click('#next-btn');
     // Step 6
     await page.selectOption('#ob-timeline', 'Within 1 month');
     await page.selectOption('#ob-budget', '$1,500 – $2,500');

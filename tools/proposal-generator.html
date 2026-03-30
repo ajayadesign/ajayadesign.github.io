@@ -23,7 +23,7 @@
             'surface': '#0A0A0F',
             'surface-card': '#12121A',
             'border-dim': '#1E1E2E',
-            'amd-red': '#ED1C24',
+            'amd-red': '#D41920',
             'amd-red-text': '#FF4654',
             'amd-red-btn': '#C41E3A',
             'electric-blue': '#00D4FF',
@@ -43,7 +43,7 @@
   </script>
   <style>
     body { font-family: 'JetBrains Mono', monospace; background: #0A0A0F; color: #e5e7eb; }
-    .gradient-line { height: 1px; background: linear-gradient(90deg, transparent, #ED1C24, #00D4FF, transparent); }
+    .gradient-line { height: 1px; background: linear-gradient(90deg, transparent, #D41920, #00D4FF, transparent); }
 
     /* Proposal preview — white/clean theme */
     #proposal-preview {
@@ -54,16 +54,16 @@
 
     /* Tier cards */
     .tier-card { border: 2px solid #e5e7eb; border-radius: 12px; padding: 24px; transition: all 0.3s; cursor: pointer; }
-    .tier-card:hover { border-color: #ED1C24; transform: translateY(-2px); }
-    .tier-card.selected { border-color: #ED1C24; background: rgba(237,28,36,0.05); }
+    .tier-card:hover { border-color: #D41920; transform: translateY(-2px); }
+    .tier-card.selected { border-color: #D41920; background: rgba(237,28,36,0.05); }
     .tier-card.recommended { border-color: #00D4FF; position: relative; }
     .tier-card.recommended::before { content: 'RECOMMENDED'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #00D4FF; color: #0A0A0F; font-size: 10px; font-weight: 700; padding: 2px 12px; border-radius: 20px; letter-spacing: 1px; }
 
     /* Feature checkboxes */
     .feature-check { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #1E1E2E; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
-    .feature-check:hover { border-color: #ED1C24; background: rgba(237,28,36,0.05); }
+    .feature-check:hover { border-color: #D41920; background: rgba(237,28,36,0.05); }
     .feature-check input:checked + span { color: #fff; }
-    .feature-check:has(input:checked) { border-color: #ED1C24; background: rgba(237,28,36,0.1); }
+    .feature-check:has(input:checked) { border-color: #D41920; background: rgba(237,28,36,0.1); }
 
     /* Print styles */
     @media print {
@@ -139,7 +139,7 @@
                 <input type="email" id="pg-email" required class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white focus:border-electric-blue focus:outline-none transition" placeholder="jane@acme.com" />
               </div>
               <div class="md:col-span-2">
-                <label for="pg-current-site" class="block text-sm text-gray-400 mb-1">Current Website <span class="text-gray-400">(optional)</span></label>
+                <label for="pg-current-site" class="block text-sm text-gray-400 mb-1">Current Website <span class="text-gray-300">(optional)</span></label>
                 <input type="url" id="pg-current-site" class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white focus:border-electric-blue focus:outline-none transition" placeholder="https://example.com" />
               </div>
             </div>
@@ -202,7 +202,7 @@
           <div class="bg-gradient-to-r from-[#0A0A0F] to-[#1a1a2e] text-white p-10 md:p-14">
             <div class="flex items-center justify-between mb-8">
               <div>
-                <span class="inline-block w-3 h-3 rounded-full bg-[#ED1C24] mr-2" aria-hidden="true"></span>
+                <span class="inline-block w-3 h-3 rounded-full bg-[#D41920] mr-2" aria-hidden="true"></span>
                 <span class="font-bold text-xl tracking-tight">Ajaya<span class="text-[#FF4654]">Design</span></span>
               </div>
               <div class="text-right text-sm text-gray-400">
@@ -219,13 +219,13 @@
           <div class="p-8 md:p-14 space-y-10">
             <!-- Project Overview -->
             <section>
-              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#ED1C24] pb-2 mb-4">Project Overview</h3>
+              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#D41920] pb-2 mb-4">Project Overview</h3>
               <p id="prop-overview" class="text-gray-400 leading-relaxed">—</p>
             </section>
 
             <!-- Recommended Features -->
             <section>
-              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#ED1C24] pb-2 mb-4">Recommended Features</h3>
+              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#D41920] pb-2 mb-4">Recommended Features</h3>
               <div id="prop-features" class="grid md:grid-cols-2 gap-4">
                 <!-- filled by JS -->
               </div>
@@ -233,7 +233,7 @@
 
             <!-- Pricing -->
             <section>
-              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#ED1C24] pb-2 mb-4">Investment</h3>
+              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#D41920] pb-2 mb-4">Investment</h3>
               <div id="prop-pricing" class="bg-gray-50 rounded-xl p-6">
                 <!-- filled by JS -->
               </div>
@@ -241,7 +241,7 @@
 
             <!-- Timeline -->
             <section>
-              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#ED1C24] pb-2 mb-4">Estimated Timeline</h3>
+              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#D41920] pb-2 mb-4">Estimated Timeline</h3>
               <div id="prop-timeline" class="space-y-3">
                 <!-- filled by JS -->
               </div>
@@ -249,7 +249,7 @@
 
             <!-- What's Included -->
             <section>
-              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#ED1C24] pb-2 mb-4">What's Included</h3>
+              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#D41920] pb-2 mb-4">What's Included</h3>
               <ul id="prop-included" class="grid md:grid-cols-2 gap-2 text-gray-400">
                 <!-- filled by JS -->
               </ul>
@@ -257,7 +257,7 @@
 
             <!-- Portfolio -->
             <section>
-              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#ED1C24] pb-2 mb-4">Our Work</h3>
+              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#D41920] pb-2 mb-4">Our Work</h3>
               <p class="text-gray-400 mb-4">We've built high-performance websites for businesses across industries. Here are a few highlights:</p>
               <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div class="bg-gray-100 rounded-lg p-4 text-center">
@@ -277,21 +277,21 @@
                   <div class="text-xs text-gray-400">Wellness Studio</div>
                 </div>
               </div>
-              <p class="text-sm text-gray-400 mt-3">View our full portfolio at <a href="https://ajayadesign.github.io/works/" class="text-[#ED1C24] underline">ajayadesign.github.io/works</a></p>
+              <p class="text-sm text-gray-400 mt-3">View our full portfolio at <a href="https://ajayadesign.github.io/works/" class="text-[#D41920] underline">ajayadesign.github.io/works</a></p>
             </section>
 
             <!-- CTA -->
             <section class="bg-gradient-to-r from-[#0A0A0F] to-[#1a1a2e] text-white rounded-xl p-8 text-center">
               <h3 class="text-2xl font-bold mb-2">Ready to Get Started?</h3>
               <p class="text-gray-300 mb-4">Let's build something exceptional for <span id="prop-business-cta">your business</span>.</p>
-              <a href="/contact/" class="inline-block bg-[#ED1C24] hover:bg-[#C41E3A] text-white font-bold py-3 px-10 rounded-xl transition">Start Your Project →</a>
+              <a href="/contact/" class="inline-block bg-[#D41920] hover:bg-[#C41E3A] text-white font-bold py-3 px-10 rounded-xl transition">Start Your Project →</a>
             </section>
           </div>
 
           <!-- Footer -->
           <div class="bg-gray-50 px-8 md:px-14 py-6 text-center text-sm text-gray-400">
             <p>This proposal is valid for 30 days from the date above.</p>
-            <p class="mt-1">© <span id="prop-year">2026</span> AjayaDesign · Austin, Texas · <a href="https://ajayadesign.github.io" class="text-[#ED1C24]">ajayadesign.github.io</a></p>
+            <p class="mt-1">© <span id="prop-year">2026</span> AjayaDesign · Austin, Texas · <a href="https://ajayadesign.github.io" class="text-[#D41920]">ajayadesign.github.io</a></p>
           </div>
         </div>
       </section>
@@ -351,7 +351,7 @@
     FEATURES.forEach(f => {
       const label = document.createElement('label');
       label.className = 'feature-check text-sm';
-      label.innerHTML = `<input type="checkbox" value="${f.id}" name="features" class="accent-[#ED1C24]" /><span class="text-gray-300">${f.icon} ${f.label}</span>`;
+      label.innerHTML = `<input type="checkbox" value="${f.id}" name="features" class="accent-[#D41920]" /><span class="text-gray-300">${f.icon} ${f.label}</span>`;
       featGrid.appendChild(label);
     });
 
@@ -420,7 +420,7 @@
       document.getElementById('prop-year').textContent = new Date().getFullYear();
 
       // Overview
-      const hasExisting = currentSite ? `We'll analyze your current site at ${currentSite} and build upon what works while addressing key areas for improvement.` : 'We'll create a brand-new digital presence from the ground up.';
+      const hasExisting = currentSite ? `We'll analyze your current site at ${currentSite} and build upon what works while addressing key areas for improvement.` : `We'll create a brand-new digital presence from the ground up.`;
       document.getElementById('prop-overview').innerHTML = `
         <strong>${contactName}</strong>, thank you for considering AjayaDesign for your <strong>${bizType.toLowerCase()}</strong> website project.
         ${hasExisting}<br><br>
@@ -444,14 +444,14 @@
             <div class="font-bold text-xl text-[#1a1a2e]">${tier.name} Package</div>
             <div class="text-sm text-gray-400">${tier.pages} · ${tier.revisions} revisions</div>
           </div>
-          <div class="text-3xl font-bold text-[#ED1C24]">${tier.priceLabel}</div>
+          <div class="text-3xl font-bold text-[#D41920]">${tier.priceLabel}</div>
         </div>
         <div class="text-sm text-gray-400">
           <div class="flex justify-between py-2 border-b border-gray-200"><span>Design & Development</span><span class="font-semibold text-[#1a1a2e]">Included</span></div>
           <div class="flex justify-between py-2 border-b border-gray-200"><span>SEO & Analytics Setup</span><span class="font-semibold text-[#1a1a2e]">Included</span></div>
           <div class="flex justify-between py-2 border-b border-gray-200"><span>Mobile Optimization</span><span class="font-semibold text-[#1a1a2e]">Included</span></div>
           <div class="flex justify-between py-2 border-b border-gray-200"><span>Post-Launch Support (30 days)</span><span class="font-semibold text-[#1a1a2e]">Included</span></div>
-          <div class="flex justify-between py-2 font-bold text-[#1a1a2e] text-base"><span>Total Investment</span><span class="text-[#ED1C24]">${tier.priceLabel}</span></div>
+          <div class="flex justify-between py-2 font-bold text-[#1a1a2e] text-base"><span>Total Investment</span><span class="text-[#D41920]">${tier.priceLabel}</span></div>
         </div>
       `;
 
@@ -465,7 +465,7 @@
       ];
       document.getElementById('prop-timeline').innerHTML = phases.map((p, i) => `
         <div class="flex gap-4 items-start">
-          <div class="w-8 h-8 rounded-full bg-[#ED1C24] text-white flex items-center justify-center text-sm font-bold flex-shrink-0">${i + 1}</div>
+          <div class="w-8 h-8 rounded-full bg-[#D41920] text-white flex items-center justify-center text-sm font-bold flex-shrink-0">${i + 1}</div>
           <div>
             <div class="font-semibold text-[#1a1a2e]">${p.phase} <span class="text-sm text-gray-400 font-normal">— ${p.duration}</span></div>
             <div class="text-sm text-gray-400">${p.desc}</div>
@@ -475,7 +475,7 @@
 
       // What's included
       document.getElementById('prop-included').innerHTML = INCLUDED_ALWAYS.map(item => `
-        <li class="flex items-center gap-2"><span class="text-[#ED1C24]" aria-hidden="true">✓</span> ${item}</li>
+        <li class="flex items-center gap-2"><span class="text-[#D41920]" aria-hidden="true">✓</span> ${item}</li>
       `).join('');
 
       // Show proposal
@@ -536,7 +536,7 @@
         console.warn('Firebase email save failed:', err);
       }
       document.getElementById('email-modal').classList.add('hidden');
-      alert('Proposal link saved! We'll send it to ' + email + ' shortly.');
+      alert(`Proposal link saved! We'll send it to ${email} shortly.`);
     });
 
   })();
