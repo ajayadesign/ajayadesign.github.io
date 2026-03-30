@@ -1285,12 +1285,13 @@
       if (refId) localStorage.setItem('ad3d_ref', refId);
     })();
 
-    // Countdown timer — 2 days from first visit (persisted in localStorage)
+    // Countdown timer — 5 days from first visit (persisted in localStorage)
     (function() {
-      const STORAGE_KEY = 'ad3d_launch_end';
+      const STORAGE_KEY = 'ad3d_launch_end_v2';
+      localStorage.removeItem('ad3d_launch_end'); // clear old timer
       let endTime = localStorage.getItem(STORAGE_KEY);
       if (!endTime) {
-        endTime = Date.now() + 2 * 24 * 60 * 60 * 1000; // 2 days from now
+        endTime = Date.now() + 5 * 24 * 60 * 60 * 1000; // 5 days from now
         localStorage.setItem(STORAGE_KEY, endTime);
       }
       endTime = parseInt(endTime, 10);
