@@ -69,6 +69,22 @@
       "referrers": { "$date": { "$ref":  { ".validate": "newData.isNumber()" } } }
     },
 
+    "chat-leads": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      "$leadId": {
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['email','timestamp']) && newData.child('email').isString()"
+      }
+    },
+
+    "exit-intent-leads": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      "$leadId": {
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['email','timestamp']) && newData.child('email').isString()"
+      }
+    },
+
     "leads": {
       ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
       "$leadId": {
