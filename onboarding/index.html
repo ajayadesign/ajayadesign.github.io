@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Onboarding | AjayaDesign — Let's Build Something Great</title>
+  <meta name="description" content="Start your project with AjayaDesign. Complete this questionnaire so we can understand your vision and deliver exactly what you need." />
+  <meta name="robots" content="index, follow" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://ajayadesign.github.io/onboarding/" />
+
+  <meta property="og:title" content="Client Onboarding | AjayaDesign" />
+  <meta property="og:description" content="Start your project with AjayaDesign. Tell us about your business and vision." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/onboarding/" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'surface': '#0A0A0F',
+            'surface-card': '#12121A',
+            'border-dim': '#1E1E2E',
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF4654',
+            'amd-red-btn': '#C41E3A',
+            'electric-blue': '#00D4FF',
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-database-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script>
+    window.__firebase = firebase.initializeApp(window.__firebaseConfig);
+    window.__db = firebase.database();
+  </script>
+  <style>
+    body { font-family: 'JetBrains Mono', monospace; background: #0A0A0F; color: #e5e7eb; }
+    .gradient-line { height: 1px; background: linear-gradient(90deg, transparent, #ED1C24, #00D4FF, transparent); }
+
+    /* Progress bar */
+    .progress-track { height: 4px; background: #1E1E2E; border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #ED1C24, #00D4FF); border-radius: 2px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+    /* Step transitions */
+    .step-panel { display: none; animation: stepIn 0.4s ease-out; }
+    .step-panel.active { display: block; }
+    @keyframes stepIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+    /* Input styles */
+    .ob-input { width: 100%; background: #0A0A0F; border: 1px solid #1E1E2E; border-radius: 0.5rem; padding: 0.75rem 1rem; color: #fff; transition: border-color 0.2s; }
+    .ob-input:focus { border-color: #00D4FF; outline: none; }
+    .ob-input::placeholder { color: rgba(255,255,255,0.3); }
+    select.ob-input { appearance: auto; }
+    textarea.ob-input { resize: vertical; min-height: 80px; }
+
+    /* Option cards */
+    .option-card { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border: 1px solid #1E1E2E; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+    .option-card:hover { border-color: #ED1C24; }
+    .option-card:has(input:checked) { border-color: #ED1C24; background: rgba(237,28,36,0.1); }
+    .option-card input { accent-color: #ED1C24; }
+
+    /* Voice selector */
+    .voice-btn { padding: 10px 20px; border: 1px solid #1E1E2E; border-radius: 10px; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .voice-btn:hover { border-color: #ED1C24; }
+    .voice-btn.selected { border-color: #ED1C24; background: rgba(237,28,36,0.1); }
+
+    /* File upload area */
+    .upload-area { border: 2px dashed #1E1E2E; border-radius: 12px; padding: 32px; text-align: center; cursor: pointer; transition: all 0.3s; }
+    .upload-area:hover { border-color: #ED1C24; background: rgba(237,28,36,0.03); }
+    .upload-area.dragover { border-color: #00D4FF; background: rgba(0,212,255,0.05); }
+
+    /* Summary */
+    .summary-section { background: #12121A; border: 1px solid #1E1E2E; border-radius: 12px; padding: 20px; margin-bottom: 12px; }
+    .summary-label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .summary-value { color: #fff; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <a href="/" class="flex items-center gap-2 group" aria-label="AjayaDesign Home">
+        <span class="inline-block w-3 h-3 rounded-full bg-amd-red animate-pulse" aria-hidden="true"></span>
+        <span class="font-bold text-white text-lg tracking-tight">Ajaya<span class="text-amd-red-text">Design</span></span>
+      </a>
+      <div class="flex items-center gap-6 text-sm">
+        <a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a>
+        <a href="/works/" class="text-gray-400 hover:text-white transition-colors">Works</a>
+        <a href="/contact/" class="text-gray-400 hover:text-white transition-colors">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pt-24 pb-20 px-4">
+    <div class="max-w-3xl mx-auto">
+
+      <!-- HEADER -->
+      <div class="text-center mb-8">
+        <p class="text-xs tracking-widest uppercase text-amd-red-text mb-3">// Client Onboarding</p>
+        <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">Let's Build Something <span class="text-amd-red-text">Great</span></h1>
+        <p class="text-gray-400 max-w-xl mx-auto">Complete this questionnaire so we understand your business, vision, and goals. Takes about 5 minutes.</p>
+      </div>
+
+      <!-- PROGRESS -->
+      <div class="mb-8">
+        <div class="flex justify-between text-xs text-gray-500 mb-2">
+          <span id="step-label">Step 1 of 6 — Business Info</span>
+          <span id="step-pct">17%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-bar" style="width:17%"></div>
+        </div>
+        <div class="flex justify-between mt-2">
+          <div class="flex gap-1" id="step-dots">
+            <!-- filled by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <form id="onboarding-form" novalidate>
+        <div class="bg-surface-card border border-border-dim rounded-2xl p-6 md:p-10">
+
+          <!-- STEP 1: Business Info -->
+          <div class="step-panel active" data-step="1">
+            <h2 class="text-xl font-bold text-white mb-6">📋 Business Information</h2>
+            <div class="space-y-4">
+              <div>
+                <label for="ob-biz-name" class="block text-sm text-gray-400 mb-1">Business Name <span class="text-amd-red-text">*</span></label>
+                <input type="text" id="ob-biz-name" required class="ob-input" placeholder="Your Business Name" />
+              </div>
+              <div>
+                <label for="ob-industry" class="block text-sm text-gray-400 mb-1">Industry <span class="text-amd-red-text">*</span></label>
+                <select id="ob-industry" required class="ob-input">
+                  <option value="">Select your industry...</option>
+                  <option>Local Service</option><option>E-Commerce / Retail</option><option>Restaurant / Food</option>
+                  <option>Real Estate</option><option>Healthcare / Wellness</option><option>Tech / SaaS</option>
+                  <option>Creative / Portfolio</option><option>Nonprofit</option><option>Education</option>
+                  <option>Construction / Trades</option><option>Legal</option><option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label for="ob-target-audience" class="block text-sm text-gray-400 mb-1">Target Audience <span class="text-amd-red-text">*</span></label>
+                <textarea id="ob-target-audience" required class="ob-input" placeholder="Who are your ideal customers? (age range, location, interests)"></textarea>
+              </div>
+              <div>
+                <label for="ob-competitors" class="block text-sm text-gray-400 mb-1">Competitors <span class="text-gray-600">(optional)</span></label>
+                <textarea id="ob-competitors" class="ob-input" placeholder="List 2-3 competitor websites you admire or compete with"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: Brand Identity -->
+          <div class="step-panel" data-step="2">
+            <h2 class="text-xl font-bold text-white mb-6">🎨 Brand Identity</h2>
+            <div class="space-y-5">
+              <div>
+                <label for="ob-brand-colors" class="block text-sm text-gray-400 mb-1">Brand Colors <span class="text-gray-600">(optional)</span></label>
+                <input type="text" id="ob-brand-colors" class="ob-input" placeholder="e.g., Navy blue, gold, white — or 'no preference'" />
+              </div>
+              <div>
+                <label for="ob-fonts" class="block text-sm text-gray-400 mb-1">Font Preferences <span class="text-gray-600">(optional)</span></label>
+                <input type="text" id="ob-fonts" class="ob-input" placeholder="e.g., Modern/clean, serif/classic, playful — or 'no preference'" />
+              </div>
+              <div>
+                <label for="ob-logo-upload" class="block text-sm text-gray-400 mb-2">Logo Upload <span class="text-gray-600">(optional)</span></label>
+                <div class="upload-area" id="logo-upload-area" role="button" tabindex="0" aria-label="Upload logo file">
+                  <input type="file" id="ob-logo-upload" accept="image/*,.svg,.pdf" class="hidden" />
+                  <div class="text-gray-500 text-sm">
+                    <span class="text-2xl block mb-2" aria-hidden="true">📁</span>
+                    <span>Drop your logo here or <span class="text-amd-red-text underline">browse</span></span>
+                    <div class="text-xs text-gray-600 mt-1">PNG, JPG, SVG, or PDF · Max 5MB</div>
+                  </div>
+                  <div id="logo-preview" class="hidden mt-3 text-sm text-electric-blue"></div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm text-gray-400 mb-2">Brand Voice <span class="text-amd-red-text">*</span></label>
+                <div class="grid grid-cols-3 gap-3" id="voice-selector" role="radiogroup" aria-label="Select brand voice">
+                  <div class="voice-btn" data-voice="professional" role="radio" aria-checked="false" tabindex="0">
+                    <div class="text-lg mb-1" aria-hidden="true">👔</div>
+                    <div class="text-sm text-white">Professional</div>
+                  </div>
+                  <div class="voice-btn" data-voice="casual" role="radio" aria-checked="false" tabindex="0">
+                    <div class="text-lg mb-1" aria-hidden="true">😊</div>
+                    <div class="text-sm text-white">Casual</div>
+                  </div>
+                  <div class="voice-btn" data-voice="fun" role="radio" aria-checked="false" tabindex="0">
+                    <div class="text-lg mb-1" aria-hidden="true">🎉</div>
+                    <div class="text-sm text-white">Fun</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: Website Goals -->
+          <div class="step-panel" data-step="3">
+            <h2 class="text-xl font-bold text-white mb-6">🎯 Website Goals</h2>
+            <p class="text-sm text-gray-400 mb-4">What should your website accomplish? Select all that apply.</p>
+            <div class="space-y-3" id="goals-list" role="group" aria-label="Select website goals">
+              <!-- filled by JS -->
+            </div>
+          </div>
+
+          <!-- STEP 4: Content -->
+          <div class="step-panel" data-step="4">
+            <h2 class="text-xl font-bold text-white mb-6">📸 Content & Assets</h2>
+            <div class="space-y-5">
+              <div>
+                <label class="block text-sm text-gray-400 mb-2">Do you have photos for the website?</label>
+                <div class="grid grid-cols-3 gap-3" id="photos-selector" role="radiogroup" aria-label="Photo availability">
+                  <div class="voice-btn" data-val="yes" role="radio" aria-checked="false" tabindex="0"><div class="text-sm text-white">Yes, ready</div></div>
+                  <div class="voice-btn" data-val="some" role="radio" aria-checked="false" tabindex="0"><div class="text-sm text-white">Some</div></div>
+                  <div class="voice-btn" data-val="need-help" role="radio" aria-checked="false" tabindex="0"><div class="text-sm text-white">Need help</div></div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm text-gray-400 mb-2">Do you have written content (copy)?</label>
+                <div class="grid grid-cols-3 gap-3" id="copy-selector" role="radiogroup" aria-label="Copy availability">
+                  <div class="voice-btn" data-val="yes" role="radio" aria-checked="false" tabindex="0"><div class="text-sm text-white">Yes, ready</div></div>
+                  <div class="voice-btn" data-val="some" role="radio" aria-checked="false" tabindex="0"><div class="text-sm text-white">Some</div></div>
+                  <div class="voice-btn" data-val="need-help" role="radio" aria-checked="false" tabindex="0"><div class="text-sm text-white">Need help</div></div>
+                </div>
+              </div>
+              <div>
+                <label for="ob-content-notes" class="block text-sm text-gray-400 mb-1">Additional Notes <span class="text-gray-600">(optional)</span></label>
+                <textarea id="ob-content-notes" class="ob-input" placeholder="Any specific pages, features, or content requirements?"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 5: Technical -->
+          <div class="step-panel" data-step="5">
+            <h2 class="text-xl font-bold text-white mb-6">⚙️ Technical Details</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm text-gray-400 mb-2">Do you own a domain name?</label>
+                <div class="grid grid-cols-3 gap-3" id="domain-selector" role="radiogroup" aria-label="Domain ownership">
+                  <div class="voice-btn" data-val="yes" role="radio" aria-checked="false" tabindex="0"><div class="text-sm text-white">Yes</div></div>
+                  <div class="voice-btn" data-val="no" role="radio" aria-checked="false" tabindex="0"><div class="text-sm text-white">No</div></div>
+                  <div class="voice-btn" data-val="need-help" role="radio" aria-checked="false" tabindex="0"><div class="text-sm text-white">Need help</div></div>
+                </div>
+              </div>
+              <div>
+                <label for="ob-domain" class="block text-sm text-gray-400 mb-1">Domain Name <span class="text-gray-600">(if owned)</span></label>
+                <input type="text" id="ob-domain" class="ob-input" placeholder="e.g., mybusiness.com" />
+              </div>
+              <div>
+                <label for="ob-hosting" class="block text-sm text-gray-400 mb-1">Hosting Preference <span class="text-gray-600">(optional)</span></label>
+                <select id="ob-hosting" class="ob-input">
+                  <option value="">No preference</option>
+                  <option>GitHub Pages (free)</option>
+                  <option>Netlify</option>
+                  <option>Vercel</option>
+                  <option>AWS / Cloud</option>
+                  <option>Shared Hosting (GoDaddy, Bluehost, etc.)</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label for="ob-integrations" class="block text-sm text-gray-400 mb-1">Integrations Needed <span class="text-gray-600">(optional)</span></label>
+                <textarea id="ob-integrations" class="ob-input" placeholder="e.g., Google Calendar, Stripe payments, Mailchimp, social media feeds"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 6: Timeline & Budget -->
+          <div class="step-panel" data-step="6">
+            <h2 class="text-xl font-bold text-white mb-6">📅 Timeline & Budget</h2>
+            <div class="space-y-4">
+              <div>
+                <label for="ob-timeline" class="block text-sm text-gray-400 mb-1">When do you need the website? <span class="text-amd-red-text">*</span></label>
+                <select id="ob-timeline" required class="ob-input">
+                  <option value="">Select...</option>
+                  <option>ASAP (within 2 weeks)</option>
+                  <option>Within 1 month</option>
+                  <option>Within 2-3 months</option>
+                  <option>No rush — just exploring</option>
+                </select>
+              </div>
+              <div>
+                <label for="ob-budget" class="block text-sm text-gray-400 mb-1">Budget Range <span class="text-amd-red-text">*</span></label>
+                <select id="ob-budget" required class="ob-input">
+                  <option value="">Select...</option>
+                  <option>Under $1,500</option>
+                  <option>$1,500 – $2,500</option>
+                  <option>$2,500 – $4,000</option>
+                  <option>$4,000+</option>
+                  <option>Not sure yet</option>
+                </select>
+              </div>
+              <div>
+                <label for="ob-email" class="block text-sm text-gray-400 mb-1">Email Address <span class="text-amd-red-text">*</span></label>
+                <input type="email" id="ob-email" required class="ob-input" placeholder="you@business.com" />
+              </div>
+              <div>
+                <label for="ob-phone" class="block text-sm text-gray-400 mb-1">Phone <span class="text-gray-600">(optional)</span></label>
+                <input type="tel" id="ob-phone" class="ob-input" placeholder="(512) 555-1234" />
+              </div>
+              <div>
+                <label for="ob-anything-else" class="block text-sm text-gray-400 mb-1">Anything else we should know? <span class="text-gray-600">(optional)</span></label>
+                <textarea id="ob-anything-else" class="ob-input" placeholder="Special requests, deadlines, inspirations..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 7: Summary (review) -->
+          <div class="step-panel" data-step="7">
+            <h2 class="text-xl font-bold text-white mb-6">✅ Review Your Answers</h2>
+            <div id="summary-container">
+              <!-- filled by JS -->
+            </div>
+          </div>
+
+          <!-- NAV BUTTONS -->
+          <div class="flex justify-between mt-8">
+            <button type="button" id="prev-btn" class="hidden px-6 py-3 border border-border-dim text-gray-400 rounded-xl hover:text-white hover:border-gray-500 transition">
+              ← Back
+            </button>
+            <div class="ml-auto flex gap-3">
+              <button type="button" id="next-btn" class="bg-amd-red hover:bg-amd-red-btn text-white font-bold py-3 px-8 rounded-xl transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amd-red focus:ring-offset-2 focus:ring-offset-surface-card">
+                Next →
+              </button>
+              <button type="submit" id="submit-btn" class="hidden bg-gradient-to-r from-amd-red to-electric-blue text-white font-bold py-3 px-8 rounded-xl transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-electric-blue focus:ring-offset-2 focus:ring-offset-surface-card">
+                Submit Questionnaire
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </form>
+
+      <!-- SUCCESS STATE -->
+      <div id="success-state" class="hidden text-center py-16">
+        <div class="text-6xl mb-4" aria-hidden="true">🎉</div>
+        <h2 class="text-3xl font-bold text-white mb-4">You're All Set!</h2>
+        <p class="text-gray-400 mb-6 max-w-lg mx-auto">Thank you for completing the onboarding questionnaire. We'll review your answers and reach out within 24 hours to kick off your project.</p>
+        <div class="bg-surface-card border border-border-dim rounded-xl p-6 max-w-md mx-auto mb-6">
+          <p class="text-sm text-gray-400 mb-2">Your submission ID:</p>
+          <p class="text-xl font-bold text-electric-blue font-mono" id="success-id">—</p>
+        </div>
+        <a href="/" class="inline-block bg-amd-red hover:bg-amd-red-btn text-white font-bold py-3 px-8 rounded-xl transition">Back to Home</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+  (function() {
+    'use strict';
+
+    const TOTAL_STEPS = 7;
+    let currentStep = 1;
+
+    const STEP_LABELS = [
+      'Business Info', 'Brand Identity', 'Website Goals',
+      'Content', 'Technical', 'Timeline & Budget', 'Review'
+    ];
+
+    const GOALS = [
+      { id: 'lead-gen', label: 'Lead Generation', icon: '🎯' },
+      { id: 'ecommerce', label: 'E-Commerce / Online Sales', icon: '🛒' },
+      { id: 'portfolio', label: 'Portfolio / Showcase', icon: '🖼️' },
+      { id: 'booking', label: 'Booking / Appointments', icon: '📅' },
+      { id: 'info', label: 'Information / Brochure', icon: '📄' },
+      { id: 'blog', label: 'Blog / Content Marketing', icon: '📝' },
+      { id: 'community', label: 'Community / Membership', icon: '👥' },
+      { id: 'brand', label: 'Brand Awareness', icon: '🌟' },
+    ];
+
+    /* ── INIT GOALS ── */
+    const goalsList = document.getElementById('goals-list');
+    GOALS.forEach(g => {
+      const label = document.createElement('label');
+      label.className = 'option-card';
+      label.innerHTML = `<input type="checkbox" value="${g.id}" name="goals" class="accent-[#ED1C24]" /><span class="text-gray-300 text-sm">${g.icon} ${g.label}</span>`;
+      goalsList.appendChild(label);
+    });
+
+    /* ── INIT STEP DOTS ── */
+    const dotsContainer = document.getElementById('step-dots');
+    for (let i = 1; i <= TOTAL_STEPS; i++) {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'w-8 h-1 rounded-full transition-all ' + (i === 1 ? 'bg-amd-red' : 'bg-border-dim');
+      dot.setAttribute('aria-label', `Go to step ${i}: ${STEP_LABELS[i-1]}`);
+      dot.dataset.step = i;
+      dot.addEventListener('click', () => { if (i <= currentStep) goToStep(i); });
+      dotsContainer.appendChild(dot);
+    }
+
+    /* ── VOICE SELECTOR (radio groups) ── */
+    function setupRadioGroup(containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      const btns = container.querySelectorAll('.voice-btn');
+      btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          btns.forEach(b => { b.classList.remove('selected'); b.setAttribute('aria-checked', 'false'); });
+          btn.classList.add('selected');
+          btn.setAttribute('aria-checked', 'true');
+        });
+        btn.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
+        });
+      });
+    }
+    ['voice-selector', 'photos-selector', 'copy-selector', 'domain-selector'].forEach(setupRadioGroup);
+
+    /* ── FILE UPLOAD ── */
+    const uploadArea = document.getElementById('logo-upload-area');
+    const fileInput = document.getElementById('ob-logo-upload');
+    const logoPreview = document.getElementById('logo-preview');
+    let logoBase64 = null;
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+    uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+    uploadArea.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFile(fileInput.files[0]); });
+
+    function handleFile(file) {
+      if (file.size > 5 * 1024 * 1024) { alert('File too large. Max 5MB.'); return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        logoBase64 = reader.result;
+        logoPreview.textContent = '✓ ' + file.name;
+        logoPreview.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /* ── NAVIGATION ── */
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const submitBtn = document.getElementById('submit-btn');
+
+    function goToStep(step) {
+      currentStep = step;
+      document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+      document.querySelector(`.step-panel[data-step="${step}"]`).classList.add('active');
+
+      // Update progress
+      const pct = Math.round((step / TOTAL_STEPS) * 100);
+      document.getElementById('progress-bar').style.width = pct + '%';
+      document.getElementById('step-pct').textContent = pct + '%';
+      document.getElementById('step-label').textContent = `Step ${step} of ${TOTAL_STEPS} — ${STEP_LABELS[step - 1]}`;
+
+      // Update dots
+      dotsContainer.querySelectorAll('button').forEach((d, i) => {
+        d.className = 'w-8 h-1 rounded-full transition-all ' + (i + 1 <= step ? 'bg-amd-red' : 'bg-border-dim');
+      });
+
+      // Button visibility
+      prevBtn.classList.toggle('hidden', step === 1);
+      nextBtn.classList.toggle('hidden', step === TOTAL_STEPS);
+      submitBtn.classList.toggle('hidden', step !== TOTAL_STEPS);
+
+      // If summary step, build summary
+      if (step === TOTAL_STEPS) buildSummary();
+
+      // Scroll to top of form
+      document.querySelector('.step-panel.active').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    nextBtn.addEventListener('click', () => {
+      if (currentStep < TOTAL_STEPS) goToStep(currentStep + 1);
+    });
+    prevBtn.addEventListener('click', () => {
+      if (currentStep > 1) goToStep(currentStep - 1);
+    });
+
+    /* ── COLLECT DATA ── */
+    function getSelectedRadio(containerId) {
+      const sel = document.querySelector(`#${containerId} .voice-btn.selected`);
+      return sel ? (sel.dataset.voice || sel.dataset.val || '') : '';
+    }
+
+    function collectData() {
+      return {
+        businessName: document.getElementById('ob-biz-name').value.trim(),
+        industry: document.getElementById('ob-industry').value,
+        targetAudience: document.getElementById('ob-target-audience').value.trim(),
+        competitors: document.getElementById('ob-competitors').value.trim(),
+        brandColors: document.getElementById('ob-brand-colors').value.trim(),
+        fonts: document.getElementById('ob-fonts').value.trim(),
+        brandVoice: getSelectedRadio('voice-selector'),
+        hasLogo: !!logoBase64,
+        goals: Array.from(document.querySelectorAll('#goals-list input:checked')).map(cb => cb.value),
+        photos: getSelectedRadio('photos-selector'),
+        copy: getSelectedRadio('copy-selector'),
+        contentNotes: document.getElementById('ob-content-notes').value.trim(),
+        domainOwned: getSelectedRadio('domain-selector'),
+        domain: document.getElementById('ob-domain').value.trim(),
+        hosting: document.getElementById('ob-hosting').value,
+        integrations: document.getElementById('ob-integrations').value.trim(),
+        timeline: document.getElementById('ob-timeline').value,
+        budget: document.getElementById('ob-budget').value,
+        email: document.getElementById('ob-email').value.trim(),
+        phone: document.getElementById('ob-phone').value.trim(),
+        anythingElse: document.getElementById('ob-anything-else').value.trim(),
+      };
+    }
+
+    /* ── SUMMARY ── */
+    function buildSummary() {
+      const data = collectData();
+      const container = document.getElementById('summary-container');
+      const sections = [
+        { title: 'Business Info', items: [
+          ['Business Name', data.businessName], ['Industry', data.industry],
+          ['Target Audience', data.targetAudience], ['Competitors', data.competitors || '—'],
+        ]},
+        { title: 'Brand Identity', items: [
+          ['Colors', data.brandColors || '—'], ['Fonts', data.fonts || '—'],
+          ['Voice', data.brandVoice || '—'], ['Logo', data.hasLogo ? 'Uploaded' : 'Not provided'],
+        ]},
+        { title: 'Website Goals', items: [
+          ['Goals', data.goals.map(g => GOALS.find(x => x.id === g)?.label).filter(Boolean).join(', ') || '—'],
+        ]},
+        { title: 'Content', items: [
+          ['Photos', data.photos || '—'], ['Copy', data.copy || '—'], ['Notes', data.contentNotes || '—'],
+        ]},
+        { title: 'Technical', items: [
+          ['Domain', data.domainOwned ? `${data.domainOwned} — ${data.domain || 'N/A'}` : '—'],
+          ['Hosting', data.hosting || '—'], ['Integrations', data.integrations || '—'],
+        ]},
+        { title: 'Timeline & Budget', items: [
+          ['Timeline', data.timeline || '—'], ['Budget', data.budget || '—'],
+          ['Email', data.email], ['Phone', data.phone || '—'],
+        ]},
+      ];
+
+      container.innerHTML = sections.map(s => `
+        <div class="summary-section">
+          <h3 class="text-sm font-bold text-amd-red-text mb-3">${s.title}</h3>
+          ${s.items.map(([label, val]) => `
+            <div class="flex justify-between py-1 border-b border-border-dim last:border-0">
+              <span class="summary-label">${label}</span>
+              <span class="summary-value text-sm text-right max-w-[60%]">${val}</span>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    /* ── SUBMIT ── */
+    document.getElementById('onboarding-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const data = collectData();
+
+      if (!data.businessName || !data.email) {
+        alert('Please fill in at least your business name and email.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+
+      const submissionId = 'OB-' + Date.now().toString(36).toUpperCase();
+
+      try {
+        const ref = window.__db.ref('onboarding/' + submissionId);
+        await ref.set({
+          ...data,
+          logoBase64: logoBase64 ? logoBase64.substring(0, 100) + '...[truncated]' : null,
+          id: submissionId,
+          createdAt: new Date().toISOString(),
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+        });
+      } catch (err) {
+        console.warn('Firebase save failed:', err);
+      }
+
+      // Show success
+      document.getElementById('onboarding-form').classList.add('hidden');
+      document.querySelector('.progress-track').parentElement.classList.add('hidden');
+      document.getElementById('success-state').classList.remove('hidden');
+      document.getElementById('success-id').textContent = submissionId;
+      document.getElementById('success-state').scrollIntoView({ behavior: 'smooth' });
+    });
+
+  })();
+  </script>
+</body>
+</html>

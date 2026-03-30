@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instant Proposal Generator | AjayaDesign</title>
+  <meta name="description" content="Get a professional website proposal in seconds. Enter your business details, pick features, and download a PDF-ready proposal." />
+  <meta name="robots" content="index, follow" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://ajayadesign.github.io/tools/proposal-generator.html" />
+
+  <meta property="og:title" content="Instant Proposal Generator | AjayaDesign" />
+  <meta property="og:description" content="Get a professional website proposal in seconds." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/tools/proposal-generator.html" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'surface': '#0A0A0F',
+            'surface-card': '#12121A',
+            'border-dim': '#1E1E2E',
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF4654',
+            'amd-red-btn': '#C41E3A',
+            'electric-blue': '#00D4FF',
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-database-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script>
+    window.__firebase = firebase.initializeApp(window.__firebaseConfig);
+    window.__db = firebase.database();
+  </script>
+  <style>
+    body { font-family: 'JetBrains Mono', monospace; background: #0A0A0F; color: #e5e7eb; }
+    .gradient-line { height: 1px; background: linear-gradient(90deg, transparent, #ED1C24, #00D4FF, transparent); }
+
+    /* Proposal preview — white/clean theme */
+    #proposal-preview {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #1a1a2e;
+    }
+
+    /* Tier cards */
+    .tier-card { border: 2px solid #e5e7eb; border-radius: 12px; padding: 24px; transition: all 0.3s; cursor: pointer; }
+    .tier-card:hover { border-color: #ED1C24; transform: translateY(-2px); }
+    .tier-card.selected { border-color: #ED1C24; background: rgba(237,28,36,0.05); }
+    .tier-card.recommended { border-color: #00D4FF; position: relative; }
+    .tier-card.recommended::before { content: 'RECOMMENDED'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #00D4FF; color: #0A0A0F; font-size: 10px; font-weight: 700; padding: 2px 12px; border-radius: 20px; letter-spacing: 1px; }
+
+    /* Feature checkboxes */
+    .feature-check { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #1E1E2E; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+    .feature-check:hover { border-color: #ED1C24; background: rgba(237,28,36,0.05); }
+    .feature-check input:checked + span { color: #fff; }
+    .feature-check:has(input:checked) { border-color: #ED1C24; background: rgba(237,28,36,0.1); }
+
+    /* Print styles */
+    @media print {
+      body { background: #fff !important; }
+      #form-section, nav, #actions-bar, .no-print { display: none !important; }
+      #proposal-preview { box-shadow: none !important; margin: 0 !important; max-width: 100% !important; }
+    }
+
+    /* Animations */
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <a href="/" class="flex items-center gap-2 group" aria-label="AjayaDesign Home">
+        <span class="inline-block w-3 h-3 rounded-full bg-amd-red animate-pulse" aria-hidden="true"></span>
+        <span class="font-bold text-white text-lg tracking-tight">Ajaya<span class="text-amd-red-text">Design</span></span>
+      </a>
+      <div class="flex items-center gap-6 text-sm">
+        <a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a>
+        <a href="/works/" class="text-gray-400 hover:text-white transition-colors">Works</a>
+        <a href="/contact/" class="text-gray-400 hover:text-white transition-colors">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pt-24 pb-20 px-4">
+    <div class="max-w-5xl mx-auto">
+
+      <!-- HEADER -->
+      <div class="text-center mb-12">
+        <p class="text-xs tracking-widest uppercase text-amd-red-text mb-3">// Proposal Generator</p>
+        <h1 class="text-3xl md:text-5xl font-bold text-white mb-4">Your Custom Proposal in <span class="text-amd-red-text">Seconds</span></h1>
+        <p class="text-gray-400 max-w-2xl mx-auto">Fill in your business details below. We'll generate a professional, PDF-ready proposal tailored to your needs — no sales call required.</p>
+      </div>
+
+      <!-- FORM SECTION (dark) -->
+      <section id="form-section" class="bg-surface-card border border-border-dim rounded-2xl p-6 md:p-10 mb-12">
+        <form id="proposal-form" novalidate>
+          <!-- Business Info -->
+          <fieldset class="mb-8">
+            <legend class="text-white font-bold text-lg mb-4">Business Details</legend>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label for="pg-business-name" class="block text-sm text-gray-400 mb-1">Business Name <span class="text-amd-red-text">*</span></label>
+                <input type="text" id="pg-business-name" required class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white focus:border-electric-blue focus:outline-none transition" placeholder="Acme Corp" />
+              </div>
+              <div>
+                <label for="pg-business-type" class="block text-sm text-gray-400 mb-1">Business Type <span class="text-amd-red-text">*</span></label>
+                <select id="pg-business-type" required class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white focus:border-electric-blue focus:outline-none transition">
+                  <option value="">Select...</option>
+                  <option value="Local Service Business">Local Service Business</option>
+                  <option value="E-Commerce / Retail">E-Commerce / Retail</option>
+                  <option value="Restaurant / Food">Restaurant / Food</option>
+                  <option value="Real Estate">Real Estate</option>
+                  <option value="Healthcare / Wellness">Healthcare / Wellness</option>
+                  <option value="Tech / SaaS">Tech / SaaS</option>
+                  <option value="Creative / Portfolio">Creative / Portfolio</option>
+                  <option value="Nonprofit">Nonprofit</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label for="pg-contact-name" class="block text-sm text-gray-400 mb-1">Your Name <span class="text-amd-red-text">*</span></label>
+                <input type="text" id="pg-contact-name" required class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white focus:border-electric-blue focus:outline-none transition" placeholder="Jane Doe" />
+              </div>
+              <div>
+                <label for="pg-email" class="block text-sm text-gray-400 mb-1">Email <span class="text-amd-red-text">*</span></label>
+                <input type="email" id="pg-email" required class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white focus:border-electric-blue focus:outline-none transition" placeholder="jane@acme.com" />
+              </div>
+              <div class="md:col-span-2">
+                <label for="pg-current-site" class="block text-sm text-gray-400 mb-1">Current Website <span class="text-gray-600">(optional)</span></label>
+                <input type="url" id="pg-current-site" class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white focus:border-electric-blue focus:outline-none transition" placeholder="https://example.com" />
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Features -->
+          <fieldset class="mb-8">
+            <legend class="text-white font-bold text-lg mb-4">Desired Features</legend>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3" id="features-grid" role="group" aria-label="Select desired website features">
+              <!-- populated by JS -->
+            </div>
+          </fieldset>
+
+          <!-- Tier -->
+          <fieldset class="mb-8">
+            <legend class="text-white font-bold text-lg mb-4">Choose Your Package</legend>
+            <div class="grid md:grid-cols-3 gap-4" id="tiers-grid" role="radiogroup" aria-label="Select pricing tier">
+              <!-- populated by JS -->
+            </div>
+          </fieldset>
+
+          <!-- Generate -->
+          <div class="text-center">
+            <button type="submit" id="generate-btn" class="bg-amd-red hover:bg-amd-red-btn text-white font-bold py-4 px-12 rounded-xl text-lg transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amd-red focus:ring-offset-2 focus:ring-offset-surface">
+              Generate My Proposal
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- PROPOSAL PREVIEW (white/clean) — hidden until generated -->
+      <section id="proposal-output" class="hidden fade-in">
+        <div id="actions-bar" class="flex flex-wrap gap-3 justify-center mb-6 no-print">
+          <button id="download-pdf" class="bg-amd-red hover:bg-amd-red-btn text-white font-bold py-3 px-8 rounded-xl transition-all hover:scale-105">
+            📄 Download as PDF
+          </button>
+          <button id="send-email-btn" class="bg-surface-card border border-border-dim text-white font-bold py-3 px-8 rounded-xl hover:border-electric-blue transition-all">
+            ✉️ Send to My Email
+          </button>
+          <button id="edit-proposal" class="bg-surface-card border border-border-dim text-gray-400 py-3 px-8 rounded-xl hover:text-white transition-all">
+            ✏️ Edit Details
+          </button>
+        </div>
+
+        <!-- Email modal -->
+        <div id="email-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 no-print" role="dialog" aria-label="Send proposal to email">
+          <div class="bg-surface-card border border-border-dim rounded-2xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-white font-bold text-lg mb-4">Send Proposal Link</h3>
+            <label for="send-email-input" class="block text-sm text-gray-400 mb-2">Your email address</label>
+            <input type="email" id="send-email-input" class="w-full bg-surface border border-border-dim rounded-lg px-4 py-3 text-white mb-4 focus:border-electric-blue focus:outline-none" placeholder="jane@acme.com" />
+            <div class="flex gap-3">
+              <button id="confirm-send-email" class="flex-1 bg-amd-red hover:bg-amd-red-btn text-white font-bold py-3 rounded-xl transition">Send</button>
+              <button id="cancel-send-email" class="flex-1 bg-surface border border-border-dim text-gray-400 py-3 rounded-xl hover:text-white transition">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="proposal-preview" class="max-w-4xl mx-auto rounded-2xl shadow-2xl overflow-hidden">
+          <!-- Header -->
+          <div class="bg-gradient-to-r from-[#0A0A0F] to-[#1a1a2e] text-white p-10 md:p-14">
+            <div class="flex items-center justify-between mb-8">
+              <div>
+                <span class="inline-block w-3 h-3 rounded-full bg-[#ED1C24] mr-2" aria-hidden="true"></span>
+                <span class="font-bold text-xl tracking-tight">Ajaya<span class="text-[#FF4654]">Design</span></span>
+              </div>
+              <div class="text-right text-sm text-gray-400">
+                <div>Proposal #<span id="prop-id">—</span></div>
+                <div id="prop-date">—</div>
+              </div>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold mb-2">Website Proposal</h2>
+            <p class="text-lg text-gray-300">Prepared for <span id="prop-business" class="text-white font-semibold">—</span></p>
+            <p class="text-sm text-gray-400 mt-1">Prepared by AjayaDesign — Austin, Texas · Serving Worldwide</p>
+          </div>
+
+          <!-- Body -->
+          <div class="p-8 md:p-14 space-y-10">
+            <!-- Project Overview -->
+            <section>
+              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#ED1C24] pb-2 mb-4">Project Overview</h3>
+              <p id="prop-overview" class="text-gray-600 leading-relaxed">—</p>
+            </section>
+
+            <!-- Recommended Features -->
+            <section>
+              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#ED1C24] pb-2 mb-4">Recommended Features</h3>
+              <div id="prop-features" class="grid md:grid-cols-2 gap-4">
+                <!-- filled by JS -->
+              </div>
+            </section>
+
+            <!-- Pricing -->
+            <section>
+              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#ED1C24] pb-2 mb-4">Investment</h3>
+              <div id="prop-pricing" class="bg-gray-50 rounded-xl p-6">
+                <!-- filled by JS -->
+              </div>
+            </section>
+
+            <!-- Timeline -->
+            <section>
+              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#ED1C24] pb-2 mb-4">Estimated Timeline</h3>
+              <div id="prop-timeline" class="space-y-3">
+                <!-- filled by JS -->
+              </div>
+            </section>
+
+            <!-- What's Included -->
+            <section>
+              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#ED1C24] pb-2 mb-4">What's Included</h3>
+              <ul id="prop-included" class="grid md:grid-cols-2 gap-2 text-gray-600">
+                <!-- filled by JS -->
+              </ul>
+            </section>
+
+            <!-- Portfolio -->
+            <section>
+              <h3 class="text-xl font-bold text-[#1a1a2e] border-b-2 border-[#ED1C24] pb-2 mb-4">Our Work</h3>
+              <p class="text-gray-600 mb-4">We've built high-performance websites for businesses across industries. Here are a few highlights:</p>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="bg-gray-100 rounded-lg p-4 text-center">
+                  <div class="font-bold text-[#1a1a2e]">Apex Auto</div>
+                  <div class="text-xs text-gray-500">Collision Center</div>
+                </div>
+                <div class="bg-gray-100 rounded-lg p-4 text-center">
+                  <div class="font-bold text-[#1a1a2e]">Austin Barbell</div>
+                  <div class="text-xs text-gray-500">Fitness Studio</div>
+                </div>
+                <div class="bg-gray-100 rounded-lg p-4 text-center">
+                  <div class="font-bold text-[#1a1a2e]">Velvet Bloom</div>
+                  <div class="text-xs text-gray-500">Beauty Brand</div>
+                </div>
+                <div class="bg-gray-100 rounded-lg p-4 text-center">
+                  <div class="font-bold text-[#1a1a2e]">Monument Pilates</div>
+                  <div class="text-xs text-gray-500">Wellness Studio</div>
+                </div>
+              </div>
+              <p class="text-sm text-gray-500 mt-3">View our full portfolio at <a href="https://ajayadesign.github.io/works/" class="text-[#ED1C24] underline">ajayadesign.github.io/works</a></p>
+            </section>
+
+            <!-- CTA -->
+            <section class="bg-gradient-to-r from-[#0A0A0F] to-[#1a1a2e] text-white rounded-xl p-8 text-center">
+              <h3 class="text-2xl font-bold mb-2">Ready to Get Started?</h3>
+              <p class="text-gray-300 mb-4">Let's build something exceptional for <span id="prop-business-cta">your business</span>.</p>
+              <a href="/contact/" class="inline-block bg-[#ED1C24] hover:bg-[#C41E3A] text-white font-bold py-3 px-10 rounded-xl transition">Start Your Project →</a>
+            </section>
+          </div>
+
+          <!-- Footer -->
+          <div class="bg-gray-50 px-8 md:px-14 py-6 text-center text-sm text-gray-500">
+            <p>This proposal is valid for 30 days from the date above.</p>
+            <p class="mt-1">© <span id="prop-year">2026</span> AjayaDesign · Austin, Texas · <a href="https://ajayadesign.github.io" class="text-[#ED1C24]">ajayadesign.github.io</a></p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+  (function() {
+    'use strict';
+
+    /* ── DATA ── */
+    const FEATURES = [
+      { id: 'responsive', label: 'Mobile Responsive', desc: 'Pixel-perfect on every device — phone, tablet, desktop.', icon: '📱' },
+      { id: 'seo', label: 'SEO Optimization', desc: 'On-page SEO, meta tags, schema markup, sitemap — rank higher on Google.', icon: '🔍' },
+      { id: 'analytics', label: 'Analytics Dashboard', desc: 'Real-time visitor tracking, heatmaps, and conversion insights.', icon: '📊' },
+      { id: 'contact-form', label: 'Contact Form', desc: 'Professional lead capture with email notifications and CRM integration.', icon: '📧' },
+      { id: 'blog', label: 'Blog / News', desc: 'Content management system for articles, updates, and SEO content.', icon: '📝' },
+      { id: 'ecommerce', label: 'E-Commerce', desc: 'Online store with product listings, cart, and secure checkout.', icon: '🛒' },
+      { id: 'booking', label: 'Booking / Scheduling', desc: 'Online appointment booking with calendar integration.', icon: '📅' },
+      { id: 'gallery', label: 'Photo Gallery', desc: 'Beautiful image galleries with lightbox and lazy loading.', icon: '🖼️' },
+      { id: 'social', label: 'Social Media Integration', desc: 'Social feeds, share buttons, and profile linking.', icon: '📲' },
+      { id: 'chat', label: 'Live Chat / Chatbot', desc: 'AI-powered chatbot or live chat widget for instant customer support.', icon: '💬' },
+      { id: 'maps', label: 'Maps & Directions', desc: 'Interactive Google Maps integration with custom styling.', icon: '📍' },
+      { id: 'animations', label: 'Custom Animations', desc: 'Scroll-triggered animations, parallax effects, and micro-interactions.', icon: '✨' },
+    ];
+
+    const TIERS = [
+      {
+        id: 'essential', name: 'Essential', price: 1500, priceLabel: '$1,500',
+        desc: 'Perfect for new businesses that need a professional online presence fast.',
+        pages: '3–5 pages', timeline: '1–2 weeks', revisions: '2 rounds',
+        includes: ['responsive', 'seo', 'contact-form', 'analytics', 'maps'],
+      },
+      {
+        id: 'professional', name: 'Professional', price: 2500, priceLabel: '$2,500',
+        desc: 'For growing businesses that need advanced functionality and a competitive edge.',
+        pages: '5–8 pages', timeline: '2–3 weeks', revisions: '3 rounds', recommended: true,
+        includes: ['responsive', 'seo', 'contact-form', 'analytics', 'maps', 'blog', 'gallery', 'social', 'animations'],
+      },
+      {
+        id: 'premium', name: 'Premium', price: 4000, priceLabel: '$4,000',
+        desc: 'The complete digital solution — everything you need to dominate your market.',
+        pages: '8–12+ pages', timeline: '3–5 weeks', revisions: 'Unlimited',
+        includes: ['responsive', 'seo', 'contact-form', 'analytics', 'maps', 'blog', 'gallery', 'social', 'animations', 'ecommerce', 'booking', 'chat'],
+      },
+    ];
+
+    const INCLUDED_ALWAYS = [
+      'SSL Certificate & HTTPS', 'Mobile-First Design', 'Google Analytics Setup',
+      'Basic On-Page SEO', 'Performance Optimization', 'Cross-Browser Testing',
+      'Favicon & Open Graph Tags', '30-Day Post-Launch Support',
+    ];
+
+    /* ── RENDER FORM ── */
+    const featGrid = document.getElementById('features-grid');
+    FEATURES.forEach(f => {
+      const label = document.createElement('label');
+      label.className = 'feature-check text-sm';
+      label.innerHTML = `<input type="checkbox" value="${f.id}" name="features" class="accent-[#ED1C24]" /><span class="text-gray-300">${f.icon} ${f.label}</span>`;
+      featGrid.appendChild(label);
+    });
+
+    const tiersGrid = document.getElementById('tiers-grid');
+    let selectedTier = 'professional';
+    TIERS.forEach(t => {
+      const div = document.createElement('div');
+      div.className = 'tier-card text-center' + (t.recommended ? ' recommended' : '') + (t.id === selectedTier ? ' selected' : '');
+      div.setAttribute('role', 'radio');
+      div.setAttribute('aria-checked', t.id === selectedTier ? 'true' : 'false');
+      div.setAttribute('tabindex', '0');
+      div.setAttribute('aria-label', `${t.name} package at ${t.priceLabel}`);
+      div.dataset.tier = t.id;
+      div.innerHTML = `
+        <div class="text-2xl font-bold text-white mb-1">${t.priceLabel}</div>
+        <div class="text-amd-red-text font-bold text-lg mb-2">${t.name}</div>
+        <div class="text-xs text-gray-400 mb-3">${t.pages} · ${t.timeline}</div>
+        <div class="text-xs text-gray-500">${t.desc}</div>
+      `;
+      div.addEventListener('click', () => selectTier(t.id));
+      div.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectTier(t.id); } });
+      tiersGrid.appendChild(div);
+    });
+
+    function selectTier(id) {
+      selectedTier = id;
+      document.querySelectorAll('.tier-card').forEach(c => {
+        const isSel = c.dataset.tier === id;
+        c.classList.toggle('selected', isSel);
+        c.setAttribute('aria-checked', isSel ? 'true' : 'false');
+      });
+    }
+
+    /* ── GENERATE PROPOSAL ── */
+    const form = document.getElementById('proposal-form');
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const bizName = document.getElementById('pg-business-name').value.trim();
+      const bizType = document.getElementById('pg-business-type').value;
+      const contactName = document.getElementById('pg-contact-name').value.trim();
+      const email = document.getElementById('pg-email').value.trim();
+      const currentSite = document.getElementById('pg-current-site').value.trim();
+
+      if (!bizName || !bizType || !contactName || !email) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+
+      const selectedFeatures = Array.from(document.querySelectorAll('#features-grid input:checked')).map(cb => cb.value);
+      const tier = TIERS.find(t => t.id === selectedTier);
+
+      // Merge tier-included features with user-selected
+      const allFeatureIds = [...new Set([...tier.includes, ...selectedFeatures])];
+      const allFeatures = allFeatureIds.map(id => FEATURES.find(f => f.id === id)).filter(Boolean);
+
+      // Proposal ID
+      const propId = 'AD-' + Date.now().toString(36).toUpperCase();
+      const propDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      // Fill proposal
+      document.getElementById('prop-id').textContent = propId;
+      document.getElementById('prop-date').textContent = propDate;
+      document.getElementById('prop-business').textContent = bizName;
+      document.getElementById('prop-business-cta').textContent = bizName;
+      document.getElementById('prop-year').textContent = new Date().getFullYear();
+
+      // Overview
+      const hasExisting = currentSite ? `We'll analyze your current site at ${currentSite} and build upon what works while addressing key areas for improvement.` : 'We'll create a brand-new digital presence from the ground up.';
+      document.getElementById('prop-overview').innerHTML = `
+        <strong>${contactName}</strong>, thank you for considering AjayaDesign for your <strong>${bizType.toLowerCase()}</strong> website project.
+        ${hasExisting}<br><br>
+        Based on your selections, we recommend our <strong>${tier.name}</strong> package — ${tier.desc.toLowerCase()}
+        This proposal outlines the scope, features, timeline, and investment for your project.
+      `;
+
+      // Features
+      const featContainer = document.getElementById('prop-features');
+      featContainer.innerHTML = allFeatures.map(f => `
+        <div class="bg-gray-50 rounded-lg p-4">
+          <div class="font-semibold text-[#1a1a2e]">${f.icon} ${f.label}</div>
+          <div class="text-sm text-gray-500 mt-1">${f.desc}</div>
+        </div>
+      `).join('');
+
+      // Pricing
+      document.getElementById('prop-pricing').innerHTML = `
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div class="font-bold text-xl text-[#1a1a2e]">${tier.name} Package</div>
+            <div class="text-sm text-gray-500">${tier.pages} · ${tier.revisions} revisions</div>
+          </div>
+          <div class="text-3xl font-bold text-[#ED1C24]">${tier.priceLabel}</div>
+        </div>
+        <div class="text-sm text-gray-500">
+          <div class="flex justify-between py-2 border-b border-gray-200"><span>Design & Development</span><span class="font-semibold text-[#1a1a2e]">Included</span></div>
+          <div class="flex justify-between py-2 border-b border-gray-200"><span>SEO & Analytics Setup</span><span class="font-semibold text-[#1a1a2e]">Included</span></div>
+          <div class="flex justify-between py-2 border-b border-gray-200"><span>Mobile Optimization</span><span class="font-semibold text-[#1a1a2e]">Included</span></div>
+          <div class="flex justify-between py-2 border-b border-gray-200"><span>Post-Launch Support (30 days)</span><span class="font-semibold text-[#1a1a2e]">Included</span></div>
+          <div class="flex justify-between py-2 font-bold text-[#1a1a2e] text-base"><span>Total Investment</span><span class="text-[#ED1C24]">${tier.priceLabel}</span></div>
+        </div>
+      `;
+
+      // Timeline
+      const phases = [
+        { phase: 'Discovery & Planning', duration: '2–3 days', desc: 'Requirements gathering, sitemap, and wireframes.' },
+        { phase: 'Design', duration: '3–5 days', desc: 'Custom visual design with your brand identity.' },
+        { phase: 'Development', duration: tier.id === 'essential' ? '5–7 days' : tier.id === 'professional' ? '7–10 days' : '10–15 days', desc: 'Clean, performant code. Mobile-first build.' },
+        { phase: 'Review & Revisions', duration: '2–3 days', desc: `${tier.revisions} of revisions to get everything perfect.` },
+        { phase: 'Launch', duration: '1 day', desc: 'DNS setup, SSL, final testing, and go-live.' },
+      ];
+      document.getElementById('prop-timeline').innerHTML = phases.map((p, i) => `
+        <div class="flex gap-4 items-start">
+          <div class="w-8 h-8 rounded-full bg-[#ED1C24] text-white flex items-center justify-center text-sm font-bold flex-shrink-0">${i + 1}</div>
+          <div>
+            <div class="font-semibold text-[#1a1a2e]">${p.phase} <span class="text-sm text-gray-400 font-normal">— ${p.duration}</span></div>
+            <div class="text-sm text-gray-500">${p.desc}</div>
+          </div>
+        </div>
+      `).join('');
+
+      // What's included
+      document.getElementById('prop-included').innerHTML = INCLUDED_ALWAYS.map(item => `
+        <li class="flex items-center gap-2"><span class="text-[#ED1C24]" aria-hidden="true">✓</span> ${item}</li>
+      `).join('');
+
+      // Show proposal
+      document.getElementById('proposal-output').classList.remove('hidden');
+      document.getElementById('proposal-output').scrollIntoView({ behavior: 'smooth' });
+
+      // Save to Firebase
+      try {
+        const ref = window.__db.ref('proposals').push();
+        await ref.set({
+          id: propId,
+          businessName: bizName,
+          businessType: bizType,
+          contactName: contactName,
+          email: email,
+          currentSite: currentSite || null,
+          selectedFeatures: selectedFeatures,
+          tier: tier.id,
+          tierPrice: tier.price,
+          createdAt: new Date().toISOString(),
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+        });
+      } catch (err) {
+        console.warn('Firebase save failed:', err);
+      }
+    });
+
+    /* ── ACTIONS ── */
+    document.getElementById('download-pdf').addEventListener('click', () => window.print());
+
+    document.getElementById('edit-proposal').addEventListener('click', () => {
+      document.getElementById('proposal-output').classList.add('hidden');
+      document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    document.getElementById('send-email-btn').addEventListener('click', () => {
+      document.getElementById('send-email-input').value = document.getElementById('pg-email').value;
+      document.getElementById('email-modal').classList.remove('hidden');
+    });
+
+    document.getElementById('cancel-send-email').addEventListener('click', () => {
+      document.getElementById('email-modal').classList.add('hidden');
+    });
+
+    document.getElementById('confirm-send-email').addEventListener('click', async () => {
+      const email = document.getElementById('send-email-input').value.trim();
+      if (!email) return;
+      try {
+        const ref = window.__db.ref('proposal_emails').push();
+        await ref.set({
+          email: email,
+          proposalId: document.getElementById('prop-id').textContent,
+          proposalUrl: window.location.href,
+          sentAt: new Date().toISOString(),
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+        });
+      } catch (err) {
+        console.warn('Firebase email save failed:', err);
+      }
+      document.getElementById('email-modal').classList.add('hidden');
+      alert('Proposal link saved! We'll send it to ' + email + ' shortly.');
+    });
+
+  })();
+  </script>
+</body>
+</html>

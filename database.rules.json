@@ -156,6 +156,30 @@
       ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
     },
 
+    "proposals": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      "$proposalId": {
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['email','businessName','tier']) && newData.child('email').isString()"
+      }
+    },
+
+    "proposal_emails": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      "$entryId": {
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['email','proposalId']) && newData.child('email').isString()"
+      }
+    },
+
+    "onboarding": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      "$submissionId": {
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['email','businessName']) && newData.child('email').isString()"
+      }
+    },
+
     "$other": {
       ".read": false,
       ".write": false
