@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Website Grader — Instant Performance & SEO Audit | AjayaDesign</title>
+  <meta name="description" content="Free website audit tool — get instant scores for performance, SEO, mobile friendliness, and security. Grade your site in seconds." />
+  <meta name="keywords" content="free website audit tool, website grader, site speed test, SEO checker, website performance test, free SEO audit" />
+  <meta name="author" content="AjayaDesign" />
+  <meta name="robots" content="index, follow" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0A0A0F" />
+
+  <link rel="canonical" href="https://ajayadesign.github.io/grader/" />
+
+  <meta property="og:title" content="Free Website Grader — Instant Performance & SEO Audit" />
+  <meta property="og:description" content="Enter your URL and get an instant report card with performance, SEO, mobile, and security scores." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/grader/" />
+  <meta property="og:site_name" content="AjayaDesign" />
+  <meta property="og:image" content="https://ajayadesign.github.io/og-image.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Free Website Grader — Instant Performance & SEO Audit" />
+  <meta name="twitter:description" content="Grade your website in seconds. Free performance, SEO, and security audit." />
+  <meta name="twitter:image" content="https://ajayadesign.github.io/og-image.png" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AjayaDesign Website Grader",
+    "url": "https://ajayadesign.github.io/grader/",
+    "description": "Free website audit tool — instant performance, SEO, mobile, and security scores.",
+    "applicationCategory": "WebApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "AjayaDesign", "url": "https://ajayadesign.github.io/" }
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF6B6B',
+            'amd-red-btn': '#D91920',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
+            sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+
+  <style>
+    @view-transition { navigation: auto; }
+
+    .scan-line {
+      position: absolute;
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #ED1C24, #00D4FF, transparent);
+      animation: scanMove 1.5s ease-in-out infinite;
+      box-shadow: 0 0 15px rgba(237,28,36,0.6), 0 0 30px rgba(0,212,255,0.3);
+    }
+    @keyframes scanMove {
+      0%, 100% { top: 0; opacity: 0.3; }
+      50% { top: 100%; opacity: 1; }
+    }
+    @keyframes pulse-border {
+      0%, 100% { border-color: rgba(237,28,36,0.3); }
+      50% { border-color: rgba(237,28,36,0.8); }
+    }
+    .score-ring {
+      transition: stroke-dashoffset 1.5s ease-out;
+    }
+    .grade-reveal {
+      opacity: 0; transform: translateY(20px);
+      animation: gradeIn 0.5s ease-out forwards;
+    }
+    @keyframes gradeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .issue-card { transition: all 0.3s; }
+    .issue-card:hover { transform: translateX(4px); border-left-color: #ED1C24; }
+  </style>
+</head>
+<body class="bg-surface text-gray-200 font-sans antialiased min-h-screen">
+
+  <!-- Nav -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <a href="/" class="text-xl font-mono font-bold text-white tracking-tight">Ajaya<span class="text-amd-red">Design</span></a>
+      <ul class="hidden md:flex items-center gap-6 text-sm font-mono">
+        <li><a href="/edge/" class="hover:text-amd-red transition-colors">The Edge</a></li>
+        <li><a href="/works/" class="hover:text-amd-red transition-colors">Works</a></li>
+        <li><a href="/grader/" class="text-amd-red font-semibold">Grader</a></li>
+        <li><a href="/3D-print/" class="hover:text-amd-red transition-colors">3D Academy</a></li>
+        <li><a href="/contact/" class="hover:text-amd-red transition-colors">Contact</a></li>
+        <li><a href="/free-audit/" class="font-semibold text-green-400 hover:text-green-300 transition-colors">Free Audit</a></li>
+        <li><a href="/contact/" class="px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">Start a Project →</a></li>
+      </ul>
+      <button id="mob-toggle" class="md:hidden text-gray-300" onclick="document.getElementById('mob-menu').classList.toggle('hidden')">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mob-menu" class="hidden md:hidden px-6 pb-4 space-y-2 text-sm font-mono">
+      <a href="/edge/" class="block py-2 hover:text-amd-red">The Edge</a>
+      <a href="/works/" class="block py-2 hover:text-amd-red">Works</a>
+      <a href="/grader/" class="block py-2 text-amd-red font-semibold">Grader</a>
+      <a href="/3D-print/" class="block py-2 hover:text-amd-red">3D Academy</a>
+      <a href="/contact/" class="block py-2 hover:text-amd-red">Contact</a>
+      <a href="/free-audit/" class="block py-2 text-green-400">Free Audit</a>
+    </div>
+  </nav>
+
+  <main class="pt-24 pb-20 px-4">
+    <!-- Hero / Input -->
+    <section class="max-w-3xl mx-auto text-center mb-16">
+      <div class="inline-block px-4 py-1 mb-6 rounded-full border border-amd-red/30 text-xs font-mono text-amd-red-text tracking-wider uppercase">Free Website Audit Tool</div>
+      <h1 class="text-4xl md:text-5xl font-bold font-mono text-white mb-4 leading-tight">
+        Grade Your Website<br/><span class="text-amd-red">In Seconds</span>
+      </h1>
+      <p class="text-gray-400 text-lg mb-10 max-w-xl mx-auto">Enter any URL and get an instant performance, SEO, mobile, and security report card — powered by Google PageSpeed Insights.</p>
+
+      <form id="grader-form" class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+        <input id="url-input" type="url" required placeholder="https://example.com" class="flex-1 px-5 py-4 rounded-lg bg-surface-card border border-border-dim text-white font-mono text-sm placeholder-gray-500 focus:outline-none focus:border-amd-red/60 transition-colors" />
+        <button type="submit" id="grade-btn" class="px-8 py-4 bg-amd-red-btn text-white font-mono font-bold rounded-lg hover:bg-red-800 transition-colors whitespace-nowrap">
+          Grade My Website
+        </button>
+      </form>
+    </section>
+
+    <!-- Loading State -->
+    <section id="loading" class="hidden max-w-2xl mx-auto text-center">
+      <div class="relative bg-surface-card border border-border-dim rounded-2xl p-10 overflow-hidden" style="animation: pulse-border 2s infinite">
+        <div class="scan-line"></div>
+        <div class="font-mono text-sm text-gray-400 space-y-2" id="scan-log">
+          <p>Initializing scan…</p>
+        </div>
+        <div class="mt-6 w-full bg-surface rounded-full h-2 overflow-hidden">
+          <div id="progress-bar" class="h-full bg-gradient-to-r from-amd-red to-electric-blue rounded-full transition-all duration-500" style="width:5%"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Error State -->
+    <section id="error-state" class="hidden max-w-2xl mx-auto text-center">
+      <div class="bg-surface-card border border-red-500/30 rounded-2xl p-10">
+        <div class="text-4xl mb-4">⚠️</div>
+        <h2 class="text-xl font-mono font-bold text-white mb-2">Scan Failed</h2>
+        <p id="error-msg" class="text-gray-400 mb-6"></p>
+        <button onclick="resetGrader()" class="px-6 py-3 bg-amd-red-btn text-white font-mono rounded-lg hover:bg-red-800 transition-colors">Try Again</button>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section id="results" class="hidden max-w-4xl mx-auto">
+      <!-- Overall Grade -->
+      <div class="text-center mb-12 grade-reveal">
+        <p class="font-mono text-sm text-gray-500 mb-2">OVERALL GRADE FOR</p>
+        <p id="result-url" class="font-mono text-electric-blue text-lg mb-6 break-all"></p>
+        <div class="inline-flex items-center justify-center w-40 h-40 rounded-full border-4" id="overall-ring">
+          <span id="overall-grade" class="text-6xl font-mono font-bold"></span>
+        </div>
+        <p id="overall-score-text" class="mt-4 font-mono text-gray-400"></p>
+      </div>
+
+      <!-- Score Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12" id="score-cards"></div>
+
+      <!-- Issues -->
+      <div id="issues-section" class="mb-12">
+        <h2 class="text-2xl font-mono font-bold text-white mb-6">📋 Issues Found</h2>
+        <div id="issues-list" class="space-y-3"></div>
+      </div>
+
+      <!-- CTA -->
+      <div id="cta-section" class="bg-gradient-to-r from-surface-card to-surface-alt border border-amd-red/20 rounded-2xl p-10 text-center mb-10">
+        <h2 id="cta-headline" class="text-2xl md:text-3xl font-mono font-bold text-white mb-4"></h2>
+        <p class="text-gray-400 mb-8 max-w-lg mx-auto">Our team can optimize your site for peak performance, better SEO rankings, and more conversions. Let's talk.</p>
+        <a href="/contact/" class="inline-block px-8 py-4 bg-amd-red-btn text-white font-mono font-bold rounded-lg hover:bg-red-800 transition-colors text-lg">
+          Book a Free 15-Min Call →
+        </a>
+      </div>
+
+      <!-- Share -->
+      <div class="text-center">
+        <button id="share-btn" onclick="shareResults()" class="inline-flex items-center gap-2 px-6 py-3 bg-surface-card border border-border-dim rounded-lg font-mono text-sm text-gray-300 hover:border-electric-blue/40 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+          Share Your Score
+        </button>
+        <button onclick="resetGrader()" class="ml-4 inline-flex items-center gap-2 px-6 py-3 bg-surface-card border border-border-dim rounded-lg font-mono text-sm text-gray-300 hover:border-electric-blue/40 transition-colors">
+          ↻ Grade Another Site
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-border-dim py-8 text-center text-xs font-mono text-gray-500">
+    <p>© 2025 AjayaDesign · Austin, Texas · <a href="/" class="hover:text-amd-red transition-colors">ajayadesign.github.io</a></p>
+  </footer>
+
+  <script>
+    const API = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
+    let scannedUrl = '';
+    let gradeData = {};
+
+    document.getElementById('grader-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      let url = document.getElementById('url-input').value.trim();
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      scannedUrl = url;
+
+      // Show loading
+      hide('results'); hide('error-state');
+      show('loading');
+      document.getElementById('grade-btn').disabled = true;
+      document.getElementById('grade-btn').textContent = 'Scanning…';
+
+      const log = document.getElementById('scan-log');
+      const bar = document.getElementById('progress-bar');
+      log.innerHTML = '<p class="text-green-400">▸ Connecting to Google PageSpeed Insights…</p>';
+      bar.style.width = '10%';
+
+      const steps = [
+        [20, '▸ Analyzing performance metrics…'],
+        [40, '▸ Checking mobile responsiveness…'],
+        [55, '▸ Evaluating SEO signals…'],
+        [70, '▸ Verifying SSL certificate…'],
+        [85, '▸ Calculating scores…'],
+      ];
+
+      let stepIdx = 0;
+      const stepInterval = setInterval(() => {
+        if (stepIdx < steps.length) {
+          bar.style.width = steps[stepIdx][0] + '%';
+          log.innerHTML += `<p class="text-green-400">${steps[stepIdx][1]}</p>`;
+          stepIdx++;
+        }
+      }, 1800);
+
+      try {
+        const resp = await fetch(`${API}?url=${encodeURIComponent(url)}&strategy=mobile&category=performance&category=seo&category=accessibility`);
+        clearInterval(stepInterval);
+        if (!resp.ok) throw new Error(`API returned ${resp.status}`);
+        const data = await resp.json();
+        bar.style.width = '100%';
+        log.innerHTML += '<p class="text-electric-blue font-bold">✓ Scan complete!</p>';
+        setTimeout(() => renderResults(data), 600);
+      } catch (err) {
+        clearInterval(stepInterval);
+        hide('loading');
+        show('error-state');
+        document.getElementById('error-msg').textContent = `Could not analyze that URL. ${err.message}. Make sure the site is publicly accessible.`;
+        document.getElementById('grade-btn').disabled = false;
+        document.getElementById('grade-btn').textContent = 'Grade My Website';
+      }
+    });
+
+    function renderResults(data) {
+      hide('loading');
+      show('results');
+      document.getElementById('grade-btn').disabled = false;
+      document.getElementById('grade-btn').textContent = 'Grade My Website';
+
+      const lhr = data.lighthouseResult;
+      const cats = lhr.categories;
+      const audits = lhr.audits;
+
+      // Extract scores
+      const perfScore = Math.round((cats.performance?.score || 0) * 100);
+      const seoScore = Math.round((cats.seo?.score || 0) * 100);
+      const a11yScore = Math.round((cats.accessibility?.score || 0) * 100);
+      const isHttps = scannedUrl.startsWith('https');
+      const fcp = audits['first-contentful-paint']?.numericValue || 0;
+      const lcp = audits['largest-contentful-paint']?.numericValue || 0;
+      const si = audits['speed-index']?.numericValue || 0;
+      const loadTime = (lcp / 1000).toFixed(1);
+
+      // Mobile check from audits
+      const viewport = audits['viewport']?.score === 1;
+      const fontSizeOk = audits['font-size']?.score !== 0;
+      const mobileScore = viewport && fontSizeOk ? 90 : (viewport ? 60 : 30);
+
+      // SSL score
+      const sslScore = isHttps ? 100 : 0;
+
+      // Overall
+      const overall = Math.round((perfScore * 0.35 + seoScore * 0.25 + mobileScore * 0.15 + sslScore * 0.1 + a11yScore * 0.15));
+      gradeData = { perfScore, seoScore, mobileScore, sslScore, a11yScore, overall, loadTime };
+
+      // URL
+      document.getElementById('result-url').textContent = scannedUrl;
+
+      // Overall grade
+      const grade = scoreToGrade(overall);
+      const color = gradeColor(grade);
+      document.getElementById('overall-grade').textContent = grade;
+      document.getElementById('overall-grade').style.color = color;
+      document.getElementById('overall-ring').style.borderColor = color;
+      document.getElementById('overall-score-text').textContent = `Overall Score: ${overall}/100`;
+
+      // Score cards
+      const cards = [
+        { label: 'Performance', score: perfScore, icon: '⚡' },
+        { label: 'SEO', score: seoScore, icon: '🔍' },
+        { label: 'Mobile', score: mobileScore, icon: '📱' },
+        { label: 'Security (SSL)', score: sslScore, icon: '🔒' },
+        { label: 'Accessibility', score: a11yScore, icon: '♿' },
+        { label: 'Load Time', score: null, display: `${loadTime}s`, icon: '⏱️' },
+      ];
+
+      const cardsEl = document.getElementById('score-cards');
+      cardsEl.innerHTML = '';
+      cards.forEach((c, i) => {
+        const g = c.score !== null ? scoreToGrade(c.score) : (parseFloat(loadTime) < 2.5 ? 'A' : parseFloat(loadTime) < 4 ? 'B' : parseFloat(loadTime) < 6 ? 'C' : 'D');
+        const col = gradeColor(g);
+        const div = document.createElement('div');
+        div.className = 'grade-reveal bg-surface-card border border-border-dim rounded-xl p-6 text-center';
+        div.style.animationDelay = `${i * 0.15}s`;
+        div.innerHTML = `
+          <div class="text-3xl mb-2">${c.icon}</div>
+          <div class="font-mono text-sm text-gray-400 mb-3">${c.label}</div>
+          <div class="text-4xl font-mono font-bold mb-1" style="color:${col}">${g}</div>
+          <div class="font-mono text-sm" style="color:${col}">${c.display || c.score + '/100'}</div>
+          <div class="mt-3 w-full bg-surface rounded-full h-1.5 overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-1000" style="width:${c.score !== null ? c.score : Math.max(5, 100 - parseFloat(loadTime)*10)}%;background:${col}"></div>
+          </div>
+        `;
+        cardsEl.appendChild(div);
+      });
+
+      // Issues
+      const issuesEl = document.getElementById('issues-list');
+      issuesEl.innerHTML = '';
+      const failedAudits = Object.values(audits).filter(a =>
+        a.score !== null && a.score < 0.9 && a.title && a.description && a.scoreDisplayMode !== 'notApplicable'
+      ).sort((a, b) => (a.score || 0) - (b.score || 0)).slice(0, 12);
+
+      if (failedAudits.length === 0) {
+        issuesEl.innerHTML = '<p class="text-green-400 font-mono">✓ No major issues detected. Nice work!</p>';
+      } else {
+        failedAudits.forEach(a => {
+          const sev = a.score === 0 ? 'High' : a.score < 0.5 ? 'Medium' : 'Low';
+          const sevColor = sev === 'High' ? '#ED1C24' : sev === 'Medium' ? '#FFA500' : '#FFD700';
+          const card = document.createElement('div');
+          card.className = 'issue-card bg-surface-card border-l-4 rounded-r-lg p-4';
+          card.style.borderLeftColor = sevColor;
+          card.innerHTML = `
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <span class="text-xs font-mono px-2 py-0.5 rounded" style="background:${sevColor}20;color:${sevColor}">${sev}</span>
+                <h3 class="font-mono text-sm text-white mt-1">${a.title}</h3>
+              </div>
+              ${a.displayValue ? `<span class="text-xs font-mono text-gray-500 shrink-0">${a.displayValue}</span>` : ''}
+            </div>
+          `;
+          issuesEl.appendChild(card);
+        });
+      }
+
+      // CTA
+      const ctaGrade = scoreToGrade(overall);
+      document.getElementById('cta-headline').innerHTML = overall >= 90
+        ? `Great score! Let's make it <span class="text-amd-red">perfect</span>.`
+        : `Your site scored <span class="text-amd-red">${ctaGrade}</span>. We can fix this.`;
+    }
+
+    function scoreToGrade(s) {
+      if (s >= 90) return 'A';
+      if (s >= 80) return 'B+';
+      if (s >= 70) return 'B';
+      if (s >= 60) return 'C+';
+      if (s >= 50) return 'C';
+      if (s >= 40) return 'D';
+      return 'F';
+    }
+
+    function gradeColor(g) {
+      const m = { 'A': '#22C55E', 'B+': '#84CC16', 'B': '#A3E635', 'C+': '#FACC15', 'C': '#F97316', 'D': '#EF4444', 'F': '#DC2626' };
+      return m[g] || '#9CA3AF';
+    }
+
+    function shareResults() {
+      const text = `My website scored ${gradeData.overall}/100 on the AjayaDesign Website Grader! Performance: ${gradeData.perfScore}, SEO: ${gradeData.seoScore}. Check yours:`;
+      const url = 'https://ajayadesign.github.io/grader/';
+      if (navigator.share) {
+        navigator.share({ title: 'Website Grade Results', text, url });
+      } else {
+        navigator.clipboard.writeText(`${text} ${url}`).then(() => {
+          const btn = document.getElementById('share-btn');
+          btn.textContent = '✓ Copied to clipboard!';
+          setTimeout(() => { btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg> Share Your Score'; }, 2000);
+        });
+      }
+    }
+
+    function resetGrader() {
+      hide('results'); hide('error-state'); hide('loading');
+      document.getElementById('url-input').value = '';
+      document.getElementById('url-input').focus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function show(id) { document.getElementById(id).classList.remove('hidden'); }
+    function hide(id) { document.getElementById(id).classList.add('hidden'); }
+  </script>
+</body>
+</html>
