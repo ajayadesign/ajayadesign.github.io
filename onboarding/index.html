@@ -79,7 +79,7 @@
 
     /* Summary */
     .summary-section { background: #12121A; border: 1px solid #1E1E2E; border-radius: 12px; padding: 20px; margin-bottom: 12px; }
-    .summary-label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .summary-label { font-size: 0.75rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
     .summary-value { color: #fff; }
   </style>
 </head>
@@ -112,7 +112,7 @@
 
       <!-- PROGRESS -->
       <div class="mb-8">
-        <div class="flex justify-between text-xs text-gray-500 mb-2">
+        <div class="flex justify-between text-xs text-gray-400 mb-2">
           <span id="step-label">Step 1 of 6 — Business Info</span>
           <span id="step-pct">17%</span>
         </div>
@@ -153,7 +153,7 @@
                 <textarea id="ob-target-audience" required class="ob-input" placeholder="Who are your ideal customers? (age range, location, interests)"></textarea>
               </div>
               <div>
-                <label for="ob-competitors" class="block text-sm text-gray-400 mb-1">Competitors <span class="text-gray-600">(optional)</span></label>
+                <label for="ob-competitors" class="block text-sm text-gray-400 mb-1">Competitors <span class="text-gray-400">(optional)</span></label>
                 <textarea id="ob-competitors" class="ob-input" placeholder="List 2-3 competitor websites you admire or compete with"></textarea>
               </div>
             </div>
@@ -164,21 +164,21 @@
             <h2 class="text-xl font-bold text-white mb-6">🎨 Brand Identity</h2>
             <div class="space-y-5">
               <div>
-                <label for="ob-brand-colors" class="block text-sm text-gray-400 mb-1">Brand Colors <span class="text-gray-600">(optional)</span></label>
+                <label for="ob-brand-colors" class="block text-sm text-gray-400 mb-1">Brand Colors <span class="text-gray-400">(optional)</span></label>
                 <input type="text" id="ob-brand-colors" class="ob-input" placeholder="e.g., Navy blue, gold, white — or 'no preference'" />
               </div>
               <div>
-                <label for="ob-fonts" class="block text-sm text-gray-400 mb-1">Font Preferences <span class="text-gray-600">(optional)</span></label>
+                <label for="ob-fonts" class="block text-sm text-gray-400 mb-1">Font Preferences <span class="text-gray-400">(optional)</span></label>
                 <input type="text" id="ob-fonts" class="ob-input" placeholder="e.g., Modern/clean, serif/classic, playful — or 'no preference'" />
               </div>
               <div>
-                <label for="ob-logo-upload" class="block text-sm text-gray-400 mb-2">Logo Upload <span class="text-gray-600">(optional)</span></label>
+                <label for="ob-logo-upload" class="block text-sm text-gray-400 mb-2">Logo Upload <span class="text-gray-400">(optional)</span></label>
                 <div class="upload-area" id="logo-upload-area" role="button" tabindex="0" aria-label="Upload logo file">
                   <input type="file" id="ob-logo-upload" accept="image/*,.svg,.pdf" class="hidden" />
-                  <div class="text-gray-500 text-sm">
+                  <div class="text-gray-400 text-sm">
                     <span class="text-2xl block mb-2" aria-hidden="true">📁</span>
                     <span>Drop your logo here or <span class="text-amd-red-text underline">browse</span></span>
-                    <div class="text-xs text-gray-600 mt-1">PNG, JPG, SVG, or PDF · Max 5MB</div>
+                    <div class="text-xs text-gray-400 mt-1">PNG, JPG, SVG, or PDF · Max 5MB</div>
                   </div>
                   <div id="logo-preview" class="hidden mt-3 text-sm text-electric-blue"></div>
                 </div>
@@ -233,7 +233,7 @@
                 </div>
               </div>
               <div>
-                <label for="ob-content-notes" class="block text-sm text-gray-400 mb-1">Additional Notes <span class="text-gray-600">(optional)</span></label>
+                <label for="ob-content-notes" class="block text-sm text-gray-400 mb-1">Additional Notes <span class="text-gray-400">(optional)</span></label>
                 <textarea id="ob-content-notes" class="ob-input" placeholder="Any specific pages, features, or content requirements?"></textarea>
               </div>
             </div>
@@ -252,11 +252,11 @@
                 </div>
               </div>
               <div>
-                <label for="ob-domain" class="block text-sm text-gray-400 mb-1">Domain Name <span class="text-gray-600">(if owned)</span></label>
+                <label for="ob-domain" class="block text-sm text-gray-400 mb-1">Domain Name <span class="text-gray-400">(if owned)</span></label>
                 <input type="text" id="ob-domain" class="ob-input" placeholder="e.g., mybusiness.com" />
               </div>
               <div>
-                <label for="ob-hosting" class="block text-sm text-gray-400 mb-1">Hosting Preference <span class="text-gray-600">(optional)</span></label>
+                <label for="ob-hosting" class="block text-sm text-gray-400 mb-1">Hosting Preference <span class="text-gray-400">(optional)</span></label>
                 <select id="ob-hosting" class="ob-input">
                   <option value="">No preference</option>
                   <option>GitHub Pages (free)</option>
@@ -268,7 +268,7 @@
                 </select>
               </div>
               <div>
-                <label for="ob-integrations" class="block text-sm text-gray-400 mb-1">Integrations Needed <span class="text-gray-600">(optional)</span></label>
+                <label for="ob-integrations" class="block text-sm text-gray-400 mb-1">Integrations Needed <span class="text-gray-400">(optional)</span></label>
                 <textarea id="ob-integrations" class="ob-input" placeholder="e.g., Google Calendar, Stripe payments, Mailchimp, social media feeds"></textarea>
               </div>
             </div>
@@ -304,11 +304,11 @@
                 <input type="email" id="ob-email" required class="ob-input" placeholder="you@business.com" />
               </div>
               <div>
-                <label for="ob-phone" class="block text-sm text-gray-400 mb-1">Phone <span class="text-gray-600">(optional)</span></label>
+                <label for="ob-phone" class="block text-sm text-gray-400 mb-1">Phone <span class="text-gray-400">(optional)</span></label>
                 <input type="tel" id="ob-phone" class="ob-input" placeholder="(512) 555-1234" />
               </div>
               <div>
-                <label for="ob-anything-else" class="block text-sm text-gray-400 mb-1">Anything else we should know? <span class="text-gray-600">(optional)</span></label>
+                <label for="ob-anything-else" class="block text-sm text-gray-400 mb-1">Anything else we should know? <span class="text-gray-400">(optional)</span></label>
                 <textarea id="ob-anything-else" class="ob-input" placeholder="Special requests, deadlines, inspirations..."></textarea>
               </div>
             </div>
