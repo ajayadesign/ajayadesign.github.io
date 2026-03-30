@@ -276,7 +276,7 @@
 
     // Share
     $('share-btn').addEventListener('click', () => {
-      const text = `I could make ${fmt(window._monthlyProfit)}/month with a 3D printer! 🖨️💰 Calculate yours:`;
+      const text = `According to the calculator, I could make ${fmt(window._monthlyProfit)}/month selling 3D printed magnets! 🤑 Try it yourself:`;
       const url = 'https://ajayadesign.github.io/3D-print/tools/profit-calculator.html';
       if (navigator.share) {
         navigator.share({ title: '3D Print Profit Calculator', text, url });

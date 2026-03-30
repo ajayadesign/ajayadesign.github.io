@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Social Post Templates — 3D Print Academy</title>
+  <meta name="description" content="Ready-to-copy social media post templates for promoting 3D Print Academy in Facebook groups and beyond." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF6B6B',
+            'amd-red-btn': '#D91920',
+            'surface': '#0A0A0F',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+            'neon-green': '#39FF14',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Inter"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    .grid-bg {
+      background-image: linear-gradient(rgba(237,28,36,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(237,28,36,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .template-card { position: relative; }
+    .copy-btn { transition: all 0.2s; }
+    .copy-btn.copied { background: rgba(57,255,20,0.2) !important; color: #39FF14 !important; border-color: rgba(57,255,20,0.5) !important; }
+  </style>
+</head>
+<body class="bg-surface text-gray-300 font-sans antialiased">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
+    <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+      <a href="/3D-print/" class="flex items-center gap-2">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-amd-red"></span>
+        <span class="font-mono font-bold text-white text-sm">3D Print <span class="text-amd-red-text">Academy</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-6 text-sm">
+        <a href="/3D-print/" class="hover:text-amd-red transition-colors">Course</a>
+        <a href="/3D-print/gallery/" class="hover:text-amd-red transition-colors">Gallery</a>
+        <a href="/3D-print/#enroll" class="px-4 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">Enroll</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="pt-28 pb-12 grid-bg">
+    <div class="max-w-3xl mx-auto px-6 text-center">
+      <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Social Templates</p>
+      <h1 class="font-mono font-bold text-3xl sm:text-4xl text-white leading-tight mb-4">
+        Ready-to-Post Templates
+      </h1>
+      <p class="text-gray-400">Copy these templates for Facebook magnet groups, Twitter/X, or anywhere. Just click "Copy" and paste.</p>
+    </div>
+  </section>
+
+  <section class="pb-20">
+    <div class="max-w-3xl mx-auto px-6 space-y-8">
+
+      <!-- Introduction Post -->
+      <div class="template-card p-6 rounded-2xl bg-surface-card border border-border-dim">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-xl">👋</span>
+          <h2 class="font-mono text-white font-bold">Introduction Post</h2>
+          <span class="ml-auto px-2 py-0.5 bg-neon-green/10 text-neon-green font-mono text-[10px] rounded">Facebook Groups</span>
+        </div>
+        <div class="bg-surface rounded-xl p-4 mb-4 text-sm text-gray-300 leading-relaxed whitespace-pre-line" id="template-intro">Hey everyone! 👋 New to the group and excited to be here.
+
+I recently got into 3D printing magnet frames and I'm blown away by how much potential there is. I've been designing custom frames for Instax, Polaroid, and standard photo sizes.
+
+Currently learning through the 3D Print Academy course — it covers everything from CAD design to actually selling these frames. The STL files alone saved me weeks of design time.
+
+Would love to connect with others who are printing magnets! What's your best-selling frame style? Drop a pic below! 📸
+
+#3Dprinting #magnetframes #smallbusiness</div>
+        <button class="copy-btn px-4 py-2 border border-border-dim rounded-lg font-mono text-xs text-gray-400 hover:text-white hover:border-amd-red/50" onclick="copyTemplate('template-intro', this)">📋 Copy Text</button>
+      </div>
+
+      <!-- Showcase Post -->
+      <div class="template-card p-6 rounded-2xl bg-surface-card border border-border-dim">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-xl">🖼️</span>
+          <h2 class="font-mono text-white font-bold">Showcase Post</h2>
+          <span class="ml-auto px-2 py-0.5 bg-neon-green/10 text-neon-green font-mono text-[10px] rounded">Facebook Groups</span>
+        </div>
+        <div class="bg-surface rounded-xl p-4 mb-4 text-sm text-gray-300 leading-relaxed whitespace-pre-line" id="template-showcase">Just printed this batch and I'm so happy with how they turned out! 😍
+
+These are [Instax Mini / Polaroid / 4x6] magnet frames — they snap right onto the fridge with embedded magnets. The fit is perfect and customers are loving them.
+
+Each one costs about $0.50 in filament and sells for $8-12. The margins on these are 🔥
+
+Been using designs from 3D Print Academy's STL library. Total game changer for getting consistent, professional results.
+
+Who else is selling magnet frames? What prices are you getting?
+
+[ATTACH 2-3 PHOTOS OF YOUR PRINTS]</div>
+        <button class="copy-btn px-4 py-2 border border-border-dim rounded-lg font-mono text-xs text-gray-400 hover:text-white hover:border-amd-red/50" onclick="copyTemplate('template-showcase', this)">📋 Copy Text</button>
+      </div>
+
+      <!-- Value Post -->
+      <div class="template-card p-6 rounded-2xl bg-surface-card border border-border-dim">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-xl">💡</span>
+          <h2 class="font-mono text-white font-bold">Value Post</h2>
+          <span class="ml-auto px-2 py-0.5 bg-neon-green/10 text-neon-green font-mono text-[10px] rounded">Facebook Groups</span>
+        </div>
+        <div class="bg-surface rounded-xl p-4 mb-4 text-sm text-gray-300 leading-relaxed whitespace-pre-line" id="template-value">Quick tip that tripled my magnet frame sales 📈
+
+I used to sell plain frames for $5 each and barely got orders. Then I started offering:
+
+✅ Custom colors to match kitchen/nursery decor
+✅ Holiday-themed frames (Christmas, Valentine's, etc.)
+✅ Wedding/event bulk packages (10+ frames at a discount)
+✅ Name personalization for $2 extra
+
+Now my average order is $25+ and I'm getting repeat customers.
+
+The key insight? People don't buy "a magnet frame" — they buy a gift, a memory display, a decoration. Price and position accordingly.
+
+Anyone else finding that customization is the key to higher margins? What add-ons work best for you?</div>
+        <button class="copy-btn px-4 py-2 border border-border-dim rounded-lg font-mono text-xs text-gray-400 hover:text-white hover:border-amd-red/50" onclick="copyTemplate('template-value', this)">📋 Copy Text</button>
+      </div>
+
+      <!-- Course Promotion Post -->
+      <div class="template-card p-6 rounded-2xl bg-surface-card border border-border-dim">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-xl">🎓</span>
+          <h2 class="font-mono text-white font-bold">Course Promotion Post</h2>
+          <span class="ml-auto px-2 py-0.5 bg-amd-red/10 text-amd-red-text font-mono text-[10px] rounded">Soft Sell</span>
+        </div>
+        <div class="bg-surface rounded-xl p-4 mb-4 text-sm text-gray-300 leading-relaxed whitespace-pre-line" id="template-promo">Been getting DMs asking how I design my magnet frames, so I wanted to share what helped me:
+
+I took the 3D Print Academy course (https://ajayadesign.github.io/3D-print/) and it honestly fast-tracked everything. Here's what I got out of it:
+
+🖨️ 15+ ready-to-print STL files (Instax, Polaroid, 4x6, custom sizes)
+📐 CAD tutorials so I can now design my own frames from scratch
+💰 A pricing calculator that helped me figure out my margins
+📦 Business module on selling at craft fairs and on Shopify
+
+The course is $97 right now (launch price — normally $999). For the STL files alone that's a steal since designing one frame from scratch took me 6+ hours before.
+
+Not affiliated, just genuinely found it helpful. They also have a free lesson if you want to try before committing:
+https://ajayadesign.github.io/3D-print/free/
+
+Happy to answer questions about my experience with it! 🙌</div>
+        <button class="copy-btn px-4 py-2 border border-border-dim rounded-lg font-mono text-xs text-gray-400 hover:text-white hover:border-amd-red/50" onclick="copyTemplate('template-promo', this)">📋 Copy Text</button>
+      </div>
+
+      <!-- Quick Share Snippets -->
+      <div class="template-card p-6 rounded-2xl bg-surface-card border border-amd-red/20">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-xl">⚡</span>
+          <h2 class="font-mono text-white font-bold">Quick Share Snippets</h2>
+          <span class="ml-auto px-2 py-0.5 bg-amd-red/10 text-amd-red-text font-mono text-[10px] rounded">Twitter / Short Posts</span>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            <div class="flex-1 bg-surface rounded-lg p-3 text-sm text-gray-300" id="snippet-1">I'm learning to build a 3D printing business! 🖨️ Check out this course https://ajayadesign.github.io/3D-print/</div>
+            <button class="copy-btn shrink-0 px-3 py-2 border border-border-dim rounded-lg font-mono text-[10px] text-gray-400 hover:text-white" onclick="copyTemplate('snippet-1', this)">📋</button>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="flex-1 bg-surface rounded-lg p-3 text-sm text-gray-300" id="snippet-2">Did you know you can make $1000+/month with a 3D printer? Here's how 👇 https://ajayadesign.github.io/3D-print/</div>
+            <button class="copy-btn shrink-0 px-3 py-2 border border-border-dim rounded-lg font-mono text-[10px] text-gray-400 hover:text-white" onclick="copyTemplate('snippet-2', this)">📋</button>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="flex-1 bg-surface rounded-lg p-3 text-sm text-gray-300" id="snippet-3">Free 3D printing magnet frame course 👀 https://ajayadesign.github.io/3D-print/free/</div>
+            <button class="copy-btn shrink-0 px-3 py-2 border border-border-dim rounded-lg font-mono text-[10px] text-gray-400 hover:text-white" onclick="copyTemplate('snippet-3', this)">📋</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="border-t border-border-dim py-12">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <p class="text-gray-600 text-xs font-mono">&copy; <script>document.write(new Date().getFullYear())</script> AjayaDesign — For internal use</p>
+    </div>
+  </footer>
+
+  <script>
+    function copyTemplate(id, btn) {
+      const text = document.getElementById(id).textContent.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('copied');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✅ Copied!';
+        setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = orig; }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

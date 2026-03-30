@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Showcase — 3D Printed Magnet Frames | 3D Print Academy</title>
+  <meta name="description" content="See what students are making with 3D Print Academy. Beautiful magnet frames for Instax, Polaroid, weddings, holidays, and more." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://ajayadesign.github.io/3D-print/gallery/" />
+  <meta property="og:title" content="Student Showcase — 3D Printed Magnet Frames" />
+  <meta property="og:description" content="See beautiful magnet frames made by 3D Print Academy students." />
+  <meta property="og:image" content="https://ajayadesign.github.io/3D-print/promo-card.png" />
+  <meta property="og:url" content="https://ajayadesign.github.io/3D-print/gallery/" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF6B6B',
+            'amd-red-btn': '#D91920',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+            'neon-green': '#39FF14',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Inter"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    .grid-bg {
+      background-image: linear-gradient(rgba(237,28,36,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(237,28,36,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .masonry { columns: 1; column-gap: 1rem; }
+    @media (min-width: 640px) { .masonry { columns: 2; } }
+    @media (min-width: 1024px) { .masonry { columns: 3; } }
+    .masonry-item { break-inside: avoid; margin-bottom: 1rem; }
+    .gallery-card { position: relative; overflow: hidden; border-radius: 1rem; cursor: pointer; }
+    .gallery-card img { width: 100%; display: block; transition: transform 0.4s ease; }
+    .gallery-card:hover img { transform: scale(1.05); }
+    .gallery-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(transparent 40%, rgba(10,10,15,0.95));
+      opacity: 0; transition: opacity 0.3s ease;
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 1.25rem;
+    }
+    .gallery-card:hover .gallery-overlay { opacity: 1; }
+    .badge-academy {
+      position: absolute; top: 0.75rem; right: 0.75rem;
+      background: rgba(237,28,36,0.9); color: white;
+      font-size: 0.6rem; font-family: 'JetBrains Mono', monospace;
+      padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-weight: 700;
+      backdrop-filter: blur(4px); letter-spacing: 0.05em;
+    }
+    .filter-btn { transition: all 0.2s; }
+    .filter-btn.active { background: rgba(237,28,36,0.2); color: #FF6B6B; border-color: rgba(237,28,36,0.5); }
+
+    /* Lightbox */
+    .lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; padding: 2rem; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 85vh; border-radius: 0.75rem; object-fit: contain; }
+    .lightbox-close { position: absolute; top: 1.5rem; right: 1.5rem; color: white; font-size: 2rem; cursor: pointer; z-index: 101; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.1); }
+    .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+    .lightbox-caption { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); text-align: center; color: white; }
+  </style>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-08QNJSTGZ2"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-08QNJSTGZ2');</script>
+</head>
+<body class="bg-surface text-gray-300 font-sans antialiased">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
+    <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+      <a href="/3D-print/" class="flex items-center gap-2">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-amd-red"></span>
+        <span class="font-mono font-bold text-white text-sm">3D Print <span class="text-amd-red-text">Academy</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-6 text-sm">
+        <a href="/3D-print/" class="hover:text-amd-red transition-colors">Course</a>
+        <a href="/3D-print/free/" class="hover:text-neon-green transition-colors">Free Lessons</a>
+        <a href="/3D-print/gallery/" class="text-amd-red-text">Gallery</a>
+        <a href="/3D-print/tools/profit-calculator.html" class="hover:text-neon-green transition-colors">Profit Calc</a>
+        <a href="/3D-print/#enroll" class="px-4 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">Enroll</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="pt-28 pb-12 grid-bg">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-3">// Student Showcase</p>
+      <h1 class="font-mono font-bold text-4xl sm:text-5xl text-white leading-tight mb-4">
+        Made with <span class="text-amd-red-text">3D Print Academy</span>
+      </h1>
+      <p class="text-gray-400 max-w-2xl mx-auto">Real magnet frames made by real students. From first prints to profit-ready products — see what's possible.</p>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <section class="pb-8">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex flex-wrap gap-2 justify-center" id="filters">
+        <button class="filter-btn active px-4 py-2 border border-border-dim rounded-full font-mono text-xs text-gray-400 hover:text-amd-red-text" data-filter="all">All</button>
+        <button class="filter-btn px-4 py-2 border border-border-dim rounded-full font-mono text-xs text-gray-400 hover:text-amd-red-text" data-filter="instax">Instax</button>
+        <button class="filter-btn px-4 py-2 border border-border-dim rounded-full font-mono text-xs text-gray-400 hover:text-amd-red-text" data-filter="polaroid">Polaroid</button>
+        <button class="filter-btn px-4 py-2 border border-border-dim rounded-full font-mono text-xs text-gray-400 hover:text-amd-red-text" data-filter="standard">Standard</button>
+        <button class="filter-btn px-4 py-2 border border-border-dim rounded-full font-mono text-xs text-gray-400 hover:text-amd-red-text" data-filter="custom">Custom</button>
+        <button class="filter-btn px-4 py-2 border border-border-dim rounded-full font-mono text-xs text-gray-400 hover:text-amd-red-text" data-filter="holiday">Holiday</button>
+        <button class="filter-btn px-4 py-2 border border-border-dim rounded-full font-mono text-xs text-gray-400 hover:text-amd-red-text" data-filter="wedding">Wedding</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="pb-20">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="masonry" id="gallery">
+        <!-- Items injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SUBMIT CTA -->
+  <section class="py-20 grid-bg">
+    <div class="max-w-2xl mx-auto px-6 text-center">
+      <div class="p-8 rounded-2xl bg-surface-card border border-border-dim">
+        <span class="text-4xl mb-4 block">📸</span>
+        <h2 class="font-mono font-bold text-2xl text-white mb-3">Show Off Your Creation</h2>
+        <p class="text-gray-400 mb-6">Made a magnet frame? We'd love to feature it! Submit a photo and get featured in the showcase.</p>
+        <a href="mailto:aj@ajayadesign.com?subject=Gallery%20Submission%20-%203D%20Print%20Academy&body=Hi!%20I'd%20like%20to%20submit%20my%20magnet%20frame%20to%20the%20gallery.%0A%0AName:%0AFrame%20type:%0APhoto%20attached!" class="inline-flex items-center gap-2 px-7 py-3.5 bg-amd-red-btn text-white rounded-lg font-mono text-sm font-semibold hover:bg-red-800 transition-all">
+          📤 Submit Your Creation
+        </a>
+        <p class="text-gray-600 text-xs font-mono mt-3">Email us a photo + your name. We'll add it within 48 hours.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-border-dim py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-amd-red"></span>
+          <span class="font-mono font-bold text-white text-sm">Ajaya<span class="text-amd-red-text">Design</span></span>
+        </div>
+        <div class="flex items-center gap-6 text-sm text-gray-500">
+          <a href="/3D-print/" class="hover:text-white transition-colors">Course</a>
+          <a href="/3D-print/gallery/" class="text-amd-red-text">Gallery</a>
+          <a href="/contact/" class="hover:text-white transition-colors">Contact</a>
+        </div>
+        <p class="text-gray-600 text-xs font-mono">&copy; <script>document.write(new Date().getFullYear())</script> AjayaDesign</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-close" onclick="closeLightbox()">&times;</div>
+    <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()" />
+    <div class="lightbox-caption">
+      <p class="font-mono text-sm font-semibold" id="lightbox-caption"></p>
+      <p class="font-mono text-xs text-amd-red-text mt-1" id="lightbox-category"></p>
+    </div>
+  </div>
+
+  <script>
+    const galleryData = [
+      { src: 'https://images.unsplash.com/photo-1631281956016-3cdc1b2fe5fb?w=600&q=80', caption: 'Classic Instax Mini Frame', category: 'instax', height: 'h-72' },
+      { src: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=600&q=80', caption: 'Rustic Wedding Set', category: 'wedding', height: 'h-96' },
+      { src: 'https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=600&q=80', caption: 'Neon Edge Polaroid Holder', category: 'polaroid', height: 'h-80' },
+      { src: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&q=80', caption: 'Holiday Snowflake Frame', category: 'holiday', height: 'h-72' },
+      { src: 'https://images.unsplash.com/photo-1563520239648-a24e51d4b570?w=600&q=80', caption: 'Minimalist 4x6 Standard', category: 'standard', height: 'h-96' },
+      { src: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80', caption: 'Custom Logo Frame — Pet Shop', category: 'custom', height: 'h-80' },
+      { src: 'https://images.unsplash.com/photo-1609921212029-bb5a28e60960?w=600&q=80', caption: 'Instax Wide Magnetic Mount', category: 'instax', height: 'h-64' },
+      { src: 'https://images.unsplash.com/photo-1606293926249-ed22f1266b5e?w=600&q=80', caption: 'Elegant Gold Wedding Frame', category: 'wedding', height: 'h-96' },
+      { src: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&q=80', caption: 'Retro Polaroid Stand', category: 'polaroid', height: 'h-72' },
+      { src: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80', caption: 'Christmas Tree Ornament Frame', category: 'holiday', height: 'h-80' },
+      { src: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80', caption: 'Multi-Photo Fridge Display', category: 'standard', height: 'h-96' },
+      { src: 'https://images.unsplash.com/photo-1581090464777-f3220bbe1b8e?w=600&q=80', caption: 'Custom Heart-Shaped Frame', category: 'custom', height: 'h-72' },
+    ];
+
+    const gallery = document.getElementById('gallery');
+    const filters = document.getElementById('filters');
+
+    function renderGallery(filter = 'all') {
+      const items = filter === 'all' ? galleryData : galleryData.filter(i => i.category === filter);
+      gallery.innerHTML = items.map((item, i) => `
+        <div class="masonry-item gallery-card" onclick="openLightbox('${item.src.replace('w=600', 'w=1200')}', '${item.caption}', '${item.category}')">
+          <img src="${item.src}" alt="${item.caption}" class="w-full object-cover ${item.height}" loading="lazy" />
+          <div class="gallery-overlay">
+            <span class="inline-block px-2 py-0.5 bg-amd-red/20 text-amd-red-text font-mono text-[10px] rounded-full w-fit mb-2 capitalize">${item.category}</span>
+            <p class="font-mono text-white text-sm font-semibold">${item.caption}</p>
+          </div>
+          <div class="badge-academy">3D PRINT ACADEMY</div>
+        </div>
+      `).join('');
+    }
+
+    filters.addEventListener('click', e => {
+      if (!e.target.matches('.filter-btn')) return;
+      filters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      renderGallery(e.target.dataset.filter);
+    });
+
+    function openLightbox(src, caption, category) {
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox-caption').textContent = caption;
+      document.getElementById('lightbox-category').textContent = category.toUpperCase();
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    renderGallery();
+  </script>
+</body>
+</html>
