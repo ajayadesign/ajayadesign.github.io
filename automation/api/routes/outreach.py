@@ -2557,22 +2557,6 @@ async def delete_email(email_id: str, db: AsyncSession = Depends(get_db)):
     return {"message": f"Email {email_id} deleted"}
 
 
-@outreach_router.delete("/emails/{email_id}")
-async def delete_email(email_id: str, db: AsyncSession = Depends(get_db)):
-    """Delete a draft email (only drafts can be deleted)."""
-    result = await db.execute(
-        select(OutreachEmail).where(OutreachEmail.id == uuid.UUID(email_id))
-    )
-    email = result.scalar_one_or_none()
-    if not email:
-        raise HTTPException(status_code=404, detail="Email not found")
-    if email.status not in ("draft", "approved", "pending_approval"):
-        raise HTTPException(status_code=400, detail="Can only delete draft/pending/approved emails")
-    await db.delete(email)
-    await db.commit()
-    return {"message": f"Email {email_id} deleted"}
-
-
 @outreach_router.post("/emails/{email_id}/regenerate")
 async def regenerate_email(email_id: str, db: AsyncSession = Depends(get_db)):
     """Re-compose an email using current audit data. Fixes stale/wrong values."""
