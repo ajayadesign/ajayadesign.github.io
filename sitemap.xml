@@ -626,9 +626,7 @@
     <priority>0.7</priority>
   </url>
 
-</urlset>
-
-  <!-- ═══ New Tools & Landing Pages ═══ -->
+  <!-- New Tools & Landing Pages (2026-03-31) -->
   <url>
     <loc>https://ajayadesign.github.io/24hr/</loc>
     <changefreq>weekly</changefreq>
@@ -644,3 +642,5 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+
+</urlset>
