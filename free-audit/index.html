@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Free Website Audit — Find Out What's Costing You Customers | AjayaDesign</title>
-  <meta name="description" content="Get a free website audit from AjayaDesign. We'll check your PageSpeed, mobile responsiveness, SEO basics, and give you 3 custom recommendations to win more customers." />
+  <title>Free Website & AI Automation Audit — Find Out What's Costing You Customers | AjayaDesign</title>
+  <meta name="description" content="Get a free website audit and AI readiness check from AjayaDesign. We'll check your PageSpeed, SEO, mobile responsiveness, and analyze your business for AI automation opportunities." />
   <meta name="robots" content="index, follow" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="canonical" href="https://ajayadesign.github.io/free-audit/" />
 
-  <meta property="og:title" content="Free Website Audit — Find Out What's Costing You Customers" />
-  <meta property="og:description" content="Get a free website audit: PageSpeed score, mobile check, SEO basics, and 3 custom recommendations." />
+  <meta property="og:title" content="Free Website & AI Automation Audit — Find Out What's Costing You Customers" />
+  <meta property="og:description" content="Get a free website audit and AI readiness check: PageSpeed, SEO, mobile, plus AI automation opportunities for your business." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://ajayadesign.github.io/free-audit/" />
 
@@ -76,11 +76,11 @@
         100% Free — No Strings Attached
       </div>
       <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
-        Get a Free Website Audit<br />
+        Get a Free Website &amp; AI Audit<br />
         <span class="text-accent-green">Find Out What's Costing You Customers</span>
       </h1>
       <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
-        We'll analyze your website and deliver a personalized report with actionable fixes — so you can stop losing leads and start converting visitors into paying customers.
+        We'll analyze your website <em>and</em> your business for AI automation opportunities — then deliver a personalized report with actionable fixes so you stop losing leads and start saving time.
       </p>
     </div>
   </section>
@@ -90,7 +90,7 @@
     <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-12 items-start">
       <!-- Benefits -->
       <div>
-        <h2 class="text-2xl font-bold mb-6">What You'll Get</h2>
+        <h2 class="text-2xl font-bold mb-6">🌐 Website Audit</h2>
         <ul class="space-y-4 text-lg text-gray-300">
           <li class="check-item">Google PageSpeed score & performance breakdown</li>
           <li class="check-item">Mobile responsiveness check across devices</li>
@@ -98,6 +98,23 @@
           <li class="check-item">3 custom recommendations tailored to your business</li>
           <li class="check-item">Competitor comparison snapshot</li>
         </ul>
+
+        <!-- AI Readiness Section -->
+        <h2 class="text-2xl font-bold mt-10 mb-6">🤖 AI Readiness Check</h2>
+        <p class="text-gray-400 mb-4">We'll analyze your business for AI automation opportunities:</p>
+        <ul class="space-y-4 text-lg text-gray-300">
+          <li class="check-item">After-hours lead capture</li>
+          <li class="check-item">Appointment booking automation</li>
+          <li class="check-item">Customer FAQ handling</li>
+          <li class="check-item">Follow-up sequence automation</li>
+          <li class="check-item">Review response automation</li>
+        </ul>
+        <p class="text-accent-green font-semibold mt-4">We'll tell you exactly which AI tools could save you $X/month — free, no strings.</p>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="/ai-automation/" class="inline-block bg-surface-light hover:bg-gray-700 text-white font-semibold px-5 py-2.5 rounded-lg border border-gray-600 transition-colors text-sm">Learn About AI Automation →</a>
+          <a href="/demo/" class="inline-block bg-amd-red hover:bg-red-700 text-white font-semibold px-5 py-2.5 rounded-lg transition-colors text-sm">See a Live Demo →</a>
+        </div>
 
         <div class="mt-8 p-4 bg-surface-light rounded-lg border border-gray-700">
           <p class="text-accent-green font-semibold text-lg">29+ sites built for local businesses</p>
@@ -109,6 +126,23 @@
       <div class="bg-surface p-8 rounded-2xl border border-gray-700 glow-green">
         <h3 class="text-xl font-bold mb-6 text-center">Request Your Free Audit</h3>
         <form id="audit-form" class="space-y-4" onsubmit="handleSubmit(event)">
+          <div>
+            <label class="block text-sm text-gray-400 mb-2">Audit Type *</label>
+            <div class="space-y-2">
+              <label class="flex items-center gap-3 p-3 bg-bg-dark border border-gray-600 rounded-lg cursor-pointer hover:border-accent-green transition-colors">
+                <input type="radio" name="audit_type" value="website+ai" checked class="accent-green-500" />
+                <span class="text-white">🌐🤖 Website + AI Audit</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 bg-bg-dark border border-gray-600 rounded-lg cursor-pointer hover:border-accent-green transition-colors">
+                <input type="radio" name="audit_type" value="website" class="accent-green-500" />
+                <span class="text-white">🌐 Website Audit</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 bg-bg-dark border border-gray-600 rounded-lg cursor-pointer hover:border-accent-green transition-colors">
+                <input type="radio" name="audit_type" value="ai" class="accent-green-500" />
+                <span class="text-white">🤖 AI Automation Audit Only</span>
+              </label>
+            </div>
+          </div>
           <div>
             <label class="block text-sm text-gray-400 mb-1" for="business">Business Name *</label>
             <input type="text" id="business" name="business" required
@@ -197,6 +231,7 @@
         website: document.getElementById('website').value || 'Not provided',
         email: document.getElementById('email').value,
         phone: document.getElementById('phone').value,
+        audit_type: document.querySelector('input[name="audit_type"]:checked').value,
         submitted_at: new Date().toISOString(),
         status: 'new'
       };
@@ -225,7 +260,7 @@
       } catch (err) {
         // Fallback to mailto
         const subject = encodeURIComponent(`Free Audit Request: ${data.business}`);
-        const body = encodeURIComponent(`Business: ${data.business}\nWebsite: ${data.website}\nEmail: ${data.email}\nPhone: ${data.phone}`);
+        const body = encodeURIComponent(`Business: ${data.business}\nWebsite: ${data.website}\nEmail: ${data.email}\nPhone: ${data.phone}\nAudit Type: ${data.audit_type}`);
         window.location.href = `mailto:ajayaconnect@gmail.com?subject=${subject}&body=${body}`;
       }
     }
