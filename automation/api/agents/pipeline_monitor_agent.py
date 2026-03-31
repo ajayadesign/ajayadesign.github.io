@@ -12,7 +12,7 @@ from typing import Dict, Any, List
 from sqlalchemy import select, func, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.database import async_session_factory
+from api.database import async_session_factory, async_session_factory as async_session
 from api.models.prospect import Prospect
 
 logger = logging.getLogger("agents.pipeline_monitor")

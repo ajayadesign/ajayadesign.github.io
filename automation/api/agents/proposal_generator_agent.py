@@ -13,7 +13,7 @@ from pathlib import Path
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.database import async_session_factory
+from api.database import async_session_factory, async_session_factory as async_session
 from api.models.prospect import Prospect
 from api.services.ai import call_ai, extract_json
 from api.config import settings

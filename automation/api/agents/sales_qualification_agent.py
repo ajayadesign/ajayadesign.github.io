@@ -13,7 +13,7 @@ from typing import Dict, Any, List, Optional
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.database import async_session_factory
+from api.database import async_session_factory, async_session_factory as async_session
 from api.models.prospect import Prospect, OutreachEmail, ProspectActivity
 from api.services.ai import call_ai, extract_json
 from api.config import settings
