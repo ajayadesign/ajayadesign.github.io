@@ -100,6 +100,23 @@
 
   <style>@view-transition { navigation: auto; }</style>
   <link rel="stylesheet" href="/css/chatbot.css">
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-08QNJSTGZ2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-08QNJSTGZ2');
+  </script>
+
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "w3y2kvyq37");
+  </script>
 </head>
 
 <body class="font-sans text-gray-300 antialiased" data-audio="/assets/audio/ambient-drone.mp3">
@@ -449,5 +466,43 @@
   <script src="/js/ad-tracker.js" defer></script>
 
   <script src="/js/chatbot-widget.js" defer></script>
+
+  <!-- ═══════════════════ STICKY AI AUDIT CTA ═══════════════════ -->
+  <div id="sticky-audit-cta" class="fixed bottom-0 inset-x-0 z-40 translate-y-full transition-transform duration-500" style="display:none">
+    <div class="bg-surface-card/95 backdrop-blur-lg border-t border-border-dim px-6 py-3 flex items-center justify-center gap-4 flex-wrap">
+      <span class="text-sm text-gray-300 font-mono">Want to see how AI can grow your business?</span>
+      <a href="/free-audit/" id="sticky-audit-btn" class="inline-flex items-center gap-2 px-5 py-2 bg-electric-blue text-surface font-mono text-sm font-bold rounded hover:bg-cyan-300 transition-colors">
+        Get Free AI Audit
+      </a>
+      <button id="sticky-audit-close" class="text-gray-500 hover:text-white ml-2 text-lg" aria-label="Dismiss">&times;</button>
+    </div>
+  </div>
+  <script>
+  (function(){
+    if(sessionStorage.getItem('audit-cta-dismissed')) return;
+    var cta=document.getElementById('sticky-audit-cta');
+    var hero=document.querySelector('.hero-section, section:first-of-type');
+    var shown=false, timer;
+    function show(){
+      if(shown) return; shown=true;
+      cta.style.display='';
+      requestAnimationFrame(function(){requestAnimationFrame(function(){cta.classList.remove('translate-y-full')})});
+      timer=setTimeout(dismiss,30000);
+    }
+    function dismiss(){
+      cta.classList.add('translate-y-full');
+      sessionStorage.setItem('audit-cta-dismissed','1');
+      clearTimeout(timer);
+    }
+    document.getElementById('sticky-audit-close').addEventListener('click',dismiss);
+    document.getElementById('sticky-audit-btn').addEventListener('click',function(){sessionStorage.setItem('audit-cta-dismissed','1')});
+    var observer=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(!e.isIntersecting) show()});
+    },{threshold:0});
+    if(hero) observer.observe(hero);
+    else setTimeout(show, 5000);
+  })();
+  </script>
+
 </body>
 </html>
