@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Intake Assistant Demo — Boston Law Firm | Built by AjayaDesign</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        surface: '#0A0A0F',
+        'surface-light': '#12121A',
+        'surface-card': '#1A1A25',
+        'amd-red': '#ED1C24',
+        'electric-blue': '#00D4FF',
+        'text-primary': '#E8E8ED',
+        'text-muted': '#8888A0',
+      },
+      fontFamily: {
+        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['Inter', 'sans-serif'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background: #0A0A0F; color: #E8E8ED; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Chat widget */
+  #chat-widget { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); transform-origin: bottom right; }
+  #chat-widget.closed { transform: scale(0); opacity: 0; pointer-events: none; }
+  #chat-fab { transition: transform 0.2s; }
+  #chat-fab:hover { transform: scale(1.1); }
+
+  /* Messages */
+  .msg-bot { animation: msgIn 0.3s ease-out; }
+  .msg-user { animation: msgIn 0.2s ease-out; }
+  @keyframes msgIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+
+  .typing-dot { animation: blink 1.4s infinite both; }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
+
+  /* Quick replies */
+  .quick-btn { transition: all 0.15s; }
+  .quick-btn:hover { background: #00D4FF; color: #0A0A0F; }
+
+  /* Scrollbar */
+  #chat-messages::-webkit-scrollbar { width: 4px; }
+  #chat-messages::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+  /* Pulse on FAB */
+  .pulse-ring { animation: pulseRing 2s ease-out infinite; }
+  @keyframes pulseRing { 0%{transform:scale(1);opacity:.6} 100%{transform:scale(1.5);opacity:0} }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- DEMO BANNER -->
+<div class="bg-amd-red text-white text-center py-2 px-4 text-sm font-medium font-mono relative z-50">
+  DEMO — Built by AjayaDesign in 24 hours &nbsp;·&nbsp;
+  <a href="/contact/" class="underline hover:text-electric-blue font-semibold">Get yours →</a>
+</div>
+
+<!-- MOCK LAW FIRM HERO -->
+<header class="bg-surface-light border-b border-white/5">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-electric-blue/20 flex items-center justify-center text-electric-blue font-bold text-lg">B</div>
+      <div>
+        <div class="font-semibold text-text-primary text-lg leading-tight">Boston Law Firm</div>
+        <div class="text-xs text-text-muted">Immigration Lawyers · Austin, TX</div>
+      </div>
+    </div>
+    <nav class="hidden md:flex gap-6 text-sm text-text-muted">
+      <span class="hover:text-electric-blue cursor-pointer">Practice Areas</span>
+      <span class="hover:text-electric-blue cursor-pointer">Our Team</span>
+      <span class="hover:text-electric-blue cursor-pointer">Resources</span>
+      <span class="hover:text-electric-blue cursor-pointer">Contact</span>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- Hero Section -->
+  <section class="max-w-6xl mx-auto px-6 py-20 md:py-32 text-center">
+    <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+      Trusted Immigration<br>Legal Services
+    </h1>
+    <p class="text-text-muted text-lg md:text-xl max-w-2xl mx-auto mb-10">
+      Helping families and professionals navigate the U.S. immigration system.
+      Serving Austin and Central Texas since 2009.
+    </p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <button onclick="openChat()" class="bg-electric-blue text-surface font-semibold px-8 py-3 rounded-lg hover:brightness-110 transition">
+        Chat with Our AI Assistant
+      </button>
+      <a href="#" class="border border-white/20 text-text-primary px-8 py-3 rounded-lg hover:border-electric-blue transition">
+        Call (512) 555-0199
+      </a>
+    </div>
+  </section>
+
+  <!-- Practice Areas -->
+  <section class="max-w-6xl mx-auto px-6 pb-20">
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-surface-card rounded-xl p-6 border border-white/5">
+        <div class="text-3xl mb-3">🛂</div>
+        <h3 class="font-semibold text-lg mb-2">Family Immigration</h3>
+        <p class="text-text-muted text-sm">Green cards, spousal visas, family petitions, and naturalization support.</p>
+      </div>
+      <div class="bg-surface-card rounded-xl p-6 border border-white/5">
+        <div class="text-3xl mb-3">💼</div>
+        <h3 class="font-semibold text-lg mb-2">Work Visas</h3>
+        <p class="text-text-muted text-sm">H-1B, L-1, O-1, TN visas for professionals and employers.</p>
+      </div>
+      <div class="bg-surface-card rounded-xl p-6 border border-white/5">
+        <div class="text-3xl mb-3">🛡️</div>
+        <h3 class="font-semibold text-lg mb-2">Asylum & Protection</h3>
+        <p class="text-text-muted text-sm">Asylum, withholding of removal, VAWA, U-visa, and T-visa cases.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="bg-surface-light border-y border-white/5 py-20">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <p class="text-electric-blue font-mono text-sm mb-3 uppercase tracking-wider">Powered by AjayaDesign</p>
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">Want this for YOUR business?</h2>
+      <p class="text-text-muted text-lg max-w-2xl mx-auto mb-8">
+        This AI chatbot demo was built in under 24 hours. Imagine what a custom-built AI intake assistant could do for your practice — qualify leads 24/7, answer FAQs instantly, and book consultations while you sleep.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="/contact/" class="bg-amd-red text-white font-semibold px-8 py-3 rounded-lg hover:brightness-110 transition">
+          Let's Talk AI Automation
+        </a>
+        <a href="/" class="border border-white/20 text-text-primary px-8 py-3 rounded-lg hover:border-electric-blue transition">
+          See Our Work
+        </a>
+      </div>
+      <div class="mt-10 grid sm:grid-cols-3 gap-6 text-left max-w-3xl mx-auto">
+        <div class="bg-surface-card rounded-xl p-5 border border-white/5">
+          <div class="text-electric-blue font-mono text-2xl font-bold mb-1">24/7</div>
+          <div class="text-sm text-text-muted">Always-on intake — never miss a lead</div>
+        </div>
+        <div class="bg-surface-card rounded-xl p-5 border border-white/5">
+          <div class="text-electric-blue font-mono text-2xl font-bold mb-1">2x</div>
+          <div class="text-sm text-text-muted">More consultations booked on average</div>
+        </div>
+        <div class="bg-surface-card rounded-xl p-5 border border-white/5">
+          <div class="text-electric-blue font-mono text-2xl font-bold mb-1">&lt;24h</div>
+          <div class="text-sm text-text-muted">From concept to working prototype</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer class="text-center py-8 text-text-muted text-sm">
+  <p>This is a demo page. "Boston Law Firm" is a fictional entity for demonstration purposes.</p>
+  <p class="mt-1">Built by <a href="/" class="text-electric-blue hover:underline">AjayaDesign</a></p>
+</footer>
+
+<!-- CHAT FAB -->
+<button id="chat-fab" onclick="toggleChat()" class="fixed bottom-6 right-6 z-40 w-16 h-16 bg-electric-blue text-surface rounded-full shadow-lg shadow-electric-blue/30 flex items-center justify-center text-2xl hover:shadow-electric-blue/50">
+  <span class="absolute w-16 h-16 rounded-full bg-electric-blue/40 pulse-ring"></span>
+  <svg id="fab-icon-chat" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+  <svg id="fab-icon-close" class="w-7 h-7 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+</button>
+
+<!-- CHAT WIDGET -->
+<div id="chat-widget" class="closed fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] bg-surface-light rounded-2xl shadow-2xl border border-white/10 flex flex-col overflow-hidden" style="height:560px; max-height:calc(100vh - 8rem);">
+  <!-- Header -->
+  <div class="bg-surface-card px-5 py-4 flex items-center gap-3 border-b border-white/5 shrink-0">
+    <div class="w-9 h-9 rounded-full bg-electric-blue/20 flex items-center justify-center text-electric-blue font-bold text-sm">AI</div>
+    <div class="flex-1 min-w-0">
+      <div class="font-semibold text-sm text-text-primary">Boston Law AI Assistant</div>
+      <div class="text-xs text-green-400 flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full inline-block"></span> Online</div>
+    </div>
+    <button onclick="toggleLang()" id="lang-toggle" class="text-xs font-mono bg-surface px-2 py-1 rounded border border-white/10 text-text-muted hover:text-electric-blue hover:border-electric-blue transition">EN/ES</button>
+  </div>
+  <!-- Messages -->
+  <div id="chat-messages" class="flex-1 overflow-y-auto px-4 py-4 space-y-3"></div>
+  <!-- Quick Replies -->
+  <div id="quick-replies" class="px-4 pb-2 flex flex-wrap gap-2 shrink-0"></div>
+  <!-- Input -->
+  <div class="px-4 py-3 border-t border-white/5 shrink-0">
+    <form id="chat-form" class="flex gap-2" onsubmit="return handleSubmit(event)">
+      <input id="chat-input" type="text" placeholder="Type your message..." autocomplete="off"
+        class="flex-1 bg-surface rounded-lg px-4 py-2.5 text-sm text-text-primary placeholder-text-muted border border-white/10 focus:border-electric-blue focus:outline-none transition">
+      <button type="submit" class="bg-electric-blue text-surface rounded-lg px-4 py-2.5 font-semibold text-sm hover:brightness-110 transition">Send</button>
+    </form>
+  </div>
+</div>
+
+<script>
+// ==================== CHAT ENGINE ====================
+const $ = s => document.querySelector(s);
+const widget = $('#chat-widget');
+const fab = $('#chat-fab');
+const msgContainer = $('#chat-messages');
+const quickContainer = $('#quick-replies');
+const input = $('#chat-input');
+let chatOpen = false;
+let lang = 'en';
+let state = 'init';
+let userData = { name: '', caseType: '', phone: '', date: '' };
+let started = false;
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  widget.classList.toggle('closed', !chatOpen);
+  $('#fab-icon-chat').classList.toggle('hidden', chatOpen);
+  $('#fab-icon-close').classList.toggle('hidden', !chatOpen);
+  fab.querySelector('.pulse-ring')?.classList.toggle('hidden', chatOpen);
+  if (chatOpen && !started) { started = true; startChat(); }
+  if (chatOpen) input.focus();
+}
+function openChat() { if (!chatOpen) toggleChat(); }
+
+function toggleLang() {
+  lang = lang === 'en' ? 'es' : 'en';
+  $('#lang-toggle').textContent = lang === 'en' ? 'EN/ES' : 'ES/EN';
+  // Restart conversation in new language
+  msgContainer.innerHTML = '';
+  quickContainer.innerHTML = '';
+  state = 'init';
+  userData = { name: '', caseType: '', phone: '', date: '' };
+  startChat();
+}
+
+// --- Bilingual content ---
+const T = {
+  welcome: {
+    en: "👋 Hello! I'm the AI assistant for **Boston Law Firm**. I can help you with:\n\n• Starting a new case intake\n• Answering questions about our services\n• Booking a consultation\n\nHow can I help you today?",
+    es: "👋 ¡Hola! Soy el asistente de IA de **Boston Law Firm**. Puedo ayudarte con:\n\n• Iniciar una consulta de caso\n• Responder preguntas sobre nuestros servicios\n• Agendar una consulta\n\n¿Cómo puedo ayudarte hoy?"
+  },
+  welcomeQuick: {
+    en: [["Start Intake","intake"],["FAQs","faq"],["Book Consultation","book"],["Hablar en Español","switch_es"]],
+    es: [["Iniciar Consulta","intake"],["Preguntas Frecuentes","faq"],["Agendar Cita","book"],["Switch to English","switch_en"]]
+  },
+  askName: {
+    en: "Great! Let's get started. What's your **full name**?",
+    es: "¡Perfecto! Comencemos. ¿Cuál es tu **nombre completo**?"
+  },
+  askCase: {
+    en: "Nice to meet you, {name}! What type of immigration matter do you need help with?",
+    es: "¡Mucho gusto, {name}! ¿Qué tipo de asunto migratorio necesitas?"
+  },
+  caseQuick: {
+    en: [["Family Immigration","family"],["Work Visa","work"],["Asylum/Protection","asylum"],["Citizenship","citizenship"],["Other","other"]],
+    es: [["Inmigración Familiar","family"],["Visa de Trabajo","work"],["Asilo/Protección","asylum"],["Ciudadanía","citizenship"],["Otro","other"]]
+  },
+  askPhone: {
+    en: "Got it — **{case}**. Can I get a **phone number** so an attorney can reach you?",
+    es: "Entendido — **{case}**. ¿Me puedes dar un **número de teléfono** para que un abogado te contacte?"
+  },
+  intakeDone: {
+    en: "Thank you, {name}! Here's a summary of your intake:\n\n📝 **Name:** {name}\n📂 **Case Type:** {case}\n📱 **Phone:** {phone}\n\nAn attorney will review your information and contact you within **1 business day**. Would you like to book a consultation now?",
+    es: "¡Gracias, {name}! Aquí está el resumen:\n\n📝 **Nombre:** {name}\n📂 **Tipo de Caso:** {case}\n📱 **Teléfono:** {phone}\n\nUn abogado revisará tu información y te contactará en **1 día hábil**. ¿Te gustaría agendar una consulta ahora?"
+  },
+  intakeDoneQuick: {
+    en: [["Yes, book now","book"],["No thanks","done"]],
+    es: [["Sí, agendar","book"],["No gracias","done"]]
+  },
+  faq: {
+    en: "Here are some common questions. What would you like to know?",
+    es: "Aquí hay algunas preguntas frecuentes. ¿Qué te gustaría saber?"
+  },
+  faqQuick: {
+    en: [["Office Hours","faq_hours"],["Consultation Fee","faq_fee"],["Practice Areas","faq_areas"],["Languages","faq_lang"],["← Back","main"]],
+    es: [["Horario","faq_hours"],["Costo de Consulta","faq_fee"],["Áreas de Práctica","faq_areas"],["Idiomas","faq_lang"],["← Volver","main"]]
+  },
+  faq_hours: {
+    en: "🕐 **Office Hours:**\n\nMonday–Friday: 9:00 AM – 6:00 PM\nSaturday: 10:00 AM – 2:00 PM (by appointment)\nSunday: Closed\n\nOur AI assistant is available **24/7** to answer questions and start your intake!",
+    es: "🕐 **Horario de Oficina:**\n\nLunes–Viernes: 9:00 AM – 6:00 PM\nSábado: 10:00 AM – 2:00 PM (con cita)\nDomingo: Cerrado\n\n¡Nuestro asistente de IA está disponible **24/7**!"
+  },
+  faq_fee: {
+    en: "💰 **Consultation Fee:**\n\nInitial consultation: **$150** (60 minutes)\nThis fee is applied toward your retainer if you decide to hire us.\n\nWe also offer **free 15-minute phone screenings** for urgent matters.",
+    es: "💰 **Costo de Consulta:**\n\nConsulta inicial: **$150** (60 minutos)\nEste costo se aplica a tu anticipo si decides contratarnos.\n\nTambién ofrecemos **evaluaciones telefónicas gratuitas de 15 minutos** para asuntos urgentes."
+  },
+  faq_areas: {
+    en: "📋 **Practice Areas:**\n\n• Family-based immigration (green cards, spousal visas)\n• Employment visas (H-1B, L-1, O-1, TN)\n• Asylum & refugee cases\n• VAWA, U-visa, T-visa\n• Naturalization & citizenship\n• Deportation defense\n• DACA renewals",
+    es: "📋 **Áreas de Práctica:**\n\n• Inmigración familiar (green cards, visas de cónyuge)\n• Visas de empleo (H-1B, L-1, O-1, TN)\n• Casos de asilo y refugio\n• VAWA, U-visa, T-visa\n• Naturalización y ciudadanía\n• Defensa contra deportación\n• Renovaciones de DACA"
+  },
+  faq_lang: {
+    en: "🌎 **Languages:**\n\nOur staff speaks **English, Spanish, and Portuguese**. We also work with certified interpreters for other languages including Mandarin, Hindi, and Arabic.",
+    es: "🌎 **Idiomas:**\n\nNuestro equipo habla **inglés, español y portugués**. También trabajamos con intérpretes certificados para otros idiomas incluyendo mandarín, hindi y árabe."
+  },
+  bookIntro: {
+    en: "📅 Let's book your consultation! Which day works best for you?",
+    es: "📅 ¡Agendemos tu consulta! ¿Qué día te funciona mejor?"
+  },
+  bookQuick: {
+    en: [["This Week","this_week"],["Next Week","next_week"],["ASAP","asap"]],
+    es: [["Esta Semana","this_week"],["Próxima Semana","next_week"],["Lo antes posible","asap"]]
+  },
+  bookConfirm: {
+    en: "✅ We've noted your preference for **{date}**. Our scheduling team will call you to confirm the exact time.\n\n{nameNote}Thank you for choosing Boston Law Firm! Is there anything else I can help with?",
+    es: "✅ Hemos anotado tu preferencia para **{date}**. Nuestro equipo te llamará para confirmar la hora exacta.\n\n{nameNote}¡Gracias por elegir Boston Law Firm! ¿Hay algo más en lo que pueda ayudarte?"
+  },
+  bookConfirmQuick: {
+    en: [["Start Intake","intake"],["FAQs","faq"],["That's all!","done"]],
+    es: [["Iniciar Consulta","intake"],["Preguntas","faq"],["¡Eso es todo!","done"]]
+  },
+  done: {
+    en: "Thank you! 🙏 Don't hesitate to reach out anytime. Have a wonderful day!",
+    es: "¡Gracias! 🙏 No dudes en contactarnos cuando quieras. ¡Que tengas un excelente día!"
+  },
+  fallback: {
+    en: "I'm not sure I understood that. Let me show you what I can help with:",
+    es: "No estoy seguro de haber entendido. Te muestro cómo puedo ayudarte:"
+  }
+};
+
+const caseLabels = {
+  en: { family:"Family Immigration", work:"Work Visa", asylum:"Asylum/Protection", citizenship:"Citizenship", other:"Other" },
+  es: { family:"Inmigración Familiar", work:"Visa de Trabajo", asylum:"Asilo/Protección", citizenship:"Ciudadanía", other:"Otro" }
+};
+const dateLabels = {
+  en: { this_week:"this week", next_week:"next week", asap:"as soon as possible" },
+  es: { this_week:"esta semana", next_week:"la próxima semana", asap:"lo antes posible" }
+};
+
+function t(key) { return (T[key] && T[key][lang]) || ''; }
+
+// --- Rendering ---
+function md(text) {
+  return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+}
+
+function addMsg(text, isUser) {
+  const div = document.createElement('div');
+  div.className = isUser
+    ? 'msg-user flex justify-end'
+    : 'msg-bot flex justify-start';
+  div.innerHTML = `<div class="${isUser ? 'bg-electric-blue text-surface' : 'bg-surface-card text-text-primary'} rounded-2xl ${isUser ? 'rounded-br-md' : 'rounded-bl-md'} px-4 py-3 max-w-[85%] text-sm leading-relaxed">${md(text)}</div>`;
+  msgContainer.appendChild(div);
+  msgContainer.scrollTop = msgContainer.scrollHeight;
+}
+
+function showTyping() {
+  const div = document.createElement('div');
+  div.id = 'typing';
+  div.className = 'msg-bot flex justify-start';
+  div.innerHTML = `<div class="bg-surface-card rounded-2xl rounded-bl-md px-4 py-3 flex gap-1 items-center"><span class="typing-dot w-2 h-2 bg-text-muted rounded-full inline-block"></span><span class="typing-dot w-2 h-2 bg-text-muted rounded-full inline-block"></span><span class="typing-dot w-2 h-2 bg-text-muted rounded-full inline-block"></span></div>`;
+  msgContainer.appendChild(div);
+  msgContainer.scrollTop = msgContainer.scrollHeight;
+}
+function hideTyping() { $('#typing')?.remove(); }
+
+function showQuick(options) {
+  quickContainer.innerHTML = '';
+  options.forEach(([label, value]) => {
+    const btn = document.createElement('button');
+    btn.className = 'quick-btn text-xs font-medium border border-electric-blue/40 text-electric-blue rounded-full px-3 py-1.5';
+    btn.textContent = label;
+    btn.onclick = () => handleQuick(value);
+    quickContainer.appendChild(btn);
+  });
+}
+function clearQuick() { quickContainer.innerHTML = ''; }
+
+function botSay(text, quick) {
+  showTyping();
+  const delay = Math.min(600 + text.length * 8, 1500);
+  setTimeout(() => {
+    hideTyping();
+    addMsg(text, false);
+    if (quick) showQuick(quick);
+    else clearQuick();
+  }, delay);
+}
+
+// --- State machine ---
+function startChat() {
+  botSay(t('welcome'), t('welcomeQuick'));
+}
+
+function handleQuick(value) {
+  clearQuick();
+  switch(value) {
+    case 'switch_es': lang = 'es'; $('#lang-toggle').textContent = 'ES/EN'; msgContainer.innerHTML=''; state='init'; userData={name:'',caseType:'',phone:'',date:''}; startChat(); return;
+    case 'switch_en': lang = 'en'; $('#lang-toggle').textContent = 'EN/ES'; msgContainer.innerHTML=''; state='init'; userData={name:'',caseType:'',phone:'',date:''}; startChat(); return;
+    case 'intake': state = 'ask_name'; botSay(t('askName')); return;
+    case 'faq': state = 'faq'; botSay(t('faq'), t('faqQuick')); return;
+    case 'faq_hours': addMsg(lang==='en'?'Office hours?':'¿Horario?', true); botSay(t('faq_hours'), t('faqQuick')); return;
+    case 'faq_fee': addMsg(lang==='en'?'Consultation fee?':'¿Costo?', true); botSay(t('faq_fee'), t('faqQuick')); return;
+    case 'faq_areas': addMsg(lang==='en'?'Practice areas?':'¿Áreas?', true); botSay(t('faq_areas'), t('faqQuick')); return;
+    case 'faq_lang': addMsg(lang==='en'?'Languages?':'¿Idiomas?', true); botSay(t('faq_lang'), t('faqQuick')); return;
+    case 'book': state = 'book_date'; botSay(t('bookIntro'), t('bookQuick')); return;
+    case 'this_week': case 'next_week': case 'asap':
+      userData.date = dateLabels[lang][value];
+      addMsg(userData.date, true);
+      const nameNote = userData.name ? '' : '';
+      botSay(t('bookConfirm').replace('{date}', userData.date).replace('{nameNote}', nameNote), t('bookConfirmQuick'));
+      state = 'main';
+      return;
+    case 'main': state = 'main'; botSay(t('welcome'), t('welcomeQuick')); return;
+    case 'done': botSay(t('done')); state = 'done'; return;
+    default:
+      // Case type selection
+      if (caseLabels[lang][value]) {
+        userData.caseType = value;
+        addMsg(caseLabels[lang][value], true);
+        state = 'ask_phone';
+        botSay(t('askPhone').replace('{case}', caseLabels[lang][value]));
+        return;
+      }
+  }
+}
+
+function handleSubmit(e) {
+  e.preventDefault();
+  const text = input.value.trim();
+  if (!text) return false;
+  input.value = '';
+  addMsg(text, true);
+  clearQuick();
+  processInput(text);
+  return false;
+}
+
+function processInput(text) {
+  switch(state) {
+    case 'ask_name':
+      userData.name = text;
+      state = 'ask_case';
+      botSay(t('askCase').replace('{name}', userData.name), t('caseQuick'));
+      break;
+    case 'ask_case':
+      // Free text case type
+      userData.caseType = 'other';
+      state = 'ask_phone';
+      botSay(t('askPhone').replace('{case}', text));
+      break;
+    case 'ask_phone':
+      userData.phone = text;
+      state = 'intake_done';
+      botSay(
+        t('intakeDone').replace(/\{name\}/g, userData.name).replace('{case}', caseLabels[lang][userData.caseType]||userData.caseType).replace('{phone}', userData.phone),
+        t('intakeDoneQuick')
+      );
+      break;
+    case 'book_date':
+      userData.date = text;
+      botSay(t('bookConfirm').replace('{date}', text).replace('{nameNote}', ''), t('bookConfirmQuick'));
+      state = 'main';
+      break;
+    default:
+      // Keyword matching fallback
+      const lower = text.toLowerCase();
+      if (/intake|start|case|caso|iniciar|consulta/.test(lower)) { handleQuick('intake'); return; }
+      if (/faq|question|pregunta|hour|hora|fee|cost|costo/.test(lower)) { handleQuick('faq'); return; }
+      if (/book|appointment|cita|agendar|schedule/.test(lower)) { handleQuick('book'); return; }
+      if (/español|spanish|espanol/.test(lower)) { handleQuick('switch_es'); return; }
+      if (/english|inglés|ingles/.test(lower)) { handleQuick('switch_en'); return; }
+      if (/thank|gracias|bye|adios|adiós/.test(lower)) { handleQuick('done'); return; }
+      botSay(t('fallback'), t('welcomeQuick'));
+  }
+}
+</script>
+</body>
+</html>
