@@ -139,10 +139,80 @@ nav {
   .hero-section {
     min-height: 80vh !important;
   }
-  .grid-cols-3 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
+  /* Force single-column grids on mobile */
+  .grid-cols-3,
+  .md\:grid-cols-3 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
+  .grid-cols-4,
+  .md\:grid-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+
+  /* Touch targets — minimum 44px for all interactive elements */
   #mobile-menu-btn { min-width: 44px; min-height: 44px; padding: 10px; }
   #mobile-menu a { min-height: 44px; display: flex; align-items: center; }
-  .cta-btn, .nav-link { min-height: 44px; }
+  .cta-btn, .nav-link { min-height: 44px; display: inline-flex; align-items: center; }
+  a[href], button { min-height: 44px; }
+
+  /* Prevent horizontal overflow */
+  body, html { overflow-x: hidden; }
+  section, div, nav, footer, header { max-width: 100vw; }
+  img, video, canvas, svg, iframe { max-width: 100%; height: auto; }
+  pre, code { overflow-x: auto; max-width: 100%; word-break: break-word; }
+
+  /* Reduce padding/gaps on mobile */
+  .py-24 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+  .py-32 { padding-top: 4rem !important; padding-bottom: 4rem !important; }
+  .sm\:py-32 { padding-top: 4rem !important; padding-bottom: 4rem !important; }
+  .gap-8 { gap: 1.25rem !important; }
+  .gap-6 { gap: 1rem !important; }
+  .mb-16 { margin-bottom: 2rem !important; }
+  .mb-14 { margin-bottom: 2rem !important; }
+
+  /* Card padding reduction */
+  .rounded-2xl.p-8 { padding: 1.25rem !important; }
+  .rounded-2xl.p-6 { padding: 1rem !important; }
+
+  /* Typography: ensure readability */
+  .text-3xl { font-size: 1.5rem !important; line-height: 2rem !important; }
+  .sm\:text-4xl, .text-4xl { font-size: 1.75rem !important; line-height: 2.25rem !important; }
+  .sm\:text-5xl, .text-5xl { font-size: 2rem !important; line-height: 2.5rem !important; }
+  .lg\:text-7xl { font-size: 2.25rem !important; line-height: 2.75rem !important; }
+  .lg\:text-5xl { font-size: 1.75rem !important; line-height: 2.25rem !important; }
+
+  /* Hero grid — stack vertically on mobile */
+  .hero-section .grid { 
+    grid-template-columns: 1fr !important; 
+    grid-template-rows: auto !important;
+    gap: 1.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    padding-top: 5rem !important;
+    padding-bottom: 2rem !important;
+    min-height: auto !important;
+  }
+  /* Metrics should left-align on mobile, not right */
+  .hero-section .grid > div:nth-child(2) {
+    align-items: flex-start !important;
+  }
+  .hero-section .grid > div:nth-child(2) .grid {
+    text-align: left !important;
+  }
+  /* Hide scroll indicator on mobile — wastes space */
+  .hero-section .grid > div:nth-child(4) { display: none !important; }
+
+  /* Footer stacking */
+  footer .flex-col.md\:flex-row,
+  footer .md\:flex-row { flex-direction: column !important; align-items: center !important; gap: 1rem !important; }
+
+  /* Sticky CTA — ensure it doesn't cover too much */
+  #sticky-audit-cta .flex { flex-direction: column; gap: 0.5rem; padding: 0.75rem 1rem; }
+
+  /* Trust bar — stack on very small screens */
+  .trust-bar-inner { flex-direction: column; gap: 0.5rem; }
+
+  /* Stat cards — 1 column on very small screens */
+  @media (max-width: 400px) {
+    .grid-cols-2 { grid-template-columns: 1fr !important; }
+  }
+
   /* GPU layer promotion for smooth canvas compositing on mobile */
   .scroll-canvas-bg { will-change: transform; }
   /* Show full landscape frame in portrait viewport (letterboxed) */
