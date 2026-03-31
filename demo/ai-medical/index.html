@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Austin Smile Dental — AI Patient Intake Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+tailwind.config={theme:{extend:{colors:{surface:'#0A0A0F','surface-light':'#12121A','surface-lighter':'#1A1A25','amd-red':'#ED1C24','electric-blue':'#00D4FF','electric-blue-dim':'#00A8CC'},fontFamily:{sans:['Inter','sans-serif'],mono:['JetBrains Mono','monospace']}}}}
+</script>
+<style>
+*{box-sizing:border-box}body{background:#0A0A0F;color:#e2e8f0;font-family:'Inter',sans-serif}
+.glass{background:rgba(18,18,26,.7);backdrop-filter:blur(12px);border:1px solid rgba(0,212,255,.12)}
+.glow-blue{box-shadow:0 0 20px rgba(0,212,255,.15)}
+.glow-red{box-shadow:0 0 20px rgba(237,28,36,.15)}
+.chat-bubble-bot{background:linear-gradient(135deg,#1A1A25,#12121A);border:1px solid rgba(0,212,255,.2);border-radius:12px 12px 12px 2px}
+.chat-bubble-user{background:linear-gradient(135deg,#ED1C24,#b8151b);border-radius:12px 12px 2px 12px}
+.typing-dot{animation:blink 1.4s infinite both}
+.typing-dot:nth-child(2){animation-delay:.2s}.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .35s ease-out}
+.step-enter{animation:fadeUp .3s ease-out}
+#chatWidget{transition:all .3s cubic-bezier(.4,0,.2,1)}
+.progress-fill{transition:width .4s ease}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#00D4FF;box-shadow:0 0 0 2px rgba(0,212,255,.2)}
+.star{color:#FBBF24}
+</style>
+</head>
+<body class="font-sans antialiased">
+
+<!-- DEMO Banner -->
+<div class="fixed top-0 inset-x-0 z-50 bg-gradient-to-r from-amd-red to-red-700 text-white text-center py-2 text-sm font-mono font-semibold tracking-wide">
+  DEMO — Built by <a href="/ai-automation/" class="underline hover:text-electric-blue transition">AjayaDesign</a> &nbsp;|&nbsp;
+  <a href="/ai-automation/" class="underline hover:text-electric-blue transition">Get AI for Your Practice →</a>
+</div>
+
+<!-- Hero -->
+<header class="pt-20 pb-16 px-4 relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-b from-electric-blue/5 to-transparent pointer-events-none"></div>
+  <div class="max-w-6xl mx-auto relative">
+    <nav class="flex items-center justify-between mb-16">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-electric-blue/20 flex items-center justify-center text-xl">🦷</div>
+        <span class="font-bold text-xl text-white">Austin Smile Dental</span>
+      </div>
+      <div class="hidden md:flex items-center gap-6 text-sm text-gray-400">
+        <a href="#intake-form" class="hover:text-electric-blue transition">Patient Intake</a>
+        <a href="#stats" class="hover:text-electric-blue transition">Results</a>
+        <a href="#comparison" class="hover:text-electric-blue transition">Why AI?</a>
+        <button onclick="toggleChat()" class="px-4 py-2 bg-electric-blue/10 text-electric-blue rounded-lg border border-electric-blue/30 hover:bg-electric-blue/20 transition text-sm font-medium">Chat with Us</button>
+      </div>
+    </nav>
+
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="px-3 py-1 bg-green-500/15 text-green-400 rounded-full text-xs font-semibold border border-green-500/30">✓ Accepting New Patients</span>
+          <span class="flex items-center gap-1 text-sm"><span class="star">★★★★★</span><span class="text-gray-400">5.0 (142 reviews)</span></span>
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
+          Your Smile,<br><span class="text-electric-blue">Powered by AI</span>
+        </h1>
+        <p class="text-lg text-gray-400 mb-8 max-w-lg">Skip the phone calls and paper forms. Book your appointment and complete intake in minutes — anytime, from anywhere.</p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#intake-form" class="px-6 py-3 bg-electric-blue text-surface font-semibold rounded-xl hover:bg-electric-blue-dim transition">Start Digital Intake</a>
+          <button onclick="toggleChat()" class="px-6 py-3 glass text-electric-blue rounded-xl hover:bg-electric-blue/10 transition font-medium">💬 Chat with AI Assistant</button>
+        </div>
+        <div class="flex items-center gap-6 mt-8 text-sm text-gray-500">
+          <span>🏥 Delta Dental</span><span>🏥 Cigna</span><span>🏥 Aetna</span><span>🏥 MetLife</span>
+        </div>
+      </div>
+      <div class="hidden md:block">
+        <div class="glass rounded-2xl p-8 glow-blue">
+          <div class="space-y-4">
+            <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-electric-blue/20 flex items-center justify-center text-sm">🤖</div><div class="chat-bubble-bot px-4 py-2 text-sm">Hi! I'm your AI assistant. Ready to book your appointment?</div></div>
+            <div class="flex items-center gap-3 justify-end"><div class="chat-bubble-user px-4 py-2 text-sm text-white">I'd like a cleaning next Tuesday</div></div>
+            <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-electric-blue/20 flex items-center justify-center text-sm">🤖</div><div class="chat-bubble-bot px-4 py-2 text-sm">I have 10:00 AM and 2:30 PM available Tuesday. Which works better?</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Stats -->
+<section id="stats" class="py-16 px-4">
+  <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
+    <div class="glass rounded-2xl p-8 text-center glow-blue">
+      <div class="text-4xl font-extrabold text-electric-blue mb-2">40%</div>
+      <div class="text-gray-300 font-medium">Reduction in No-Shows</div>
+      <p class="text-gray-500 text-sm mt-2">Automated reminders & easy rescheduling</p>
+    </div>
+    <div class="glass rounded-2xl p-8 text-center glow-red">
+      <div class="text-4xl font-extrabold text-amd-red mb-2">2 hrs</div>
+      <div class="text-gray-300 font-medium">Saved Per Day on Calls</div>
+      <p class="text-gray-500 text-sm mt-2">AI handles booking & intake questions</p>
+    </div>
+    <div class="glass rounded-2xl p-8 text-center glow-blue">
+      <div class="text-4xl font-extrabold text-electric-blue mb-2">24/7</div>
+      <div class="text-gray-300 font-medium">Patient Booking</div>
+      <p class="text-gray-500 text-sm mt-2">Never miss a patient — even at 2 AM</p>
+    </div>
+  </div>
+</section>
+
+<!-- Before/After -->
+<section id="comparison" class="py-16 px-4">
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold text-center text-white mb-12">The Difference AI Makes</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="glass rounded-2xl p-8 border-amd-red/30 glow-red">
+        <h3 class="text-xl font-bold text-amd-red mb-6 flex items-center gap-2">❌ Without AI</h3>
+        <ul class="space-y-4 text-gray-400">
+          <li class="flex items-start gap-3"><span class="text-amd-red mt-1">✗</span>Phone tag with patients all day</li>
+          <li class="flex items-start gap-3"><span class="text-amd-red mt-1">✗</span>Paper forms filled out in the lobby</li>
+          <li class="flex items-start gap-3"><span class="text-amd-red mt-1">✗</span>Missed calls = missed patients</li>
+          <li class="flex items-start gap-3"><span class="text-amd-red mt-1">✗</span>Staff buried in admin work</li>
+          <li class="flex items-start gap-3"><span class="text-amd-red mt-1">✗</span>No-shows with no follow-up</li>
+        </ul>
+      </div>
+      <div class="glass rounded-2xl p-8 border-electric-blue/30 glow-blue">
+        <h3 class="text-xl font-bold text-electric-blue mb-6 flex items-center gap-2">✨ With AI</h3>
+        <ul class="space-y-4 text-gray-300">
+          <li class="flex items-start gap-3"><span class="text-green-400 mt-1">✓</span>Instant online booking 24/7</li>
+          <li class="flex items-start gap-3"><span class="text-green-400 mt-1">✓</span>Digital intake before they arrive</li>
+          <li class="flex items-start gap-3"><span class="text-green-400 mt-1">✓</span>Zero missed patients — AI answers every inquiry</li>
+          <li class="flex items-start gap-3"><span class="text-green-400 mt-1">✓</span>Staff focused on patient care</li>
+          <li class="flex items-start gap-3"><span class="text-green-400 mt-1">✓</span>Automated reminders & rescheduling</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Multi-Step Intake Form -->
+<section id="intake-form" class="py-16 px-4">
+  <div class="max-w-3xl mx-auto">
+    <h2 class="text-3xl font-bold text-center text-white mb-2">Smart Patient Intake</h2>
+    <p class="text-center text-gray-400 mb-10">Complete your forms online before your visit — takes about 2 minutes.</p>
+
+    <!-- Progress Bar -->
+    <div class="mb-8">
+      <div class="flex justify-between text-xs text-gray-500 mb-2 font-mono">
+        <span id="stepLabel">Step 1 of 5 — Personal Info</span>
+        <span id="stepPercent">20%</span>
+      </div>
+      <div class="w-full h-2 bg-surface-lighter rounded-full overflow-hidden">
+        <div id="progressBar" class="h-full bg-gradient-to-r from-electric-blue to-blue-400 rounded-full progress-fill" style="width:20%"></div>
+      </div>
+    </div>
+
+    <div class="glass rounded-2xl p-8">
+      <!-- Step 1: Personal -->
+      <div id="formStep1" class="form-step step-enter">
+        <h3 class="text-lg font-semibold text-white mb-6">Personal Information</h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div><label class="block text-sm text-gray-400 mb-1">Full Name *</label><input id="f_name" type="text" class="w-full bg-surface-lighter border border-gray-700 rounded-lg px-4 py-3 text-white" placeholder="Jane Smith"></div>
+          <div><label class="block text-sm text-gray-400 mb-1">Date of Birth *</label><input id="f_dob" type="date" class="w-full bg-surface-lighter border border-gray-700 rounded-lg px-4 py-3 text-white"></div>
+          <div><label class="block text-sm text-gray-400 mb-1">Phone *</label><input id="f_phone" type="tel" class="w-full bg-surface-lighter border border-gray-700 rounded-lg px-4 py-3 text-white" placeholder="(512) 555-1234"></div>
+          <div><label class="block text-sm text-gray-400 mb-1">Email *</label><input id="f_email" type="email" class="w-full bg-surface-lighter border border-gray-700 rounded-lg px-4 py-3 text-white" placeholder="jane@example.com"></div>
+        </div>
+      </div>
+
+      <!-- Step 2: Insurance -->
+      <div id="formStep2" class="form-step hidden">
+        <h3 class="text-lg font-semibold text-white mb-6">Insurance Information</h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="md:col-span-2"><label class="block text-sm text-gray-400 mb-1">Insurance Provider</label>
+            <select id="f_insurance" class="w-full bg-surface-lighter border border-gray-700 rounded-lg px-4 py-3 text-white">
+              <option value="">Select provider...</option><option>Delta Dental</option><option>Cigna</option><option>Aetna</option><option>MetLife</option><option>United Healthcare</option><option>BlueCross BlueShield</option><option>Guardian</option><option>Self-Pay / No Insurance</option><option>Other</option>
+            </select></div>
+          <div><label class="block text-sm text-gray-400 mb-1">Member ID</label><input id="f_memberid" type="text" class="w-full bg-surface-lighter border border-gray-700 rounded-lg px-4 py-3 text-white" placeholder="ABC123456"></div>
+          <div><label class="block text-sm text-gray-400 mb-1">Group Number</label><input id="f_group" type="text" class="w-full bg-surface-lighter border border-gray-700 rounded-lg px-4 py-3 text-white" placeholder="GRP-7890"></div>
+        </div>
+      </div>
+
+      <!-- Step 3: Medical History -->
+      <div id="formStep3" class="form-step hidden">
+        <h3 class="text-lg font-semibold text-white mb-6">Medical History</h3>
+        <div class="mb-4"><label class="block text-sm text-gray-400 mb-2">Known Allergies</label>
+          <div class="flex flex-wrap gap-3" id="allergyChecks">
+            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="checkbox" value="Penicillin" class="accent-electric-blue"> Penicillin</label>
+            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="checkbox" value="Latex" class="accent-electric-blue"> Latex</label>
+            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="checkbox" value="Lidocaine" class="accent-electric-blue"> Lidocaine</label>
+            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="checkbox" value="Aspirin" class="accent-electric-blue"> Aspirin</label>
+            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="checkbox" value="None" class="accent-electric-blue"> None</label>
+          </div>
+        </div>
+        <div class="mb-4"><label class="block text-sm text-gray-400 mb-2">Current Medications</label><input id="f_meds" type="text" class="w-full bg-surface-lighter border border-gray-700 rounded-lg px-4 py-3 text-white" placeholder="List medications or 'None'"></div>
+        <div><label class="block text-sm text-gray-400 mb-2">Existing Conditions</label>
+          <div class="flex flex-wrap gap-3" id="conditionChecks">
+            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="checkbox" value="Diabetes" class="accent-electric-blue"> Diabetes</label>
+            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="checkbox" value="Heart Disease" class="accent-electric-blue"> Heart Disease</label>
+            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="checkbox" value="High Blood Pressure" class="accent-electric-blue"> High Blood Pressure</label>
+            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="checkbox" value="Asthma" class="accent-electric-blue"> Asthma</label>
+            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="checkbox" value="None" class="accent-electric-blue"> None</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Visit -->
+      <div id="formStep4" class="form-step hidden">
+        <h3 class="text-lg font-semibold text-white mb-6">Visit Details</h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="md:col-span-2"><label class="block text-sm text-gray-400 mb-1">Reason for Visit *</label>
+            <select id="f_reason" class="w-full bg-surface-lighter border border-gray-700 rounded-lg px-4 py-3 text-white">
+              <option value="">Select reason...</option><option>Routine Cleaning</option><option>Toothache / Pain</option><option>Cosmetic Consultation</option><option>Emergency</option><option>Whitening</option><option>Crown / Bridge</option><option>Other</option>
+            </select></div>
+          <div><label class="block text-sm text-gray-400 mb-1">Preferred Date</label><input id="f_date" type="date" class="w-full bg-surface-lighter border border-gray-700 rounded-lg px-4 py-3 text-white"></div>
+          <div><label class="block text-sm text-gray-400 mb-1">Preferred Time</label>
+            <select id="f_time" class="w-full bg-surface-lighter border border-gray-700 rounded-lg px-4 py-3 text-white">
+              <option value="">Select time...</option><option>Morning (8-11 AM)</option><option>Midday (11 AM-1 PM)</option><option>Afternoon (1-4 PM)</option><option>Late Afternoon (4-6 PM)</option>
+            </select></div>
+          <div class="md:col-span-2"><label class="block text-sm text-gray-400 mb-1">Additional Notes</label><textarea id="f_notes" rows="3" class="w-full bg-surface-lighter border border-gray-700 rounded-lg px-4 py-3 text-white" placeholder="Anything else we should know?"></textarea></div>
+        </div>
+      </div>
+
+      <!-- Step 5: Review -->
+      <div id="formStep5" class="form-step hidden">
+        <h3 class="text-lg font-semibold text-white mb-6">Review & Submit</h3>
+        <div id="reviewContent" class="space-y-3 text-sm text-gray-300"></div>
+      </div>
+
+      <!-- Submitted -->
+      <div id="formDone" class="form-step hidden text-center py-8">
+        <div class="text-5xl mb-4">✅</div>
+        <h3 class="text-2xl font-bold text-white mb-2">Intake Submitted!</h3>
+        <p class="text-gray-400 mb-4">We'll confirm your appointment within 1 business hour.</p>
+        <p class="text-xs text-gray-600 font-mono">(This is a demo — no real data was submitted)</p>
+      </div>
+
+      <!-- Nav Buttons -->
+      <div id="formNav" class="flex justify-between mt-8">
+        <button id="btnPrev" onclick="formNav(-1)" class="px-5 py-2.5 glass text-gray-400 rounded-lg hover:text-white transition hidden">← Back</button>
+        <button id="btnNext" onclick="formNav(1)" class="px-5 py-2.5 bg-electric-blue text-surface font-semibold rounded-lg hover:bg-electric-blue-dim transition ml-auto">Next →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-20 px-4">
+  <div class="max-w-3xl mx-auto text-center glass rounded-2xl p-12 glow-blue">
+    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Want This for <span class="text-electric-blue">YOUR</span> Practice?</h2>
+    <p class="text-gray-400 mb-8 max-w-lg mx-auto">We build custom AI intake systems, chatbots, and automation for medical & dental offices in Austin and beyond.</p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="/ai-automation/" class="px-8 py-3 bg-amd-red text-white font-semibold rounded-xl hover:bg-red-700 transition">See AI Automation Services</a>
+      <a href="/ai-automation/#contact" class="px-8 py-3 glass text-electric-blue rounded-xl hover:bg-electric-blue/10 transition font-medium">Get a Free Consultation</a>
+    </div>
+    <p class="text-xs text-gray-600 mt-6 font-mono">AjayaDesign — AI Automation for Austin Businesses</p>
+  </div>
+</section>
+
+<footer class="border-t border-gray-800 py-8 px-4 text-center text-sm text-gray-600">
+  <p>This is a demo for <strong class="text-gray-400">Austin Smile Dental</strong> (fictional). Built by <a href="/" class="text-electric-blue hover:underline">AjayaDesign</a>.</p>
+</footer>
+
+<!-- Chat Widget -->
+<div id="chatToggle" onclick="toggleChat()" class="fixed bottom-6 right-6 z-40 w-14 h-14 bg-electric-blue rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition-transform">
+  <span class="text-2xl">💬</span>
+</div>
+
+<div id="chatWidget" class="fixed bottom-24 right-6 z-40 w-[360px] max-w-[calc(100vw-2rem)] glass rounded-2xl overflow-hidden hidden" style="height:500px;max-height:70vh">
+  <div class="bg-gradient-to-r from-electric-blue/20 to-blue-900/20 px-5 py-3 flex items-center justify-between border-b border-electric-blue/20">
+    <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-400"></span><span class="font-semibold text-white text-sm">AI Assistant</span></div>
+    <button onclick="toggleChat()" class="text-gray-400 hover:text-white text-lg">✕</button>
+  </div>
+  <div id="chatMessages" class="p-4 overflow-y-auto flex flex-col gap-3" style="height:calc(100% - 110px)"></div>
+  <div class="absolute bottom-0 inset-x-0 p-3 border-t border-gray-800 bg-surface/80 backdrop-blur flex gap-2">
+    <input id="chatInput" type="text" class="flex-1 bg-surface-lighter border border-gray-700 rounded-lg px-3 py-2 text-sm text-white" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()">
+    <button onclick="sendChat()" class="px-3 py-2 bg-electric-blue text-surface rounded-lg text-sm font-semibold hover:bg-electric-blue-dim transition">Send</button>
+  </div>
+  <!-- Quick replies -->
+  <div id="quickReplies" class="absolute bottom-14 inset-x-0 px-3 pb-1 flex flex-wrap gap-1.5 hidden"></div>
+</div>
+
+<script>
+// ── Multi-step Form ──
+let step=1;const labels=['Personal Info','Insurance','Medical History','Visit Details','Review & Submit'];
+function formNav(d){
+  const next=step+d;if(next<1||next>5)return;
+  if(d===1&&step===5){document.getElementById('formDone').classList.remove('hidden');document.querySelectorAll('.form-step').forEach(s=>s.classList.add('hidden'));document.getElementById('formDone').classList.remove('hidden');document.getElementById('formNav').classList.add('hidden');document.getElementById('progressBar').style.width='100%';document.getElementById('stepLabel').textContent='Complete!';document.getElementById('stepPercent').textContent='100%';return}
+  if(d===1&&step===4)buildReview();
+  document.getElementById('formStep'+step).classList.add('hidden');
+  step=next;
+  const el=document.getElementById('formStep'+step);el.classList.remove('hidden');el.classList.add('step-enter');
+  document.getElementById('progressBar').style.width=(step*20)+'%';
+  document.getElementById('stepLabel').textContent=`Step ${step} of 5 — ${labels[step-1]}`;
+  document.getElementById('stepPercent').textContent=(step*20)+'%';
+  document.getElementById('btnPrev').classList.toggle('hidden',step===1);
+  document.getElementById('btnNext').textContent=step===5?'Submit ✓':'Next →';
+}
+function v(id){return document.getElementById(id)?.value||'—'}
+function checked(id){return [...document.querySelectorAll('#'+id+' input:checked')].map(c=>c.value).join(', ')||'None'}
+function buildReview(){
+  document.getElementById('reviewContent').innerHTML=`
+    <div class="glass rounded-lg p-4 space-y-2">
+      <p><span class="text-gray-500">Name:</span> <strong class="text-white">${v('f_name')}</strong></p>
+      <p><span class="text-gray-500">DOB:</span> ${v('f_dob')}</p>
+      <p><span class="text-gray-500">Phone:</span> ${v('f_phone')}</p>
+      <p><span class="text-gray-500">Email:</span> ${v('f_email')}</p>
+    </div>
+    <div class="glass rounded-lg p-4 space-y-2">
+      <p><span class="text-gray-500">Insurance:</span> ${v('f_insurance')} &nbsp; <span class="text-gray-500">ID:</span> ${v('f_memberid')} &nbsp; <span class="text-gray-500">Group:</span> ${v('f_group')}</p>
+    </div>
+    <div class="glass rounded-lg p-4 space-y-2">
+      <p><span class="text-gray-500">Allergies:</span> ${checked('allergyChecks')}</p>
+      <p><span class="text-gray-500">Medications:</span> ${v('f_meds')}</p>
+      <p><span class="text-gray-500">Conditions:</span> ${checked('conditionChecks')}</p>
+    </div>
+    <div class="glass rounded-lg p-4 space-y-2">
+      <p><span class="text-gray-500">Reason:</span> ${v('f_reason')}</p>
+      <p><span class="text-gray-500">Preferred:</span> ${v('f_date')} — ${v('f_time')}</p>
+      <p><span class="text-gray-500">Notes:</span> ${v('f_notes')}</p>
+    </div>
+    <p class="text-xs text-gray-600 font-mono">Demo only — no data will be stored or transmitted.</p>`;
+}
+
+// ── Chatbot ──
+let chatOpen=false;
+function toggleChat(){chatOpen=!chatOpen;document.getElementById('chatWidget').classList.toggle('hidden',!chatOpen);if(chatOpen&&!chatInited)initChat()}
+
+let chatInited=false,chatState='greeting',chatData={};
+const msgs=document.getElementById('chatMessages');
+
+function addBot(text,quick){
+  const d=document.createElement('div');d.className='flex items-start gap-2 fade-up';
+  d.innerHTML=`<div class="w-7 h-7 rounded-full bg-electric-blue/20 flex items-center justify-center text-xs shrink-0">🤖</div><div class="chat-bubble-bot px-3 py-2 text-sm max-w-[85%]">${text}</div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+  if(quick)showQuick(quick);else hideQuick();
+}
+function addUser(text){
+  const d=document.createElement('div');d.className='flex justify-end fade-up';
+  d.innerHTML=`<div class="chat-bubble-user px-3 py-2 text-sm text-white max-w-[85%]">${text}</div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;hideQuick();
+}
+function showQuick(opts){const qr=document.getElementById('quickReplies');qr.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.className='text-xs px-2.5 py-1 bg-electric-blue/10 text-electric-blue rounded-full border border-electric-blue/30 hover:bg-electric-blue/20 transition';b.textContent=o;b.onclick=()=>{document.getElementById('chatInput').value=o;sendChat()};qr.appendChild(b)});qr.classList.remove('hidden')}
+function hideQuick(){document.getElementById('quickReplies').classList.add('hidden')}
+
+function initChat(){chatInited=true;addBot("Hi! 👋 Welcome to <strong>Austin Smile Dental</strong>. I'm your AI assistant.<br><br>Are you a <strong>new</strong> or <strong>returning</strong> patient?",['New Patient','Returning Patient','I have a question'])}
+
+const faq={
+  'office hours':"We're open <strong>Mon–Fri 8 AM – 6 PM</strong> and <strong>Sat 9 AM – 2 PM</strong>. Closed Sundays.",
+  'insurance':"We accept <strong>Delta Dental, Cigna, Aetna, MetLife, BCBS, Guardian, United Healthcare</strong>, and most PPO plans. We also welcome self-pay patients!",
+  'emergency':"For dental emergencies, call <strong>(512) 555-SMILE</strong>. We reserve same-day slots for urgent cases. If it's after hours, our AI can help triage.",
+  'covid':"We follow all CDC guidelines: temperature checks, enhanced sanitization, HEPA filtration, and optional masking. Your safety is our priority.",
+  'parking':"Free parking is available in our lot directly in front of the building. Accessible spaces are closest to the entrance."
+};
+
+function sendChat(){
+  const inp=document.getElementById('chatInput'),txt=inp.value.trim();if(!txt)return;
+  addUser(txt);inp.value='';
+  setTimeout(()=>processChat(txt),400);
+}
+
+function processChat(txt){
+  const low=txt.toLowerCase();
+  // FAQ detection
+  for(const[k,a]of Object.entries(faq)){if(low.includes(k.split(' ')[0])){addBot(a,['Book Appointment','Another Question']);return}}
+  if(low.includes('hour'))return addBot(faq['office hours'],['Book Appointment','Another Question']);
+  if(low.includes('park'))return addBot(faq['parking'],['Book Appointment','Another Question']);
+
+  switch(chatState){
+    case'greeting':
+      if(low.includes('new')){chatState='new_name';chatData.type='new';addBot("Great, welcome! Let's get you set up. What's your <strong>full name</strong>?")}
+      else if(low.includes('return')){chatState='ret_name';chatData.type='returning';addBot("Welcome back! What's your <strong>full name</strong>?")}
+      else if(low.includes('question')){addBot("Of course! You can ask about:<br>• Office hours<br>• Accepted insurance<br>• Emergency procedures<br>• COVID protocols<br>• Parking",['Office Hours','Insurance','Emergency','COVID','Parking'])}
+      else{addBot("No worries! Are you a <strong>new</strong> or <strong>returning</strong> patient? Or do you have a question?",['New Patient','Returning Patient','I have a question'])}
+      break;
+    case'new_name':chatData.name=txt;chatState='new_dob';addBot(`Nice to meet you, <strong>${txt}</strong>! What's your <strong>date of birth</strong>? (MM/DD/YYYY)`);break;
+    case'new_dob':chatData.dob=txt;chatState='new_phone';addBot("And your <strong>phone number</strong>?");break;
+    case'new_phone':chatData.phone=txt;chatState='new_insurance';addBot("Who is your <strong>insurance provider</strong>?",['Delta Dental','Cigna','Aetna','Self-Pay','Other']);break;
+    case'new_insurance':chatData.insurance=txt;chatState='new_reason';addBot("What's the <strong>reason for your visit</strong>?",['Cleaning','Toothache','Cosmetic','Emergency','Other']);break;
+    case'new_reason':chatData.reason=txt;chatState='new_schedule';addBot("When would you like to come in? Give me a <strong>preferred date and time</strong>.",['Tomorrow Morning','Next Monday','This Friday Afternoon']);break;
+    case'new_schedule':chatData.schedule=txt;chatState='done';showSummary();break;
+    case'ret_name':chatData.name=txt;chatState='ret_dob';addBot(`Welcome back, <strong>${txt}</strong>! What's your <strong>date of birth</strong> so I can pull up your file?`);break;
+    case'ret_dob':chatData.dob=txt;chatState='ret_reason';addBot("Found you! What's the <strong>reason for your visit</strong>?",['Cleaning','Toothache','Cosmetic','Follow-up','Other']);break;
+    case'ret_reason':chatData.reason=txt;chatState='ret_schedule';addBot("When works best for you?",['Tomorrow Morning','Next Monday','This Friday Afternoon']);break;
+    case'ret_schedule':chatData.schedule=txt;chatState='done';showSummary();break;
+    case'done':addBot("Your request is already submitted! Is there anything else I can help with?",['Office Hours','Insurance','Parking','No, thanks!']);if(low.includes('no')||low.includes('thank'))addBot("You're all set! See you soon 😊");break;
+  }
+}
+
+function showSummary(){
+  let s=`<strong>📋 Appointment Request Summary</strong><br><br>`;
+  s+=`<strong>Name:</strong> ${chatData.name}<br>`;
+  s+=`<strong>DOB:</strong> ${chatData.dob}<br>`;
+  if(chatData.phone)s+=`<strong>Phone:</strong> ${chatData.phone}<br>`;
+  if(chatData.insurance)s+=`<strong>Insurance:</strong> ${chatData.insurance}<br>`;
+  s+=`<strong>Reason:</strong> ${chatData.reason}<br>`;
+  s+=`<strong>Preferred Time:</strong> ${chatData.schedule}<br><br>`;
+  s+=`✅ <strong>Appointment request submitted!</strong><br><span class="text-gray-500 text-xs">We'll confirm within 1 business hour. (Demo only)</span>`;
+  addBot(s,['Office Hours','Parking','Thanks!']);
+}
+</script>
+</body>
+</html>

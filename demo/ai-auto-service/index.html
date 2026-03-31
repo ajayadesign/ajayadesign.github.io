@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lone Star Auto & Tire — AI-Powered Service Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        surface: '#0A0A0F',
+        'surface-light': '#12121A',
+        'surface-card': '#1A1A25',
+        'amd-red': '#ED1C24',
+        'electric-blue': '#00D4FF',
+        'neon-green': '#39FF14',
+        border: '#2A2A3A',
+      },
+      fontFamily: {
+        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['Inter', 'sans-serif'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { background: #0A0A0F; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+  .glow-red { box-shadow: 0 0 30px rgba(237,28,36,0.3); }
+  .glow-blue { box-shadow: 0 0 20px rgba(0,212,255,0.2); }
+  .chat-bubble-bot { background: #1A1A25; border: 1px solid #2A2A3A; }
+  .chat-bubble-user { background: #ED1C24; }
+  #chatWidget { transition: all 0.3s ease; }
+  .status-step.active { color: #00D4FF; }
+  .status-step.done { color: #39FF14; }
+  .progress-fill { transition: width 0.6s ease; }
+  @keyframes pulse-glow { 0%,100%{box-shadow:0 0 8px rgba(237,28,36,0.4)} 50%{box-shadow:0 0 20px rgba(237,28,36,0.8)} }
+  .pulse-glow { animation: pulse-glow 2s infinite; }
+  .chat-option:hover { background: #ED1C24 !important; color: white !important; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- DEMO BANNER -->
+<div class="fixed top-0 left-0 right-0 z-50 bg-amd-red text-white text-center py-2 text-sm font-mono tracking-wider">
+  ⚡ DEMO — Built by <a href="/ai-automation/" class="underline font-bold">AjayaDesign</a> — This is a preview of AI-powered auto shop automation
+</div>
+
+<!-- HERO -->
+<section class="pt-20 pb-16 px-4 relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-amd-red/5 via-transparent to-electric-blue/5"></div>
+  <div class="max-w-6xl mx-auto relative">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 bg-surface-card border border-border rounded-full px-4 py-1.5 text-sm mb-6">
+        <span class="text-yellow-400">★★★★★</span>
+        <span class="text-gray-400">4.7 stars · 300+ reviews</span>
+      </div>
+      <h1 class="text-4xl md:text-6xl font-black mb-4 tracking-tight">
+        <span class="text-white">LONE STAR</span><br>
+        <span class="text-amd-red">AUTO & TIRE</span>
+      </h1>
+      <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-6">Family Owned Since 2005 · ASE Certified Technicians · Austin, TX</p>
+      <div class="flex flex-wrap justify-center gap-3 mb-8">
+        <span class="bg-surface-card border border-border rounded-lg px-4 py-2 text-sm font-mono">🏆 ASE Certified</span>
+        <span class="bg-surface-card border border-border rounded-lg px-4 py-2 text-sm font-mono">👨‍👩‍👧‍👦 Family Owned</span>
+        <span class="bg-surface-card border border-border rounded-lg px-4 py-2 text-sm font-mono">⚡ Same-Day Service</span>
+      </div>
+      <button onclick="openChat()" class="bg-amd-red hover:bg-red-700 text-white font-bold py-4 px-8 rounded-xl text-lg glow-red transition-all">
+        🤖 Talk to Our AI Service Advisor
+      </button>
+    </div>
+
+    <!-- STATS -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12">
+      <div class="bg-surface-card border border-border rounded-xl p-6 text-center">
+        <div class="text-3xl font-black text-electric-blue">30 sec</div>
+        <div class="text-gray-400 mt-1">Book an appointment</div>
+      </div>
+      <div class="bg-surface-card border border-border rounded-xl p-6 text-center">
+        <div class="text-3xl font-black text-amd-red">0</div>
+        <div class="text-gray-400 mt-1">Phone tag needed</div>
+      </div>
+      <div class="bg-surface-card border border-border rounded-xl p-6 text-center">
+        <div class="text-3xl font-black text-neon-green">24/7</div>
+        <div class="text-gray-400 mt-1">Automated reminders</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICE MENU -->
+<section class="py-16 px-4" id="services">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-2">Our Services</h2>
+    <p class="text-gray-500 text-center mb-10 font-mono text-sm">Transparent pricing · No surprises</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="bg-surface-card border border-border rounded-xl p-6 hover:border-amd-red/50 transition-all">
+        <div class="text-4xl mb-3">🛢️</div>
+        <h3 class="font-bold text-lg">Oil Change</h3>
+        <p class="text-electric-blue font-mono font-bold mt-1">$35 – $85</p>
+        <p class="text-gray-500 text-sm mt-2">Conventional, synthetic blend, or full synthetic</p>
+      </div>
+      <div class="bg-surface-card border border-border rounded-xl p-6 hover:border-amd-red/50 transition-all">
+        <div class="text-4xl mb-3">🛞</div>
+        <h3 class="font-bold text-lg">Tire Service</h3>
+        <p class="text-electric-blue font-mono font-bold mt-1">$20 – $200+</p>
+        <p class="text-gray-500 text-sm mt-2">Rotation, balance, repair, or new tires</p>
+      </div>
+      <div class="bg-surface-card border border-border rounded-xl p-6 hover:border-amd-red/50 transition-all">
+        <div class="text-4xl mb-3">🔧</div>
+        <h3 class="font-bold text-lg">Brake Service</h3>
+        <p class="text-electric-blue font-mono font-bold mt-1">$150 – $400</p>
+        <p class="text-gray-500 text-sm mt-2">Pads, rotors, fluid flush per axle</p>
+      </div>
+      <div class="bg-surface-card border border-border rounded-xl p-6 hover:border-amd-red/50 transition-all">
+        <div class="text-4xl mb-3">🔋</div>
+        <h3 class="font-bold text-lg">Engine Diagnostics</h3>
+        <p class="text-electric-blue font-mono font-bold mt-1">$75 – $150</p>
+        <p class="text-gray-500 text-sm mt-2">Check engine light, full scan & report</p>
+      </div>
+      <div class="bg-surface-card border border-border rounded-xl p-6 hover:border-amd-red/50 transition-all">
+        <div class="text-4xl mb-3">❄️</div>
+        <h3 class="font-bold text-lg">AC Repair</h3>
+        <p class="text-electric-blue font-mono font-bold mt-1">$120 – $500</p>
+        <p class="text-gray-500 text-sm mt-2">Recharge, leak repair, compressor service</p>
+      </div>
+      <div class="bg-surface-card border border-border rounded-xl p-6 hover:border-amd-red/50 transition-all">
+        <div class="text-4xl mb-3">🔧</div>
+        <h3 class="font-bold text-lg">General Repair</h3>
+        <p class="text-electric-blue font-mono font-bold mt-1">Varies</p>
+        <p class="text-gray-500 text-sm mt-2">Suspension, electrical, belts, hoses & more</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTANT QUOTE CALCULATOR -->
+<section class="py-16 px-4 bg-surface-light" id="quote">
+  <div class="max-w-2xl mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-2">⚡ Instant Quote</h2>
+    <p class="text-gray-500 text-center mb-8 font-mono text-sm">Get an estimate in seconds</p>
+    <div class="bg-surface-card border border-border rounded-xl p-6 space-y-4">
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Service</label>
+        <select id="quoteService" onchange="updateQuote()" class="w-full bg-surface border border-border rounded-lg px-4 py-3 text-white focus:border-electric-blue outline-none">
+          <option value="">Select a service…</option>
+          <option value="oil">Oil Change</option>
+          <option value="tire">Tire Service</option>
+          <option value="brakes">Brake Service</option>
+          <option value="diag">Engine Diagnostics</option>
+          <option value="ac">AC Repair</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-400 mb-1">Vehicle Type</label>
+        <select id="quoteVehicle" onchange="updateQuote()" class="w-full bg-surface border border-border rounded-lg px-4 py-3 text-white focus:border-electric-blue outline-none">
+          <option value="">Select vehicle type…</option>
+          <option value="sedan">Sedan / Compact</option>
+          <option value="suv">SUV / Crossover</option>
+          <option value="truck">Truck / Full-Size</option>
+          <option value="luxury">Luxury / European</option>
+        </select>
+      </div>
+      <div id="quoteResult" class="hidden bg-surface rounded-xl p-6 text-center border border-electric-blue/30">
+        <p class="text-gray-400 text-sm">Estimated Price Range</p>
+        <p id="quotePrice" class="text-3xl font-black text-electric-blue font-mono mt-1"></p>
+        <p class="text-gray-500 text-xs mt-2">Final price confirmed after inspection</p>
+        <button onclick="openChat()" class="mt-4 bg-amd-red hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg text-sm transition-all">Book Now →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICE STATUS TRACKER -->
+<section class="py-16 px-4" id="status">
+  <div class="max-w-2xl mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-2">📍 Service Status Tracker</h2>
+    <p class="text-gray-500 text-center mb-8 font-mono text-sm">Check your vehicle's progress</p>
+    <div class="bg-surface-card border border-border rounded-xl p-6">
+      <div class="flex gap-2 mb-6">
+        <input id="statusPhone" type="tel" placeholder="Enter your phone number" class="flex-1 bg-surface border border-border rounded-lg px-4 py-3 text-white focus:border-electric-blue outline-none" maxlength="14">
+        <button onclick="checkStatus()" class="bg-electric-blue hover:bg-cyan-400 text-surface font-bold px-6 rounded-lg transition-all">Check</button>
+      </div>
+      <div id="statusResult" class="hidden">
+        <p class="text-sm text-gray-400 mb-1 font-mono">2019 Toyota Camry · Oil Change + Tire Rotation</p>
+        <div class="flex items-center gap-1 my-4">
+          <div class="flex-1 h-2 rounded-full bg-neon-green"></div>
+          <div class="flex-1 h-2 rounded-full bg-neon-green"></div>
+          <div class="flex-1 h-2 rounded-full bg-electric-blue progress-fill animate-pulse"></div>
+          <div class="flex-1 h-2 rounded-full bg-border"></div>
+        </div>
+        <div class="grid grid-cols-4 text-center text-xs gap-1">
+          <div class="text-neon-green font-bold">✓ Drop-off</div>
+          <div class="text-neon-green font-bold">✓ Diagnosed</div>
+          <div class="text-electric-blue font-bold">⟳ In Progress</div>
+          <div class="text-gray-600">Ready</div>
+        </div>
+        <div class="mt-4 bg-surface rounded-lg p-3 text-sm text-gray-400 border border-border">
+          <strong class="text-white">Tech Note:</strong> Oil change complete. Rotating tires now — est. 20 min remaining. We'll text you when it's ready!
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-20 px-4 bg-gradient-to-b from-surface-light to-surface">
+  <div class="max-w-3xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-black mb-4">Want this for <span class="text-amd-red">YOUR</span> shop?</h2>
+    <p class="text-gray-400 text-lg mb-8 max-w-xl mx-auto">AI-powered booking, instant quotes, automated reminders, and 24/7 customer service — tailored for your auto repair business.</p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="/ai-automation/" class="bg-amd-red hover:bg-red-700 text-white font-bold py-4 px-8 rounded-xl text-lg glow-red transition-all">See How It Works →</a>
+      <a href="/ai-automation/#contact" class="border border-border hover:border-electric-blue text-white font-bold py-4 px-8 rounded-xl text-lg transition-all">Get a Free Quote</a>
+    </div>
+    <p class="text-gray-600 text-sm mt-6 font-mono">Setup in days, not months · No long-term contracts · Works with your existing website</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-border py-8 px-4 text-center text-gray-600 text-sm">
+  <p>"Lone Star Auto & Tire" is a fictional demo business.</p>
+  <p class="mt-1">Built by <a href="/ai-automation/" class="text-electric-blue hover:underline">AjayaDesign AI Automation</a></p>
+</footer>
+
+<!-- CHAT WIDGET -->
+<button id="chatToggle" onclick="toggleChat()" class="fixed bottom-6 right-6 z-40 bg-amd-red text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl shadow-lg pulse-glow hover:scale-110 transition-transform">
+  💬
+</button>
+
+<div id="chatWidget" class="fixed bottom-24 right-4 z-40 w-[360px] max-w-[calc(100vw-2rem)] bg-surface-card border border-border rounded-2xl shadow-2xl hidden flex-col" style="height:500px;max-height:70vh;">
+  <div class="bg-amd-red rounded-t-2xl px-4 py-3 flex items-center justify-between">
+    <div>
+      <div class="font-bold text-white text-sm">🤖 AI Service Advisor</div>
+      <div class="text-red-200 text-xs">Lone Star Auto & Tire</div>
+    </div>
+    <button onclick="toggleChat()" class="text-white/70 hover:text-white text-xl">✕</button>
+  </div>
+  <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-3" style="flex:1;overflow-y:auto;"></div>
+  <div id="chatInputArea" class="p-3 border-t border-border"></div>
+</div>
+
+<script>
+// --- QUOTE CALCULATOR ---
+const prices = {
+  oil:    { sedan: [35,55],  suv: [45,65],  truck: [50,75],  luxury: [65,95] },
+  tire:   { sedan: [60,150], suv: [80,180], truck: [90,220], luxury: [100,250] },
+  brakes: { sedan: [150,300],suv: [180,350],truck: [200,400],luxury: [250,450] },
+  diag:   { sedan: [75,120], suv: [75,130], truck: [85,150], luxury: [100,175] },
+  ac:     { sedan: [120,350],suv: [150,400],truck: [160,450],luxury: [200,550] },
+};
+function updateQuote() {
+  const s = document.getElementById('quoteService').value;
+  const v = document.getElementById('quoteVehicle').value;
+  const r = document.getElementById('quoteResult');
+  if (s && v && prices[s]) {
+    const [lo,hi] = prices[s][v];
+    document.getElementById('quotePrice').textContent = `$${lo} – $${hi}`;
+    r.classList.remove('hidden');
+  } else { r.classList.add('hidden'); }
+}
+
+// --- STATUS TRACKER ---
+function checkStatus() {
+  const p = document.getElementById('statusPhone').value.replace(/\D/g,'');
+  if (p.length >= 7) document.getElementById('statusResult').classList.remove('hidden');
+}
+
+// --- CHAT WIDGET ---
+let chatOpen = false;
+function toggleChat() { chatOpen = !chatOpen; document.getElementById('chatWidget').style.display = chatOpen ? 'flex' : 'none'; if(chatOpen && !chatStarted) startChat(); }
+function openChat() { if(!chatOpen) toggleChat(); }
+
+let chatStarted = false;
+let chatState = 'greet';
+let chatData = {};
+
+const serviceLabels = { oil:'Oil Change', tire:'Tire Service', brakes:'Brake Service', diag:'Engine Diagnostics', ac:'AC Repair', general:'General Repair', other:'Other' };
+const serviceQuotes = {
+  oil:'$35–85', tire:'$60–250', brakes:'$150–450', diag:'$75–175', ac:'$120–550', general:'Varies', other:'We\'ll provide a quote after inspection'
+};
+
+function startChat() {
+  chatStarted = true;
+  botMsg("Hey there! 👋 Welcome to <b>Lone Star Auto & Tire</b>. I'm your AI Service Advisor.");
+  setTimeout(() => {
+    botMsg("What can I help you with today?");
+    showOptions([
+      {l:'🛢️ Oil Change',v:'oil'},{l:'🛞 Tire Service',v:'tire'},{l:'🔧 Brakes',v:'brakes'},
+      {l:'🔋 Diagnostics',v:'diag'},{l:'❄️ AC Repair',v:'ac'},{l:'🔧 General Repair',v:'general'},
+      {l:'📍 Check Service Status',v:'status'},{l:'❓ FAQ / Hours',v:'faq'}
+    ]);
+    chatState = 'pick_service';
+  }, 600);
+}
+
+function botMsg(html) {
+  const d = document.getElementById('chatMessages');
+  const m = document.createElement('div');
+  m.className = 'chat-bubble-bot rounded-xl rounded-bl-sm px-3 py-2 text-sm max-w-[85%]';
+  m.innerHTML = html;
+  d.appendChild(m);
+  d.scrollTop = d.scrollHeight;
+}
+function userMsg(text) {
+  const d = document.getElementById('chatMessages');
+  const m = document.createElement('div');
+  m.className = 'chat-bubble-user rounded-xl rounded-br-sm px-3 py-2 text-sm max-w-[85%] ml-auto text-white';
+  m.textContent = text;
+  d.appendChild(m);
+  d.scrollTop = d.scrollHeight;
+}
+
+function showOptions(opts) {
+  const area = document.getElementById('chatInputArea');
+  area.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'flex flex-wrap gap-1.5';
+  opts.forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'chat-option bg-surface border border-border text-gray-300 rounded-lg px-3 py-1.5 text-xs font-medium transition-all hover:bg-amd-red hover:text-white';
+    b.textContent = o.l;
+    b.onclick = () => handleInput(o.v, o.l);
+    wrap.appendChild(b);
+  });
+  area.appendChild(wrap);
+}
+
+function showTextInput(placeholder, onSubmit) {
+  const area = document.getElementById('chatInputArea');
+  area.innerHTML = '';
+  const form = document.createElement('form');
+  form.className = 'flex gap-2';
+  form.onsubmit = e => { e.preventDefault(); const v = inp.value.trim(); if(v) onSubmit(v); };
+  const inp = document.createElement('input');
+  inp.className = 'flex-1 bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-electric-blue';
+  inp.placeholder = placeholder;
+  const btn = document.createElement('button');
+  btn.type = 'submit';
+  btn.className = 'bg-amd-red text-white px-4 rounded-lg text-sm font-bold';
+  btn.textContent = '→';
+  form.append(inp, btn);
+  area.appendChild(form);
+  inp.focus();
+}
+
+function handleInput(value, label) {
+  if (chatState === 'pick_service') {
+    if (value === 'status') { userMsg(label); chatState = 'status_phone'; botMsg("Sure! Enter the phone number you used when dropping off:"); showTextInput('(512) 555-1234', v => { userMsg(v); botMsg("Found it! 🚗<br><b>2019 Toyota Camry — Oil Change + Tire Rotation</b><br><br>Status: <b style='color:#00D4FF'>⟳ In Progress</b><br>Tech note: Oil change done, rotating tires now — ~20 min left.<br><br>We'll text you when it's ready!"); showOptions([{l:'🔄 Check Another',v:'restart'},{l:'📞 Call Us',v:'call'}]); chatState='done'; }); return; }
+    if (value === 'faq') { userMsg(label); botMsg("Here's our info:<br><br>🕐 <b>Hours:</b> Mon–Fri 7:30am–6pm, Sat 8am–3pm<br>📍 <b>Location:</b> 1234 S. Congress Ave, Austin TX<br>💳 <b>Payment:</b> Cash, card, financing available<br>🛡️ <b>Warranty:</b> 12-month/12K-mile on parts & labor<br>🚗 <b>Towing:</b> Free within 10 miles for repairs over $300"); showOptions([{l:'📅 Book Appointment',v:'book'},{l:'🔙 Back to Services',v:'restart'}]); chatState='faq_done'; return; }
+    userMsg(label);
+    chatData.service = value;
+    chatData.serviceLabel = serviceLabels[value] || value;
+    chatState = 'vehicle';
+    botMsg(`Great — <b>${chatData.serviceLabel}</b>. What vehicle do you have?`);
+    showTextInput('e.g. 2019 Toyota Camry', v => { userMsg(v); chatData.vehicle = v; chatState='issue'; botMsg("Got it! Can you describe the issue or anything you've noticed?"); showTextInput('e.g. squeaking noise when braking', v2 => { userMsg(v2); chatData.issue = v2; chatState='quote'; const q = serviceQuotes[chatData.service]||'TBD'; botMsg(`Here's your estimate:<br><br>🚗 <b>${chatData.vehicle}</b><br>🔧 <b>${chatData.serviceLabel}</b><br>💰 <b style="color:#00D4FF">${q}</b><br><br>Want to book an appointment?`); showOptions([{l:'📅 Yes, Book It!',v:'book'},{l:'💬 I Have Questions',v:'faq'}]); chatState='pre_book'; }); });
+    return;
+  }
+  if (chatState === 'pre_book' || chatState === 'faq_done') {
+    userMsg(label);
+    if (value === 'book') { chatState='book_date'; botMsg("When works best for you?"); showOptions([{l:'Tomorrow AM',v:'tom_am'},{l:'Tomorrow PM',v:'tom_pm'},{l:'This Week',v:'this_week'},{l:'Next Week',v:'next_week'}]); chatState='pick_date'; return; }
+    if (value === 'restart') { chatState='pick_service'; botMsg("No problem! What do you need?"); showOptions([{l:'🛢️ Oil Change',v:'oil'},{l:'🛞 Tire Service',v:'tire'},{l:'🔧 Brakes',v:'brakes'},{l:'🔋 Diagnostics',v:'diag'},{l:'❄️ AC Repair',v:'ac'},{l:'🔧 General Repair',v:'general'},{l:'📍 Check Status',v:'status'},{l:'❓ FAQ',v:'faq'}]); return; }
+    if (value === 'faq') { handleInput('faq','❓ FAQ / Hours'); return; }
+  }
+  if (chatState === 'pick_date') {
+    userMsg(label);
+    chatData.date = label;
+    botMsg("Drop off or wait?");
+    showOptions([{l:'🚗 Drop Off',v:'dropoff'},{l:'☕ I\'ll Wait',v:'wait'}]);
+    chatState = 'pick_wait';
+    return;
+  }
+  if (chatState === 'pick_wait') {
+    userMsg(label);
+    chatData.wait = label;
+    botMsg("Last step — your name and phone so we can confirm:");
+    showTextInput('Name, phone', v => {
+      userMsg(v);
+      botMsg(`✅ <b>Appointment Booked!</b><br><br>🔧 ${chatData.serviceLabel}<br>🚗 ${chatData.vehicle||'Your vehicle'}<br>📅 ${chatData.date}<br>📱 ${chatData.wait}<br><br>We'll send a confirmation text shortly. See you soon! 🤠`);
+      showOptions([{l:'👍 Thanks!',v:'done'},{l:'🔙 Start Over',v:'restart'}]);
+      chatState = 'done';
+    });
+    return;
+  }
+  if (chatState === 'done') {
+    userMsg(label);
+    if (value === 'restart') { chatData={}; chatState='pick_service'; botMsg("What else can I help with?"); showOptions([{l:'🛢️ Oil Change',v:'oil'},{l:'🛞 Tire Service',v:'tire'},{l:'🔧 Brakes',v:'brakes'},{l:'🔋 Diagnostics',v:'diag'},{l:'❄️ AC Repair',v:'ac'},{l:'🔧 General Repair',v:'general'},{l:'📍 Check Status',v:'status'},{l:'❓ FAQ',v:'faq'}]); return; }
+    botMsg("Thanks for choosing Lone Star Auto & Tire! Have a great day. 🤠");
+    document.getElementById('chatInputArea').innerHTML = '';
+  }
+}
+</script>
+
+</body>
+</html>

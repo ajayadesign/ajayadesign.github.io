@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hill Country Realty — AI-Powered Real Estate | Demo by AjayaDesign</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        surface: '#0A0A0F',
+        'surface-light': '#12121A',
+        'surface-card': '#1A1A25',
+        'amd-red': '#ED1C24',
+        'electric-blue': '#00D4FF',
+        'electric-blue-dim': '#00D4FF33',
+        border: '#2A2A3A',
+      },
+      fontFamily: {
+        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['Inter', 'sans-serif'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { background: #0A0A0F; color: #e0e0e0; font-family: 'Inter', sans-serif; }
+  .gradient-text { background: linear-gradient(135deg, #00D4FF, #ED1C24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .glow { box-shadow: 0 0 30px #00D4FF22; }
+  .card-hover:hover { transform: translateY(-4px); box-shadow: 0 8px 30px #00D4FF15; }
+  .chat-bubble-bot { background: #1A1A25; border: 1px solid #2A2A3A; }
+  .chat-bubble-user { background: #00D4FF18; border: 1px solid #00D4FF44; }
+  .typing-dot { animation: blink 1.4s infinite both; }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  .fade-in { animation: fadeInUp 0.3s ease-out; }
+  .chat-option:hover { background: #00D4FF22; border-color: #00D4FF; }
+  #chatWidget { transition: all 0.3s cubic-bezier(.4,0,.2,1); }
+  .listing-img { background: linear-gradient(135deg, #1a1a2588, #00D4FF11); }
+  .counter-num { font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2A2A3A; border-radius: 3px; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- DEMO BANNER -->
+<div class="fixed top-0 left-0 right-0 z-50 bg-amd-red/95 backdrop-blur text-white text-center py-2 px-4 text-sm font-mono">
+  <span class="font-bold">DEMO</span> — Built by AjayaDesign &nbsp;|&nbsp;
+  <a href="/ai-automation/" class="underline hover:text-electric-blue transition">Get AI Automation for Your Business →</a>
+</div>
+
+<!-- NAV -->
+<nav class="fixed top-10 left-0 right-0 z-40 bg-surface/90 backdrop-blur border-b border-border">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-electric-blue flex items-center justify-center text-surface font-bold text-lg">H</div>
+      <span class="font-bold text-lg">Hill Country Realty</span>
+    </div>
+    <div class="hidden md:flex gap-8 text-sm text-gray-400">
+      <a href="#listings" class="hover:text-electric-blue transition">Listings</a>
+      <a href="#estimator" class="hover:text-electric-blue transition">Home Value</a>
+      <a href="#stats" class="hover:text-electric-blue transition">Why AI?</a>
+      <a href="#cta" class="hover:text-electric-blue transition">Contact</a>
+    </div>
+    <button onclick="openChat()" class="bg-electric-blue text-surface font-semibold px-4 py-2 rounded-lg text-sm hover:bg-electric-blue/80 transition">Chat with AI</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="pt-40 pb-20 px-4 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-10" style="background:radial-gradient(ellipse at 50% 0%, #00D4FF 0%, transparent 60%)"></div>
+  <div class="max-w-4xl mx-auto text-center relative z-10">
+    <p class="font-mono text-electric-blue text-sm mb-4 tracking-widest uppercase">AI-Powered Real Estate</p>
+    <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">Find Your Dream Home<br><span class="gradient-text">in Austin, TX</span></h1>
+    <p class="text-gray-400 text-lg md:text-xl mb-8 max-w-2xl mx-auto">Our AI assistant qualifies leads, answers questions, and books showings 24/7 — so no buyer slips through the cracks.</p>
+    <!-- Search bar placeholder -->
+    <div class="max-w-2xl mx-auto flex bg-surface-card border border-border rounded-xl overflow-hidden glow">
+      <input type="text" placeholder="Search by city, ZIP, or neighborhood..." class="flex-1 bg-transparent px-6 py-4 text-white placeholder-gray-500 outline-none">
+      <button class="bg-electric-blue text-surface font-semibold px-6 py-4 hover:bg-electric-blue/80 transition">Search</button>
+    </div>
+    <!-- Trust signals -->
+    <div class="flex flex-wrap justify-center gap-6 mt-10 text-sm text-gray-500">
+      <span>⭐ 4.9 avg rating</span>
+      <span>🏠 500+ homes sold</span>
+      <span>⚡ &lt; 5 min AI response</span>
+      <span>📍 Austin • Manor • Pflugerville • Round Rock</span>
+    </div>
+  </div>
+</section>
+
+<!-- RESPONSE TIME -->
+<section class="py-16 px-4">
+  <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
+    <div class="bg-surface-card border border-border rounded-2xl p-8 text-center glow">
+      <p class="text-sm font-mono text-electric-blue mb-2 uppercase tracking-wider">With AI Assistant</p>
+      <p class="text-5xl md:text-6xl font-extrabold text-electric-blue counter-num" id="aiTime">0</p>
+      <p class="text-gray-400 mt-2">seconds average response</p>
+    </div>
+    <div class="bg-surface-card border border-border rounded-2xl p-8 text-center">
+      <p class="text-sm font-mono text-gray-500 mb-2 uppercase tracking-wider">Industry Average</p>
+      <p class="text-5xl md:text-6xl font-extrabold text-gray-600 counter-num">24–48</p>
+      <p class="text-gray-500 mt-2">hours to respond</p>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats" class="py-16 px-4">
+  <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-surface-card border border-border rounded-2xl p-8 text-center card-hover transition-all duration-300">
+      <div class="text-4xl mb-4">🌙</div>
+      <h3 class="text-xl font-bold mb-2">Capture Leads 24/7</h3>
+      <p class="text-gray-400 text-sm">Your AI never sleeps. Midnight inquiry? Handled instantly.</p>
+    </div>
+    <div class="bg-surface-card border border-border rounded-2xl p-8 text-center card-hover transition-all duration-300">
+      <div class="text-4xl mb-4">📈</div>
+      <h3 class="text-xl font-bold mb-2">2× More Showings</h3>
+      <p class="text-gray-400 text-sm">Qualified leads book faster when AI handles the first touch.</p>
+    </div>
+    <div class="bg-surface-card border border-border rounded-2xl p-8 text-center card-hover transition-all duration-300">
+      <div class="text-4xl mb-4">🎯</div>
+      <h3 class="text-xl font-bold mb-2">Never Miss a Buyer</h3>
+      <p class="text-gray-400 text-sm">Every inquiry gets an instant, personalized response.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED LISTINGS -->
+<section id="listings" class="py-16 px-4">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Featured Listings</h2>
+    <p class="text-gray-400 text-center mb-12">Hand-picked properties in the Austin metro area</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="listingsGrid"></div>
+  </div>
+</section>
+
+<!-- HOME VALUE ESTIMATOR -->
+<section id="estimator" class="py-16 px-4">
+  <div class="max-w-2xl mx-auto">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Home Value Estimator</h2>
+    <p class="text-gray-400 text-center mb-10">Enter any address to get an instant mock estimate</p>
+    <div class="bg-surface-card border border-border rounded-2xl p-8 glow">
+      <div class="flex gap-3 mb-6">
+        <input id="estAddr" type="text" placeholder="e.g. 1234 Oak Hill Dr, Austin TX" class="flex-1 bg-surface border border-border rounded-lg px-4 py-3 text-white placeholder-gray-500 outline-none focus:border-electric-blue transition">
+        <button onclick="estimateValue()" class="bg-electric-blue text-surface font-semibold px-6 py-3 rounded-lg hover:bg-electric-blue/80 transition whitespace-nowrap">Estimate</button>
+      </div>
+      <div id="estResult" class="hidden fade-in">
+        <div class="text-center">
+          <p class="text-sm text-gray-400 mb-2 font-mono">ESTIMATED VALUE RANGE</p>
+          <p class="text-4xl font-extrabold gradient-text mb-2" id="estValue"></p>
+          <p class="text-gray-500 text-sm" id="estAddr2"></p>
+          <div class="mt-6 grid grid-cols-3 gap-4 text-center text-sm">
+            <div><p class="text-gray-500">Low</p><p class="font-bold text-white" id="estLow"></p></div>
+            <div><p class="text-gray-500">Median</p><p class="font-bold text-electric-blue" id="estMid"></p></div>
+            <div><p class="text-gray-500">High</p><p class="font-bold text-white" id="estHigh"></p></div>
+          </div>
+          <button onclick="openChat()" class="mt-6 text-sm text-electric-blue hover:underline">Want an accurate valuation? Chat with our AI →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta" class="py-20 px-4">
+  <div class="max-w-3xl mx-auto bg-gradient-to-br from-surface-card to-surface border border-electric-blue/30 rounded-2xl p-10 md:p-14 text-center glow">
+    <p class="font-mono text-electric-blue text-sm mb-4 tracking-widest uppercase">For Real Estate Professionals</p>
+    <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Want This for <span class="gradient-text">YOUR</span> Agency?</h2>
+    <p class="text-gray-400 mb-8 max-w-xl mx-auto">AjayaDesign builds custom AI lead capture systems for real estate agencies. Qualify leads, book showings, and close more deals — all on autopilot.</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="/ai-automation/" class="bg-amd-red text-white font-semibold px-8 py-4 rounded-xl hover:bg-amd-red/80 transition text-lg">Get Started →</a>
+      <a href="/contact/" class="border border-border text-white font-semibold px-8 py-4 rounded-xl hover:border-electric-blue hover:text-electric-blue transition text-lg">Book a Demo</a>
+    </div>
+    <p class="text-gray-600 text-xs mt-6 font-mono">Setup in 48 hours • No monthly contracts • Cancel anytime</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-border py-8 px-4 text-center text-gray-600 text-sm">
+  <p>This is a <strong>demo</strong> by <a href="/" class="text-electric-blue hover:underline">AjayaDesign</a>. Hill Country Realty is fictional.</p>
+  <p class="mt-1">No data is collected. All interactions stay in your browser.</p>
+</footer>
+
+<!-- CHAT WIDGET -->
+<div id="chatToggle" onclick="toggleChat()" class="fixed bottom-6 right-6 z-50 w-16 h-16 bg-electric-blue rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition-transform" title="Chat with AI">
+  <svg id="chatIconOpen" class="w-7 h-7 text-surface" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+  <svg id="chatIconClose" class="w-7 h-7 text-surface hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+</div>
+
+<div id="chatWidget" class="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] bg-surface-light border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden hidden" style="height:520px">
+  <div class="bg-surface-card border-b border-border px-5 py-4 flex items-center gap-3">
+    <div class="w-9 h-9 rounded-full bg-electric-blue flex items-center justify-center text-surface font-bold text-sm">AI</div>
+    <div>
+      <p class="font-semibold text-sm text-white">Hill Country Realty AI</p>
+      <p class="text-xs text-green-400">● Online — responds instantly</p>
+    </div>
+  </div>
+  <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+  <div id="chatInputArea" class="border-t border-border p-3 hidden">
+    <div class="flex gap-2">
+      <input id="chatInput" type="text" placeholder="Type here..." class="flex-1 bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 outline-none focus:border-electric-blue transition" onkeydown="if(event.key==='Enter')sendUserInput()">
+      <button onclick="sendUserInput()" class="bg-electric-blue text-surface font-semibold px-4 py-2 rounded-lg text-sm hover:bg-electric-blue/80 transition">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// --- LISTINGS DATA ---
+const listings = [
+  { price: '$485,000', beds: 3, baths: 2, sqft: '1,850', area: 'South Austin', addr: '2410 Barton Creek Blvd', tag: 'New' },
+  { price: '$325,000', beds: 4, baths: 2, sqft: '2,100', area: 'Manor', addr: '812 Wildhorse Trail', tag: 'Hot' },
+  { price: '$589,000', beds: 3, baths: 3, sqft: '2,400', area: 'Round Rock', addr: '1055 Brushy Creek Rd', tag: '' },
+  { price: '$275,000', beds: 2, baths: 1, sqft: '1,200', area: 'Pflugerville', addr: '304 Pecan St', tag: 'Price Drop' },
+  { price: '$720,000', beds: 5, baths: 4, sqft: '3,500', area: 'Lake Travis', addr: '6781 Lakeway Dr', tag: 'Luxury' },
+  { price: '$399,000', beds: 3, baths: 2, sqft: '1,950', area: 'East Austin', addr: '1122 Webberville Rd', tag: 'Open House' },
+];
+
+const grid = document.getElementById('listingsGrid');
+listings.forEach(l => {
+  const tagColor = {'New':'bg-green-500','Hot':'bg-amd-red','Price Drop':'bg-yellow-500','Luxury':'bg-purple-500','Open House':'bg-electric-blue'}[l.tag] || '';
+  grid.innerHTML += `
+    <div class="bg-surface-card border border-border rounded-2xl overflow-hidden card-hover transition-all duration-300">
+      <div class="listing-img h-48 flex items-center justify-center text-gray-600 relative">
+        <svg class="w-12 h-12 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"/></svg>
+        ${l.tag ? `<span class="absolute top-3 left-3 ${tagColor} text-white text-xs font-bold px-2 py-1 rounded-md">${l.tag}</span>` : ''}
+      </div>
+      <div class="p-5">
+        <p class="text-2xl font-bold text-white mb-1">${l.price}</p>
+        <p class="text-sm text-gray-400 mb-3">${l.addr}</p>
+        <div class="flex gap-4 text-sm text-gray-500">
+          <span>${l.beds} bed</span><span>${l.baths} bath</span><span>${l.sqft} sqft</span>
+        </div>
+        <p class="text-xs text-electric-blue mt-3 font-mono">${l.area}</p>
+      </div>
+    </div>`;
+});
+
+// --- AI TIME COUNTER ---
+let aiCount = 0;
+const aiEl = document.getElementById('aiTime');
+const aiInterval = setInterval(() => { aiCount++; aiEl.textContent = aiCount; if(aiCount >= 5) clearInterval(aiInterval); }, 400);
+
+// --- HOME VALUE ESTIMATOR ---
+function estimateValue() {
+  const addr = document.getElementById('estAddr').value.trim();
+  if (!addr) return;
+  const base = 250000 + Math.abs(hashStr(addr)) % 500000;
+  const low = base - 30000, high = base + 45000;
+  document.getElementById('estValue').textContent = '$' + base.toLocaleString();
+  document.getElementById('estAddr2').textContent = addr;
+  document.getElementById('estLow').textContent = '$' + low.toLocaleString();
+  document.getElementById('estMid').textContent = '$' + base.toLocaleString();
+  document.getElementById('estHigh').textContent = '$' + high.toLocaleString();
+  document.getElementById('estResult').classList.remove('hidden');
+}
+function hashStr(s) { let h=0; for(let i=0;i<s.length;i++) h=((h<<5)-h)+s.charCodeAt(i); return h; }
+
+// --- CHAT WIDGET ---
+let chatOpen = false;
+function toggleChat() {
+  chatOpen = !chatOpen;
+  document.getElementById('chatWidget').classList.toggle('hidden', !chatOpen);
+  document.getElementById('chatIconOpen').classList.toggle('hidden', chatOpen);
+  document.getElementById('chatIconClose').classList.toggle('hidden', !chatOpen);
+  if (chatOpen && !chatStarted) startChat();
+}
+function openChat() { if (!chatOpen) toggleChat(); }
+
+// --- CHATBOT STATE MACHINE ---
+let chatStarted = false;
+let state = 'init';
+let leadData = {};
+const msgs = document.getElementById('chatMessages');
+const inputArea = document.getElementById('chatInputArea');
+const chatInput = document.getElementById('chatInput');
+
+function addMsg(text, sender='bot') {
+  const div = document.createElement('div');
+  div.className = `fade-in ${sender === 'bot' ? 'chat-bubble-bot' : 'chat-bubble-user'} rounded-2xl px-4 py-3 text-sm max-w-[85%] ${sender === 'bot' ? 'mr-auto' : 'ml-auto'}`;
+  div.innerHTML = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addOptions(opts) {
+  const div = document.createElement('div');
+  div.className = 'fade-in flex flex-wrap gap-2 mr-auto';
+  div.id = 'chatOptions';
+  opts.forEach(o => {
+    const btn = document.createElement('button');
+    btn.className = 'chat-option border border-border rounded-xl px-3 py-2 text-sm text-white hover:text-electric-blue transition cursor-pointer';
+    btn.textContent = o;
+    btn.onclick = () => selectOption(o);
+    div.appendChild(btn);
+  });
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeOptions() {
+  const el = document.getElementById('chatOptions');
+  if (el) el.remove();
+}
+
+function showInput(placeholder) {
+  inputArea.classList.remove('hidden');
+  chatInput.placeholder = placeholder || 'Type here...';
+  chatInput.value = '';
+  chatInput.focus();
+}
+function hideInput() { inputArea.classList.add('hidden'); }
+
+function selectOption(opt) {
+  removeOptions();
+  hideInput();
+  addMsg(opt, 'user');
+  setTimeout(() => processInput(opt), 400);
+}
+
+function sendUserInput() {
+  const v = chatInput.value.trim();
+  if (!v) return;
+  hideInput();
+  addMsg(v, 'user');
+  chatInput.value = '';
+  setTimeout(() => processInput(v), 400);
+}
+
+function startChat() {
+  chatStarted = true;
+  state = 'init';
+  leadData = {};
+  addMsg("Hi! 👋 I'm the Hill Country Realty AI assistant. How can I help you today?");
+  setTimeout(() => addOptions(['🏠 Buy a Home', '💰 Sell My Home', '🔑 Rent', '❓ FAQ']), 600);
+}
+
+function processInput(input) {
+  const lc = input.toLowerCase();
+
+  switch(state) {
+    case 'init':
+      if (lc.includes('buy')) { state = 'buy_budget'; leadData.intent = 'buy'; addMsg("Great choice! Austin's market is 🔥. What's your budget range?"); setTimeout(() => addOptions(['Under $300K','$300K – $500K','$500K – $750K','$750K+']), 400); }
+      else if (lc.includes('sell')) { state = 'sell_address'; leadData.intent = 'sell'; addMsg("We'd love to help you sell! What's the property address?"); showInput('e.g. 1234 Oak Hill Dr, Austin TX'); }
+      else if (lc.includes('rent')) { state = 'rent_budget'; leadData.intent = 'rent'; addMsg("Let's find your perfect rental! What's your monthly budget?"); setTimeout(() => addOptions(['Under $1,500','$1,500 – $2,500','$2,500 – $3,500','$3,500+']), 400); }
+      else if (lc.includes('faq') || lc.includes('?')) { state = 'faq'; addMsg("Here are some common questions:"); setTimeout(() => addOptions(['Commission rates?','How long to close?','Need pre-approval?','Open houses?']), 400); }
+      else { addMsg("I can help you buy, sell, or rent. What are you interested in?"); setTimeout(() => addOptions(['🏠 Buy a Home', '💰 Sell My Home', '🔑 Rent', '❓ FAQ']), 400); }
+      break;
+
+    // --- BUY FLOW ---
+    case 'buy_budget':
+      leadData.budget = input; state = 'buy_area';
+      addMsg(`${input} — solid range! Which area are you looking at?`);
+      setTimeout(() => addOptions(['Austin','Manor','Pflugerville','Round Rock','Not sure yet']), 400);
+      break;
+    case 'buy_area':
+      leadData.area = input; state = 'buy_beds';
+      addMsg(`${input} is a great area! How many bedrooms do you need?`);
+      setTimeout(() => addOptions(['1–2','3','4','5+']), 400);
+      break;
+    case 'buy_beds':
+      leadData.beds = input; state = 'buy_timeline';
+      addMsg("And what's your timeline?");
+      setTimeout(() => addOptions(['ASAP','1–3 months','6+ months']), 400);
+      break;
+    case 'buy_timeline':
+      leadData.timeline = input; state = 'buy_suggestions';
+      showMatches();
+      break;
+    case 'buy_suggestions':
+      state = 'collect_name';
+      addMsg("Want one of our agents to set up showings? I just need a few details.<br><br>What's your <strong>full name</strong>?");
+      showInput('Your name');
+      break;
+
+    // --- SELL FLOW ---
+    case 'sell_address':
+      leadData.address = input; state = 'sell_value';
+      addMsg(`Got it — <strong>${input}</strong>. Do you have an idea of what it's worth?`);
+      setTimeout(() => addOptions(["I have an estimate","No idea — help me!"]), 400);
+      break;
+    case 'sell_value':
+      leadData.valueKnowledge = input; state = 'sell_timeline';
+      addMsg("When are you looking to sell?");
+      setTimeout(() => addOptions(['ASAP','1–3 months','6+ months','Just exploring']), 400);
+      break;
+    case 'sell_timeline':
+      leadData.timeline = input; state = 'collect_name';
+      addMsg("Perfect. We'll prepare a <strong>free home valuation</strong> for you! I just need your details.<br><br>What's your <strong>full name</strong>?");
+      showInput('Your name');
+      break;
+
+    // --- RENT FLOW ---
+    case 'rent_budget':
+      leadData.budget = input; state = 'rent_area';
+      addMsg("What area are you looking in?");
+      setTimeout(() => addOptions(['Austin','Manor','Pflugerville','Round Rock']), 400);
+      break;
+    case 'rent_area':
+      leadData.area = input; state = 'rent_beds';
+      addMsg("How many bedrooms?");
+      setTimeout(() => addOptions(['Studio','1','2','3+']), 400);
+      break;
+    case 'rent_beds':
+      leadData.beds = input; state = 'rent_date';
+      addMsg("When do you need to move in?");
+      setTimeout(() => addOptions(['This month','Next month','2–3 months','Flexible']), 400);
+      break;
+    case 'rent_date':
+      leadData.moveIn = input; state = 'collect_name';
+      addMsg("Let me connect you with available rentals. What's your <strong>full name</strong>?");
+      showInput('Your name');
+      break;
+
+    // --- CONTACT COLLECTION ---
+    case 'collect_name':
+      leadData.name = input; state = 'collect_phone';
+      addMsg(`Nice to meet you, ${input}! What's the best <strong>phone number</strong> to reach you?`);
+      showInput('(512) 555-1234');
+      break;
+    case 'collect_phone':
+      leadData.phone = input; state = 'collect_email';
+      if (leadData.intent === 'sell') { state = 'done'; finishLead(); break; }
+      addMsg("And your <strong>email</strong>?");
+      showInput('you@email.com');
+      break;
+    case 'collect_email':
+      leadData.email = input; state = 'done';
+      finishLead();
+      break;
+
+    // --- FAQ ---
+    case 'faq':
+      handleFAQ(lc);
+      break;
+
+    default:
+      addMsg("Thanks for chatting! Refresh to start over, or click below.");
+      setTimeout(() => addOptions(['Start Over']), 400);
+      state = 'restart';
+      break;
+    case 'restart':
+      msgs.innerHTML = '';
+      startChat();
+      break;
+  }
+}
+
+function showMatches() {
+  const area = leadData.area || 'Austin';
+  const matches = listings.filter(l => area === 'Not sure yet' || l.area.toLowerCase().includes(area.toLowerCase())).slice(0, 3);
+  const fallback = matches.length ? matches : listings.slice(0, 3);
+  let html = "Based on your criteria, here are <strong>3 matches</strong>:<br><br>";
+  fallback.forEach(l => { html += `🏠 <strong>${l.price}</strong> — ${l.beds}bd/${l.baths}ba, ${l.sqft} sqft<br><span style="color:#888">${l.addr}, ${l.area}</span><br><br>`; });
+  addMsg(html);
+  setTimeout(() => addOptions(['Schedule Showings','Refine Search']), 600);
+}
+
+function finishLead() {
+  const isS = leadData.intent === 'sell';
+  addMsg(isS
+    ? `🎉 All set, ${leadData.name}! We'll send a <strong>free home valuation</strong> for your property. An agent will call you within 1 hour.`
+    : `🎉 Awesome, ${leadData.name}! An agent will reach out within <strong>1 hour</strong> to help you find the perfect ${leadData.intent === 'rent' ? 'rental' : 'home'}.`
+  );
+  setTimeout(() => {
+    addMsg(`<div class="text-xs text-gray-500 font-mono mt-1">📋 Lead captured:<br>Intent: ${leadData.intent}<br>Name: ${leadData.name}<br>Phone: ${leadData.phone}${leadData.email ? '<br>Email: '+leadData.email : ''}${leadData.budget ? '<br>Budget: '+leadData.budget : ''}${leadData.area ? '<br>Area: '+leadData.area : ''}${leadData.address ? '<br>Address: '+leadData.address : ''}<br><br><em>In production, this goes to your CRM instantly.</em></div>`);
+    setTimeout(() => addOptions(['Start Over']), 600);
+    state = 'restart';
+  }, 800);
+}
+
+function handleFAQ(q) {
+  let a;
+  if (q.includes('commission')) a = "Our standard commission is <strong>5-6%</strong>, split between buyer's and seller's agents. We offer competitive rates — chat with an agent for details!";
+  else if (q.includes('long') || q.includes('close') || q.includes('timeline')) a = "Typical closing in Austin takes <strong>30-45 days</strong> from accepted offer. Cash deals can close in as little as 2 weeks!";
+  else if (q.includes('pre-approval') || q.includes('pre')) a = "Pre-approval is <strong>highly recommended</strong> before house hunting. We can connect you with trusted lenders who often approve within 24 hours.";
+  else if (q.includes('open house')) a = "We host open houses every weekend! Our AI will notify you of upcoming ones in your preferred areas. 🏡";
+  else a = "Great question! An agent can give you a detailed answer. Want me to connect you?";
+  addMsg(a);
+  setTimeout(() => addOptions(['Ask another question','🏠 Buy a Home','💰 Sell My Home','🔑 Rent']), 500);
+  state = q.includes('another') ? 'faq' : 'faq';
+}
+</script>
+</body>
+</html>

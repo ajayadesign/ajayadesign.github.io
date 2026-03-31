@@ -147,6 +147,55 @@ CONTRACTOR_INDUSTRY_INFO = {
     "water_treatment":      ("water treatment specialist", "water treatment", "contractor"),
 }
 
+# ─── AI Automation Templates (industry-specific, link to live demos) ──
+AI_AUTOMATION_TEMPLATES = {
+    "law_firm": {
+        "template": "ai_automation_law.html",
+        "subject": "{{business_name}} — quick thought on after-hours leads",
+    },
+    "dental_office": {
+        "template": "ai_automation_medical.html",
+        "subject": "your patients want to book at 10pm — here's how",
+    },
+    "medical": {
+        "template": "ai_automation_medical.html",
+        "subject": "{{business_name}} — quick thought on patient intake",
+    },
+    "veterinarian": {
+        "template": "ai_automation_medical.html",
+        "subject": "{{business_name}} — quick thought on online booking",
+    },
+    "restaurant": {
+        "template": "ai_automation_restaurant.html",
+        "subject": "{{google_reviews}} reviews but no online ordering?",
+    },
+    "bakery": {
+        "template": "ai_automation_restaurant.html",
+        "subject": "{{business_name}} — take orders without the phone",
+    },
+    "cafe": {
+        "template": "ai_automation_restaurant.html",
+        "subject": "{{business_name}} — what if customers could order online?",
+    },
+    "auto_repair": {
+        "template": "ai_automation_auto.html",
+        "subject": "{{business_name}} — booking while you're under the hood",
+    },
+    "beauty_salon": {
+        "template": "ai_automation_salon.html",
+        "subject": "{{business_name}} — clients want to book at 11pm",
+    },
+    "real_estate": {
+        "template": "ai_automation_realestate.html",
+        "subject": "{{business_name}} — the agent who responds first wins",
+    },
+}
+
+AI_AUTOMATION_GENERAL = {
+    "template": "ai_automation_general.html",
+    "subject": "{{business_name}} — your customers are looking for you online",
+}
+
 # ─── WP-Score-Driven Templates (step 1 overrides) ────────────────────
 # Higher priority = checked first. Each entry has a condition checker,
 # template file, and subject line.

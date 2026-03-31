@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velvet Rose Salon & Spa — Manor, TX</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        surface: '#0A0A0F',
+        'surface-light': '#12121A',
+        'surface-card': '#1A1A25',
+        'amd-red': '#ED1C24',
+        'electric-blue': '#00D4FF',
+        'rose-gold': '#B76E79',
+        'rose-light': '#D4A0A7',
+        'cream': '#FFF5EE',
+      },
+      fontFamily: {
+        inter: ['Inter', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+        display: ['Playfair Display', 'serif'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background: #0A0A0F; color: #e0e0e0; }
+  .font-display { font-family: 'Playfair Display', serif; }
+  .glass { background: rgba(26,26,37,0.8); backdrop-filter: blur(12px); border: 1px solid rgba(183,110,121,0.15); }
+  .glow { box-shadow: 0 0 30px rgba(183,110,121,0.15); }
+  .chat-bubble-bot { background: linear-gradient(135deg, #1A1A25, #22222F); border: 1px solid rgba(183,110,121,0.2); }
+  .chat-bubble-user { background: linear-gradient(135deg, #B76E79, #8B5A62); }
+  .btn-rose { background: linear-gradient(135deg, #B76E79, #96545C); transition: all 0.3s; }
+  .btn-rose:hover { background: linear-gradient(135deg, #D4A0A7, #B76E79); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(183,110,121,0.3); }
+  .service-card:hover { transform: translateY(-4px); border-color: rgba(183,110,121,0.4); }
+  .service-card { transition: all 0.3s ease; }
+  .chat-option { transition: all 0.2s; cursor: pointer; }
+  .chat-option:hover { background: rgba(183,110,121,0.15); border-color: #B76E79; }
+  #chatWidget { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+  .typing-dot { animation: blink 1.4s infinite both; }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,80%,100%{ opacity:0.3; } 40%{ opacity:1; } }
+  @keyframes fadeInUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  .fade-in { animation: fadeInUp 0.3s ease forwards; }
+  .star { color: #F5A623; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(183,110,121,0.3); border-radius: 2px; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- DEMO Banner -->
+<div class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-amd-red via-rose-gold to-electric-blue text-white text-center py-1.5 text-sm font-mono font-medium tracking-wide">
+  ✨ DEMO — Built by <a href="/ai-automation/" class="underline font-bold hover:text-cream">AjayaDesign</a> | <a href="/ai-automation/" class="underline hover:text-cream">Get This For Your Business →</a>
+</div>
+
+<!-- Hero -->
+<section class="relative min-h-screen flex items-center pt-16 overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-surface via-surface-light to-surface opacity-90"></div>
+  <div class="absolute top-20 right-10 w-96 h-96 bg-rose-gold/5 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-20 left-10 w-72 h-72 bg-electric-blue/5 rounded-full blur-3xl"></div>
+  <div class="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
+    <p class="text-rose-gold font-mono text-sm tracking-[0.3em] uppercase mb-4">Manor, TX</p>
+    <h1 class="font-display text-5xl md:text-7xl font-bold text-cream mb-4">Velvet Rose</h1>
+    <h2 class="font-display text-2xl md:text-3xl text-rose-light/80 mb-8 italic">Salon & Spa</h2>
+    <div class="flex flex-wrap justify-center gap-6 mb-10 text-sm">
+      <span class="glass px-4 py-2 rounded-full flex items-center gap-2"><span class="star">★★★★★</span> 4.8 (312 reviews)</span>
+      <span class="glass px-4 py-2 rounded-full">🕐 Book Online 24/7</span>
+      <span class="glass px-4 py-2 rounded-full">💜 Walk-ins Welcome</span>
+    </div>
+    <p class="text-gray-400 max-w-xl mx-auto mb-10 leading-relaxed">Where beauty meets technology. Effortless booking, personalized care, and an experience you'll love — powered by AI.</p>
+    <button onclick="openChat()" class="btn-rose text-white font-semibold px-8 py-4 rounded-full text-lg shadow-lg">
+      Book Your Appointment →
+    </button>
+  </div>
+</section>
+
+<!-- Services -->
+<section id="services" class="max-w-6xl mx-auto px-6 py-24">
+  <h2 class="font-display text-4xl text-cream text-center mb-4">Our Services</h2>
+  <p class="text-gray-400 text-center mb-14 max-w-lg mx-auto">Premium beauty services with transparent pricing. No surprises.</p>
+  <div class="grid md:grid-cols-3 gap-6">
+    <!-- Hair -->
+    <div class="glass rounded-2xl p-6 service-card">
+      <div class="text-3xl mb-3">💇‍♀️</div>
+      <h3 class="text-xl font-semibold text-rose-light mb-4">Hair</h3>
+      <ul class="space-y-3 text-sm text-gray-300">
+        <li class="flex justify-between"><span>Haircut & Style</span><span class="text-rose-gold font-mono">$45+ <span class="text-gray-500">45min</span></span></li>
+        <li class="flex justify-between"><span>Color</span><span class="text-rose-gold font-mono">$85+ <span class="text-gray-500">90min</span></span></li>
+        <li class="flex justify-between"><span>Highlights</span><span class="text-rose-gold font-mono">$120+ <span class="text-gray-500">120min</span></span></li>
+        <li class="flex justify-between"><span>Blowout</span><span class="text-rose-gold font-mono">$35+ <span class="text-gray-500">30min</span></span></li>
+        <li class="flex justify-between"><span>Deep Treatment</span><span class="text-rose-gold font-mono">$55+ <span class="text-gray-500">45min</span></span></li>
+      </ul>
+    </div>
+    <!-- Nails -->
+    <div class="glass rounded-2xl p-6 service-card">
+      <div class="text-3xl mb-3">💅</div>
+      <h3 class="text-xl font-semibold text-rose-light mb-4">Nails</h3>
+      <ul class="space-y-3 text-sm text-gray-300">
+        <li class="flex justify-between"><span>Classic Manicure</span><span class="text-rose-gold font-mono">$25+ <span class="text-gray-500">30min</span></span></li>
+        <li class="flex justify-between"><span>Pedicure</span><span class="text-rose-gold font-mono">$40+ <span class="text-gray-500">45min</span></span></li>
+        <li class="flex justify-between"><span>Gel Nails</span><span class="text-rose-gold font-mono">$45+ <span class="text-gray-500">45min</span></span></li>
+        <li class="flex justify-between"><span>Acrylic Full Set</span><span class="text-rose-gold font-mono">$55+ <span class="text-gray-500">60min</span></span></li>
+        <li class="flex justify-between"><span>Nail Art</span><span class="text-rose-gold font-mono">$15+ <span class="text-gray-500">15min</span></span></li>
+      </ul>
+    </div>
+    <!-- Spa -->
+    <div class="glass rounded-2xl p-6 service-card">
+      <div class="text-3xl mb-3">🧖‍♀️</div>
+      <h3 class="text-xl font-semibold text-rose-light mb-4">Spa</h3>
+      <ul class="space-y-3 text-sm text-gray-300">
+        <li class="flex justify-between"><span>Classic Facial</span><span class="text-rose-gold font-mono">$65+ <span class="text-gray-500">60min</span></span></li>
+        <li class="flex justify-between"><span>Swedish Massage</span><span class="text-rose-gold font-mono">$80+ <span class="text-gray-500">60min</span></span></li>
+        <li class="flex justify-between"><span>Deep Tissue Massage</span><span class="text-rose-gold font-mono">$95+ <span class="text-gray-500">60min</span></span></li>
+        <li class="flex justify-between"><span>Eyebrow Wax</span><span class="text-rose-gold font-mono">$15+ <span class="text-gray-500">15min</span></span></li>
+        <li class="flex justify-between"><span>Full Body Wax</span><span class="text-rose-gold font-mono">$75+ <span class="text-gray-500">45min</span></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Staff -->
+<section class="max-w-6xl mx-auto px-6 py-24">
+  <h2 class="font-display text-4xl text-cream text-center mb-4">Meet Our Team</h2>
+  <p class="text-gray-400 text-center mb-14">Skilled professionals dedicated to making you look and feel your best.</p>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="glass rounded-2xl p-6 text-center service-card">
+      <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-rose-gold to-rose-light flex items-center justify-center text-3xl">👩‍🦰</div>
+      <h3 class="font-semibold text-cream">Maria Santos</h3>
+      <p class="text-rose-gold text-sm mb-2">Senior Stylist</p>
+      <p class="text-gray-400 text-xs mb-3">Color specialist • Balayage • 12 yrs exp</p>
+      <span class="text-xs bg-green-500/20 text-green-400 px-3 py-1 rounded-full">🟢 Available Today</span>
+    </div>
+    <div class="glass rounded-2xl p-6 text-center service-card">
+      <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-rose-gold to-rose-light flex items-center justify-center text-3xl">👩‍🦱</div>
+      <h3 class="font-semibold text-cream">Ashley Chen</h3>
+      <p class="text-rose-gold text-sm mb-2">Nail Technician</p>
+      <p class="text-gray-400 text-xs mb-3">Gel art • Acrylics • 8 yrs exp</p>
+      <span class="text-xs bg-green-500/20 text-green-400 px-3 py-1 rounded-full">🟢 Available Today</span>
+    </div>
+    <div class="glass rounded-2xl p-6 text-center service-card">
+      <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-rose-gold to-rose-light flex items-center justify-center text-3xl">🧑</div>
+      <h3 class="font-semibold text-cream">Jordan Rivera</h3>
+      <p class="text-rose-gold text-sm mb-2">Massage Therapist</p>
+      <p class="text-gray-400 text-xs mb-3">Deep tissue • Sports • 6 yrs exp</p>
+      <span class="text-xs bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">🟡 Next: Tomorrow</span>
+    </div>
+    <div class="glass rounded-2xl p-6 text-center service-card">
+      <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-rose-gold to-rose-light flex items-center justify-center text-3xl">👩</div>
+      <h3 class="font-semibold text-cream">Taylor Brooks</h3>
+      <p class="text-rose-gold text-sm mb-2">Esthetician</p>
+      <p class="text-gray-400 text-xs mb-3">Facials • Waxing • 10 yrs exp</p>
+      <span class="text-xs bg-green-500/20 text-green-400 px-3 py-1 rounded-full">🟢 Available Today</span>
+    </div>
+  </div>
+</section>
+
+<!-- No-Show Killer -->
+<section class="py-24 bg-gradient-to-b from-surface to-surface-light">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="font-display text-4xl text-cream text-center mb-4">The No-Show Killer</h2>
+    <p class="text-gray-400 text-center mb-14 max-w-xl mx-auto">AI-powered reminders that keep your chairs full and revenue flowing.</p>
+    <div class="grid md:grid-cols-3 gap-8 mb-16">
+      <div class="text-center">
+        <div class="text-5xl font-bold text-rose-gold font-mono mb-2">40%</div>
+        <p class="text-gray-300">Reduction in no-shows</p>
+        <p class="text-gray-500 text-sm mt-1">with automated SMS reminders</p>
+      </div>
+      <div class="text-center">
+        <div class="text-5xl font-bold text-electric-blue font-mono mb-2">$2,400</div>
+        <p class="text-gray-300">Average monthly savings</p>
+        <p class="text-gray-500 text-sm mt-1">in recovered appointments</p>
+      </div>
+      <div class="text-center">
+        <div class="text-5xl font-bold text-green-400 font-mono mb-2">24/7</div>
+        <p class="text-gray-300">Booking availability</p>
+        <p class="text-gray-500 text-sm mt-1">even when you're closed</p>
+      </div>
+    </div>
+    <!-- Before/After -->
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="glass rounded-2xl p-8 border-red-500/20">
+        <h3 class="text-xl font-semibold text-red-400 mb-6 flex items-center gap-2">❌ Without AI</h3>
+        <ul class="space-y-4 text-gray-400">
+          <li class="flex gap-3"><span class="text-red-400 mt-1">•</span>Client calls after hours — gets voicemail</li>
+          <li class="flex gap-3"><span class="text-red-400 mt-1">•</span>No reminder → client forgets → no-show</li>
+          <li class="flex gap-3"><span class="text-red-400 mt-1">•</span>Staff spends 2+ hours/day on phone bookings</li>
+          <li class="flex gap-3"><span class="text-red-400 mt-1">•</span>Frustrated client books with your competitor</li>
+          <li class="flex gap-3"><span class="text-red-400 mt-1">•</span>Empty chairs = lost revenue every single day</li>
+        </ul>
+      </div>
+      <div class="glass rounded-2xl p-8 border-green-500/20 glow">
+        <h3 class="text-xl font-semibold text-green-400 mb-6 flex items-center gap-2">✅ With AI Booking</h3>
+        <ul class="space-y-4 text-gray-300">
+          <li class="flex gap-3"><span class="text-green-400 mt-1">•</span>Client books at 11pm from their couch — instant</li>
+          <li class="flex gap-3"><span class="text-green-400 mt-1">•</span>Auto text reminder 24h before → no-shows drop 40%</li>
+          <li class="flex gap-3"><span class="text-green-400 mt-1">•</span>Staff focuses on clients, not the phone</li>
+          <li class="flex gap-3"><span class="text-green-400 mt-1">•</span>Client feels valued → leaves 5-star review</li>
+          <li class="flex gap-3"><span class="text-green-400 mt-1">•</span>Every chair filled = maximum revenue captured</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-24 text-center">
+  <div class="max-w-3xl mx-auto px-6">
+    <h2 class="font-display text-4xl md:text-5xl text-cream mb-6">Want This For <em class="text-rose-gold">YOUR</em> Salon?</h2>
+    <p class="text-gray-400 mb-10 text-lg leading-relaxed">AjayaDesign builds custom AI booking assistants for salons and spas. More bookings. Fewer no-shows. Zero extra staff. Setup in under a week.</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="/ai-automation/" class="btn-rose text-white font-semibold px-8 py-4 rounded-full text-lg inline-block">See AI Automation Services →</a>
+      <a href="/contact/" class="glass text-rose-light font-semibold px-8 py-4 rounded-full text-lg inline-block hover:bg-rose-gold/10 transition">Contact Us</a>
+    </div>
+    <p class="text-gray-500 text-sm mt-8 font-mono">Built with ❤️ by AjayaDesign — Austin, TX</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-gray-800 py-8 text-center text-gray-500 text-sm">
+  <p>This is a demo site for a fictional business. <a href="/ai-automation/" class="text-rose-gold hover:underline">Powered by AjayaDesign AI</a></p>
+</footer>
+
+<!-- Chat Widget Toggle -->
+<button id="chatToggle" onclick="toggleChat()" class="fixed bottom-6 right-6 z-40 w-16 h-16 btn-rose rounded-full shadow-xl flex items-center justify-center text-2xl hover:scale-105 transition-transform" aria-label="Open booking assistant">
+  💬
+</button>
+
+<!-- Chat Widget -->
+<div id="chatWidget" class="fixed bottom-24 right-6 z-40 w-[380px] max-w-[calc(100vw-2rem)] rounded-2xl glass glow flex-col hidden" style="height:520px; max-height:70vh;">
+  <div class="flex items-center justify-between px-5 py-4 border-b border-rose-gold/10">
+    <div>
+      <h3 class="font-semibold text-cream text-sm">Velvet Rose AI Assistant</h3>
+      <p class="text-xs text-green-400">● Online — Ready to help</p>
+    </div>
+    <button onclick="toggleChat()" class="text-gray-400 hover:text-white text-xl">✕</button>
+  </div>
+  <div id="chatMessages" class="flex-1 overflow-y-auto px-4 py-4 space-y-3" style="height:calc(100% - 130px);"></div>
+  <div class="px-4 py-3 border-t border-rose-gold/10">
+    <div class="flex gap-2">
+      <input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 bg-surface-light border border-gray-700 rounded-full px-4 py-2.5 text-sm text-cream outline-none focus:border-rose-gold/50 transition" onkeydown="if(event.key==='Enter')sendUserMsg()">
+      <button onclick="sendUserMsg()" class="btn-rose w-10 h-10 rounded-full flex items-center justify-center text-white">↑</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const chat = document.getElementById('chatMessages');
+const chatWidget = document.getElementById('chatWidget');
+const chatToggle = document.getElementById('chatToggle');
+const chatInput = document.getElementById('chatInput');
+let chatOpen = false;
+
+// Mock data
+const SERVICES = {
+  hair: { name:'Hair', items:['Haircut & Style ($45, 45min)','Color ($85, 90min)','Highlights ($120, 2hr)','Blowout ($35, 30min)','Deep Treatment ($55, 45min)'] },
+  nails: { name:'Nails', items:['Classic Manicure ($25, 30min)','Pedicure ($40, 45min)','Gel Nails ($45, 45min)','Acrylic Full Set ($55, 1hr)','Nail Art (add $15)'] },
+  spa: { name:'Spa', items:['Classic Facial ($65, 1hr)','Swedish Massage ($80, 1hr)','Deep Tissue Massage ($95, 1hr)','Eyebrow Wax ($15, 15min)','Full Body Wax ($75, 45min)'] }
+};
+const STYLISTS = {
+  hair: ['Maria Santos','No preference'],
+  nails: ['Ashley Chen','No preference'],
+  spa: ['Jordan Rivera','Taylor Brooks','No preference']
+};
+const SLOTS = {
+  today: ['11:00 AM','1:30 PM','3:00 PM','4:30 PM'],
+  tomorrow: ['9:00 AM','10:30 AM','12:00 PM','2:00 PM','3:30 PM','5:00 PM'],
+  wednesday: ['10:00 AM','11:30 AM','1:00 PM','4:00 PM']
+};
+const FAQ = {
+  hours: "We're open Mon-Sat 9AM-7PM, Sun 10AM-5PM.",
+  cancel: "Free cancellation up to 4 hours before your appointment. Late cancels may incur a 50% fee.",
+  parking: "Free parking lot right in front of the salon — easy access!",
+  walkins: "Walk-ins are welcome based on availability! Booking ahead guarantees your spot.",
+  prices: "Check our services menu above for full pricing. All prices start from the listed amount."
+};
+
+let state = 'idle';
+let booking = {};
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  chatWidget.classList.toggle('hidden', !chatOpen);
+  chatWidget.style.display = chatOpen ? 'flex' : 'none';
+  chatToggle.innerHTML = chatOpen ? '✕' : '💬';
+  if (chatOpen && chat.children.length === 0) startChat();
+}
+function openChat() { if (!chatOpen) toggleChat(); }
+
+function addMsg(text, isUser, options) {
+  const wrap = document.createElement('div');
+  wrap.className = 'fade-in ' + (isUser ? 'flex justify-end' : 'flex justify-start');
+  const bubble = document.createElement('div');
+  bubble.className = (isUser ? 'chat-bubble-user text-white' : 'chat-bubble-bot text-gray-200') + ' rounded-2xl px-4 py-3 max-w-[85%] text-sm leading-relaxed';
+  bubble.innerHTML = text;
+  wrap.appendChild(bubble);
+  chat.appendChild(wrap);
+  if (options && options.length) {
+    const optWrap = document.createElement('div');
+    optWrap.className = 'fade-in flex flex-wrap gap-2 mt-1';
+    options.forEach(o => {
+      const btn = document.createElement('button');
+      btn.className = 'chat-option text-xs border border-gray-600 text-gray-300 px-3 py-1.5 rounded-full';
+      btn.textContent = typeof o === 'string' ? o : o.label;
+      btn.onclick = () => { handleOption(typeof o === 'string' ? o : o.value); optWrap.remove(); };
+      optWrap.appendChild(btn);
+    });
+    chat.appendChild(optWrap);
+  }
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function typing(cb) {
+  const wrap = document.createElement('div');
+  wrap.className = 'flex justify-start fade-in';
+  wrap.id = 'typing';
+  wrap.innerHTML = '<div class="chat-bubble-bot rounded-2xl px-4 py-3 flex gap-1"><span class="typing-dot w-2 h-2 bg-rose-gold rounded-full inline-block"></span><span class="typing-dot w-2 h-2 bg-rose-gold rounded-full inline-block"></span><span class="typing-dot w-2 h-2 bg-rose-gold rounded-full inline-block"></span></div>';
+  chat.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+  setTimeout(() => { wrap.remove(); cb(); }, 600 + Math.random()*400);
+}
+
+function startChat() {
+  state = 'greet';
+  typing(() => {
+    addMsg("Hi there! ✨ Welcome to <b>Velvet Rose Salon & Spa</b>. I'm your booking assistant.<br><br>How can I help you today?",
+      false, ['Book an appointment','View services','Ask a question']);
+  });
+}
+
+function sendUserMsg() {
+  const v = chatInput.value.trim();
+  if (!v) return;
+  chatInput.value = '';
+  addMsg(v, true);
+  handleFreeText(v.toLowerCase());
+}
+
+function handleOption(val) {
+  addMsg(val, true);
+  processInput(val);
+}
+
+function handleFreeText(text) {
+  // FAQ detection
+  if (/hour|open|close|when/.test(text)) return typing(()=>addMsg(FAQ.hours, false, state==='idle'?['Book an appointment']:[]));
+  if (/cancel/.test(text)) return typing(()=>addMsg(FAQ.cancel, false, state==='idle'?['Book an appointment']:[]));
+  if (/park/.test(text)) return typing(()=>addMsg(FAQ.parking, false, state==='idle'?['Book an appointment']:[]));
+  if (/walk.?in/.test(text)) return typing(()=>addMsg(FAQ.walkins, false, state==='idle'?['Book an appointment']:[]));
+  if (/price|cost|how much/.test(text)) return typing(()=>addMsg(FAQ.prices, false, state==='idle'?['Book an appointment']:[]));
+  processInput(text);
+}
+
+function processInput(val) {
+  const v = val.toLowerCase();
+
+  if (state === 'greet') {
+    if (/book|appointment/.test(v)) { askCategory(); }
+    else if (/service|menu/.test(v)) { typing(()=>addMsg("Check out our <b>Services</b> section above! 👆 Or I can book you in right now.",false,['Book an appointment'])); }
+    else if (/question|ask|faq/.test(v)) { typing(()=>addMsg("Sure! You can ask about:<br>• Hours & location<br>• Prices<br>• Cancellation policy<br>• Walk-in availability<br>• Parking",false)); state='idle'; }
+    else askCategory();
+    return;
+  }
+
+  if (state === 'category') {
+    if (/hair|cut|color|highlight|blowout|treat/.test(v)) { booking.cat='hair'; askService('hair'); }
+    else if (/nail|mani|pedi|gel|acrylic/.test(v)) { booking.cat='nails'; askService('nails'); }
+    else if (/spa|facial|massage|wax/.test(v)) { booking.cat='spa'; askService('spa'); }
+    else typing(()=>addMsg("Please choose a category:",false,['💇‍♀️ Hair','💅 Nails','🧖‍♀️ Spa']));
+    return;
+  }
+
+  if (state === 'service') {
+    booking.service = val;
+    askStylist();
+    return;
+  }
+
+  if (state === 'stylist') {
+    booking.stylist = val;
+    askDate();
+    return;
+  }
+
+  if (state === 'date') {
+    booking.date = val;
+    askTime(v);
+    return;
+  }
+
+  if (state === 'time') {
+    booking.time = val;
+    askName();
+    return;
+  }
+
+  if (state === 'name') {
+    booking.name = val;
+    askPhone();
+    return;
+  }
+
+  if (state === 'phone') {
+    booking.phone = val;
+    confirmBooking();
+    return;
+  }
+
+  if (state === 'confirm') {
+    if (/yes|confirm|perfect|great|looks good/.test(v)) bookingDone();
+    else typing(()=>addMsg("No worries! Want to start over?",false,['Start over','No, confirm it']));
+    return;
+  }
+
+  if (state === 'done' || state === 'idle') {
+    if (/book|another|again|start/.test(v)) { booking={}; askCategory(); }
+    else typing(()=>addMsg("Anything else I can help with?",false,['Book an appointment','Ask a question']));
+    return;
+  }
+}
+
+function askCategory() {
+  state = 'category';
+  typing(()=>addMsg("What type of service are you looking for?",false,['💇‍♀️ Hair','💅 Nails','🧖‍♀️ Spa']));
+}
+
+function askService(cat) {
+  state = 'service';
+  typing(()=>addMsg("Great choice! Which service would you like?",false,SERVICES[cat].items));
+}
+
+function askStylist() {
+  state = 'stylist';
+  const cat = booking.cat;
+  typing(()=>addMsg("Do you have a preferred " + (cat==='hair'?'stylist':'technician') + "?",false,STYLISTS[cat]));
+}
+
+function askDate() {
+  state = 'date';
+  const d = new Date();
+  const tom = new Date(d); tom.setDate(tom.getDate()+1);
+  const wed = new Date(d); wed.setDate(wed.getDate()+2);
+  const fmt = d => d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+  typing(()=>addMsg("When would you like to come in?",false,[
+    {label:'Today ('+fmt(d)+')', value:'today'},
+    {label:'Tomorrow ('+fmt(tom)+')', value:'tomorrow'},
+    {label:fmt(wed), value:'wednesday'}
+  ]));
+}
+
+function askTime(day) {
+  state = 'time';
+  const slots = SLOTS[day] || SLOTS.today;
+  typing(()=>addMsg("Here are available times:",false,slots));
+}
+
+function askName() {
+  state = 'name';
+  typing(()=>addMsg("Almost there! What's your name?",false));
+  chatInput.focus();
+}
+
+function askPhone() {
+  state = 'phone';
+  typing(()=>addMsg("And your phone number? (for appointment confirmation & reminders)",false));
+  chatInput.focus();
+}
+
+function confirmBooking() {
+  state = 'confirm';
+  const summary = `<b>📋 Booking Summary</b><br><br>` +
+    `<b>Service:</b> ${booking.service}<br>` +
+    `<b>With:</b> ${booking.stylist}<br>` +
+    `<b>When:</b> ${booking.date} at ${booking.time}<br>` +
+    `<b>Name:</b> ${booking.name}<br>` +
+    `<b>Phone:</b> ${booking.phone}<br><br>` +
+    `Does everything look good?`;
+  typing(()=>addMsg(summary,false,['✅ Confirm Booking','Start Over']));
+}
+
+function bookingDone() {
+  state = 'done';
+  typing(()=>{
+    addMsg("🎉 <b>You're all booked!</b><br><br>We'll send a text reminder 24 hours before your appointment. See you soon! 💜",false);
+    setTimeout(()=>addMsg("📱 <i>Automated reminder will be sent to " + booking.phone + "</i>",false,['Book another appointment']),800);
+  });
+}
+</script>
+</body>
+</html>

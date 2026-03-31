@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Texas Mesquite BBQ — AI-Powered Ordering Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        surface: '#0A0A0F',
+        'surface-light': '#12121A',
+        'surface-card': '#1A1A25',
+        'amd-red': '#ED1C24',
+        'electric-blue': '#00D4FF',
+        'smoke': '#F5E6D3',
+        'amber': '#F59E0B',
+      },
+      fontFamily: {
+        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['Inter', 'sans-serif'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { background: #0A0A0F; color: #E5E7EB; font-family: 'Inter', sans-serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+  .glow-red { box-shadow: 0 0 30px rgba(237,28,36,0.3); }
+  .glow-blue { box-shadow: 0 0 20px rgba(0,212,255,0.2); }
+  #chatbot { transition: transform 0.3s ease, opacity 0.3s ease; transform-origin: bottom right; }
+  #chatbot.hidden-chat { transform: scale(0); opacity: 0; pointer-events: none; }
+  #chat-messages { scroll-behavior: smooth; }
+  .chat-bubble { animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  .fire-gradient { background: linear-gradient(135deg, #ED1C24 0%, #F59E0B 100%); }
+  .tracker-step.active { color: #00D4FF; }
+  .tracker-step.active .step-dot { background: #00D4FF; box-shadow: 0 0 10px #00D4FF; }
+  .step-dot { transition: all 0.5s; }
+  .menu-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(237,28,36,0.15); }
+  .menu-card { transition: transform 0.2s, box-shadow 0.2s; }
+  .quick-btn { transition: background 0.15s; }
+  .quick-btn:hover { background: #ED1C24; color: #fff; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- DEMO BANNER -->
+<div class="fire-gradient text-white text-center py-2 px-4 font-mono text-sm fixed top-0 w-full z-50">
+  <span class="font-bold">🔥 DEMO</span> — Built by <a href="/ai-automation/" class="underline font-bold hover:text-smoke">AjayaDesign</a> | AI-Powered Restaurant Ordering
+</div>
+
+<!-- HERO -->
+<header class="pt-16 pb-12 md:pt-20 md:pb-16 relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-b from-amd-red/10 to-transparent"></div>
+  <div class="max-w-6xl mx-auto px-4 relative z-10 text-center">
+    <div class="text-6xl md:text-8xl mb-4">🔥</div>
+    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-2">
+      <span class="text-amd-red">Texas Mesquite</span> <span class="text-amber">BBQ</span>
+    </h1>
+    <p class="text-smoke/70 font-mono text-sm md:text-base mb-6">Slow-smoked perfection since 2019 · Manor, TX</p>
+    <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-400">
+      <span>📍 1200 Main St, Manor TX 78653</span>
+      <span>🕐 Tue–Sun 11am–9pm</span>
+      <span>📞 (512) 555-0142</span>
+    </div>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <button onclick="toggleChat()" class="bg-amd-red hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full glow-red transition">
+        🤖 Order with AI Assistant
+      </button>
+      <a href="#menu" class="border border-electric-blue text-electric-blue hover:bg-electric-blue/10 font-bold py-3 px-8 rounded-full transition">
+        📋 View Menu
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- NO DOORDASH CALLOUT -->
+<section class="bg-surface-light border-y border-amber/20 py-6">
+  <div class="max-w-4xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+    <div>
+      <h2 class="text-2xl font-bold text-amber">🚫 No More DoorDash Fees</h2>
+      <p class="text-gray-400 mt-1">Order direct from us. <span class="text-electric-blue font-bold">Save 30%</span> on every order.</p>
+    </div>
+    <button onclick="toggleChat()" class="bg-amber hover:bg-amber/80 text-surface font-bold py-3 px-6 rounded-full whitespace-nowrap transition">
+      Order Direct Now →
+    </button>
+  </div>
+</section>
+
+<!-- MENU GRID -->
+<section id="menu" class="py-16">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-2">Our Menu</h2>
+    <p class="text-gray-500 text-center mb-10 font-mono text-sm">Tap any item to add via AI assistant</p>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" id="menu-grid"></div>
+  </div>
+</section>
+
+<!-- ORDER TRACKER -->
+<section id="tracker" class="py-16 bg-surface-light hidden">
+  <div class="max-w-3xl mx-auto px-4 text-center">
+    <h2 class="text-2xl font-bold mb-8 text-electric-blue">📦 Order Tracker</h2>
+    <div class="flex justify-between items-center max-w-lg mx-auto mb-4">
+      <div class="tracker-step active text-center flex-1" id="step-1">
+        <div class="step-dot w-4 h-4 rounded-full bg-electric-blue mx-auto mb-2"></div>
+        <span class="text-xs font-mono">Received</span>
+      </div>
+      <div class="flex-1 h-0.5 bg-gray-700" id="bar-1"></div>
+      <div class="tracker-step text-center flex-1 text-gray-600" id="step-2">
+        <div class="step-dot w-4 h-4 rounded-full bg-gray-700 mx-auto mb-2"></div>
+        <span class="text-xs font-mono">Preparing</span>
+      </div>
+      <div class="flex-1 h-0.5 bg-gray-700" id="bar-2"></div>
+      <div class="tracker-step text-center flex-1 text-gray-600" id="step-3">
+        <div class="step-dot w-4 h-4 rounded-full bg-gray-700 mx-auto mb-2"></div>
+        <span class="text-xs font-mono">Ready!</span>
+      </div>
+    </div>
+    <p class="text-gray-400 text-sm font-mono mt-4" id="tracker-msg">Your order has been received!</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-20 text-center bg-gradient-to-b from-surface to-surface-light">
+  <div class="max-w-3xl mx-auto px-4">
+    <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Want This for <span class="text-amd-red">YOUR</span> Restaurant?</h2>
+    <p class="text-gray-400 mb-8 max-w-xl mx-auto">AI ordering, no commissions, more direct customers. We build custom AI assistants for restaurants in the Austin area.</p>
+    <a href="/ai-automation/" class="inline-block fire-gradient text-white font-bold py-4 px-10 rounded-full glow-red text-lg transition hover:opacity-90">
+      Get Your AI Assistant →
+    </a>
+    <p class="text-gray-600 text-sm mt-4 font-mono">Built by AjayaDesign · ajayadesign.com</p>
+  </div>
+</section>
+
+<!-- CHATBOT TOGGLE -->
+<button onclick="toggleChat()" id="chat-toggle" class="fixed bottom-6 right-6 z-40 bg-amd-red hover:bg-red-700 text-white w-16 h-16 rounded-full shadow-lg glow-red flex items-center justify-center text-2xl transition">
+  🤖
+</button>
+
+<!-- CHATBOT WIDGET -->
+<div id="chatbot" class="hidden-chat fixed bottom-24 right-4 z-50 w-[360px] max-w-[calc(100vw-2rem)] bg-surface-card border border-gray-800 rounded-2xl shadow-2xl flex flex-col" style="height:520px;">
+  <div class="fire-gradient rounded-t-2xl px-4 py-3 flex items-center justify-between">
+    <div>
+      <span class="font-bold text-white">🤖 Texas Mesquite AI</span>
+      <span class="text-white/70 text-xs ml-2 font-mono">Online</span>
+    </div>
+    <button onclick="toggleChat()" class="text-white/80 hover:text-white text-xl">✕</button>
+  </div>
+  <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 text-sm"></div>
+  <div id="chat-quick" class="px-3 pb-2 flex flex-wrap gap-2"></div>
+  <div class="border-t border-gray-800 p-3 flex gap-2">
+    <input id="chat-input" type="text" placeholder="Type a message..." class="flex-1 bg-surface border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-electric-blue" onkeydown="if(event.key==='Enter')sendUserMsg()">
+    <button onclick="sendUserMsg()" class="bg-amd-red hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition">Send</button>
+  </div>
+</div>
+
+<script>
+// ─── MENU DATA ───
+const MENU = {
+  "BBQ Plates": [
+    { name:"Brisket Plate", price:16.99, emoji:"🥩", desc:"14hr slow-smoked brisket, 2 sides", allergens:"gluten-free option available", spice:0 },
+    { name:"Pulled Pork Plate", price:13.99, emoji:"🍖", desc:"Hickory-smoked pulled pork, 2 sides", allergens:"gluten-free option available", spice:0 },
+    { name:"Ribs Half Rack", price:18.99, emoji:"🍖", desc:"St. Louis style ribs, 2 sides", allergens:"contains soy", spice:1 },
+    { name:"Smoked Turkey Plate", price:14.99, emoji:"🦃", desc:"Mesquite-smoked turkey breast, 2 sides", allergens:"gluten-free", spice:0 },
+    { name:"Sausage Plate", price:12.99, emoji:"🌭", desc:"House-made beef sausage, 2 sides", allergens:"contains pork casing", spice:2 },
+    { name:"Chopped Beef Sandwich", price:10.99, emoji:"🥪", desc:"Chopped brisket on brioche bun", allergens:"contains gluten, dairy", spice:0 },
+  ],
+  "Sides": [
+    { name:"Mac & Cheese", price:4.99, emoji:"🧀", desc:"Creamy three-cheese blend", allergens:"dairy, gluten", spice:0, vegetarian:true },
+    { name:"Coleslaw", price:3.49, emoji:"🥗", desc:"Classic creamy coleslaw", allergens:"dairy, egg", spice:0, vegetarian:true },
+    { name:"Corn on the Cob", price:3.99, emoji:"🌽", desc:"Buttered sweet corn", allergens:"dairy", spice:0, vegetarian:true },
+    { name:"Baked Beans", price:3.99, emoji:"🫘", desc:"Slow-cooked with brisket bits", allergens:"none", spice:1 },
+    { name:"Jalapeño Cornbread", price:3.49, emoji:"🍞", desc:"Spicy house cornbread", allergens:"gluten, dairy, egg", spice:2, vegetarian:true },
+    { name:"Potato Salad", price:3.99, emoji:"🥔", desc:"Classic Texas potato salad", allergens:"egg, dairy", spice:0, vegetarian:true },
+  ],
+  "Drinks": [
+    { name:"Sweet Tea", price:2.99, emoji:"🥤", desc:"Fresh-brewed Texas sweet tea", allergens:"none", spice:0, vegetarian:true },
+    { name:"Lemonade", price:3.49, emoji:"🍋", desc:"House-squeezed lemonade", allergens:"none", spice:0, vegetarian:true },
+    { name:"Dr Pepper", price:2.49, emoji:"🥫", desc:"The Texas classic", allergens:"none", spice:0, vegetarian:true },
+    { name:"Craft Beer", price:5.99, emoji:"🍺", desc:"Rotating local selection", allergens:"gluten", spice:0, vegetarian:true },
+    { name:"Water", price:0.00, emoji:"💧", desc:"Complimentary", allergens:"none", spice:0, vegetarian:true },
+  ],
+  "Combos": [
+    { name:"Pitmaster Combo", price:22.99, emoji:"🔥", desc:"Brisket + ribs + 2 sides + drink", allergens:"varies", spice:0 },
+    { name:"Family Pack (4)", price:54.99, emoji:"👨‍👩‍👧‍👦", desc:"1lb brisket, 1lb pulled pork, 4 sides, 4 drinks", allergens:"varies", spice:0 },
+    { name:"Lunch Special", price:9.99, emoji:"⚡", desc:"Any sandwich + 1 side + drink (before 3pm)", allergens:"varies", spice:0 },
+  ],
+  "Desserts": [
+    { name:"Pecan Pie Slice", price:5.99, emoji:"🥧", desc:"Texas pecan pie", allergens:"gluten, dairy, nuts, egg", spice:0, vegetarian:true },
+    { name:"Banana Pudding", price:4.99, emoji:"🍌", desc:"Southern-style banana pudding", allergens:"dairy, gluten, egg", spice:0, vegetarian:true },
+    { name:"Peach Cobbler", price:5.49, emoji:"🍑", desc:"Warm peach cobbler à la mode", allergens:"gluten, dairy", spice:0, vegetarian:true },
+  ]
+};
+
+const allItems = Object.values(MENU).flat();
+const spiceLabel = s => ["None","Mild 🌶️","Medium 🌶️🌶️","Hot 🌶️🌶️🌶️"][s]||"None";
+
+// ─── RENDER MENU GRID ───
+const grid = document.getElementById('menu-grid');
+for (const [cat, items] of Object.entries(MENU)) {
+  const card = document.createElement('div');
+  card.className = 'menu-card bg-surface-card border border-gray-800 rounded-xl p-5 cursor-pointer text-center';
+  card.innerHTML = `<div class="text-4xl mb-2">${items[0].emoji}</div><h3 class="font-bold text-white">${cat}</h3><p class="text-gray-500 text-xs mt-1">${items.length} items</p>`;
+  card.onclick = () => { openChat(); handleCategory(cat); };
+  grid.appendChild(card);
+}
+
+// ─── CHAT STATE ───
+let chatOpen = false;
+let cart = [];
+let state = 'greeting'; // greeting, browsing, item_detail, cart_review, checkout, confirmed
+let lastCategory = null;
+
+function toggleChat() { chatOpen = !chatOpen; document.getElementById('chatbot').classList.toggle('hidden-chat', !chatOpen); if(chatOpen && state==='greeting') botGreet(); }
+function openChat() { if(!chatOpen) toggleChat(); }
+
+const msgBox = document.getElementById('chat-messages');
+const quickBox = document.getElementById('chat-quick');
+
+function addMsg(text, from='bot') {
+  const d = document.createElement('div');
+  d.className = 'chat-bubble flex ' + (from==='user'?'justify-end':'justify-start');
+  const bg = from==='user' ? 'bg-amd-red/20 border-amd-red/30' : 'bg-surface-light border-gray-700';
+  d.innerHTML = `<div class="max-w-[85%] ${bg} border rounded-xl px-3 py-2 text-sm leading-relaxed">${text}</div>`;
+  msgBox.appendChild(d);
+  msgBox.scrollTop = msgBox.scrollHeight;
+}
+
+function setQuick(buttons) {
+  quickBox.innerHTML = '';
+  buttons.forEach(b => {
+    const btn = document.createElement('button');
+    btn.className = 'quick-btn text-xs border border-gray-600 text-gray-300 rounded-full px-3 py-1 hover:bg-amd-red hover:text-white transition';
+    btn.textContent = b.label;
+    btn.onclick = () => { addMsg(b.label, 'user'); b.action(); };
+    quickBox.appendChild(btn);
+  });
+}
+
+// ─── BOT LOGIC ───
+function botGreet() {
+  addMsg("Howdy! 🤠 Welcome to <b>Texas Mesquite BBQ</b>. I'm your AI ordering assistant.");
+  setTimeout(() => {
+    addMsg("What can I help you with?");
+    showMainMenu();
+  }, 500);
+}
+
+function showMainMenu() {
+  state = 'browsing';
+  const btns = Object.keys(MENU).map(cat => ({ label: cat, action: () => handleCategory(cat) }));
+  btns.push({ label: '🛒 View Cart', action: showCart });
+  btns.push({ label: '❓ Help', action: showHelp });
+  setQuick(btns);
+}
+
+function handleCategory(cat) {
+  lastCategory = cat;
+  const items = MENU[cat];
+  let html = `<b>${cat}</b><br>`;
+  items.forEach((it,i) => { html += `${it.emoji} <b>${it.name}</b> — $${it.price.toFixed(2)}<br>`; });
+  addMsg(html);
+  addMsg("Tap an item for details, or ask me anything about ingredients!");
+  const btns = items.map(it => ({ label: `${it.emoji} ${it.name}`, action: () => showItem(it) }));
+  btns.push({ label: '← Back', action: () => { addMsg("Back to menu"); showMainMenu(); } });
+  setQuick(btns);
+}
+
+function showItem(item) {
+  state = 'item_detail';
+  let html = `<b>${item.emoji} ${item.name}</b> — <b>$${item.price.toFixed(2)}</b><br>${item.desc}<br>`;
+  html += `🌶️ Spice: ${spiceLabel(item.spice)}<br>`;
+  html += `⚠️ Allergens: ${item.allergens}<br>`;
+  if(item.vegetarian) html += `🥬 Vegetarian ✓`;
+  addMsg(html);
+  setQuick([
+    { label: '➕ Add to Cart', action: () => addToCart(item) },
+    { label: '← Back to ' + (lastCategory||'Menu'), action: () => lastCategory ? handleCategory(lastCategory) : showMainMenu() },
+    { label: '🛒 View Cart', action: showCart },
+  ]);
+}
+
+function addToCart(item) {
+  cart.push({ ...item });
+  const total = cart.reduce((s,i) => s+i.price, 0);
+  addMsg(`Added <b>${item.name}</b> to cart! (${cart.length} item${cart.length>1?'s':''}, total: $${total.toFixed(2)})`);
+
+  // Upsell logic
+  const hasDrink = cart.some(i => MENU["Drinks"].some(d => d.name===i.name));
+  const hasDessert = cart.some(i => MENU["Desserts"].some(d => d.name===i.name));
+  if(!hasDrink && cart.length >= 1) {
+    setTimeout(() => {
+      addMsg("🥤 Add a <b>Sweet Tea</b> for just $2.99?");
+      setQuick([
+        { label: '✅ Add Sweet Tea', action: () => addToCart(MENU["Drinks"][0]) },
+        { label: '🛒 View Cart', action: showCart },
+        { label: '← Keep Browsing', action: showMainMenu },
+      ]);
+    }, 400);
+  } else if(!hasDessert && cart.length >= 2) {
+    setTimeout(() => {
+      addMsg("🥧 Save room for dessert? Our <b>Pecan Pie</b> is legendary!");
+      setQuick([
+        { label: '✅ Add Pecan Pie', action: () => addToCart(MENU["Desserts"][0]) },
+        { label: '🛒 View Cart', action: showCart },
+        { label: '← Keep Browsing', action: showMainMenu },
+      ]);
+    }, 400);
+  } else {
+    showMainMenu();
+  }
+}
+
+function showCart() {
+  state = 'cart_review';
+  if(cart.length === 0) {
+    addMsg("Your cart is empty! Let's fix that 😄");
+    showMainMenu();
+    return;
+  }
+  let html = '<b>🛒 Your Order:</b><br>';
+  cart.forEach((it,i) => { html += `${i+1}. ${it.emoji} ${it.name} — $${it.price.toFixed(2)}<br>`; });
+  const total = cart.reduce((s,i) => s+i.price, 0);
+  html += `<br><b>Total: $${total.toFixed(2)}</b>`;
+  addMsg(html);
+
+  const btns = [
+    { label: '✅ Checkout', action: startCheckout },
+    { label: '← Add More', action: showMainMenu },
+  ];
+  cart.forEach((it,i) => {
+    btns.push({ label: `❌ Remove ${it.name}`, action: () => removeItem(i) });
+  });
+  setQuick(btns);
+}
+
+function removeItem(idx) {
+  const removed = cart.splice(idx, 1)[0];
+  addMsg(`Removed <b>${removed.name}</b> from cart.`);
+  showCart();
+}
+
+function startCheckout() {
+  state = 'checkout';
+  const total = cart.reduce((s,i) => s+i.price, 0);
+  addMsg(`Great! Your total is <b>$${total.toFixed(2)}</b>.<br>Please enter your <b>name</b> for the pickup order:`);
+  setQuick([]);
+  checkoutStep = 'name';
+}
+
+let checkoutStep = null;
+let orderName = '';
+
+function sendUserMsg() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  addMsg(text, 'user');
+
+  if(checkoutStep === 'name') {
+    orderName = text;
+    checkoutStep = 'phone';
+    addMsg(`Thanks, <b>${orderName}</b>! Now enter your <b>phone number</b>:`);
+    return;
+  }
+  if(checkoutStep === 'phone') {
+    checkoutStep = null;
+    confirmOrder(orderName, text);
+    return;
+  }
+
+  // Free text matching
+  const lower = text.toLowerCase();
+  if(lower.includes('vegetarian') || lower.includes('vegan')) {
+    const veg = allItems.filter(i => i.vegetarian);
+    let html = '<b>🥬 Vegetarian Options:</b><br>';
+    veg.forEach(i => { html += `${i.emoji} ${i.name} — $${i.price.toFixed(2)}<br>`; });
+    addMsg(html);
+    showMainMenu();
+  } else if(lower.includes('allergen') || lower.includes('allergy') || lower.includes('gluten') || lower.includes('nut')) {
+    addMsg("We take allergies seriously! Every item has allergen info. Tap any menu item to see details, or ask about a specific dish.");
+    showMainMenu();
+  } else if(lower.includes('spicy') || lower.includes('spice') || lower.includes('hot')) {
+    const spicy = allItems.filter(i => i.spice >= 2);
+    let html = '<b>🌶️ Our Spiciest Items:</b><br>';
+    spicy.forEach(i => { html += `${i.emoji} ${i.name} — ${spiceLabel(i.spice)}<br>`; });
+    if(spicy.length===0) html += 'We keep things mild Texas-style!';
+    addMsg(html);
+    showMainMenu();
+  } else if(lower.includes('hours') || lower.includes('open')) {
+    addMsg("🕐 We're open <b>Tuesday–Sunday, 11am–9pm</b>. Closed Mondays.");
+    showMainMenu();
+  } else if(lower.includes('cart') || lower.includes('order')) {
+    showCart();
+  } else {
+    // Try item match
+    const match = allItems.find(i => lower.includes(i.name.toLowerCase()));
+    if(match) { showItem(match); }
+    else { addMsg("I can help you browse our menu, check ingredients, or place an order! Try tapping a category below."); showMainMenu(); }
+  }
+}
+
+function confirmOrder(name, phone) {
+  state = 'confirmed';
+  const total = cart.reduce((s,i) => s+i.price, 0);
+  let html = `🎉 <b>Order Confirmed!</b><br><br>`;
+  html += `<b>Name:</b> ${name}<br><b>Phone:</b> ${phone}<br><b>Total:</b> $${total.toFixed(2)}<br>`;
+  html += `<b>Pickup:</b> ~25 minutes<br><br>`;
+  html += `Thanks for ordering direct — you just saved ~$${(total*0.3).toFixed(2)} vs DoorDash! 🙌`;
+  addMsg(html);
+  setQuick([{ label: '🔄 New Order', action: resetOrder }]);
+
+  // Show tracker
+  document.getElementById('tracker').classList.remove('hidden');
+  document.getElementById('tracker').scrollIntoView({ behavior:'smooth' });
+  animateTracker();
+}
+
+function animateTracker() {
+  setTimeout(() => {
+    document.getElementById('step-2').classList.add('active');
+    document.getElementById('step-2').querySelector('.step-dot').style.background = '#00D4FF';
+    document.getElementById('bar-1').style.background = '#00D4FF';
+    document.getElementById('tracker-msg').textContent = '🍖 Your order is being prepared...';
+  }, 3000);
+  setTimeout(() => {
+    document.getElementById('step-3').classList.add('active');
+    document.getElementById('step-3').querySelector('.step-dot').style.background = '#00D4FF';
+    document.getElementById('bar-2').style.background = '#00D4FF';
+    document.getElementById('tracker-msg').textContent = '✅ Your order is ready for pickup!';
+  }, 8000);
+}
+
+function resetOrder() {
+  cart = [];
+  state = 'greeting';
+  document.getElementById('tracker').classList.add('hidden');
+  // reset tracker visuals
+  ['step-2','step-3'].forEach(id => { document.getElementById(id).classList.remove('active'); document.getElementById(id).querySelector('.step-dot').style.background='#374151'; });
+  ['bar-1','bar-2'].forEach(id => { document.getElementById(id).style.background='#374151'; });
+  document.getElementById('tracker-msg').textContent = 'Your order has been received!';
+  addMsg("Starting fresh! What would you like to order?");
+  showMainMenu();
+}
+
+function showHelp() {
+  addMsg("I can help you:<br>• Browse the menu by category<br>• Answer questions about <b>ingredients, allergens, spice levels</b><br>• Find <b>vegetarian</b> options<br>• Take your order & checkout<br>• Check <b>hours</b> & location<br><br>Just type or tap away!");
+  showMainMenu();
+}
+</script>
+
+</body>
+</html>
