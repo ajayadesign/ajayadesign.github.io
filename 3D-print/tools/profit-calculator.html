@@ -87,6 +87,18 @@
           <h2 class="font-mono text-white font-bold text-lg mb-2">Your Setup</h2>
 
           <!-- Printer -->
+          <!-- Quick Presets -->
+          <div>
+            <label class="block text-sm text-gray-400 mb-3 font-mono">Quick Presets</label>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button onclick="loadPreset('hobby')" class="px-3 py-1.5 text-xs font-mono bg-surface border border-border-dim rounded-lg text-gray-400 hover:text-white hover:border-neon-green/50 transition-colors">🟢 Hobby (5/day)</button>
+              <button onclick="loadPreset('side')" class="px-3 py-1.5 text-xs font-mono bg-surface border border-border-dim rounded-lg text-gray-400 hover:text-white hover:border-yellow-400/50 transition-colors">🟡 Side Hustle (15/day)</button>
+              <button onclick="loadPreset('full')" class="px-3 py-1.5 text-xs font-mono bg-surface border border-border-dim rounded-lg text-gray-400 hover:text-white hover:border-amd-red/50 transition-colors">🔴 Full-Time (40/day)</button>
+              <button onclick="loadPreset('craft')" class="px-3 py-1.5 text-xs font-mono bg-surface border border-border-dim rounded-lg text-gray-400 hover:text-white hover:border-electric-blue/50 transition-colors">🎪 Craft Fair</button>
+              <button onclick="loadPreset('etsy')" class="px-3 py-1.5 text-xs font-mono bg-surface border border-border-dim rounded-lg text-gray-400 hover:text-white hover:border-orange-400/50 transition-colors">🛒 Etsy Seller</button>
+            </div>
+          </div>
+
           <div>
             <label class="block text-sm text-gray-400 mb-2 font-mono">Printer</label>
             <select id="printer" class="w-full px-4 py-3 bg-surface border border-border-dim rounded-lg text-white font-mono text-sm focus:outline-none focus:border-amd-red/50">
@@ -213,6 +225,24 @@
     const electricityPerHour = 0.05; // ~$0.05/hr for a 3D printer
 
     function fmt(n) { return n >= 1000 ? '$' + n.toLocaleString('en-US', {maximumFractionDigits:0}) : '$' + n.toFixed(n < 10 ? 2 : 0); }
+
+    function loadPreset(name) {
+      const presets = {
+        hobby:  { printer: '200', filament: 18, printTime: 45, sellPrice: 15, hoursDay: 2, daysWeek: 5 },
+        side:   { printer: '599', filament: 20, printTime: 35, sellPrice: 18, hoursDay: 4, daysWeek: 6 },
+        full:   { printer: '599', filament: 20, printTime: 30, sellPrice: 20, hoursDay: 10, daysWeek: 6 },
+        craft:  { printer: '200', filament: 18, printTime: 45, sellPrice: 22, hoursDay: 6, daysWeek: 2 },
+        etsy:   { printer: '599', filament: 20, printTime: 40, sellPrice: 19, hoursDay: 3, daysWeek: 7 },
+      };
+      const p = presets[name]; if (!p) return;
+      $('printer').value = p.printer;
+      $('filament').value = p.filament;
+      $('printTime').value = p.printTime;
+      $('sellPrice').value = p.sellPrice;
+      $('hoursDay').value = p.hoursDay;
+      $('daysWeek').value = p.daysWeek;
+      calculate();
+    }
 
     function calculate() {
       const printerCost = parseInt($('printer').value);
