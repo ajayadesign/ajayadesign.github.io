@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Website Speed Test | AjayaDesign — Check Your Site Performance</title>
+  <meta name="description" content="Test your website speed for free. Get Lighthouse performance, SEO, and accessibility scores instantly. See how you compare to AjayaDesign's average score of 95." />
+  <meta name="robots" content="index, follow" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://ajayadesign.github.io/tools/speed-test.html" />
+
+  <meta property="og:title" content="Free Website Speed Test | AjayaDesign" />
+  <meta property="og:description" content="Test your website speed for free. Get performance, SEO, and accessibility scores instantly." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/tools/speed-test.html" />
+  <meta property="og:image" content="https://ajayadesign.github.io/og-image.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Free Website Speed Test | AjayaDesign" />
+  <meta name="twitter:description" content="Test your website speed for free." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Website Speed Test",
+    "description": "Free website speed and performance testing tool powered by Google PageSpeed Insights.",
+    "url": "https://ajayadesign.github.io/tools/speed-test.html",
+    "applicationCategory": "WebTool",
+    "publisher": { "@type": "Organization", "name": "AjayaDesign" }
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF6B6B',
+            'amd-red-btn': '#D91920',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Inter"', 'system-ui', 'sans-serif'],
+          },
+          animation: { 'pulse-glow': 'pulseGlow 2s ease-in-out infinite' },
+          keyframes: { pulseGlow: { '0%, 100%': { boxShadow: '0 0 8px rgba(237,28,36,0.4)' }, '50%': { boxShadow: '0 0 20px rgba(237,28,36,0.8)' } } },
+        },
+      },
+    };
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-08QNJSTGZ2"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-08QNJSTGZ2');</script>
+  <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)})(window,document,"clarity","script","w3y2kvyq37");</script>
+  <link rel="stylesheet" href="/css/chatbot.css">
+
+  <style>
+    .gauge-ring { width: 120px; height: 120px; border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; }
+    .gauge-ring::before { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: #16161F; }
+    .gauge-ring span { position: relative; z-index: 1; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.75rem; }
+    .skeleton { background: linear-gradient(90deg, #16161F 25%, #1E1E2A 50%, #16161F 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 0.5rem; }
+    @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+    @keyframes progress { 0% { width: 0 } 100% { width: 100% } }
+  </style>
+</head>
+
+<body class="bg-surface font-sans text-gray-300 antialiased">
+
+  <!-- NAV -->
+  <nav id="navbar" class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim transition-all duration-300">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <a href="/" class="flex items-center gap-2 group">
+        <span class="inline-block w-3 h-3 rounded-full bg-amd-red animate-pulse-glow"></span>
+        <span class="font-mono font-bold text-white text-lg tracking-tight">Ajaya<span class="text-amd-red-text">Design</span></span>
+      </a>
+      <ul class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <li><a href="/ai-automation/" class="nav-link hover:text-amd-red transition-colors font-semibold text-electric-blue">AI Automation</a></li>
+        <li><a href="/works/" class="nav-link hover:text-amd-red transition-colors">Works</a></li>
+        <li><a href="/blog/" class="nav-link hover:text-amd-red transition-colors">Blog</a></li>
+        <li><a href="/contact/" class="nav-link hover:text-amd-red transition-colors">Contact</a></li>
+        <li class="relative group">
+          <button class="nav-link hover:text-amd-red transition-colors flex items-center gap-1">More <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+          <ul class="absolute top-full right-0 mt-2 w-48 bg-surface-card border border-border-dim rounded-lg py-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+            <li><a href="/edge/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">The Edge</a></li>
+            <li><a href="/grader/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">Grader</a></li>
+            <li><a href="/3D-print/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">3D Academy</a></li>
+            <li><a href="/tools/roi-calculator.html" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">ROI Calculator</a></li>
+            <li><a href="/free-audit/" class="block px-4 py-2 text-sm text-green-400 hover:text-amd-red hover:bg-surface-alt transition-colors">Free Audit</a></li>
+          </ul>
+        </li>
+        <li><a href="/contact/" class="inline-flex items-center gap-2 px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">Start Free</a></li>
+      </ul>
+      <button id="mobile-menu-btn" class="relative z-10 md:hidden text-gray-400 hover:text-white" aria-label="Toggle menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path id="menu-icon-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          <path id="menu-icon-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-border-dim bg-surface/95 backdrop-blur-lg">
+      <ul class="flex flex-col gap-1 px-6 py-4 text-sm font-medium">
+        <li><a href="/ai-automation/" class="nav-link block py-2 hover:text-amd-red transition-colors font-semibold text-electric-blue">AI Automation</a></li>
+        <li><a href="/works/" class="nav-link block py-2 hover:text-amd-red transition-colors">Works</a></li>
+        <li><a href="/blog/" class="nav-link block py-2 hover:text-amd-red transition-colors">Blog</a></li>
+        <li><a href="/contact/" class="nav-link block py-2 hover:text-amd-red transition-colors">Contact</a></li>
+        <li class="pt-2 border-t border-border-dim mt-2"><p class="text-xs text-gray-500 font-mono py-1">More</p></li>
+        <li><a href="/edge/" class="nav-link block py-2 hover:text-amd-red transition-colors">The Edge</a></li>
+        <li><a href="/grader/" class="nav-link block py-2 hover:text-amd-red transition-colors">Grader</a></li>
+        <li><a href="/3D-print/" class="nav-link block py-2 hover:text-amd-red transition-colors">3D Academy</a></li>
+        <li><a href="/tools/roi-calculator.html" class="nav-link block py-2 hover:text-amd-red transition-colors">ROI Calculator</a></li>
+        <li><a href="/free-audit/" class="nav-link block py-2 hover:text-amd-red transition-colors font-semibold text-green-400">Free Audit</a></li>
+        <li class="pt-2"><a href="/contact/" class="block text-center px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">Start Free</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="pt-28 pb-12 px-6">
+    <div class="max-w-3xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full border border-border-dim bg-surface-alt/60 text-xs font-mono text-gray-300">
+        <span class="w-2 h-2 rounded-full bg-electric-blue"></span>
+        ~/tools <span class="text-amd-red">$</span> speed-test --live
+      </div>
+      <h1 class="font-mono font-bold text-3xl sm:text-5xl text-white leading-tight mb-4">
+        How Fast Is <span class="text-electric-blue">Your Website?</span>
+      </h1>
+      <p class="text-gray-400 text-lg max-w-2xl mx-auto mb-8">Enter your URL below and get real Google PageSpeed Insights data — performance, SEO, and accessibility scores.</p>
+
+      <!-- INPUT -->
+      <form id="speed-form" class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+        <label for="url-input" class="sr-only">Website URL</label>
+        <input id="url-input" type="url" placeholder="https://yourwebsite.com" required
+          class="flex-1 px-5 py-3 bg-surface-card border border-border-dim rounded-lg text-white font-mono text-sm focus:border-electric-blue focus:outline-none focus:ring-1 focus:ring-electric-blue transition-colors" />
+        <button type="submit" id="test-btn" class="px-8 py-3 bg-electric-blue text-surface font-mono font-bold rounded-lg hover:bg-cyan-300 transition-colors text-sm whitespace-nowrap">
+          Test Speed
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- LOADING -->
+  <section id="loading-section" class="hidden pb-12 px-6">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-surface-card border border-border-dim rounded-xl p-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-4 h-4 border-2 border-electric-blue border-t-transparent rounded-full animate-spin"></div>
+          <p class="font-mono text-sm text-gray-300" id="loading-text">Analyzing your website...</p>
+        </div>
+        <div class="w-full h-2 bg-surface-alt rounded-full overflow-hidden">
+          <div id="progress-bar" class="h-full bg-gradient-to-r from-electric-blue to-amd-red rounded-full" style="width:0%;animation:progress 25s ease-out forwards"></div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+          <div class="skeleton h-24"></div>
+          <div class="skeleton h-24"></div>
+          <div class="skeleton h-24"></div>
+          <div class="skeleton h-24"></div>
+          <div class="skeleton h-24"></div>
+          <div class="skeleton h-24"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results-section" class="hidden pb-12 px-6">
+    <div class="max-w-4xl mx-auto">
+      <!-- Score Gauges -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-surface-card border border-border-dim rounded-xl p-6 text-center">
+          <p class="text-xs font-mono text-gray-500 mb-3">PERFORMANCE</p>
+          <div class="flex justify-center">
+            <div class="gauge-ring" id="gauge-perf" style="background:conic-gradient(#888 0deg,#333 0deg)">
+              <span id="score-perf">--</span>
+            </div>
+          </div>
+        </div>
+        <div class="bg-surface-card border border-border-dim rounded-xl p-6 text-center">
+          <p class="text-xs font-mono text-gray-500 mb-3">SEO</p>
+          <div class="flex justify-center">
+            <div class="gauge-ring" id="gauge-seo" style="background:conic-gradient(#888 0deg,#333 0deg)">
+              <span id="score-seo">--</span>
+            </div>
+          </div>
+        </div>
+        <div class="bg-surface-card border border-border-dim rounded-xl p-6 text-center">
+          <p class="text-xs font-mono text-gray-500 mb-3">ACCESSIBILITY</p>
+          <div class="flex justify-center">
+            <div class="gauge-ring" id="gauge-a11y" style="background:conic-gradient(#888 0deg,#333 0deg)">
+              <span id="score-a11y">--</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Web Vitals -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-surface-card border border-border-dim rounded-xl p-6 text-center">
+          <p class="text-xs font-mono text-gray-500 mb-2">LCP (Largest Contentful Paint)</p>
+          <p class="text-3xl font-mono font-bold" id="metric-lcp">--</p>
+        </div>
+        <div class="bg-surface-card border border-border-dim rounded-xl p-6 text-center">
+          <p class="text-xs font-mono text-gray-500 mb-2">FID (First Input Delay)</p>
+          <p class="text-3xl font-mono font-bold" id="metric-fid">--</p>
+        </div>
+        <div class="bg-surface-card border border-border-dim rounded-xl p-6 text-center">
+          <p class="text-xs font-mono text-gray-500 mb-2">CLS (Cumulative Layout Shift)</p>
+          <p class="text-3xl font-mono font-bold" id="metric-cls">--</p>
+        </div>
+      </div>
+
+      <!-- Comparison -->
+      <div class="bg-surface-card border border-border-dim rounded-xl p-8 mb-8" id="comparison-card">
+        <div class="grid grid-cols-2 gap-6 text-center">
+          <div>
+            <p class="text-xs font-mono text-gray-500 mb-2">YOUR SITE</p>
+            <p class="text-5xl font-mono font-bold" id="compare-yours">--</p>
+          </div>
+          <div>
+            <p class="text-xs font-mono text-gray-500 mb-2">AJAYADESIGN AVERAGE</p>
+            <p class="text-5xl font-mono font-bold text-green-400">95</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="text-center bg-surface-card border border-border-dim rounded-2xl p-10">
+        <h2 class="font-mono font-bold text-2xl text-white mb-3">We Can Fix This.</h2>
+        <p class="text-gray-400 mb-6">Our sites average a 95 performance score. Let us show you what's possible.</p>
+        <a href="/contact/" class="inline-flex items-center gap-2 px-8 py-3 bg-amd-red-btn text-white rounded-lg font-mono font-bold hover:bg-red-800 transition-colors">
+          Let's Talk →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ERROR -->
+  <section id="error-section" class="hidden pb-12 px-6">
+    <div class="max-w-3xl mx-auto bg-surface-card border border-red-500/30 rounded-xl p-8 text-center">
+      <p class="text-red-400 font-mono text-lg mb-2">⚠️ Test Failed</p>
+      <p class="text-gray-400" id="error-text">Something went wrong. Please check the URL and try again.</p>
+      <button onclick="document.getElementById('error-section').classList.add('hidden');document.getElementById('url-input').focus()" class="mt-4 px-6 py-2 bg-surface-alt border border-border-dim rounded-lg text-sm font-mono text-gray-300 hover:text-white transition-colors">Try Again</button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-border-dim py-12 mt-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amd-red"></span>
+          <span class="font-mono font-bold text-white text-sm">Ajaya<span class="text-amd-red-text">Design</span></span>
+        </div>
+        <p class="font-mono text-xs text-gray-400 text-center">
+          Built with engineering precision in Austin, Texas &nbsp;·&nbsp; &copy; <span id="footer-year"></span> AjayaDesign
+        </p>
+        <div class="flex items-center gap-2 text-xs font-mono text-gray-400">
+          <a href="/admin/" class="text-gray-600 hover:text-electric-blue transition mr-3 text-sm" title="Admin Dashboard">⚙️</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-database-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script>
+    window.__firebase = firebase.initializeApp(window.__firebaseConfig);
+    window.__db = firebase.database();
+  </script>
+  <script src="/js/main.js" defer></script>
+  <script src="/js/ad-tracker.js" defer></script>
+  <script src="/js/chatbot-widget.js" defer></script>
+
+  <script>
+    // Mobile menu
+    (function(){
+      var btn=document.getElementById('mobile-menu-btn'),menu=document.getElementById('mobile-menu'),
+          open=document.getElementById('menu-icon-open'),close=document.getElementById('menu-icon-close');
+      if(btn)btn.addEventListener('click',function(){
+        menu.classList.toggle('hidden');open.classList.toggle('hidden');close.classList.toggle('hidden');
+      });
+    })();
+
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+    function scoreColor(score) {
+      if (score >= 90) return '#22c55e';
+      if (score >= 50) return '#f59e0b';
+      return '#ef4444';
+    }
+
+    function scoreClass(score) {
+      if (score >= 90) return 'text-green-400';
+      if (score >= 50) return 'text-yellow-400';
+      return 'text-red-400';
+    }
+
+    function setGauge(id, score) {
+      var el = document.getElementById(id);
+      var deg = (score / 100) * 360;
+      var color = scoreColor(score);
+      el.style.background = 'conic-gradient(' + color + ' ' + deg + 'deg, #333 ' + deg + 'deg)';
+      el.querySelector('span').textContent = score;
+      el.querySelector('span').className = scoreClass(score);
+    }
+
+    function setMetric(id, value, unit) {
+      var el = document.getElementById(id);
+      var text = value + (unit || '');
+      el.textContent = text;
+      // Color thresholds for metrics
+      if (id === 'metric-lcp') {
+        el.className = 'text-3xl font-mono font-bold ' + (parseFloat(value) <= 2.5 ? 'text-green-400' : parseFloat(value) <= 4 ? 'text-yellow-400' : 'text-red-400');
+      } else if (id === 'metric-fid') {
+        el.className = 'text-3xl font-mono font-bold ' + (parseFloat(value) <= 100 ? 'text-green-400' : parseFloat(value) <= 300 ? 'text-yellow-400' : 'text-red-400');
+      } else if (id === 'metric-cls') {
+        el.className = 'text-3xl font-mono font-bold ' + (parseFloat(value) <= 0.1 ? 'text-green-400' : parseFloat(value) <= 0.25 ? 'text-yellow-400' : 'text-red-400');
+      }
+    }
+
+    var loadingMessages = [
+      'Connecting to Google PageSpeed...',
+      'Running Lighthouse audit...',
+      'Analyzing performance metrics...',
+      'Checking SEO signals...',
+      'Testing accessibility...',
+      'Almost there...'
+    ];
+
+    document.getElementById('speed-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var url = document.getElementById('url-input').value.trim();
+      if (!url) return;
+      if (!url.match(/^https?:\/\//)) url = 'https://' + url;
+
+      document.getElementById('loading-section').classList.remove('hidden');
+      document.getElementById('results-section').classList.add('hidden');
+      document.getElementById('error-section').classList.add('hidden');
+      document.getElementById('test-btn').disabled = true;
+      document.getElementById('test-btn').textContent = 'Testing...';
+
+      // Reset progress bar animation
+      var bar = document.getElementById('progress-bar');
+      bar.style.animation = 'none';
+      bar.offsetHeight;
+      bar.style.animation = 'progress 25s ease-out forwards';
+
+      // Cycling loading messages
+      var msgIdx = 0;
+      var msgInterval = setInterval(function() {
+        msgIdx = (msgIdx + 1) % loadingMessages.length;
+        document.getElementById('loading-text').textContent = loadingMessages[msgIdx];
+      }, 3000);
+
+      var apiUrl = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(url) + '&category=performance&category=seo&category=accessibility';
+
+      fetch(apiUrl)
+        .then(function(r) { if (!r.ok) throw new Error('API returned ' + r.status); return r.json(); })
+        .then(function(data) {
+          clearInterval(msgInterval);
+          document.getElementById('loading-section').classList.add('hidden');
+          document.getElementById('results-section').classList.remove('hidden');
+
+          var cats = data.lighthouseResult.categories;
+          var perfScore = Math.round((cats.performance ? cats.performance.score : 0) * 100);
+          var seoScore = Math.round((cats.seo ? cats.seo.score : 0) * 100);
+          var a11yScore = Math.round((cats.accessibility ? cats.accessibility.score : 0) * 100);
+
+          setGauge('gauge-perf', perfScore);
+          setGauge('gauge-seo', seoScore);
+          setGauge('gauge-a11y', a11yScore);
+
+          // Core Web Vitals
+          var audits = data.lighthouseResult.audits;
+          var lcp = audits['largest-contentful-paint'] ? (audits['largest-contentful-paint'].numericValue / 1000).toFixed(1) : '--';
+          var fid = audits['max-potential-fid'] ? Math.round(audits['max-potential-fid'].numericValue) : '--';
+          var cls = audits['cumulative-layout-shift'] ? audits['cumulative-layout-shift'].numericValue.toFixed(3) : '--';
+
+          setMetric('metric-lcp', lcp, 's');
+          setMetric('metric-fid', fid, 'ms');
+          setMetric('metric-cls', cls, '');
+
+          // Comparison
+          var yours = document.getElementById('compare-yours');
+          yours.textContent = perfScore;
+          yours.className = 'text-5xl font-mono font-bold ' + scoreClass(perfScore);
+
+          // Log to Firebase
+          if (window.__db) {
+            window.__db.ref('speed-tests').push({
+              url: url,
+              performance: perfScore,
+              seo: seoScore,
+              accessibility: a11yScore,
+              timestamp: Date.now()
+            });
+          }
+        })
+        .catch(function(err) {
+          clearInterval(msgInterval);
+          document.getElementById('loading-section').classList.add('hidden');
+          document.getElementById('error-section').classList.remove('hidden');
+          document.getElementById('error-text').textContent = err.message || 'Something went wrong. Please check the URL and try again.';
+        })
+        .finally(function() {
+          document.getElementById('test-btn').disabled = false;
+          document.getElementById('test-btn').textContent = 'Test Speed';
+        });
+    });
+  </script>
+
+  <!-- STICKY AUDIT CTA -->
+  <div id="sticky-audit-cta" class="fixed bottom-0 inset-x-0 z-40 translate-y-full transition-transform duration-500" style="display:none">
+    <div class="bg-surface-card/95 backdrop-blur-lg border-t border-border-dim px-6 py-3 flex items-center justify-center gap-4 flex-wrap">
+      <span class="text-sm text-gray-300 font-mono">Want to see how AI can grow your business?</span>
+      <a href="/free-audit/" id="sticky-audit-btn" class="inline-flex items-center gap-2 px-5 py-2 bg-electric-blue text-surface font-mono text-sm font-bold rounded hover:bg-cyan-300 transition-colors">Get Free AI Audit</a>
+      <button id="sticky-audit-close" class="text-gray-500 hover:text-white ml-2 text-lg" aria-label="Dismiss">&times;</button>
+    </div>
+  </div>
+  <script>
+  (function(){
+    if(sessionStorage.getItem('audit-cta-dismissed')) return;
+    var cta=document.getElementById('sticky-audit-cta');
+    var shown=false;
+    function show(){if(shown) return; shown=true; cta.style.display=''; requestAnimationFrame(function(){requestAnimationFrame(function(){cta.classList.remove('translate-y-full')})});}
+    function dismiss(){cta.classList.add('translate-y-full'); sessionStorage.setItem('audit-cta-dismissed','1');}
+    document.getElementById('sticky-audit-close').addEventListener('click',dismiss);
+    document.getElementById('sticky-audit-btn').addEventListener('click',function(){sessionStorage.setItem('audit-cta-dismissed','1')});
+    setTimeout(show, 8000);
+  })();
+  </script>
+</body>
+</html>
