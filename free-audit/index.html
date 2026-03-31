@@ -266,9 +266,23 @@
   </section>
 
   <!-- Footer -->
-  <footer class="py-8 px-4 border-t border-gray-800 text-center text-gray-500 text-sm">
-    <p>&copy; 2025 AjayaDesign. All rights reserved.</p>
-    <p class="mt-1">Austin, Texas — Serving Worldwide</p>
+  <footer class="content-over-video border-t border-border-dim py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amd-red"></span>
+          <span class="font-mono font-bold text-white text-sm">Ajaya<span class="text-amd-red-text">Design</span></span>
+        </div>
+
+        <p class="font-mono text-xs text-gray-400 text-center">
+          Built with engineering precision in Austin, Texas &nbsp;&middot;&nbsp; &copy; <span id="footer-year"></span> AjayaDesign
+        </p>
+
+        <div class="flex items-center gap-2 text-xs font-mono text-gray-400">
+          <a href="/admin/" class="text-gray-600 hover:text-electric transition mr-3 text-sm" title="Admin Dashboard">&#9881;&#65039;</a>
+        </div>
+      </div>
+    </div>
   </footer>
 
   <script>
@@ -330,5 +344,6 @@
   </script>
   <script src="/js/chatbot-widget.js" defer></script>
 <script src="/js/main.js" defer></script>
+  <script src="/js/ad-tracker.js" defer></script>
 </body>
 </html>
