@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free AI Readiness Assessment for Small Business | AjayaDesign</title>
+  <meta name="description" content="Take our free 2-minute AI Readiness Assessment and discover how much revenue your business is leaving on the table. Get a personalized AI score with specific recommendations." />
+  <meta name="keywords" content="ai readiness assessment small business, ai readiness calculator, ai for local business, ai automation score, business ai audit" />
+  <meta name="author" content="AjayaDesign" />
+  <meta name="robots" content="index, follow" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0A0A0F" />
+
+  <link rel="canonical" href="https://ajayadesign.github.io/tools/ai-readiness.html" />
+
+  <meta property="og:title" content="Free AI Readiness Assessment | How Ready Is Your Business for AI?" />
+  <meta property="og:description" content="2-minute quiz: Get your AI Readiness Score, estimated monthly savings, and personalized recommendations. Free, no signup required." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/tools/ai-readiness.html" />
+  <meta property="og:site_name" content="AjayaDesign" />
+  <meta property="og:image" content="https://ajayadesign.github.io/og-image.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Free AI Readiness Assessment | AjayaDesign" />
+  <meta name="twitter:description" content="2-minute quiz: Get your AI Readiness Score and personalized recommendations." />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Readiness Assessment",
+    "description": "Free AI readiness calculator for small businesses. Get your score and personalized recommendations.",
+    "url": "https://ajayadesign.github.io/tools/ai-readiness.html",
+    "applicationCategory": "BusinessApplication",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "provider": { "@type": "ProfessionalService", "name": "AjayaDesign", "url": "https://ajayadesign.github.io/" }
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF6B6B',
+            'amd-red-btn': '#D91920',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
+            sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+            'score-fill': 'scoreFill 1.5s ease-out forwards',
+            'fade-up': 'fadeUp 0.5s ease-out forwards',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { boxShadow: '0 0 8px rgba(237,28,36,0.4)' },
+              '50%': { boxShadow: '0 0 20px rgba(237,28,36,0.8)' },
+            },
+            scoreFill: {
+              '0%': { strokeDashoffset: '283' },
+              '100%': { strokeDashoffset: 'var(--target-offset)' },
+            },
+            fadeUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    .gradient-line { height: 1px; background: linear-gradient(90deg, transparent, #ED1C24, #00D4FF, transparent); }
+    .step-container { transition: opacity 0.4s ease, transform 0.4s ease; }
+    .step-container.entering { opacity: 0; transform: translateX(40px); }
+    .step-container.active { opacity: 1; transform: translateX(0); }
+    .step-container.leaving { opacity: 0; transform: translateX(-40px); }
+    .option-card { transition: all 0.2s ease; }
+    .option-card:hover { border-color: rgba(0,212,255,0.4); }
+    .option-card.selected { border-color: #00D4FF !important; background: rgba(0,212,255,0.08) !important; }
+    .checkbox-card.selected { border-color: #ED1C24 !important; background: rgba(237,28,36,0.08) !important; }
+    input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: #1E1E2A; outline: none; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #00D4FF; cursor: pointer; box-shadow: 0 0 10px rgba(0,212,255,0.5); }
+    input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #00D4FF; cursor: pointer; border: none; }
+    .score-circle { filter: drop-shadow(0 0 20px var(--score-color)); }
+    @keyframes countUp { from { opacity: 0; } to { opacity: 1; } }
+    .result-card { opacity: 0; transform: translateY(20px); animation: fadeUp 0.5s ease-out forwards; }
+    .result-card:nth-child(1) { animation-delay: 0.2s; }
+    .result-card:nth-child(2) { animation-delay: 0.4s; }
+    .result-card:nth-child(3) { animation-delay: 0.6s; }
+    .confetti { position: fixed; top: -10px; pointer-events: none; z-index: 100; animation: fall linear forwards; }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+  </style>
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-08QNJSTGZ2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-08QNJSTGZ2');
+  </script>
+
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "w3y2kvyq37");
+  </script>
+</head>
+
+<body class="font-sans text-gray-300 antialiased bg-surface min-h-screen">
+
+  <!-- NAV -->
+  <nav id="navbar" class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim transition-all duration-300">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <a href="/" class="flex items-center gap-2 group">
+        <span class="inline-block w-3 h-3 rounded-full bg-amd-red animate-pulse-glow"></span>
+        <span class="font-mono font-bold text-white text-lg tracking-tight">Ajaya<span class="text-amd-red-text">Design</span></span>
+      </a>
+      <ul class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <li><a href="/ai-automation/" class="nav-link text-amd-red font-semibold">AI Automation</a></li>
+        <li><a href="/works/" class="nav-link hover:text-amd-red transition-colors">Works</a></li>
+        <li><a href="/blog/" class="nav-link hover:text-amd-red transition-colors">Blog</a></li>
+        <li><a href="/contact/" class="nav-link hover:text-amd-red transition-colors">Contact</a></li>
+        <li>
+          <a href="/contact/" class="inline-flex items-center gap-2 px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">
+            Get Free AI Audit
+          </a>
+        </li>
+      </ul>
+      <button id="mobile-menu-btn" class="relative z-10 md:hidden text-gray-400 hover:text-white" aria-label="Toggle menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path id="menu-icon-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          <path id="menu-icon-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-border-dim bg-surface/95 backdrop-blur-lg">
+      <ul class="flex flex-col gap-1 px-6 py-4 text-sm font-medium">
+        <li><a href="/ai-automation/" class="block py-2 text-amd-red font-semibold">AI Automation</a></li>
+        <li><a href="/works/" class="block py-2 hover:text-amd-red transition-colors">Works</a></li>
+        <li><a href="/blog/" class="block py-2 hover:text-amd-red transition-colors">Blog</a></li>
+        <li><a href="/contact/" class="block py-2 hover:text-amd-red transition-colors">Contact</a></li>
+        <li class="pt-2">
+          <a href="/contact/" class="block text-center px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">Get Free AI Audit</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="pt-24 pb-16 px-4 sm:px-6">
+    <div class="max-w-2xl mx-auto">
+
+      <!-- INTRO -->
+      <div id="intro-section" class="text-center mb-8">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full border border-border-dim bg-surface-alt/60 text-xs font-mono text-gray-300">
+          <span class="w-2 h-2 rounded-full bg-electric-blue animate-pulse"></span>
+          Free · 2 minutes · No signup required
+        </div>
+        <h1 class="font-mono font-bold text-3xl sm:text-4xl md:text-5xl text-white leading-tight tracking-tight mb-4">
+          How Ready Is Your Business for <span class="text-amd-red">AI?</span>
+        </h1>
+        <p class="text-gray-400 text-lg max-w-lg mx-auto mb-8">
+          Answer 8 quick questions and get your personalized AI Readiness Score with specific recommendations and ROI projections.
+        </p>
+        <button onclick="startQuiz()" class="inline-flex items-center gap-2 px-8 py-4 bg-amd-red-btn text-white rounded-lg font-mono text-sm font-bold hover:bg-red-800 transition-colors shadow-lg shadow-amd-red/20 group">
+          Start Assessment
+          <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </button>
+        <p class="mt-4 font-mono text-xs text-gray-500">Join 500+ business owners who've taken the assessment</p>
+      </div>
+
+      <!-- PROGRESS BAR -->
+      <div id="progress-section" class="hidden mb-8">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-mono text-xs text-gray-400">Question <span id="current-step">1</span> of 8</span>
+          <span id="progress-pct" class="font-mono text-xs text-electric-blue">0%</span>
+        </div>
+        <div class="w-full h-1.5 bg-border-dim rounded-full overflow-hidden">
+          <div id="progress-bar" class="h-full bg-gradient-to-r from-amd-red to-electric-blue rounded-full transition-all duration-500 ease-out" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- QUIZ STEPS -->
+      <div id="quiz-container" class="hidden">
+
+        <!-- Step 1: Business Type -->
+        <div class="step-container" data-step="1">
+          <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-amd-red/10 text-amd-red-text font-mono font-bold text-sm">01</span>
+              <div>
+                <h2 class="font-mono text-white font-bold text-lg">What type of business do you run?</h2>
+                <p class="text-gray-500 text-sm">This helps us tailor recommendations to your industry</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <button onclick="selectOption(1,'Restaurant')" class="option-card flex flex-col items-center gap-2 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-center" data-value="Restaurant">
+                <span class="text-2xl">🍽️</span><span class="text-sm text-gray-300 font-medium">Restaurant</span>
+              </button>
+              <button onclick="selectOption(1,'Dental/Medical')" class="option-card flex flex-col items-center gap-2 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-center" data-value="Dental/Medical">
+                <span class="text-2xl">🏥</span><span class="text-sm text-gray-300 font-medium">Dental / Medical</span>
+              </button>
+              <button onclick="selectOption(1,'Law Firm')" class="option-card flex flex-col items-center gap-2 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-center" data-value="Law Firm">
+                <span class="text-2xl">⚖️</span><span class="text-sm text-gray-300 font-medium">Law Firm</span>
+              </button>
+              <button onclick="selectOption(1,'Auto Repair')" class="option-card flex flex-col items-center gap-2 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-center" data-value="Auto Repair">
+                <span class="text-2xl">🔧</span><span class="text-sm text-gray-300 font-medium">Auto Repair</span>
+              </button>
+              <button onclick="selectOption(1,'Salon/Spa')" class="option-card flex flex-col items-center gap-2 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-center" data-value="Salon/Spa">
+                <span class="text-2xl">💇</span><span class="text-sm text-gray-300 font-medium">Salon / Spa</span>
+              </button>
+              <button onclick="selectOption(1,'Real Estate')" class="option-card flex flex-col items-center gap-2 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-center" data-value="Real Estate">
+                <span class="text-2xl">🏠</span><span class="text-sm text-gray-300 font-medium">Real Estate</span>
+              </button>
+              <button onclick="selectOption(1,'Other')" class="option-card flex flex-col items-center gap-2 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-center col-span-2 sm:col-span-3" data-value="Other">
+                <span class="text-2xl">🏢</span><span class="text-sm text-gray-300 font-medium">Other Local Business</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Daily Calls -->
+        <div class="step-container hidden" data-step="2">
+          <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-electric-blue/10 text-electric-blue font-mono font-bold text-sm">02</span>
+              <div>
+                <h2 class="font-mono text-white font-bold text-lg">How many customer calls/inquiries per day?</h2>
+                <p class="text-gray-500 text-sm">Include phone, email, and walk-in inquiries</p>
+              </div>
+            </div>
+            <div class="text-center mb-4">
+              <span id="calls-value" class="font-mono text-5xl font-bold text-electric-blue">15</span>
+              <span class="font-mono text-lg text-gray-400">/day</span>
+            </div>
+            <input type="range" id="calls-slider" min="5" max="100" value="15" class="w-full mb-4" oninput="document.getElementById('calls-value').textContent=this.value">
+            <div class="flex justify-between text-xs font-mono text-gray-500">
+              <span>5</span><span>25</span><span>50</span><span>75</span><span>100+</span>
+            </div>
+            <div class="flex justify-end mt-6">
+              <button onclick="nextStep(2)" class="inline-flex items-center gap-2 px-6 py-3 bg-electric-blue/10 text-electric-blue border border-electric-blue/30 rounded-lg font-mono text-sm hover:bg-electric-blue/20 transition-colors">
+                Next →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Business Hours -->
+        <div class="step-container hidden" data-step="3">
+          <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-amd-red/10 text-amd-red-text font-mono font-bold text-sm">03</span>
+              <div>
+                <h2 class="font-mono text-white font-bold text-lg">What are your business hours?</h2>
+                <p class="text-gray-500 text-sm">When can customers currently reach you?</p>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <button onclick="selectOption(3,'9-5')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="9-5">
+                <span class="text-2xl">🕘</span>
+                <div><span class="text-white font-medium">9 to 5 only</span><p class="text-xs text-gray-500">Standard business hours</p></div>
+              </button>
+              <button onclick="selectOption(3,'Extended')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="Extended">
+                <span class="text-2xl">🌆</span>
+                <div><span class="text-white font-medium">Extended hours</span><p class="text-xs text-gray-500">Open early/late or weekends</p></div>
+              </button>
+              <button onclick="selectOption(3,'24/7')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="24/7">
+                <span class="text-2xl">🌙</span>
+                <div><span class="text-white font-medium">24/7 already</span><p class="text-xs text-gray-500">Always available to customers</p></div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Booking Method -->
+        <div class="step-container hidden" data-step="4">
+          <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-electric-blue/10 text-electric-blue font-mono font-bold text-sm">04</span>
+              <div>
+                <h2 class="font-mono text-white font-bold text-lg">How do customers book appointments?</h2>
+                <p class="text-gray-500 text-sm">Select your primary booking method</p>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <button onclick="selectOption(4,'Phone only')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="Phone only">
+                <span class="text-2xl">📞</span>
+                <div><span class="text-white font-medium">Phone only</span><p class="text-xs text-gray-500">Customers have to call to book</p></div>
+              </button>
+              <button onclick="selectOption(4,'Phone + website')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="Phone + website">
+                <span class="text-2xl">📋</span>
+                <div><span class="text-white font-medium">Phone + website form</span><p class="text-xs text-gray-500">Contact form but no real-time booking</p></div>
+              </button>
+              <button onclick="selectOption(4,'Online booking')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="Online booking">
+                <span class="text-2xl">📅</span>
+                <div><span class="text-white font-medium">Online booking system</span><p class="text-xs text-gray-500">Calendly, Acuity, or similar</p></div>
+              </button>
+              <button onclick="selectOption(4,'Walk-in only')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="Walk-in only">
+                <span class="text-2xl">🚶</span>
+                <div><span class="text-white font-medium">Walk-in only</span><p class="text-xs text-gray-500">No appointment system at all</p></div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Website -->
+        <div class="step-container hidden" data-step="5">
+          <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-amd-red/10 text-amd-red-text font-mono font-bold text-sm">05</span>
+              <div>
+                <h2 class="font-mono text-white font-bold text-lg">Do you have a website?</h2>
+                <p class="text-gray-500 text-sm">And if so, how effective is it at generating leads?</p>
+              </div>
+            </div>
+            <div class="space-y-3 mb-4">
+              <button onclick="selectWebsite(true)" id="website-yes" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="yes">
+                <span class="text-2xl">✅</span>
+                <span class="text-white font-medium">Yes, I have a website</span>
+              </button>
+              <button onclick="selectWebsite(false)" id="website-no" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="no">
+                <span class="text-2xl">❌</span>
+                <span class="text-white font-medium">No website yet</span>
+              </button>
+            </div>
+            <div id="website-rating" class="hidden mt-6 p-4 bg-surface rounded-xl border border-border-dim">
+              <p class="font-mono text-sm text-gray-400 mb-3">How effective is your website at generating leads?</p>
+              <div class="flex justify-center gap-2">
+                <button onclick="rateWebsite(1)" class="rate-btn w-12 h-12 rounded-lg bg-surface-card border border-border-dim text-gray-400 font-mono font-bold hover:border-amd-red/40 hover:text-amd-red-text transition-all">1</button>
+                <button onclick="rateWebsite(2)" class="rate-btn w-12 h-12 rounded-lg bg-surface-card border border-border-dim text-gray-400 font-mono font-bold hover:border-amd-red/40 hover:text-amd-red-text transition-all">2</button>
+                <button onclick="rateWebsite(3)" class="rate-btn w-12 h-12 rounded-lg bg-surface-card border border-border-dim text-gray-400 font-mono font-bold hover:border-amd-red/40 hover:text-amd-red-text transition-all">3</button>
+                <button onclick="rateWebsite(4)" class="rate-btn w-12 h-12 rounded-lg bg-surface-card border border-border-dim text-gray-400 font-mono font-bold hover:border-amd-red/40 hover:text-amd-red-text transition-all">4</button>
+                <button onclick="rateWebsite(5)" class="rate-btn w-12 h-12 rounded-lg bg-surface-card border border-border-dim text-gray-400 font-mono font-bold hover:border-amd-red/40 hover:text-amd-red-text transition-all">5</button>
+              </div>
+              <div class="flex justify-between mt-2 text-xs font-mono text-gray-500">
+                <span>Not effective</span><span>Very effective</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6: Staff -->
+        <div class="step-container hidden" data-step="6">
+          <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-electric-blue/10 text-electric-blue font-mono font-bold text-sm">06</span>
+              <div>
+                <h2 class="font-mono text-white font-bold text-lg">How many staff handle customer inquiries?</h2>
+                <p class="text-gray-500 text-sm">People who answer phones, emails, or chats</p>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <button onclick="selectOption(6,'1')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="1">
+                <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-amd-red/10 text-amd-red-text font-mono font-bold">1</span>
+                <div><span class="text-white font-medium">Just me (or 1 person)</span><p class="text-xs text-gray-500">Wearing all the hats</p></div>
+              </button>
+              <button onclick="selectOption(6,'2-3')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="2-3">
+                <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-yellow-400/10 text-yellow-400 font-mono font-bold">2-3</span>
+                <div><span class="text-white font-medium">Small team</span><p class="text-xs text-gray-500">A few people share the load</p></div>
+              </button>
+              <button onclick="selectOption(6,'4+')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="4+">
+                <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-green-400/10 text-green-400 font-mono font-bold">4+</span>
+                <div><span class="text-white font-medium">Dedicated team</span><p class="text-xs text-gray-500">Multiple staff handling inquiries</p></div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 7: Pain Points -->
+        <div class="step-container hidden" data-step="7">
+          <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-amd-red/10 text-amd-red-text font-mono font-bold text-sm">07</span>
+              <div>
+                <h2 class="font-mono text-white font-bold text-lg">What are your biggest pain points?</h2>
+                <p class="text-gray-500 text-sm">Select all that apply</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button onclick="togglePain(this,'Missed calls')" class="checkbox-card option-card flex items-center gap-3 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left">
+                <span class="flex-shrink-0 w-5 h-5 rounded border border-gray-600 flex items-center justify-center text-xs check-icon"></span>
+                <span class="text-sm text-gray-300">Missed calls</span>
+              </button>
+              <button onclick="togglePain(this,'No-shows')" class="checkbox-card option-card flex items-center gap-3 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left">
+                <span class="flex-shrink-0 w-5 h-5 rounded border border-gray-600 flex items-center justify-center text-xs check-icon"></span>
+                <span class="text-sm text-gray-300">No-shows</span>
+              </button>
+              <button onclick="togglePain(this,'After-hours leads')" class="checkbox-card option-card flex items-center gap-3 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left">
+                <span class="flex-shrink-0 w-5 h-5 rounded border border-gray-600 flex items-center justify-center text-xs check-icon"></span>
+                <span class="text-sm text-gray-300">After-hours leads lost</span>
+              </button>
+              <button onclick="togglePain(this,'Manual scheduling')" class="checkbox-card option-card flex items-center gap-3 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left">
+                <span class="flex-shrink-0 w-5 h-5 rounded border border-gray-600 flex items-center justify-center text-xs check-icon"></span>
+                <span class="text-sm text-gray-300">Manual scheduling</span>
+              </button>
+              <button onclick="togglePain(this,'Repetitive questions')" class="checkbox-card option-card flex items-center gap-3 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left">
+                <span class="flex-shrink-0 w-5 h-5 rounded border border-gray-600 flex items-center justify-center text-xs check-icon"></span>
+                <span class="text-sm text-gray-300">Repetitive questions</span>
+              </button>
+              <button onclick="togglePain(this,'Slow follow-up')" class="checkbox-card option-card flex items-center gap-3 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left">
+                <span class="flex-shrink-0 w-5 h-5 rounded border border-gray-600 flex items-center justify-center text-xs check-icon"></span>
+                <span class="text-sm text-gray-300">Slow follow-up</span>
+              </button>
+            </div>
+            <div class="flex justify-end mt-6">
+              <button onclick="nextStep(7)" id="pain-next" class="inline-flex items-center gap-2 px-6 py-3 bg-amd-red/10 text-amd-red-text border border-amd-red/30 rounded-lg font-mono text-sm hover:bg-amd-red/20 transition-colors opacity-50 cursor-not-allowed" disabled>
+                Next →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 8: Revenue -->
+        <div class="step-container hidden" data-step="8">
+          <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-electric-blue/10 text-electric-blue font-mono font-bold text-sm">08</span>
+              <div>
+                <h2 class="font-mono text-white font-bold text-lg">What's your monthly revenue range?</h2>
+                <p class="text-gray-500 text-sm">This helps us estimate your potential ROI</p>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <button onclick="selectOption(8,'<10K')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="<10K">
+                <span class="font-mono text-gray-400 font-bold w-20">< $10K</span>
+                <span class="text-sm text-gray-300">Getting started</span>
+              </button>
+              <button onclick="selectOption(8,'10-25K')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="10-25K">
+                <span class="font-mono text-gray-400 font-bold w-20">$10-25K</span>
+                <span class="text-sm text-gray-300">Growing steadily</span>
+              </button>
+              <button onclick="selectOption(8,'25-50K')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="25-50K">
+                <span class="font-mono text-yellow-400 font-bold w-20">$25-50K</span>
+                <span class="text-sm text-gray-300">Established business</span>
+              </button>
+              <button onclick="selectOption(8,'50-100K')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="50-100K">
+                <span class="font-mono text-electric-blue font-bold w-20">$50-100K</span>
+                <span class="text-sm text-gray-300">Scaling up</span>
+              </button>
+              <button onclick="selectOption(8,'100K+')" class="option-card w-full flex items-center gap-4 p-4 bg-surface border border-border-dim rounded-xl cursor-pointer text-left" data-value="100K+">
+                <span class="font-mono text-green-400 font-bold w-20">$100K+</span>
+                <span class="text-sm text-gray-300">High volume</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RESULTS -->
+      <div id="results-section" class="hidden">
+        <!-- Score Circle -->
+        <div class="text-center mb-8">
+          <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-4">// Your Results</p>
+          <h2 class="font-mono text-2xl sm:text-3xl font-bold text-white mb-8">Your AI Readiness Score</h2>
+
+          <div class="relative inline-flex items-center justify-center mb-6">
+            <svg class="score-circle w-48 h-48 sm:w-56 sm:h-56 -rotate-90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="45" fill="none" stroke="#1E1E2A" stroke-width="6"/>
+              <circle id="score-ring" cx="50" cy="50" r="45" fill="none" stroke-width="6" stroke-linecap="round"
+                stroke-dasharray="283" stroke-dashoffset="283" style="transition: stroke-dashoffset 1.5s ease-out;"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span id="score-number" class="font-mono text-5xl sm:text-6xl font-bold text-white">0</span>
+              <span class="font-mono text-xs text-gray-400 mt-1">out of 100</span>
+            </div>
+          </div>
+
+          <p id="score-label" class="font-mono text-lg font-semibold mb-2"></p>
+          <p id="score-desc" class="text-gray-400 text-sm max-w-md mx-auto"></p>
+        </div>
+
+        <div class="gradient-line mb-8"></div>
+
+        <!-- ROI Breakdown -->
+        <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8 mb-6 result-card">
+          <h3 class="font-mono text-white font-bold text-lg mb-4 flex items-center gap-2">
+            <span class="text-amd-red-text">💰</span> Your Estimated Monthly Savings
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div class="bg-surface rounded-xl p-4 border border-border-dim text-center">
+              <p class="font-mono text-xs text-gray-500 mb-1">Recovered Leads</p>
+              <p id="roi-leads" class="font-mono text-2xl font-bold text-electric-blue">$0</p>
+            </div>
+            <div class="bg-surface rounded-xl p-4 border border-border-dim text-center">
+              <p class="font-mono text-xs text-gray-500 mb-1">Staff Time Saved</p>
+              <p id="roi-staff" class="font-mono text-2xl font-bold text-yellow-400">$0</p>
+            </div>
+            <div class="bg-surface rounded-xl p-4 border border-border-dim text-center">
+              <p class="font-mono text-xs text-gray-500 mb-1">Total Monthly Savings</p>
+              <p id="roi-total" class="font-mono text-2xl font-bold text-amd-red-text">$0</p>
+            </div>
+          </div>
+          <p id="roi-narrative" class="text-gray-400 text-sm"></p>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="bg-surface-card border border-border-dim rounded-2xl p-6 sm:p-8 mb-6 result-card">
+          <h3 class="font-mono text-white font-bold text-lg mb-4 flex items-center gap-2">
+            <span class="text-electric-blue">🎯</span> Your Top 3 AI Recommendations
+          </h3>
+          <div id="recommendations" class="space-y-4"></div>
+        </div>
+
+        <!-- ROI Projection -->
+        <div class="bg-gradient-to-br from-amd-red/10 to-electric-blue/10 border border-amd-red/20 rounded-2xl p-6 sm:p-8 mb-8 result-card text-center">
+          <p class="font-mono text-xs text-gray-400 uppercase tracking-widest mb-2">12-Month Projection</p>
+          <p id="roi-annual" class="font-mono text-4xl sm:text-5xl font-bold text-white mb-2">$0</p>
+          <p class="text-gray-400 text-sm">estimated annual savings with AI automation</p>
+        </div>
+
+        <div class="gradient-line mb-8"></div>
+
+        <!-- Email Capture -->
+        <div class="bg-surface-card border-2 border-amd-red/30 rounded-2xl p-6 sm:p-8 mb-6 text-center">
+          <div class="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full border border-amd-red/20 bg-amd-red/5 text-xs font-mono text-amd-red-text">
+            📊 Full Report Available
+          </div>
+          <h3 class="font-mono text-white font-bold text-xl mb-2">Get Your Full Personalized AI Report</h3>
+          <p class="text-gray-400 text-sm mb-6 max-w-md mx-auto">
+            Includes detailed implementation roadmap, cost breakdown, vendor comparisons, and a custom action plan for your business.
+          </p>
+          <form id="email-form" onsubmit="handleEmailSubmit(event)" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input type="email" id="lead-email" required placeholder="you@business.com"
+              class="flex-1 bg-surface border border-border-dim rounded-lg px-4 py-3 text-white font-mono text-sm focus:border-amd-red focus:outline-none transition-colors placeholder-gray-500" />
+            <button type="submit" class="px-6 py-3 bg-amd-red-btn text-white rounded-lg font-mono text-sm font-bold hover:bg-red-800 transition-colors whitespace-nowrap shadow-lg shadow-amd-red/20">
+              Send My Report →
+            </button>
+          </form>
+          <p class="mt-3 text-xs text-gray-500">No spam. Just your personalized report.</p>
+          <div id="email-success" class="hidden mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+            <p class="text-green-400 font-mono text-sm font-semibold">✓ Check your inbox! Your report is on its way.</p>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="text-center mb-8">
+          <a href="/contact/" class="inline-flex items-center gap-2 px-8 py-4 bg-amd-red-btn text-white rounded-lg font-mono text-sm font-bold hover:bg-red-800 transition-colors shadow-lg shadow-amd-red/20">
+            Schedule a Free Consultation →
+          </a>
+          <p class="mt-3 font-mono text-xs text-gray-400">We'll walk through your results live · No obligation</p>
+        </div>
+
+        <!-- Social Share -->
+        <div class="text-center mb-8">
+          <p class="font-mono text-xs text-gray-500 mb-3">Share your AI score</p>
+          <div class="flex justify-center gap-3">
+            <button onclick="shareTwitter()" class="flex items-center gap-2 px-4 py-2 bg-surface-card border border-border-dim rounded-lg text-sm text-gray-400 hover:border-electric-blue/40 hover:text-electric-blue transition-all">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              Tweet
+            </button>
+            <button onclick="shareLinkedIn()" class="flex items-center gap-2 px-4 py-2 bg-surface-card border border-border-dim rounded-lg text-sm text-gray-400 hover:border-electric-blue/40 hover:text-electric-blue transition-all">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </button>
+            <button onclick="copyLink()" id="copy-btn" class="flex items-center gap-2 px-4 py-2 bg-surface-card border border-border-dim rounded-lg text-sm text-gray-400 hover:border-electric-blue/40 hover:text-electric-blue transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10"/></svg>
+              Copy Link
+            </button>
+          </div>
+        </div>
+
+        <!-- Back to AI Automation -->
+        <div class="text-center">
+          <a href="/ai-automation/" class="font-mono text-sm text-gray-400 hover:text-electric-blue transition-colors">
+            ← Explore our AI Automation services
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-border-dim py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amd-red"></span>
+          <span class="font-mono font-bold text-white text-sm">Ajaya<span class="text-amd-red-text">Design</span></span>
+        </div>
+        <p class="font-mono text-xs text-gray-400 text-center">
+          Built with engineering precision in Austin, Texas &nbsp;·&nbsp; © <span id="footer-year"></span> AjayaDesign
+        </p>
+        <div class="flex items-center gap-4 text-xs font-mono text-gray-400">
+          <a href="/" class="hover:text-white transition-colors">Home</a>
+          <a href="/ai-automation/" class="hover:text-white transition-colors">AI Automation</a>
+          <a href="/works/" class="hover:text-white transition-colors">Works</a>
+          <a href="/contact/" class="hover:text-white transition-colors">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+    // Mobile menu
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const iconOpen = document.getElementById('menu-icon-open');
+    const iconClose = document.getElementById('menu-icon-close');
+    if (menuBtn) {
+      menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden');
+        iconClose.classList.toggle('hidden');
+      });
+    }
+
+    // State
+    const answers = {};
+    let currentStep = 1;
+    const totalSteps = 8;
+
+    function startQuiz() {
+      document.getElementById('intro-section').classList.add('hidden');
+      document.getElementById('progress-section').classList.remove('hidden');
+      document.getElementById('quiz-container').classList.remove('hidden');
+      showStep(1);
+      gtag('event', 'quiz_start', { event_category: 'ai_readiness' });
+    }
+
+    function showStep(step) {
+      currentStep = step;
+      document.getElementById('current-step').textContent = step;
+      const pct = Math.round(((step - 1) / totalSteps) * 100);
+      document.getElementById('progress-bar').style.width = pct + '%';
+      document.getElementById('progress-pct').textContent = pct + '%';
+
+      document.querySelectorAll('.step-container').forEach(el => {
+        const s = parseInt(el.dataset.step);
+        if (s === step) {
+          el.classList.remove('hidden', 'leaving');
+          el.classList.add('entering');
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            el.classList.remove('entering');
+            el.classList.add('active');
+          }));
+        } else {
+          el.classList.add('hidden');
+          el.classList.remove('active', 'entering');
+        }
+      });
+    }
+
+    function selectOption(step, value) {
+      answers[step] = value;
+      // Highlight
+      const container = document.querySelector(`[data-step="${step}"]`);
+      container.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+      const clicked = container.querySelector(`[data-value="${value}"]`);
+      if (clicked) clicked.classList.add('selected');
+
+      gtag('event', 'quiz_answer', { event_category: 'ai_readiness', event_label: 'step_' + step, value: value });
+
+      // Auto-advance after short delay (except steps needing manual next)
+      setTimeout(() => {
+        if (step < totalSteps) {
+          showStep(step + 1);
+        } else {
+          showResults();
+        }
+      }, 400);
+    }
+
+    function nextStep(step) {
+      if (step === 2) {
+        answers[2] = parseInt(document.getElementById('calls-slider').value);
+      }
+      if (step === 7 && (!answers[7] || answers[7].length === 0)) return;
+
+      gtag('event', 'quiz_answer', { event_category: 'ai_readiness', event_label: 'step_' + step });
+
+      if (step < totalSteps) {
+        showStep(step + 1);
+      } else {
+        showResults();
+      }
+    }
+
+    // Step 5 special handling
+    function selectWebsite(hasWebsite) {
+      document.getElementById('website-yes').classList.toggle('selected', hasWebsite);
+      document.getElementById('website-no').classList.toggle('selected', !hasWebsite);
+      if (hasWebsite) {
+        document.getElementById('website-rating').classList.remove('hidden');
+        answers[5] = { has: true, rating: null };
+      } else {
+        document.getElementById('website-rating').classList.add('hidden');
+        answers[5] = { has: false, rating: 0 };
+        setTimeout(() => showStep(6), 400);
+      }
+    }
+
+    function rateWebsite(rating) {
+      answers[5] = { has: true, rating };
+      document.querySelectorAll('.rate-btn').forEach((b, i) => {
+        b.classList.toggle('border-amd-red', i < rating);
+        b.classList.toggle('text-amd-red-text', i < rating);
+        b.classList.toggle('bg-amd-red/10', i < rating);
+      });
+      setTimeout(() => showStep(6), 400);
+    }
+
+    // Step 7 pain points
+    const painPoints = new Set();
+    function togglePain(el, pain) {
+      if (painPoints.has(pain)) {
+        painPoints.delete(pain);
+        el.classList.remove('selected');
+        el.querySelector('.check-icon').textContent = '';
+      } else {
+        painPoints.add(pain);
+        el.classList.add('selected');
+        el.querySelector('.check-icon').textContent = '✓';
+        el.querySelector('.check-icon').style.color = '#ED1C24';
+      }
+      answers[7] = [...painPoints];
+      const btn = document.getElementById('pain-next');
+      if (painPoints.size > 0) {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+      } else {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
+    // ═══════════ SCORING ENGINE ═══════════
+    function calculateScore() {
+      let score = 0;
+      const biz = answers[1] || 'Other';
+      const calls = answers[2] || 15;
+      const hours = answers[3] || '9-5';
+      const booking = answers[4] || 'Phone only';
+      const website = answers[5] || { has: false, rating: 0 };
+      const staff = answers[6] || '1';
+      const pains = answers[7] || [];
+      const revenue = answers[8] || '<10K';
+
+      // More calls = more AI opportunity
+      score += Math.min(calls / 100 * 20, 20);
+
+      // Hours: 9-5 has biggest gap → highest score
+      if (hours === '9-5') score += 18;
+      else if (hours === 'Extended') score += 10;
+      else score += 3;
+
+      // Booking: less digital = more opportunity
+      if (booking === 'Walk-in only') score += 15;
+      else if (booking === 'Phone only') score += 14;
+      else if (booking === 'Phone + website') score += 8;
+      else score += 3;
+
+      // Website
+      if (!website.has) score += 12;
+      else score += Math.max(0, 12 - (website.rating || 0) * 2.4);
+
+      // Staff: fewer = more benefit from AI
+      if (staff === '1') score += 12;
+      else if (staff === '2-3') score += 8;
+      else score += 4;
+
+      // Pain points: each adds points
+      score += Math.min(pains.length * 4, 18);
+
+      // Revenue multiplier: higher rev = more to gain
+      const revMultiplier = { '<10K': 0.85, '10-25K': 0.92, '25-50K': 1.0, '50-100K': 1.05, '100K+': 1.1 };
+      score = Math.round(score * (revMultiplier[revenue] || 1));
+
+      return Math.min(100, Math.max(15, score));
+    }
+
+    function calculateROI() {
+      const calls = answers[2] || 15;
+      const hours = answers[3] || '9-5';
+      const staff = answers[6] || '1';
+      const revenue = answers[8] || '<10K';
+      const biz = answers[1] || 'Other';
+
+      // Average job value by industry
+      const avgJobValue = {
+        'Restaurant': 35, 'Dental/Medical': 250, 'Law Firm': 500,
+        'Auto Repair': 300, 'Salon/Spa': 80, 'Real Estate': 800, 'Other': 150
+      };
+      const jobVal = avgJobValue[biz] || 150;
+
+      // Missed calls estimate: % of daily calls missed (higher for 9-5, phone-only)
+      let missedPct = 0.15;
+      if (hours === '9-5') missedPct = 0.35;
+      else if (hours === 'Extended') missedPct = 0.2;
+
+      const missedCallsPerMonth = Math.round(calls * missedPct * 22);
+      const conversionRate = 0.3;
+      const recoveredLeadValue = Math.round(missedCallsPerMonth * conversionRate * jobVal);
+
+      // Staff time saved
+      const staffHourlyRate = 20;
+      const hoursPerStaff = staff === '1' ? 3 : staff === '2-3' ? 2 : 1.5;
+      const staffCount = staff === '1' ? 1 : staff === '2-3' ? 2.5 : 4;
+      const staffSavings = Math.round(hoursPerStaff * staffCount * 22 * staffHourlyRate * 0.4);
+
+      return { leads: recoveredLeadValue, staff: staffSavings, total: recoveredLeadValue + staffSavings };
+    }
+
+    function getRecommendations() {
+      const biz = answers[1] || 'Other';
+      const booking = answers[4] || 'Phone only';
+      const website = answers[5] || { has: false, rating: 0 };
+      const pains = answers[7] || [];
+
+      const recs = {
+        'Restaurant': [
+          { icon: '🤖', title: 'AI Chatbot for Menu & Reservations', desc: 'Answer "What time do you close?" and "Do you have vegan options?" 24/7. Handle reservations automatically.', link: '/demo/ai-restaurant/' },
+          { icon: '📅', title: 'Automated Reservation & Waitlist', desc: 'Let customers book tables, join waitlists, and get SMS confirmations without calling.', link: '/ai-automation/#services' },
+          { icon: '⭐', title: 'AI Review Response', desc: 'Automatically respond to Google/Yelp reviews within minutes. Build reputation while you cook.', link: '/ai-automation/#services' },
+        ],
+        'Dental/Medical': [
+          { icon: '📋', title: 'AI Patient Intake Forms', desc: 'Collect insurance info, medical history, and consent forms before the visit. Reduce front-desk bottleneck by 60%.', link: '/demo/ai-medical/' },
+          { icon: '🤖', title: 'AI Chatbot for Patient Questions', desc: 'Answer insurance, hours, and procedure questions 24/7. Route emergencies to on-call staff.', link: '/demo/ai-medical/' },
+          { icon: '📱', title: 'Automated Appointment Reminders', desc: 'Cut no-shows by 40% with smart SMS/email reminders and easy rescheduling.', link: '/ai-automation/#services' },
+        ],
+        'Law Firm': [
+          { icon: '📋', title: 'AI Legal Intake Forms', desc: 'Qualify leads at 2am. Collect case details, documents, and conflict checks — automatically and bilingually.', link: '/demo/ai-chatbot/' },
+          { icon: '🤖', title: 'AI Client Chatbot', desc: 'Answer common legal questions, explain your practice areas, and book consultations 24/7.', link: '/demo/ai-chatbot/' },
+          { icon: '📞', title: 'AI Phone Answering', desc: 'Never miss a potential client call. AI answers, qualifies, and schedules — then texts you the summary.', link: '/ai-automation/#services' },
+        ],
+        'Auto Repair': [
+          { icon: '🤖', title: 'AI Service Request Bot', desc: 'Capture vehicle info, problem descriptions, and photos after hours. Book the next available slot automatically.', link: '/demo/ai-auto-service/' },
+          { icon: '💬', title: 'Automated Quote & Follow-up', desc: 'Send instant estimates based on common services. Follow up on pending quotes automatically.', link: '/ai-automation/#services' },
+          { icon: '📱', title: 'Service Ready Notifications', desc: 'Automatically text customers when their car is ready. Reduce phone calls by 50%.', link: '/ai-automation/#services' },
+        ],
+        'Salon/Spa': [
+          { icon: '📅', title: '24/7 Online Booking', desc: 'Let clients book appointments any time. AI matches them with the right stylist based on service type.', link: '/demo/ai-salon/' },
+          { icon: '🤖', title: 'AI Chatbot for Services & Pricing', desc: 'Answer questions about services, pricing, and availability instantly. Upsell add-on treatments.', link: '/demo/ai-salon/' },
+          { icon: '📱', title: 'Smart Reminder & Rebooking', desc: 'Cut no-shows with reminders and automatically suggest rebooking when clients are due for their next visit.', link: '/ai-automation/#services' },
+        ],
+        'Real Estate': [
+          { icon: '🏠', title: 'AI Lead Qualification Bot', desc: 'Qualify buyers and sellers 24/7. Collect budget, timeline, and preferences before you ever pick up the phone.', link: '/demo/ai-realestate/' },
+          { icon: '📊', title: 'Automated Property Matching', desc: 'AI matches leads with listings based on their criteria and sends personalized property recommendations.', link: '/demo/ai-realestate/' },
+          { icon: '📅', title: 'AI Showing Scheduler', desc: 'Let prospects book showings directly. AI coordinates with your calendar and sends confirmations.', link: '/ai-automation/#services' },
+        ],
+        'Other': [
+          { icon: '🤖', title: 'AI Customer Service Chatbot', desc: 'Answer FAQs, capture leads, and book appointments 24/7. Trained on your specific business.', link: '/ai-automation/#services' },
+          { icon: '📋', title: 'AI Intake & Lead Capture', desc: 'Smart forms that qualify leads and collect the right information before you engage.', link: '/ai-automation/#services' },
+          { icon: '📞', title: 'AI Phone & Follow-up System', desc: 'Never miss a call. Automated follow-ups ensure no lead falls through the cracks.', link: '/ai-automation/#services' },
+        ],
+      };
+
+      return recs[biz] || recs['Other'];
+    }
+
+    // ═══════════ SHOW RESULTS ═══════════
+    function showResults() {
+      document.getElementById('quiz-container').classList.add('hidden');
+      document.getElementById('progress-section').classList.add('hidden');
+      document.getElementById('results-section').classList.remove('hidden');
+
+      const score = calculateScore();
+      const roi = calculateROI();
+      const recs = getRecommendations();
+
+      // GA event
+      gtag('event', 'quiz_complete', { event_category: 'ai_readiness', value: score });
+
+      // Score color
+      let color, label, desc;
+      if (score <= 40) {
+        color = '#EF4444'; label = 'Early Stage';
+        desc = "Your business has some room for AI, but you're not losing as much as you think. Small wins can still make a big difference.";
+      } else if (score <= 70) {
+        color = '#EAB308'; label = 'High Opportunity';
+        desc = "You're leaving significant money on the table. AI automation could transform how you handle customers and leads.";
+      } else {
+        color = '#22C55E'; label = 'Maximum Impact';
+        desc = "Your business is perfectly positioned for AI. You're likely losing thousands per month in missed leads and inefficiency.";
+      }
+
+      document.documentElement.style.setProperty('--score-color', color);
+      document.getElementById('score-label').textContent = label;
+      document.getElementById('score-label').style.color = color;
+      document.getElementById('score-desc').textContent = desc;
+
+      // Animate score ring
+      const ring = document.getElementById('score-ring');
+      ring.style.stroke = color;
+      const offset = 283 - (283 * score / 100);
+      setTimeout(() => { ring.style.strokeDashoffset = offset; }, 100);
+
+      // Animate score number
+      let current = 0;
+      const increment = Math.ceil(score / 40);
+      const counter = setInterval(() => {
+        current += increment;
+        if (current >= score) { current = score; clearInterval(counter); }
+        document.getElementById('score-number').textContent = current;
+      }, 30);
+
+      // ROI
+      document.getElementById('roi-leads').textContent = '$' + roi.leads.toLocaleString();
+      document.getElementById('roi-staff').textContent = '$' + roi.staff.toLocaleString();
+      document.getElementById('roi-total').textContent = '$' + roi.total.toLocaleString();
+      document.getElementById('roi-annual').textContent = '$' + (roi.total * 12).toLocaleString();
+      document.getElementById('roi-narrative').textContent =
+        `Based on ~${answers[2] || 15} daily inquiries and your current setup, an AI system could recover approximately $${roi.leads.toLocaleString()}/mo in missed leads and save $${roi.staff.toLocaleString()}/mo in staff time.`;
+
+      // Recommendations
+      const recsContainer = document.getElementById('recommendations');
+      recsContainer.innerHTML = recs.map((r, i) => `
+        <div class="flex gap-4 p-4 bg-surface rounded-xl border border-border-dim hover:border-electric-blue/30 transition-all">
+          <span class="text-2xl flex-shrink-0">${r.icon}</span>
+          <div class="flex-1">
+            <h4 class="font-mono text-white font-semibold text-sm mb-1">${r.title}</h4>
+            <p class="text-gray-400 text-xs leading-relaxed mb-2">${r.desc}</p>
+            <a href="${r.link}" class="font-mono text-xs text-electric-blue hover:underline">See demo →</a>
+          </div>
+        </div>
+      `).join('');
+
+      // Confetti for high scores
+      if (score >= 70) spawnConfetti();
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function spawnConfetti() {
+      const colors = ['#ED1C24', '#00D4FF', '#EAB308', '#22C55E', '#A855F7'];
+      for (let i = 0; i < 40; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti';
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.width = el.style.height = (Math.random() * 8 + 4) + 'px';
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        el.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        el.style.animationDelay = (Math.random() * 1.5) + 's';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 5000);
+      }
+    }
+
+    // Email form
+    function handleEmailSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('lead-email').value;
+      gtag('event', 'lead_capture', { event_category: 'ai_readiness', event_label: email });
+      document.getElementById('email-form').classList.add('hidden');
+      document.getElementById('email-success').classList.remove('hidden');
+    }
+
+    // Social share
+    function shareTwitter() {
+      const score = document.getElementById('score-number').textContent;
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent(`I just scored ${score}/100 on the AI Readiness Assessment! How ready is YOUR business for AI? 🤖`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+    }
+
+    function shareLinkedIn() {
+      const url = encodeURIComponent(window.location.href);
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+    }
+
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href);
+      document.getElementById('copy-btn').innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Copied!';
+      setTimeout(() => {
+        document.getElementById('copy-btn').innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10"/></svg> Copy Link';
+      }, 2000);
+    }
+  </script>
+
+</body>
+</html>
