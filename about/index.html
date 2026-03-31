@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Meet the Engineer Behind Your Website | AjayaDesign</title>
+  <meta name="description" content="Meet Ajaya Dahal — CPU debug engineer turned web designer. Engineering precision, Lighthouse 95+ guaranteed, AI-powered automation. Based in Austin, Texas." />
+  <meta name="keywords" content="about AjayaDesign, Ajaya Dahal, web designer Austin, engineer web design, Austin Texas" />
+  <meta name="author" content="AjayaDesign" />
+  <meta name="robots" content="index, follow" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0A0A0F" />
+
+  <link rel="canonical" href="https://ajayadesign.github.io/about/" />
+
+  <meta property="og:title" content="About — Meet the Engineer Behind Your Website | AjayaDesign" />
+  <meta property="og:description" content="CPU debug engineer turned web designer. Engineering precision applied to every pixel." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/about/" />
+  <meta property="og:site_name" content="AjayaDesign" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content="https://ajayadesign.github.io/og-image.png" />
+  <meta property="og:image:width" content="2848" />
+  <meta property="og:image:height" content="1504" />
+  <meta property="og:image:type" content="image/png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="About — Meet the Engineer Behind Your Website | AjayaDesign" />
+  <meta name="twitter:description" content="CPU debug engineer turned web designer. Engineering precision applied to every pixel." />
+  <meta name="twitter:image" content="https://ajayadesign.github.io/og-image.png" />
+
+  <meta name="geo.region" content="US-TX" />
+  <meta name="geo.placename" content="Austin" />
+
+  <link rel="prefetch" href="/works/" />
+  <link rel="prefetch" href="/contact/" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "AboutPage",
+        "name": "About AjayaDesign",
+        "description": "Meet the engineer behind AjayaDesign — high-performance web design in Austin, Texas.",
+        "url": "https://ajayadesign.github.io/about/",
+        "isPartOf": { "@type": "WebSite", "name": "AjayaDesign", "url": "https://ajayadesign.github.io/" },
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ajayadesign.github.io/" },
+            { "@type": "ListItem", "position": 2, "name": "About", "item": "https://ajayadesign.github.io/about/" }
+          ]
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "Ajaya Dahal",
+        "jobTitle": "Founder & Lead Engineer",
+        "worksFor": { "@type": "Organization", "name": "AjayaDesign" },
+        "alumniOf": { "@type": "CollegeOrUniversity", "name": "Michigan State University" },
+        "knowsAbout": ["Web Design", "AI Automation", "CPU Architecture", "FPGA Design", "SEO", "Performance Engineering"],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Manor",
+          "addressRegion": "TX",
+          "addressCountry": "US"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF6B6B',
+            'amd-red-btn': '#D91920',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
+            sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+            'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { boxShadow: '0 0 8px rgba(237,28,36,0.4)' },
+              '50%': { boxShadow: '0 0 20px rgba(237,28,36,0.8)' },
+            },
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(24px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/styles.css" />
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-08QNJSTGZ2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-08QNJSTGZ2');
+  </script>
+
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window,document,"clarity","script","rx06gw7skd");
+  </script>
+
+  <style>
+    @view-transition { navigation: auto; }
+    .reveal { opacity: 0; transform: translateY(24px); transition: all 0.6s ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .gradient-line { height: 1px; background: linear-gradient(90deg, transparent, #ED1C24, transparent); }
+  </style>
+</head>
+<body class="bg-surface text-white font-sans antialiased overflow-x-hidden">
+
+  <!-- ═══════════════════ NAV ═══════════════════ -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-xl border-b border-border-dim">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2 group">
+        <span class="w-2 h-2 rounded-full bg-amd-red group-hover:animate-pulse-glow transition-shadow"></span>
+        <span class="font-mono font-bold text-sm text-white">Ajaya<span class="text-amd-red-text">Design</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-6 text-sm font-mono">
+        <a href="/" class="text-gray-400 hover:text-white transition">Home</a>
+        <a href="/works/" class="text-gray-400 hover:text-white transition">Works</a>
+        <a href="/edge/" class="text-gray-400 hover:text-white transition">Edge</a>
+        <a href="/industries/" class="text-gray-400 hover:text-white transition">Industries</a>
+        <a href="/blog/" class="text-gray-400 hover:text-white transition">Blog</a>
+        <div class="relative group/more">
+          <button class="text-gray-400 hover:text-white transition flex items-center gap-1">
+            More <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="absolute top-full right-0 mt-2 w-48 bg-surface-card border border-border-dim rounded-lg shadow-xl opacity-0 invisible group-hover/more:opacity-100 group-hover/more:visible transition-all">
+            <a href="/tools/pricing.html" class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-surface-alt transition">Tools</a>
+            <a href="/case-studies/" class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-surface-alt transition">Case Studies</a>
+            <a href="/about/" class="block px-4 py-2 text-sm text-white bg-surface-alt">About</a>
+            <a href="/process/" class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-surface-alt transition">How We Work</a>
+            <a href="/reviews/" class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-surface-alt transition">Reviews</a>
+            <a href="/faq/" class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-surface-alt transition">FAQ</a>
+            <a href="/resources/" class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-surface-alt transition">Resources</a>
+          </div>
+        </div>
+        <a href="/contact/" class="px-4 py-2 bg-amd-red-btn text-white rounded hover:bg-red-800 transition text-sm">Contact</a>
+      </div>
+      <!-- Mobile menu button -->
+      <button id="mobile-menu-btn" class="md:hidden text-gray-400 hover:text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-surface-card border-t border-border-dim">
+      <div class="px-6 py-4 space-y-3 text-sm font-mono">
+        <a href="/" class="block text-gray-400 hover:text-white">Home</a>
+        <a href="/works/" class="block text-gray-400 hover:text-white">Works</a>
+        <a href="/edge/" class="block text-gray-400 hover:text-white">Edge</a>
+        <a href="/industries/" class="block text-gray-400 hover:text-white">Industries</a>
+        <a href="/blog/" class="block text-gray-400 hover:text-white">Blog</a>
+        <a href="/about/" class="block text-white">About</a>
+        <a href="/process/" class="block text-gray-400 hover:text-white">How We Work</a>
+        <a href="/reviews/" class="block text-gray-400 hover:text-white">Reviews</a>
+        <a href="/faq/" class="block text-gray-400 hover:text-white">FAQ</a>
+        <a href="/resources/" class="block text-gray-400 hover:text-white">Resources</a>
+        <a href="/contact/" class="block px-4 py-2 bg-amd-red-btn text-white rounded text-center">Contact</a>
+      </div>
+    </div>
+  </nav>
+  <script>
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+  </script>
+
+
+  <!-- ═══════════════════ HERO ═══════════════════ -->
+  <section class="pt-32 pb-20 sm:pt-40 sm:pb-28">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <div class="reveal">
+        <p class="font-mono text-sm text-amd-red-text tracking-widest uppercase mb-4">About</p>
+        <h1 class="font-mono text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+          Meet the <span class="text-amd-red-text">Engineer</span><br>Behind Your Website
+        </h1>
+        <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+          From debugging CPUs at the silicon level to engineering websites that load in under 2 seconds — same precision, different medium.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════════════ THE STORY ═══════════════════ -->
+  <section class="py-20 sm:py-28">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="reveal">
+        <h2 class="font-mono text-2xl sm:text-3xl font-bold text-white mb-8">The <span class="text-amd-red-text">Origin</span> Story</h2>
+        <div class="space-y-6 text-gray-300 leading-relaxed">
+          <p>
+            I'm <strong class="text-white">Ajaya Dahal</strong> — but most people call me AJ. I graduated from Michigan State University with a degree in engineering, then spent years at <span class="text-amd-red-text font-semibold">AMD</span> as a CPU debug engineer and FPGA lead.
+          </p>
+          <p>
+            My job was finding defects that hide in silicon — bugs invisible to everyone else. Tracing signal paths through billions of transistors, optimizing clock cycles, ensuring zero-defect tape-outs. That's the kind of precision I was trained on.
+          </p>
+          <p>
+            Then I looked at the web. And I saw the same problems: slow load times nobody notices, SEO gaps bleeding revenue, mobile experiences that drive customers away, bloated code that nobody audits. Most websites are built by designers. <strong class="text-white">Mine are engineered.</strong>
+          </p>
+          <p>
+            AjayaDesign was born from a simple idea: <span class="text-electric-blue font-medium">apply hardware-level precision to web engineering</span>. Every site goes through the same rigorous pipeline I used to validate processors — performance benchmarks, automated testing, optimization sweeps, zero-defect deployment.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════════════ PHILOSOPHY ═══════════════════ -->
+  <section class="py-20 sm:py-28 bg-surface-alt">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="reveal text-center mb-16">
+        <h2 class="font-mono text-2xl sm:text-3xl font-bold text-white mb-4">Engineering <span class="text-amd-red-text">Philosophy</span></h2>
+        <p class="text-gray-400 max-w-2xl mx-auto">The same methodology that validates silicon now builds your web presence.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="reveal bg-surface-card border border-border-dim rounded-xl p-8 hover:border-amd-red/30 transition-colors">
+          <div class="text-3xl mb-4">🔬</div>
+          <h3 class="font-mono text-lg font-bold text-white mb-3">Test Everything</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Every site runs through Lighthouse audits, cross-browser testing, mobile validation, and SEO checks before it goes live. No exceptions.</p>
+        </div>
+        <div class="reveal bg-surface-card border border-border-dim rounded-xl p-8 hover:border-amd-red/30 transition-colors">
+          <div class="text-3xl mb-4">⚡</div>
+          <h3 class="font-mono text-lg font-bold text-white mb-3">Optimize Relentlessly</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Every millisecond matters. Lazy loading, code splitting, image optimization, CDN routing — the same obsession I brought to clock cycle optimization.</p>
+        </div>
+        <div class="reveal bg-surface-card border border-border-dim rounded-xl p-8 hover:border-amd-red/30 transition-colors">
+          <div class="text-3xl mb-4">🚀</div>
+          <h3 class="font-mono text-lg font-bold text-white mb-3">Ship Fast</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Speed to market matters. Free preview in 24 hours, full site in 1-2 weeks. Automation handles the repetitive work so I can focus on what makes your site unique.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════════════ WHY AJAYA DESIGN ═══════════════════ -->
+  <section class="py-20 sm:py-28">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="reveal text-center mb-16">
+        <h2 class="font-mono text-2xl sm:text-3xl font-bold text-white mb-4">Why <span class="text-amd-red-text">AjayaDesign</span></h2>
+        <p class="text-gray-400 max-w-2xl mx-auto">What you get when an engineer builds your website.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-8">
+        <div class="reveal flex gap-4 bg-surface-card border border-border-dim rounded-xl p-6 hover:border-electric-blue/30 transition-colors">
+          <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-amd-red/10 flex items-center justify-center">
+            <span class="text-amd-red-text font-mono font-bold text-lg">95+</span>
+          </div>
+          <div>
+            <h3 class="font-mono font-bold text-white mb-1">Lighthouse Guaranteed</h3>
+            <p class="text-gray-400 text-sm">Every site ships with a 95+ Lighthouse score across Performance, SEO, Accessibility, and Best Practices. Guaranteed.</p>
+          </div>
+        </div>
+        <div class="reveal flex gap-4 bg-surface-card border border-border-dim rounded-xl p-6 hover:border-electric-blue/30 transition-colors">
+          <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-electric-blue/10 flex items-center justify-center">
+            <span class="text-electric-blue font-mono font-bold text-lg">24h</span>
+          </div>
+          <div>
+            <h3 class="font-mono font-bold text-white mb-1">Free Preview in 24 Hours</h3>
+            <p class="text-gray-400 text-sm">See your site before you commit. We build a working preview within 24 hours of your first conversation — completely free.</p>
+          </div>
+        </div>
+        <div class="reveal flex gap-4 bg-surface-card border border-border-dim rounded-xl p-6 hover:border-electric-blue/30 transition-colors">
+          <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-amd-red/10 flex items-center justify-center">
+            <span class="text-2xl">🤖</span>
+          </div>
+          <div>
+            <h3 class="font-mono font-bold text-white mb-1">AI-Powered Automation</h3>
+            <p class="text-gray-400 text-sm">Chatbots, intake forms, booking systems, email automation — AI tools that work while you sleep, turning visitors into customers.</p>
+          </div>
+        </div>
+        <div class="reveal flex gap-4 bg-surface-card border border-border-dim rounded-xl p-6 hover:border-electric-blue/30 transition-colors">
+          <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-electric-blue/10 flex items-center justify-center">
+            <span class="text-2xl">📍</span>
+          </div>
+          <div>
+            <h3 class="font-mono font-bold text-white mb-1">Local Austin Presence</h3>
+            <p class="text-gray-400 text-sm">Based in Manor, TX — serving Austin, Round Rock, Pflugerville, Georgetown, and beyond. Local knowledge, global standards.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════════════ STATS ═══════════════════ -->
+  <section class="py-20 sm:py-28 bg-surface-alt">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div class="reveal">
+          <div class="font-mono text-4xl sm:text-5xl font-bold text-amd-red-text" data-count="29">0</div>
+          <div class="font-mono text-xs text-gray-400 mt-2 uppercase tracking-wider">Sites Deployed</div>
+        </div>
+        <div class="reveal">
+          <div class="font-mono text-4xl sm:text-5xl font-bold text-electric-blue" data-count="95">0</div>
+          <div class="font-mono text-xs text-gray-400 mt-2 uppercase tracking-wider">Lighthouse Score</div>
+        </div>
+        <div class="reveal">
+          <div class="font-mono text-4xl sm:text-5xl font-bold text-amd-red-text">&lt;2<span class="text-2xl">s</span></div>
+          <div class="font-mono text-xs text-gray-400 mt-2 uppercase tracking-wider">Load Times</div>
+        </div>
+        <div class="reveal">
+          <div class="font-mono text-4xl sm:text-5xl font-bold text-electric-blue">24<span class="text-2xl">h</span></div>
+          <div class="font-mono text-xs text-gray-400 mt-2 uppercase tracking-wider">Free Preview</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════════════ BUILDER ═══════════════════ -->
+  <section class="py-20 sm:py-28">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="reveal">
+        <h2 class="font-mono text-2xl sm:text-3xl font-bold text-white mb-8">Beyond <span class="text-amd-red-text">Web Design</span></h2>
+        <div class="space-y-6 text-gray-300 leading-relaxed">
+          <p>
+            I'm a builder at heart. When I'm not engineering websites, I'm designing 3D-printed products, building drones from scratch, or experimenting with AI automation systems.
+          </p>
+          <p>
+            That tinkerer's mindset shows up in every project — I don't just build what you ask for, I find ways to make it better. Faster. More automated. More profitable. Whether it's an AI chatbot that handles your customer inquiries at 3 AM or an SEO strategy that puts you on page one, I'm always looking for the engineering edge.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
+  <!-- ═══════════════════ CTA ═══════════════════ -->
+  <section class="py-24 sm:py-32">
+    <div class="max-w-3xl mx-auto px-6 text-center">
+      <div class="reveal">
+        <h2 class="font-mono text-3xl sm:text-4xl font-bold text-white mb-4">Ready to <span class="text-amd-red">Work Together</span>?</h2>
+        <p class="text-gray-400 max-w-lg mx-auto mb-10">Let's talk about your project. Free consultation, free preview — no commitment.</p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="/contact/" class="inline-flex items-center gap-3 px-8 py-4 bg-amd-red-btn text-white font-mono font-semibold rounded hover:bg-red-800 transition-all hover:shadow-lg hover:shadow-amd-red/20">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            Let's Talk
+          </a>
+          <a href="/free-audit/" class="inline-flex items-center gap-3 px-8 py-4 border border-electric-blue text-electric-blue font-mono font-semibold rounded hover:bg-electric-blue/10 transition-all">
+            Get Free Audit
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
+  <footer class="border-t border-border-dim py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amd-red"></span>
+          <span class="font-mono font-bold text-white text-sm">Ajaya<span class="text-amd-red-text">Design</span></span>
+        </div>
+        <p class="font-mono text-xs text-gray-400 text-center">
+          Built with engineering precision in Austin, Texas &nbsp;·&nbsp; &copy; <span id="footer-year"></span> AjayaDesign
+        </p>
+        <div id="footer-system-status" class="flex items-center gap-2 text-xs font-mono text-gray-400">
+          <a href="/admin/" class="text-gray-600 hover:text-electric transition mr-3 text-sm" title="Admin Dashboard">⚙️</a>
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
+          </span>
+          <span>Checking…</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ═══════════════════ SCRIPTS ═══════════════════ -->
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-database-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script>
+    window.__firebase = firebase.initializeApp(window.__firebaseConfig);
+    window.__db = firebase.database();
+  </script>
+  <script src="/js/main.js" defer></script>
+  <script src="/js/ad-tracker.js" defer></script>
+
+
+  <!-- ═══════════════════ STICKY AI AUDIT CTA ═══════════════════ -->
+  <div id="sticky-audit-cta" class="fixed bottom-0 inset-x-0 z-40 translate-y-full transition-transform duration-500" style="display:none">
+    <div class="bg-surface-card/95 backdrop-blur-lg border-t border-border-dim px-6 py-3 flex items-center justify-center gap-4 flex-wrap">
+      <span class="text-sm text-gray-300 font-mono">Want to see how AI can grow your business?</span>
+      <a href="/free-audit/" id="sticky-audit-btn" class="inline-flex items-center gap-2 px-5 py-2 bg-electric-blue text-surface font-mono text-sm font-bold rounded hover:bg-cyan-300 transition-colors">
+        Get Free AI Audit
+      </a>
+      <button id="sticky-audit-close" class="text-gray-500 hover:text-white ml-2 text-lg" aria-label="Dismiss">&times;</button>
+    </div>
+  </div>
+  <script>
+  (function(){
+    if(sessionStorage.getItem('audit-cta-dismissed')) return;
+    var cta=document.getElementById('sticky-audit-cta');
+    var hero=document.querySelector('section:first-of-type');
+    var shown=false, timer;
+    function show(){
+      if(shown) return; shown=true;
+      cta.style.display='';
+      requestAnimationFrame(function(){requestAnimationFrame(function(){cta.classList.remove('translate-y-full')})});
+      timer=setTimeout(dismiss,30000);
+    }
+    function dismiss(){
+      cta.classList.add('translate-y-full');
+      sessionStorage.setItem('audit-cta-dismissed','1');
+      clearTimeout(timer);
+    }
+    document.getElementById('sticky-audit-close').addEventListener('click',dismiss);
+    document.getElementById('sticky-audit-btn').addEventListener('click',function(){sessionStorage.setItem('audit-cta-dismissed','1')});
+    var observer=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(!e.isIntersecting) show()});
+    },{threshold:0});
+    if(hero) observer.observe(hero);
+    else setTimeout(show, 5000);
+  })();
+  </script>
+
+  <!-- Reveal on scroll -->
+  <script>
+  (function(){
+    var reveals = document.querySelectorAll('.reveal');
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); });
+    }, {threshold: 0.1});
+    reveals.forEach(function(el){ obs.observe(el); });
+  })();
+  </script>
+
+</body>
+</html>

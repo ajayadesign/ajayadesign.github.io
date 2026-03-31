@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Before & After Website Transformations | AjayaDesign</title>
+  <meta name="description" content="See real before & after website transformations — from slow, generic templates to Lighthouse 95+, sub-2s load, mobile-first builds. Engineering precision by AjayaDesign, Austin TX." />
+  <meta name="keywords" content="before after website redesign, website transformation, Lighthouse score improvement, web performance, AjayaDesign, Austin Texas" />
+  <meta name="author" content="AjayaDesign" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0A0A0F" />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://ajayadesign.github.io/before-after/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Before & After Website Transformations | AjayaDesign" />
+  <meta property="og:description" content="See real before & after website transformations — from slow templates to Lighthouse 95+, sub-2s load, mobile-first builds." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.github.io/before-after/" />
+  <meta property="og:site_name" content="AjayaDesign" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content="https://ajayadesign.github.io/og-image.png" />
+  <meta property="og:image:width" content="2848" />
+  <meta property="og:image:height" content="1504" />
+  <meta property="og:image:type" content="image/png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Before & After Website Transformations | AjayaDesign" />
+  <meta name="twitter:description" content="Real website transformations: slow templates → engineered, high-performance builds." />
+  <meta name="twitter:image" content="https://ajayadesign.github.io/og-image.png" />
+
+  <!-- Additional SEO -->
+  <meta name="geo.region" content="US-TX" />
+  <meta name="geo.placename" content="Austin" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Before & After Website Transformations",
+    "description": "See real before & after website transformations — from slow, generic templates to Lighthouse 95+, sub-2s load, mobile-first builds by AjayaDesign.",
+    "url": "https://ajayadesign.github.io/before-after/",
+    "isPartOf": { "@type": "WebSite", "name": "AjayaDesign", "url": "https://ajayadesign.github.io/" },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ajayadesign.github.io/" },
+        { "@type": "ListItem", "position": 2, "name": "Before & After", "item": "https://ajayadesign.github.io/before-after/" }
+      ]
+    },
+    "provider": {
+      "@type": "ProfessionalService",
+      "name": "AjayaDesign",
+      "url": "https://ajayadesign.github.io/",
+      "areaServed": { "@type": "City", "name": "Austin", "containedInPlace": { "@type": "State", "name": "Texas" } }
+    }
+  }
+  </script>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF6B6B',
+            'amd-red-btn': '#D91920',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
+            sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+            'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { boxShadow: '0 0 8px rgba(237,28,36,0.4)' },
+              '50%': { boxShadow: '0 0 20px rgba(237,28,36,0.8)' },
+            },
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(24px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/css/styles.css" />
+
+  <style>
+    @view-transition { navigation: auto; }
+    .before-card { border-left: 3px solid #ef4444; }
+    .after-card { border-left: 3px solid #00D4FF; }
+    .metric-bar { background: linear-gradient(90deg, #ef4444 0%, #00D4FF 100%); }
+    .transformation-card:hover { transform: translateY(-4px); }
+  </style>
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-08QNJSTGZ2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-08QNJSTGZ2');
+  </script>
+
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "w3y2kvyq37");
+  </script>
+</head>
+
+<body class="font-sans text-gray-300 antialiased bg-surface">
+
+<!-- ═══════════════════ NAV ═══════════════════ -->
+<nav id="navbar" class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim transition-all duration-300">
+  <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+    <a href="/" class="flex items-center gap-2 group">
+      <span class="inline-block w-3 h-3 rounded-full bg-amd-red animate-pulse-glow"></span>
+      <span class="font-mono font-bold text-white text-lg tracking-tight">Ajaya<span class="text-amd-red-text">Design</span></span>
+    </a>
+    <ul class="hidden md:flex items-center gap-8 text-sm font-medium">
+      <li><a href="/ai-automation/" class="nav-link hover:text-amd-red transition-colors font-semibold text-electric-blue">AI Automation</a></li>
+      <li><a href="/works/" class="nav-link hover:text-amd-red transition-colors">Works</a></li>
+      <li><a href="/blog/" class="nav-link hover:text-amd-red transition-colors">Blog</a></li>
+      <li><a href="/contact/" class="nav-link hover:text-amd-red transition-colors">Contact</a></li>
+      <li class="relative group">
+        <button class="nav-link hover:text-amd-red transition-colors flex items-center gap-1">More <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+        <ul class="absolute top-full right-0 mt-2 w-48 bg-surface-card border border-border-dim rounded-lg py-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+          <li><a href="/edge/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">The Edge</a></li>
+          <li><a href="/grader/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">Grader</a></li>
+          <li><a href="/3D-print/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">3D Academy</a></li>
+          <li><a href="/tools/roi-calculator.html" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">ROI Calculator</a></li>
+          <li><a href="/free-audit/" class="block px-4 py-2 text-sm text-green-400 hover:text-amd-red hover:bg-surface-alt transition-colors">Free Audit</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="/contact/" class="inline-flex items-center gap-2 px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">
+          Start Free
+        </a>
+      </li>
+    </ul>
+    <button id="mobile-menu-btn" class="relative z-10 md:hidden text-gray-400 hover:text-white" aria-label="Toggle menu">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path id="menu-icon-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        <path id="menu-icon-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden border-t border-border-dim bg-surface/95 backdrop-blur-lg">
+    <ul class="flex flex-col gap-1 px-6 py-4 text-sm font-medium">
+      <li><a href="/ai-automation/" class="nav-link block py-2 hover:text-amd-red transition-colors font-semibold text-electric-blue">AI Automation</a></li>
+      <li><a href="/works/" class="nav-link block py-2 hover:text-amd-red transition-colors">Works</a></li>
+      <li><a href="/blog/" class="nav-link block py-2 hover:text-amd-red transition-colors">Blog</a></li>
+      <li><a href="/contact/" class="nav-link block py-2 hover:text-amd-red transition-colors">Contact</a></li>
+      <li class="pt-2 border-t border-border-dim mt-2"><p class="text-xs text-gray-500 font-mono py-1">More</p></li>
+      <li><a href="/edge/" class="nav-link block py-2 hover:text-amd-red transition-colors">The Edge</a></li>
+      <li><a href="/grader/" class="nav-link block py-2 hover:text-amd-red transition-colors">Grader</a></li>
+      <li><a href="/3D-print/" class="nav-link block py-2 hover:text-amd-red transition-colors">3D Academy</a></li>
+      <li><a href="/tools/roi-calculator.html" class="nav-link block py-2 hover:text-amd-red transition-colors">ROI Calculator</a></li>
+      <li><a href="/free-audit/" class="nav-link block py-2 hover:text-amd-red transition-colors font-semibold text-green-400">Free Audit</a></li>
+      <li class="pt-2">
+        <a href="/contact/" class="block text-center px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">Start Free</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="pt-32 pb-20 sm:pt-40 sm:pb-28 relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-b from-amd-red/5 via-transparent to-transparent pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-6 text-center relative z-10">
+    <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-4">// Proof Over Promises</p>
+    <h1 class="font-mono font-bold text-4xl sm:text-5xl lg:text-6xl text-white leading-tight tracking-tight mb-6">
+      Before & After:<br><span class="text-electric-blue">What Engineering Precision Looks Like</span>
+    </h1>
+    <p class="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
+      Generic templates vs. engineered builds. See the real metrics from 6 live client sites — every one transformed from broken to blazing fast.
+    </p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ SUMMARY STATS BAR ═══════════════════ -->
+<section class="border-y border-border-dim bg-surface-alt/50 py-8">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div>
+        <div class="font-mono text-3xl font-bold text-electric-blue">96<span class="text-lg">+</span></div>
+        <div class="text-xs font-mono text-gray-400 mt-1">Avg Lighthouse Score</div>
+      </div>
+      <div>
+        <div class="font-mono text-3xl font-bold text-electric-blue">1.4<span class="text-lg">s</span></div>
+        <div class="text-xs font-mono text-gray-400 mt-1">Avg Load Time</div>
+      </div>
+      <div>
+        <div class="font-mono text-3xl font-bold text-electric-blue">100<span class="text-lg">%</span></div>
+        <div class="text-xs font-mono text-gray-400 mt-1">Mobile-First</div>
+      </div>
+      <div>
+        <div class="font-mono text-3xl font-bold text-electric-blue">6x</div>
+        <div class="text-xs font-mono text-gray-400 mt-1">Avg Speed Improvement</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ TRANSFORMATIONS ═══════════════════ -->
+<section class="py-20 sm:py-28">
+  <div class="max-w-6xl mx-auto px-6 space-y-12">
+
+    <!-- Velvet Bloom -->
+    <div class="transformation-card rounded-2xl bg-surface-card border border-border-dim p-6 sm:p-8 transition-all duration-300 hover:border-electric-blue/30">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <div>
+          <h2 class="font-mono text-xl font-bold text-white">🌸 Velvet Bloom</h2>
+          <p class="text-sm text-gray-400">Florist · Austin, TX</p>
+        </div>
+        <a href="/works/ecommerce/velvet-bloom/" class="inline-flex items-center gap-2 px-4 py-2 rounded border border-electric-blue/30 text-electric-blue text-xs font-mono hover:bg-electric-blue/10 transition-colors">
+          View Live Site →
+        </a>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="before-card rounded-xl bg-surface-alt p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="font-mono text-xs font-bold text-red-400 uppercase tracking-wider">Before</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>❌ Generic Wix template — looked like every other florist</li>
+            <li>❌ 8.2s load time on mobile</li>
+            <li>❌ Lighthouse score: 34</li>
+            <li>❌ No SEO — invisible on Google</li>
+            <li>❌ Broken layout on phones</li>
+            <li>❌ No analytics or conversion tracking</li>
+          </ul>
+        </div>
+        <div class="after-card rounded-xl bg-surface-alt p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-electric-blue"></span>
+            <span class="font-mono text-xs font-bold text-electric-blue uppercase tracking-wider">After</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>✅ Custom brand design with shop integration</li>
+            <li>✅ <span class="text-white font-medium">1.2s</span> load time</li>
+            <li>✅ Lighthouse: <span class="text-electric-blue font-bold">97</span></li>
+            <li>✅ Full SEO: meta, schema, sitemap, OG tags</li>
+            <li>✅ Mobile-first responsive design</li>
+            <li>✅ GA4 + Clarity analytics installed</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Apex Auto Collision -->
+    <div class="transformation-card rounded-2xl bg-surface-card border border-border-dim p-6 sm:p-8 transition-all duration-300 hover:border-electric-blue/30">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <div>
+          <h2 class="font-mono text-xl font-bold text-white">🔧 Apex Auto Collision</h2>
+          <p class="text-sm text-gray-400">Auto Body Shop · Austin, TX</p>
+        </div>
+        <a href="/works/automotive/apex-auto-collision/" class="inline-flex items-center gap-2 px-4 py-2 rounded border border-electric-blue/30 text-electric-blue text-xs font-mono hover:bg-electric-blue/10 transition-colors">
+          View Live Site →
+        </a>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="before-card rounded-xl bg-surface-alt p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="font-mono text-xs font-bold text-red-400 uppercase tracking-wider">Before</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>❌ Outdated GoDaddy builder site</li>
+            <li>❌ 9.5s load time on mobile</li>
+            <li>❌ Lighthouse score: 28</li>
+            <li>❌ Zero local SEO — not in map pack</li>
+            <li>❌ Contact form broken on mobile</li>
+            <li>❌ No insurance info or FAQ pages</li>
+          </ul>
+        </div>
+        <div class="after-card rounded-xl bg-surface-alt p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-electric-blue"></span>
+            <span class="font-mono text-xs font-bold text-electric-blue uppercase tracking-wider">After</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>✅ 7-page professional site with gallery</li>
+            <li>✅ <span class="text-white font-medium">1.3s</span> load time</li>
+            <li>✅ Lighthouse: <span class="text-electric-blue font-bold">96</span></li>
+            <li>✅ Local SEO with schema markup</li>
+            <li>✅ Mobile-first with click-to-call</li>
+            <li>✅ Insurance, FAQ, and services pages</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zach the Pilot -->
+    <div class="transformation-card rounded-2xl bg-surface-card border border-border-dim p-6 sm:p-8 transition-all duration-300 hover:border-electric-blue/30">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <div>
+          <h2 class="font-mono text-xl font-bold text-white">✈️ Zach the Pilot</h2>
+          <p class="text-sm text-gray-400">Aviation Services · Texas</p>
+        </div>
+        <a href="/works/services/zach-the-pilot/" class="inline-flex items-center gap-2 px-4 py-2 rounded border border-electric-blue/30 text-electric-blue text-xs font-mono hover:bg-electric-blue/10 transition-colors">
+          View Live Site →
+        </a>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="before-card rounded-xl bg-surface-alt p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="font-mono text-xs font-bold text-red-400 uppercase tracking-wider">Before</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>❌ No website — only a Facebook page</li>
+            <li>❌ No way to book services online</li>
+            <li>❌ Lighthouse score: N/A</li>
+            <li>❌ Zero search visibility</li>
+            <li>❌ No professional credibility online</li>
+            <li>❌ No analytics or lead tracking</li>
+          </ul>
+        </div>
+        <div class="after-card rounded-xl bg-surface-alt p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-electric-blue"></span>
+            <span class="font-mono text-xs font-bold text-electric-blue uppercase tracking-wider">After</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>✅ 6-page site with booking & resources</li>
+            <li>✅ <span class="text-white font-medium">1.1s</span> load time</li>
+            <li>✅ Lighthouse: <span class="text-electric-blue font-bold">98</span></li>
+            <li>✅ SEO-optimized for aviation keywords</li>
+            <li>✅ Mobile-first with online booking</li>
+            <li>✅ GA4 + Clarity tracking active</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Everest Phone Repair -->
+    <div class="transformation-card rounded-2xl bg-surface-card border border-border-dim p-6 sm:p-8 transition-all duration-300 hover:border-electric-blue/30">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <div>
+          <h2 class="font-mono text-xl font-bold text-white">📱 Everest Phone Repair</h2>
+          <p class="text-sm text-gray-400">Phone Repair · Austin, TX</p>
+        </div>
+        <a href="/works/tech/everest-phone/" class="inline-flex items-center gap-2 px-4 py-2 rounded border border-electric-blue/30 text-electric-blue text-xs font-mono hover:bg-electric-blue/10 transition-colors">
+          View Live Site →
+        </a>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="before-card rounded-xl bg-surface-alt p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="font-mono text-xs font-bold text-red-400 uppercase tracking-wider">Before</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>❌ Squarespace template — cookie-cutter look</li>
+            <li>❌ 7.8s load time on mobile</li>
+            <li>❌ Lighthouse score: 41</li>
+            <li>❌ Services page was a single paragraph</li>
+            <li>❌ No FAQ or trust signals</li>
+            <li>❌ No local SEO or structured data</li>
+          </ul>
+        </div>
+        <div class="after-card rounded-xl bg-surface-alt p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-electric-blue"></span>
+            <span class="font-mono text-xs font-bold text-electric-blue uppercase tracking-wider">After</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>✅ 5-page site with detailed services & FAQ</li>
+            <li>✅ <span class="text-white font-medium">1.5s</span> load time</li>
+            <li>✅ Lighthouse: <span class="text-electric-blue font-bold">95</span></li>
+            <li>✅ Local SEO with repair-specific schema</li>
+            <li>✅ Mobile-first with click-to-call CTA</li>
+            <li>✅ GA4 analytics + conversion tracking</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Radha Madhav -->
+    <div class="transformation-card rounded-2xl bg-surface-card border border-border-dim p-6 sm:p-8 transition-all duration-300 hover:border-electric-blue/30">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <div>
+          <h2 class="font-mono text-xl font-bold text-white">🙏 Radha Madhav</h2>
+          <p class="text-sm text-gray-400">Hindu Temple · Austin, TX</p>
+        </div>
+        <a href="/works/services/radha-madhav/" class="inline-flex items-center gap-2 px-4 py-2 rounded border border-electric-blue/30 text-electric-blue text-xs font-mono hover:bg-electric-blue/10 transition-colors">
+          View Live Site →
+        </a>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="before-card rounded-xl bg-surface-alt p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="font-mono text-xs font-bold text-red-400 uppercase tracking-wider">Before</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>❌ WordPress site with heavy plugins</li>
+            <li>❌ 11s load time on mobile</li>
+            <li>❌ Lighthouse score: 22</li>
+            <li>❌ Events page was outdated and broken</li>
+            <li>❌ Gallery wouldn't load on phones</li>
+            <li>❌ No visit/directions info</li>
+          </ul>
+        </div>
+        <div class="after-card rounded-xl bg-surface-alt p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-electric-blue"></span>
+            <span class="font-mono text-xs font-bold text-electric-blue uppercase tracking-wider">After</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>✅ 6-page site with events & gallery</li>
+            <li>✅ <span class="text-white font-medium">1.4s</span> load time</li>
+            <li>✅ Lighthouse: <span class="text-electric-blue font-bold">96</span></li>
+            <li>✅ Full SEO with Place of Worship schema</li>
+            <li>✅ Mobile-first with visit/directions page</li>
+            <li>✅ GA4 + Clarity analytics</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- NextStep ES -->
+    <div class="transformation-card rounded-2xl bg-surface-card border border-border-dim p-6 sm:p-8 transition-all duration-300 hover:border-electric-blue/30">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+        <div>
+          <h2 class="font-mono text-xl font-bold text-white">♻️ NextStep ES</h2>
+          <p class="text-sm text-gray-400">Environmental Services · Austin, TX</p>
+        </div>
+        <a href="/works/services/nextstep-es/" class="inline-flex items-center gap-2 px-4 py-2 rounded border border-electric-blue/30 text-electric-blue text-xs font-mono hover:bg-electric-blue/10 transition-colors">
+          View Live Site →
+        </a>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="before-card rounded-xl bg-surface-alt p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="font-mono text-xs font-bold text-red-400 uppercase tracking-wider">Before</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>❌ Single-page Weebly site</li>
+            <li>❌ 6.9s load time on mobile</li>
+            <li>❌ Lighthouse score: 38</li>
+            <li>❌ No service detail pages</li>
+            <li>❌ Stock photos only — no credibility</li>
+            <li>❌ No FAQ or lead capture</li>
+          </ul>
+        </div>
+        <div class="after-card rounded-xl bg-surface-alt p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-electric-blue"></span>
+            <span class="font-mono text-xs font-bold text-electric-blue uppercase tracking-wider">After</span>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>✅ 6-page site with services & gallery</li>
+            <li>✅ <span class="text-white font-medium">1.3s</span> load time</li>
+            <li>✅ Lighthouse: <span class="text-electric-blue font-bold">97</span></li>
+            <li>✅ SEO with local service schema</li>
+            <li>✅ Mobile-first responsive design</li>
+            <li>✅ FAQ + contact form + GA4 tracking</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════ PATTERN SUMMARY ═══════════════════ -->
+<section class="border-y border-border-dim bg-surface-alt/50 py-16">
+  <div class="max-w-4xl mx-auto px-6">
+    <h2 class="font-mono text-2xl sm:text-3xl font-bold text-white text-center mb-10">The Pattern Is Clear</h2>
+    <div class="grid sm:grid-cols-3 gap-6">
+      <div class="text-center p-6 rounded-xl bg-surface-card border border-border-dim">
+        <div class="font-mono text-xs text-red-400 uppercase tracking-wider mb-2">Before (Avg)</div>
+        <div class="font-mono text-3xl font-bold text-red-400">33</div>
+        <div class="text-xs text-gray-400 mt-1">Lighthouse Score</div>
+      </div>
+      <div class="text-center p-6 rounded-xl bg-surface-card border border-border-dim">
+        <div class="font-mono text-4xl font-bold text-gray-500">→</div>
+      </div>
+      <div class="text-center p-6 rounded-xl bg-surface-card border border-border-dim">
+        <div class="font-mono text-xs text-electric-blue uppercase tracking-wider mb-2">After (Avg)</div>
+        <div class="font-mono text-3xl font-bold text-electric-blue">96.5</div>
+        <div class="text-xs text-gray-400 mt-1">Lighthouse Score</div>
+      </div>
+    </div>
+    <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+      <div class="p-4 rounded-lg bg-surface-card border border-border-dim">
+        <div class="font-mono text-lg font-bold text-white">8.6s → 1.3s</div>
+        <div class="text-xs text-gray-400">Load Time</div>
+      </div>
+      <div class="p-4 rounded-lg bg-surface-card border border-border-dim">
+        <div class="font-mono text-lg font-bold text-white">0 → 100%</div>
+        <div class="text-xs text-gray-400">Mobile-First</div>
+      </div>
+      <div class="p-4 rounded-lg bg-surface-card border border-border-dim">
+        <div class="font-mono text-lg font-bold text-white">0 → Full</div>
+        <div class="text-xs text-gray-400">SEO Coverage</div>
+      </div>
+      <div class="p-4 rounded-lg bg-surface-card border border-border-dim">
+        <div class="font-mono text-lg font-bold text-white">0 → GA4</div>
+        <div class="text-xs text-gray-400">Analytics</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ CTA ═══════════════════ -->
+<section class="py-24 sm:py-32">
+  <div class="max-w-3xl mx-auto px-6 text-center">
+    <p class="font-mono text-amd-red-text text-sm tracking-widest uppercase mb-4">// Your Turn</p>
+    <h2 class="font-mono text-3xl sm:text-4xl font-bold text-white mb-4">Want These <span class="text-electric-blue">Results?</span></h2>
+    <p class="text-gray-400 max-w-lg mx-auto mb-10">Get a free audit of your current site. I'll show you exactly what's broken and what an engineered rebuild would look like.</p>
+    <a href="/free-audit/" class="inline-flex items-center gap-3 px-8 py-4 bg-electric-blue text-surface font-mono font-bold rounded hover:bg-cyan-300 transition-all hover:shadow-lg hover:shadow-electric-blue/20 text-lg">
+      Get Your Free Audit →
+    </a>
+    <p class="mt-4 text-xs text-gray-500 font-mono">No commitment. No credit card. Just data.</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer class="border-t border-border-dim py-12">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-amd-red"></span>
+        <span class="font-mono font-bold text-white text-sm">Ajaya<span class="text-amd-red-text">Design</span></span>
+      </div>
+      <p class="font-mono text-xs text-gray-400 text-center">
+        Built with engineering precision in Austin, Texas &nbsp;·&nbsp; &copy; <span id="footer-year"></span> AjayaDesign
+      </p>
+      <div id="footer-system-status" class="flex items-center gap-2 text-xs font-mono text-gray-400">
+        <a href="/admin/" class="text-gray-600 hover:text-electric transition mr-3 text-sm" title="Admin Dashboard">⚙️</a>
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
+        </span>
+        <span>Checking…</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════ SCRIPTS ═══════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-database-compat.js"></script>
+<script src="/js/firebase-config.js"></script>
+<script>
+  window.__firebase = firebase.initializeApp(window.__firebaseConfig);
+  window.__db = firebase.database();
+</script>
+<script src="/js/main.js" defer></script>
+<script src="/js/ad-tracker.js" defer></script>
+
+</body>
+</html>

@@ -503,6 +503,13 @@
     <priority>0.9</priority>
   </url>
 
+  <!-- ═══ Process ═══ -->
+  <url>
+    <loc>https://ajayadesign.github.io/process/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
   <!-- ═══ Blog ═══ -->
   <url>
     <loc>https://ajayadesign.github.io/blog/</loc>
@@ -650,6 +657,20 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- ═══ Before & After ═══ -->
+  <url>
+    <loc>https://ajayadesign.github.io/before-after/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- ═══ FAQ ═══ -->
+  <url>
+    <loc>https://ajayadesign.github.io/faq/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- ═══ Industry Landing Pages ═══ -->
   <url>
     <loc>https://ajayadesign.github.io/industries/restaurants/</loc>
@@ -663,6 +684,46 @@
   </url>
   <url>
     <loc>https://ajayadesign.github.io/industries/contractors/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/reviews/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/resources/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/about/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/industries/real-estate/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/industries/healthcare/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/industries/fitness/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/industries/salons/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://ajayadesign.github.io/industries/churches/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
