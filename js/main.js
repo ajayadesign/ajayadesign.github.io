@@ -5,7 +5,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   // ── Footer Year ──
-  document.getElementById('footer-year').textContent = new Date().getFullYear();
+  const footerYear = document.getElementById('footer-year');
+  if (footerYear) footerYear.textContent = new Date().getFullYear();
 
   // ── Mobile Menu Toggle ──
   const menuBtn   = document.getElementById('mobile-menu-btn');

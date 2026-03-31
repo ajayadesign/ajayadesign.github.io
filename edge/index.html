@@ -167,20 +167,31 @@
 
 <body class="font-sans text-gray-300 antialiased" data-audio="/assets/audio/ambient-pcb.mp3">
 
-  <!-- ═══════════════════ NAV ═══════════════════ -->
+<!-- ═══════════════════ NAV ═══════════════════ -->
   <nav id="navbar" class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim transition-all duration-300">
     <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+      <!-- Logo -->
       <a href="/" class="flex items-center gap-2 group">
         <span class="inline-block w-3 h-3 rounded-full bg-amd-red animate-pulse-glow"></span>
         <span class="font-mono font-bold text-white text-lg tracking-tight">Ajaya<span class="text-amd-red-text">Design</span></span>
       </a>
 
+      <!-- Desktop Links -->
       <ul class="hidden md:flex items-center gap-8 text-sm font-medium">
-        <li><a href="/edge/" class="nav-link active hover:text-amd-red transition-colors">The Edge</a></li>
         <li><a href="/ai-automation/" class="nav-link hover:text-amd-red transition-colors font-semibold text-electric-blue">AI Automation</a></li>
         <li><a href="/works/" class="nav-link hover:text-amd-red transition-colors">Works</a></li>
-        <li><a href="/3D-print/" class="nav-link hover:text-amd-red transition-colors">3D Academy</a></li>
+        <li><a href="/blog/" class="nav-link hover:text-amd-red transition-colors">Blog</a></li>
         <li><a href="/contact/" class="nav-link hover:text-amd-red transition-colors">Contact</a></li>
+        <li class="relative group">
+          <button class="nav-link hover:text-amd-red transition-colors flex items-center gap-1">More <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+          <ul class="absolute top-full right-0 mt-2 w-48 bg-surface-card border border-border-dim rounded-lg py-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+            <li><a href="/edge/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">The Edge</a></li>
+            <li><a href="/grader/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">Grader</a></li>
+            <li><a href="/3D-print/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">3D Academy</a></li>
+            <li><a href="/tools/roi-calculator.html" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">ROI Calculator</a></li>
+            <li><a href="/free-audit/" class="block px-4 py-2 text-sm text-green-400 hover:text-amd-red hover:bg-surface-alt transition-colors">Free Audit</a></li>
+          </ul>
+        </li>
         <li>
           <a href="/contact/" class="inline-flex items-center gap-2 px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">
             Start Free
@@ -188,19 +199,7 @@
         </li>
       </ul>
 
-      <div id="nav-system-status" class="hidden md:flex items-center gap-2 text-xs font-mono text-gray-400">
-        <span class="relative flex h-2 w-2">
-          <span id="nav-status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
-          <span id="nav-status-dot" class="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
-        </span>
-        <span id="nav-status-text">Checking…</span>
-      </div>
-
-      <!-- Audio Toggle -->
-      <button id="audio-toggle" class="hidden md:flex items-center justify-center w-8 h-8 text-gray-500 hover:text-white transition-colors" aria-label="Toggle ambient audio" title="Ambient audio">
-        <svg id="audio-icon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5.586v12.828a1 1 0 01-1.707.707L5.586 15z"/></svg>
-      </button>
-
+      <!-- Mobile Menu Button -->
       <button id="mobile-menu-btn" class="relative z-10 md:hidden text-gray-400 hover:text-white" aria-label="Toggle menu">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path id="menu-icon-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -209,26 +208,25 @@
       </button>
     </div>
 
+    <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-border-dim bg-surface/95 backdrop-blur-lg">
       <ul class="flex flex-col gap-1 px-6 py-4 text-sm font-medium">
-        <li><a href="/edge/" class="nav-link active block py-2 hover:text-amd-red transition-colors">The Edge</a></li>
         <li><a href="/ai-automation/" class="nav-link block py-2 hover:text-amd-red transition-colors font-semibold text-electric-blue">AI Automation</a></li>
         <li><a href="/works/" class="nav-link block py-2 hover:text-amd-red transition-colors">Works</a></li>
-        <li><a href="/3D-print/" class="nav-link block py-2 hover:text-amd-red transition-colors">3D Academy</a></li>
+        <li><a href="/blog/" class="nav-link block py-2 hover:text-amd-red transition-colors">Blog</a></li>
         <li><a href="/contact/" class="nav-link block py-2 hover:text-amd-red transition-colors">Contact</a></li>
+        <li class="pt-2 border-t border-border-dim mt-2">
+          <p class="text-xs text-gray-500 font-mono py-1">More</p>
+        </li>
+        <li><a href="/edge/" class="nav-link block py-2 hover:text-amd-red transition-colors">The Edge</a></li>
+        <li><a href="/grader/" class="nav-link block py-2 hover:text-amd-red transition-colors">Grader</a></li>
+        <li><a href="/3D-print/" class="nav-link block py-2 hover:text-amd-red transition-colors">3D Academy</a></li>
+        <li><a href="/tools/roi-calculator.html" class="nav-link block py-2 hover:text-amd-red transition-colors">ROI Calculator</a></li>
+        <li><a href="/free-audit/" class="nav-link block py-2 hover:text-amd-red transition-colors font-semibold text-green-400">Free Audit</a></li>
         <li class="pt-2">
           <a href="/contact/" class="block text-center px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">
             Start Free
           </a>
-        </li>
-        <li class="pt-2">
-          <div id="mobile-system-status" class="flex items-center gap-2 text-xs font-mono text-gray-400">
-            <span class="relative flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-gray-500"></span>
-            </span>
-            Checking…
-          </div>
         </li>
       </ul>
     </div>
