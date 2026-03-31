@@ -100,8 +100,8 @@ for (const pg of PAGES_WITH_CANVAS) {
     });
 
     test(`content sections have opaque overlay`, async ({ page }) => {
-      await page.goto(pg.path);
-      await page.waitForTimeout(500);
+      await page.goto(pg.path, { waitUntil: 'networkidle' });
+      await page.locator('.content-over-video').first().waitFor({ state: 'attached', timeout: 15000 });
 
       const contentInfo = await page.evaluate(() => {
         const sections = document.querySelectorAll('.content-over-video');
