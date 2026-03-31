@@ -223,3 +223,22 @@ This is a starting point. Add your own conventions, style, and rules as you figu
 - Permissions are locked: `chmod 600 ~/.env.secrets` (owner-only read)
 
 If you need a new env var, add it to `~/.env.secrets` and document it in `.env.example`.
+
+## 🧪 Testing (MANDATORY — Before Every Push)
+
+**Run Playwright tests locally before pushing ANY change to main:**
+
+```bash
+cd /home/aj/website/ajayadesign.github.io
+npx playwright test --reporter=line
+```
+
+- **ALL tests must pass** before `git push`
+- If tests fail, fix them FIRST — don't push broken code
+- CI runs the same tests and blocks deploy on failure
+- Common failure causes:
+  - **Color contrast** — use `text-gray-400` (not `text-gray-500`) on dark backgrounds for WCAG AA
+  - **New form fields** — update `tests/accessibility.spec.js` if you add required fields
+  - **Nav changes** — update `tests/debug-scrollytelling.spec.js` if you modify navigation structure
+- Test suite: 122 tests (Desktop + Mobile Chrome), ~1-2 minutes to run
+- **No exceptions. No "I'll fix tests later." Fix before push.**
