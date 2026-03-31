@@ -114,6 +114,7 @@
 
       <ul class="hidden md:flex items-center gap-8 text-sm font-medium">
         <li><a href="/edge/" class="nav-link hover:text-amd-red transition-colors">The Edge</a></li>
+        <li><a href="/ai-automation/" class="nav-link hover:text-amd-red transition-colors font-semibold text-electric-blue">AI Automation</a></li>
         <li><a href="/works/" class="nav-link hover:text-amd-red transition-colors">Works</a></li>
         <li><a href="/3D-print/" class="nav-link hover:text-amd-red transition-colors">3D Academy</a></li>
         <li><a href="/contact/" class="nav-link active hover:text-amd-red transition-colors">Contact</a></li>
@@ -148,6 +149,7 @@
     <div id="mobile-menu" class="hidden md:hidden border-t border-border-dim bg-surface/95 backdrop-blur-lg">
       <ul class="flex flex-col gap-1 px-6 py-4 text-sm font-medium">
         <li><a href="/edge/" class="nav-link block py-2 hover:text-amd-red transition-colors">The Edge</a></li>
+        <li><a href="/ai-automation/" class="nav-link block py-2 hover:text-amd-red transition-colors font-semibold text-electric-blue">AI Automation</a></li>
         <li><a href="/works/" class="nav-link block py-2 hover:text-amd-red transition-colors">Works</a></li>
         <li><a href="/3D-print/" class="nav-link block py-2 hover:text-amd-red transition-colors">3D Academy</a></li>
         <li><a href="/contact/" class="nav-link active block py-2 hover:text-amd-red transition-colors">Contact</a></li>
@@ -179,6 +181,7 @@
         Get Your <span class="text-amd-red">Free Preview</span>
       </h1>
       <p class="mt-4 text-gray-400 max-w-lg mx-auto text-lg">Fill out the form and I'll send you a free site preview within 24 hours — no payment, no commitment.</p>
+      <p class="mt-3 text-electric-blue max-w-lg mx-auto text-sm font-mono">🤖 Looking for AI Automation? Tell us about your business and we'll show you what's possible. <span class="text-amd-red-text font-bold">Starting at $99/mo.</span></p>
     </div>
   </section>
 
@@ -203,6 +206,24 @@
           <input type="hidden" name="_captcha" value="false">
           <input type="hidden" name="_next" value="https://ajayadesign.github.io/contact/#thank-you">
           <input type="hidden" name="_template" value="box">
+
+          <!-- Service Type -->
+          <div>
+            <label for="service-type" class="block font-mono text-sm text-gray-400 mb-2">
+              <span class="text-amd-red">$</span> service_type
+            </label>
+            <select id="service-type" name="service_type" required
+              class="w-full px-4 py-3 rounded-lg bg-surface border border-border-dim text-white font-mono text-sm focus:outline-none focus:border-amd-red focus:ring-1 focus:ring-amd-red/50 transition-colors">
+              <option value="" disabled selected class="text-gray-600">What do you need?</option>
+              <option value="Website Design">Website Design</option>
+              <option value="Website Rebuild">Website Rebuild</option>
+              <option value="AI Chatbot + Website">AI Chatbot + Website</option>
+              <option value="AI Workflow Automation">AI Workflow Automation</option>
+              <option value="Full AI Business Suite">Full AI Business Suite</option>
+              <option value="Custom AI Solution">Custom AI Solution</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
 
           <!-- Business Name -->
           <div>
