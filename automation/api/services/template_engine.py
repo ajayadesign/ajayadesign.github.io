@@ -94,9 +94,9 @@ STEP1_NO_WEBSITE_OPTIONS = [
 
 NO_WEBSITE_SUBJECT_VARIANTS = [
     "{{business_name}} — quick question",
-    "{{owner_first_name}}, noticed something about {{business_name}}",
     "{{business_name}} on Google — thought you should know",
-    "{{owner_first_name}}, your competitors have websites",
+    "quick thought about {{business_name}}",
+    "noticed something about {{business_name}}",
 ]
 
 def _pick_subject(step: int, no_website: bool = False) -> str:

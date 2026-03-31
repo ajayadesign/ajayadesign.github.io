@@ -55,8 +55,18 @@ def _parse_name(raw: str) -> tuple[str, str]:
     """
     Parse 'LAST, FIRST MIDDLE' → (first_name, full_name).
     Returns (first_name, "First Last") or ("", raw) if parsing fails.
+    Also handles business names with leading suffixes like 'LLC ACME CORP'.
     """
+    import re as _re
     raw = raw.strip()
+
+    # Strip leading corporate suffixes (LLC, Inc, Ltd, Corp, Co, DBA)
+    suffix_match = _re.match(r'^(Inc|Llc|LLC|Ltd|LTD|Corp|CORP|Co|CO|Dba|DBA)\s+(.+)$', raw, _re.IGNORECASE)
+    if suffix_match:
+        suffix = suffix_match.group(1)
+        rest = suffix_match.group(2)
+        raw = f"{rest}, {suffix}"  # move to end before further parsing
+
     if "," in raw:
         parts = raw.split(",", 1)
         last = parts[0].strip().title()

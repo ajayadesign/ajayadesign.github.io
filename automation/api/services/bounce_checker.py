@@ -85,8 +85,9 @@ def _connect_imap():
     if not imap_user or not imap_pass:
         raise RuntimeError("SMTP_EMAIL / SMTP_APP_PASSWORD not configured")
 
-    conn = imaplib.IMAP4_SSL(IMAP_HOST, IMAP_PORT)
+    conn = imaplib.IMAP4_SSL(IMAP_HOST, IMAP_PORT, timeout=30)
     conn.login(imap_user, imap_pass)
+    conn.socket().settimeout(60)  # 60s timeout on all IMAP operations
     return conn
 
 
