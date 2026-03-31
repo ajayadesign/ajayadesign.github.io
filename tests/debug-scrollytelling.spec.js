@@ -217,7 +217,20 @@ test('navigating between pages preserves scroll-canvas architecture', async ({ p
       await link.waitFor({ state: 'visible', timeout: 5000 });
       await link.click();
     } else {
-      await page.click(`a[href="${href}"]`);
+      // Try direct visible nav link first, otherwise use More dropdown
+      const directLink = page.locator(`nav a[href="${href}"]:visible`).first();
+      if (await directLink.count() > 0) {
+        await directLink.click();
+      } else {
+        // Link is in the "More" dropdown — hover to reveal
+        const moreBtn = page.locator('nav button:has-text("More")');
+        if (await moreBtn.count() > 0) {
+          await moreBtn.hover();
+          await page.waitForTimeout(400);
+        }
+        const dropdownLink = page.locator(`a[href="${href}"]:visible`).first();
+        await dropdownLink.click();
+      }
     }
   }
 

@@ -65,6 +65,11 @@ test('intake form has all required fields and submits', async ({ page }) => {
 
   // Fill all required fields and submit
   await form.locator('#business-name').scrollIntoViewIfNeeded();
+  // Select service type if the dropdown exists (AI automation update)
+  const serviceType = form.locator('#service-type');
+  if (await serviceType.count() > 0) {
+    await serviceType.selectOption('Website Design');
+  }
   await form.locator('#business-name').fill('Test Biz');
   await form.locator('#niche').fill('Tech');
   await form.locator('#goals').fill('Build a site');
