@@ -242,15 +242,20 @@
 
       <!-- Desktop Links -->
       <ul class="hidden md:flex items-center gap-8 text-sm font-medium">
-        <li><a href="/edge/" class="nav-link hover:text-amd-red transition-colors">The Edge</a></li>
         <li><a href="/ai-automation/" class="nav-link hover:text-amd-red transition-colors font-semibold text-electric-blue">AI Automation</a></li>
         <li><a href="/works/" class="nav-link hover:text-amd-red transition-colors">Works</a></li>
-        <li><a href="/grader/" class="nav-link hover:text-amd-red transition-colors">Grader</a></li>
-        <li><a href="/3D-print/" class="nav-link hover:text-amd-red transition-colors">3D Academy</a></li>
         <li><a href="/blog/" class="nav-link hover:text-amd-red transition-colors">Blog</a></li>
         <li><a href="/contact/" class="nav-link hover:text-amd-red transition-colors">Contact</a></li>
-        <li><a href="/tools/roi-calculator.html" class="nav-link hover:text-amd-red transition-colors">ROI Calculator</a></li>
-        <li><a href="/free-audit/" class="nav-link hover:text-amd-red transition-colors font-semibold text-green-400">Free Audit</a></li>
+        <li class="relative group">
+          <button class="nav-link hover:text-amd-red transition-colors flex items-center gap-1">More <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+          <ul class="absolute top-full right-0 mt-2 w-48 bg-surface-card border border-border-dim rounded-lg py-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+            <li><a href="/edge/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">The Edge</a></li>
+            <li><a href="/grader/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">Grader</a></li>
+            <li><a href="/3D-print/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">3D Academy</a></li>
+            <li><a href="/tools/roi-calculator.html" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">ROI Calculator</a></li>
+            <li><a href="/free-audit/" class="block px-4 py-2 text-sm text-green-400 hover:text-amd-red hover:bg-surface-alt transition-colors">Free Audit</a></li>
+          </ul>
+        </li>
         <li>
           <a href="/contact/" class="inline-flex items-center gap-2 px-5 py-2 bg-amd-red-btn text-white rounded font-mono text-sm hover:bg-red-800 transition-colors">
             Start Free
@@ -284,13 +289,16 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-border-dim bg-surface/95 backdrop-blur-lg">
       <ul class="flex flex-col gap-1 px-6 py-4 text-sm font-medium">
-        <li><a href="/edge/" class="nav-link block py-2 hover:text-amd-red transition-colors">The Edge</a></li>
         <li><a href="/ai-automation/" class="nav-link block py-2 hover:text-amd-red transition-colors font-semibold text-electric-blue">AI Automation</a></li>
         <li><a href="/works/" class="nav-link block py-2 hover:text-amd-red transition-colors">Works</a></li>
-        <li><a href="/grader/" class="nav-link block py-2 hover:text-amd-red transition-colors">Grader</a></li>
-        <li><a href="/3D-print/" class="nav-link block py-2 hover:text-amd-red transition-colors">3D Academy</a></li>
         <li><a href="/blog/" class="nav-link block py-2 hover:text-amd-red transition-colors">Blog</a></li>
         <li><a href="/contact/" class="nav-link block py-2 hover:text-amd-red transition-colors">Contact</a></li>
+        <li class="pt-2 border-t border-border-dim mt-2">
+          <p class="text-xs text-gray-500 font-mono py-1">More</p>
+        </li>
+        <li><a href="/edge/" class="nav-link block py-2 hover:text-amd-red transition-colors">The Edge</a></li>
+        <li><a href="/grader/" class="nav-link block py-2 hover:text-amd-red transition-colors">Grader</a></li>
+        <li><a href="/3D-print/" class="nav-link block py-2 hover:text-amd-red transition-colors">3D Academy</a></li>
         <li><a href="/tools/roi-calculator.html" class="nav-link block py-2 hover:text-amd-red transition-colors">ROI Calculator</a></li>
         <li><a href="/free-audit/" class="nav-link block py-2 hover:text-amd-red transition-colors font-semibold text-green-400">Free Audit</a></li>
         <li class="pt-2">
@@ -336,7 +344,7 @@
             <span class="text-amd-red">Is One Click Away.</span>
           </h1>
           <p class="mt-6 max-w-lg text-base sm:text-lg text-gray-300 leading-relaxed">
-            I build <span class="text-electric-blue font-medium">blazing-fast, SEO-tuned websites</span> that turn visitors into paying customers — engineered with the precision of a hardware lab.
+            I build <span class="text-electric-blue font-medium">AI-powered websites</span> that capture leads, book appointments, and grow revenue — engineered with the precision of a hardware lab.
           </p>
         </div>
 
@@ -361,7 +369,7 @@
         <!-- BOTTOM-LEFT: Tagline -->
         <div class="flex items-end pb-8" data-scroll-fade data-scroll-start="0.2" data-scroll-end="1.0">
           <p class="font-mono text-xs sm:text-sm text-gray-300 max-w-sm leading-relaxed tracking-wide">
-            Engineering-grade web design. Austin, Texas — serving worldwide.
+            Web Design & AI Automation. Austin, Texas — serving worldwide.
           </p>
         </div>
 
@@ -374,6 +382,16 @@
         </div>
       </div>
   </section>
+
+  <div class="gradient-line"></div>
+
+  <!-- ═══════════════════ TRUST BAR ═══════════════════ -->
+  <div class="content-over-video">
+    <div class="max-w-4xl mx-auto px-6 py-6 flex items-center justify-center gap-6 text-sm font-mono text-gray-400">
+      <span>Trusted by <span class="text-white font-semibold">25+</span> Austin businesses</span>
+      <span class="hidden sm:inline-flex items-center gap-4 text-lg">🏥 🍽️ ⚖️ 🔧</span>
+    </div>
+  </div>
 
   <div class="gradient-line"></div>
 
@@ -616,6 +634,65 @@
   <div class="gradient-line"></div>
 
 
+  <!-- ═══════════════════ BUILT FOR REAL BUSINESSES ═══════════════════ -->
+  <section class="content-over-video reveal py-20 border-t border-border-dim">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <p class="font-mono text-gray-200 text-xs tracking-widest uppercase mb-2">// Social Proof</p>
+      <h2 class="text-3xl sm:text-4xl font-mono font-bold text-white mb-4">Built for Real Businesses</h2>
+      <p class="text-gray-400 max-w-2xl mx-auto mb-12">We build AI automation for businesses like yours. Here's what we can do in 24 hours.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <!-- Card 1: Law Firm -->
+        <a href="/demo/ai-chatbot/" class="group bg-surface-alt border border-border-dim rounded-2xl p-8 text-left hover:border-electric-blue transition-all hover:-translate-y-1">
+          <span class="text-4xl mb-4 block">⚖️</span>
+          <h3 class="font-mono font-bold text-white text-lg mb-3">Law Firm Intake Bot</h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4">Built in 24 hours. Qualifies leads in English &amp; Spanish. Books consultations on autopilot.</p>
+          <span class="font-mono text-sm font-bold text-amd-red group-hover:text-white transition-colors">Try the demo →</span>
+        </a>
+        <!-- Card 2: Restaurant -->
+        <a href="/demo/ai-restaurant/" class="group bg-surface-alt border border-border-dim rounded-2xl p-8 text-left hover:border-electric-blue transition-all hover:-translate-y-1">
+          <span class="text-4xl mb-4 block">🍽️</span>
+          <h3 class="font-mono font-bold text-white text-lg mb-3">Restaurant Ordering</h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4">No more DoorDash fees. Customers order direct. Menu assistant handles allergen questions.</p>
+          <span class="font-mono text-sm font-bold text-amd-red group-hover:text-white transition-colors">Try the demo →</span>
+        </a>
+        <!-- Card 3: Dental -->
+        <a href="/demo/ai-medical/" class="group bg-surface-alt border border-border-dim rounded-2xl p-8 text-left hover:border-electric-blue transition-all hover:-translate-y-1">
+          <span class="text-4xl mb-4 block">🏥</span>
+          <h3 class="font-mono font-bold text-white text-lg mb-3">Dental Patient Intake</h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4">Patients book at 10pm. Smart forms collect insurance info before the visit. 40% fewer no-shows.</p>
+          <span class="font-mono text-sm font-bold text-amd-red group-hover:text-white transition-colors">Try the demo →</span>
+        </a>
+      </div>
+
+      <!-- Stat Bar -->
+      <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-mono text-sm text-gray-300 mb-16">
+        <span>6 industries served</span>
+        <span class="text-border-dim hidden sm:inline">·</span>
+        <span>6 live demos</span>
+        <span class="text-border-dim hidden sm:inline">·</span>
+        <span>Starting at <strong class="text-white">$99/mo</strong></span>
+      </div>
+
+      <!-- Trusted By -->
+      <div class="border-t border-border-dim pt-10">
+        <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-gray-300 font-mono text-sm mb-4">
+          <span>🏥 Healthcare</span>
+          <span>⚖️ Legal</span>
+          <span>🍽️ Restaurant</span>
+          <span>🔧 Automotive</span>
+          <span>🏠 Real Estate</span>
+          <span>🛒 E-Commerce</span>
+          <span>📸 Photography</span>
+        </div>
+        <p class="text-gray-500 text-xs font-mono">Serving Austin's local businesses since 2024</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="gradient-line"></div>
+
+
   <!-- ═══════════════════ BUILT WITH / TRUST ═══════════════════ -->
   <section class="content-over-video py-16 border-t border-border-dim bg-surface">
     <div class="max-w-4xl mx-auto px-6">
@@ -681,5 +758,41 @@
   <script src="/js/ad-tracker.js" defer></script>
 
   <script src="/js/chatbot-widget.js" defer></script>
+
+  <!-- ═══════════════════ STICKY AI AUDIT CTA ═══════════════════ -->
+  <div id="sticky-audit-cta" class="fixed bottom-0 inset-x-0 z-40 translate-y-full transition-transform duration-500" style="display:none">
+    <div class="bg-surface-card/95 backdrop-blur-lg border-t border-border-dim px-6 py-3 flex items-center justify-center gap-4 flex-wrap">
+      <span class="text-sm text-gray-300 font-mono">Want to see how AI can grow your business?</span>
+      <a href="/free-audit/" id="sticky-audit-btn" class="inline-flex items-center gap-2 px-5 py-2 bg-electric-blue text-surface font-mono text-sm font-bold rounded hover:bg-cyan-300 transition-colors">
+        Get Free AI Audit
+      </a>
+      <button id="sticky-audit-close" class="text-gray-500 hover:text-white ml-2 text-lg" aria-label="Dismiss">&times;</button>
+    </div>
+  </div>
+  <script>
+  (function(){
+    if(sessionStorage.getItem('audit-cta-dismissed')) return;
+    var cta=document.getElementById('sticky-audit-cta');
+    var hero=document.querySelector('.hero-section');
+    var shown=false, timer;
+    function show(){
+      if(shown) return; shown=true;
+      cta.style.display='';
+      requestAnimationFrame(function(){requestAnimationFrame(function(){cta.classList.remove('translate-y-full')})});
+      timer=setTimeout(dismiss,30000);
+    }
+    function dismiss(){
+      cta.classList.add('translate-y-full');
+      sessionStorage.setItem('audit-cta-dismissed','1');
+      clearTimeout(timer);
+    }
+    document.getElementById('sticky-audit-close').addEventListener('click',dismiss);
+    document.getElementById('sticky-audit-btn').addEventListener('click',function(){sessionStorage.setItem('audit-cta-dismissed','1')});
+    var observer=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(!e.isIntersecting) show()});
+    },{threshold:0});
+    if(hero) observer.observe(hero);
+  })();
+  </script>
 </body>
 </html>
