@@ -206,7 +206,7 @@
 
   /* ============== Console Fingerprint ============== */
   console.log(
-    '%c⚡ Engineered by AjayaDesign %c https://ajayadesign.github.io ',
+    '%c⚡ Engineered by AjayaDesign %c https://ajayadesign.com ',
     'background: linear-gradient(135deg, #c2185b, #e91e63); color: white; padding: 8px 14px; border-radius: 6px 0 0 6px; font-weight: bold;',
     'background: #1a237e; color: #f06292; padding: 8px 14px; border-radius: 0 6px 6px 0;'
   );

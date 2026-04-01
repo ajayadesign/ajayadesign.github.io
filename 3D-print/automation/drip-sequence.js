@@ -117,7 +117,7 @@ async function main() {
       const html = renderTemplate(loadTemplate(drip.template), {
         NAME: name,
         EMAIL: email,
-        UNSUBSCRIBE_URL: `https://ajayadesign.github.io/3D-print/unsubscribe?email=${encodeURIComponent(email)}`,
+        UNSUBSCRIBE_URL: `https://ajayadesign.com/3D-print/unsubscribe?email=${encodeURIComponent(email)}`,
       });
 
       const queueEntry = {

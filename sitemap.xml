@@ -3,757 +3,757 @@
 
   <!-- ═══ Main Site ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/</loc>
+    <loc>https://ajayadesign.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/edge/</loc>
+    <loc>https://ajayadesign.com/edge/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/</loc>
+    <loc>https://ajayadesign.com/works/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/contact/</loc>
+    <loc>https://ajayadesign.com/contact/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/quote/</loc>
+    <loc>https://ajayadesign.com/quote/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- ═══ Ankita Dahal ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/portfolio/ankita-dahal/</loc>
+    <loc>https://ajayadesign.com/works/portfolio/ankita-dahal/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- ═══ Apex Auto Collision ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto/</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto/about.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto/services.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto/services.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto/gallery.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto/gallery.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto/contact.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto/contact.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto/faq.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto/faq.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto/insurance.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto/insurance.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <!-- ═══ Apex Auto Collision (New) ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto-collision/</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto-collision/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto-collision/services.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto-collision/services.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto-collision/about.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto-collision/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto-collision/gallery.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto-collision/gallery.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto-collision/contact.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto-collision/contact.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto-collision/insurance.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto-collision/insurance.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto-collision/faq.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto-collision/faq.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/automotive/apex-auto-collision/report.html</loc>
+    <loc>https://ajayadesign.com/works/automotive/apex-auto-collision/report.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <!-- ═══ Austin Barbell ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/fitness/austin-barbell/</loc>
+    <loc>https://ajayadesign.com/works/fitness/austin-barbell/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/fitness/austin-barbell/about.html</loc>
+    <loc>https://ajayadesign.com/works/fitness/austin-barbell/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/fitness/austin-barbell/programs.html</loc>
+    <loc>https://ajayadesign.com/works/fitness/austin-barbell/programs.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/fitness/austin-barbell/schedule.html</loc>
+    <loc>https://ajayadesign.com/works/fitness/austin-barbell/schedule.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/fitness/austin-barbell/blog.html</loc>
+    <loc>https://ajayadesign.com/works/fitness/austin-barbell/blog.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/fitness/austin-barbell/contact.html</loc>
+    <loc>https://ajayadesign.com/works/fitness/austin-barbell/contact.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- ═══ CompuPLUS ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/tech/compu-plus/</loc>
+    <loc>https://ajayadesign.com/works/tech/compu-plus/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/tech/compu-plus/about.html</loc>
+    <loc>https://ajayadesign.com/works/tech/compu-plus/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/tech/compu-plus/services.html</loc>
+    <loc>https://ajayadesign.com/works/tech/compu-plus/services.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/tech/compu-plus/products.html</loc>
+    <loc>https://ajayadesign.com/works/tech/compu-plus/products.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/tech/compu-plus/blog.html</loc>
+    <loc>https://ajayadesign.com/works/tech/compu-plus/blog.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/tech/compu-plus/contact.html</loc>
+    <loc>https://ajayadesign.com/works/tech/compu-plus/contact.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- ═══ Everest Phones ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/tech/everest-phone/</loc>
+    <loc>https://ajayadesign.com/works/tech/everest-phone/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/tech/everest-phone/about.html</loc>
+    <loc>https://ajayadesign.com/works/tech/everest-phone/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/tech/everest-phone/services.html</loc>
+    <loc>https://ajayadesign.com/works/tech/everest-phone/services.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/tech/everest-phone/faq.html</loc>
+    <loc>https://ajayadesign.com/works/tech/everest-phone/faq.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/tech/everest-phone/contact.html</loc>
+    <loc>https://ajayadesign.com/works/tech/everest-phone/contact.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- ═══ Flicks by Riri ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/photography/flicks-by-riri/</loc>
+    <loc>https://ajayadesign.com/works/photography/flicks-by-riri/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- ═══ Isla Noor Accessories ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/isla-noor/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/isla-noor/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/isla-noor/about/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/isla-noor/about/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/isla-noor/shop/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/isla-noor/shop/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/isla-noor/collections/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/isla-noor/collections/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/isla-noor/faq/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/isla-noor/faq/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/isla-noor/contact/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/isla-noor/contact/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- ═══ Magnet Moments Co. (redirect to magnetmomentsco.github.io) ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/redirects/magnetmomentsco/</loc>
+    <loc>https://ajayadesign.com/works/redirects/magnetmomentsco/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <!-- ═══ Memory Lane Studio TX ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/memory-lane/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/memory-lane/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/memory-lane/about/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/memory-lane/about/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/memory-lane/shop/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/memory-lane/shop/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/memory-lane/faq/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/memory-lane/faq/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/memory-lane/policies/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/memory-lane/policies/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/memory-lane/contact/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/memory-lane/contact/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- ═══ Monument Pilates (redirect to monumentpilates.github.io) ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/redirects/monument-pilates/</loc>
+    <loc>https://ajayadesign.com/works/redirects/monument-pilates/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <!-- ═══ Next Step Estate Sales ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/services/nextstep-es/</loc>
+    <loc>https://ajayadesign.com/works/services/nextstep-es/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/nextstep-es/about.html</loc>
+    <loc>https://ajayadesign.com/works/services/nextstep-es/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/nextstep-es/services.html</loc>
+    <loc>https://ajayadesign.com/works/services/nextstep-es/services.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/nextstep-es/gallery.html</loc>
+    <loc>https://ajayadesign.com/works/services/nextstep-es/gallery.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/nextstep-es/faq.html</loc>
+    <loc>https://ajayadesign.com/works/services/nextstep-es/faq.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/nextstep-es/contact.html</loc>
+    <loc>https://ajayadesign.com/works/services/nextstep-es/contact.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- ═══ Picture This Magnet (redirect to picturethismagnet.github.io) ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/redirects/picture-this-magnet/</loc>
+    <loc>https://ajayadesign.com/works/redirects/picture-this-magnet/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <!-- ═══ Radha Madhav Dham ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/services/radha-madhav/</loc>
+    <loc>https://ajayadesign.com/works/services/radha-madhav/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/radha-madhav/about.html</loc>
+    <loc>https://ajayadesign.com/works/services/radha-madhav/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/radha-madhav/events.html</loc>
+    <loc>https://ajayadesign.com/works/services/radha-madhav/events.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/radha-madhav/gallery.html</loc>
+    <loc>https://ajayadesign.com/works/services/radha-madhav/gallery.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/radha-madhav/visit.html</loc>
+    <loc>https://ajayadesign.com/works/services/radha-madhav/visit.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/radha-madhav/contact.html</loc>
+    <loc>https://ajayadesign.com/works/services/radha-madhav/contact.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- ═══ Sanskriti Chaulagain ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/portfolio/sanskriti-chaulagain/</loc>
+    <loc>https://ajayadesign.com/works/portfolio/sanskriti-chaulagain/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- ═══ Sno Ball Dude Shave Ice ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/food-bev/snoball-dude/</loc>
+    <loc>https://ajayadesign.com/works/food-bev/snoball-dude/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/food-bev/snoball-dude/about.html</loc>
+    <loc>https://ajayadesign.com/works/food-bev/snoball-dude/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/food-bev/snoball-dude/menu.html</loc>
+    <loc>https://ajayadesign.com/works/food-bev/snoball-dude/menu.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/food-bev/snoball-dude/events.html</loc>
+    <loc>https://ajayadesign.com/works/food-bev/snoball-dude/events.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/food-bev/snoball-dude/contact.html</loc>
+    <loc>https://ajayadesign.com/works/food-bev/snoball-dude/contact.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- ═══ The Magnet Guy ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/the-magnet-guy/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/the-magnet-guy/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/the-magnet-guy/about/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/the-magnet-guy/about/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/the-magnet-guy/shop/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/the-magnet-guy/shop/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/the-magnet-guy/events/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/the-magnet-guy/events/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/the-magnet-guy/faq/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/the-magnet-guy/faq/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/the-magnet-guy/contact/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/the-magnet-guy/contact/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- ═══ Velvet & Bloom ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/velvet-bloom/</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/velvet-bloom/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/velvet-bloom/about.html</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/velvet-bloom/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/velvet-bloom/shop.html</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/velvet-bloom/shop.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/velvet-bloom/gifting-guide.html</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/velvet-bloom/gifting-guide.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/velvet-bloom/blog.html</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/velvet-bloom/blog.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/velvet-bloom/faq.html</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/velvet-bloom/faq.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/ecommerce/velvet-bloom/contact.html</loc>
+    <loc>https://ajayadesign.com/works/ecommerce/velvet-bloom/contact.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- ═══ Zach The Pilot ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/works/services/zach-the-pilot/</loc>
+    <loc>https://ajayadesign.com/works/services/zach-the-pilot/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/zach-the-pilot/about.html</loc>
+    <loc>https://ajayadesign.com/works/services/zach-the-pilot/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/zach-the-pilot/services.html</loc>
+    <loc>https://ajayadesign.com/works/services/zach-the-pilot/services.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/zach-the-pilot/booking.html</loc>
+    <loc>https://ajayadesign.com/works/services/zach-the-pilot/booking.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/zach-the-pilot/resources.html</loc>
+    <loc>https://ajayadesign.com/works/services/zach-the-pilot/resources.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/works/services/zach-the-pilot/contact.html</loc>
+    <loc>https://ajayadesign.com/works/services/zach-the-pilot/contact.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <!-- ═══ Website Grader ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/grader/</loc>
+    <loc>https://ajayadesign.com/grader/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- ═══ Process ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/process/</loc>
+    <loc>https://ajayadesign.com/process/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <!-- ═══ Blog ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/blog/</loc>
+    <loc>https://ajayadesign.com/blog/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/ai-automation-local-business.html</loc>
+    <loc>https://ajayadesign.com/blog/ai-automation-local-business.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/ai-chatbot-vs-hiring-receptionist.html</loc>
+    <loc>https://ajayadesign.com/blog/ai-chatbot-vs-hiring-receptionist.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/why-your-small-business-needs-a-website.html</loc>
+    <loc>https://ajayadesign.com/blog/why-your-small-business-needs-a-website.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/website-speed-matters.html</loc>
+    <loc>https://ajayadesign.com/blog/website-speed-matters.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/diy-vs-professional-web-design.html</loc>
+    <loc>https://ajayadesign.com/blog/diy-vs-professional-web-design.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/small-business-website-cost-2026.html</loc>
+    <loc>https://ajayadesign.com/blog/small-business-website-cost-2026.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/web-designer-manor-tx.html</loc>
+    <loc>https://ajayadesign.com/blog/web-designer-manor-tx.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- ═══ AI Automation ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/ai-automation/</loc>
+    <loc>https://ajayadesign.com/ai-automation/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/demo/ai-chatbot/</loc>
+    <loc>https://ajayadesign.com/demo/ai-chatbot/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/demo/ai-medical/</loc>
+    <loc>https://ajayadesign.com/demo/ai-medical/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/demo/ai-restaurant/</loc>
+    <loc>https://ajayadesign.com/demo/ai-restaurant/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/demo/ai-auto-service/</loc>
+    <loc>https://ajayadesign.com/demo/ai-auto-service/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/demo/ai-salon/</loc>
+    <loc>https://ajayadesign.com/demo/ai-salon/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/demo/ai-realestate/</loc>
+    <loc>https://ajayadesign.com/demo/ai-realestate/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- ═══ Free Audit & Tools ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/free-audit/</loc>
+    <loc>https://ajayadesign.com/free-audit/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/tools/ai-readiness.html</loc>
+    <loc>https://ajayadesign.com/tools/ai-readiness.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/industries/</loc>
+    <loc>https://ajayadesign.com/industries/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- ═══ 3D Print Academy ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/3D-print/</loc>
+    <loc>https://ajayadesign.com/3D-print/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/3D-print/tools/calculator.html</loc>
+    <loc>https://ajayadesign.com/3D-print/tools/calculator.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/3D-print/tools/checklist.html</loc>
+    <loc>https://ajayadesign.com/3D-print/tools/checklist.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/3D-print/tools/materials.html</loc>
+    <loc>https://ajayadesign.com/3D-print/tools/materials.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/tools/roi-calculator.html</loc>
+    <loc>https://ajayadesign.com/tools/roi-calculator.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- New Tools & Landing Pages (2026-03-31) -->
   <url>
-    <loc>https://ajayadesign.github.io/24hr/</loc>
+    <loc>https://ajayadesign.com/24hr/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/tools/speed-test.html</loc>
+    <loc>https://ajayadesign.com/tools/speed-test.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/tools/speed-compare.html</loc>
+    <loc>https://ajayadesign.com/tools/speed-compare.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
 
   <url>
-    <loc>https://ajayadesign.github.io/case-studies/</loc>
+    <loc>https://ajayadesign.com/case-studies/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- ═══ Before & After ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/before-after/</loc>
+    <loc>https://ajayadesign.com/before-after/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <!-- ═══ FAQ ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/faq/</loc>
+    <loc>https://ajayadesign.com/faq/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- ═══ Industry Landing Pages ═══ -->
   <url>
-    <loc>https://ajayadesign.github.io/industries/restaurants/</loc>
+    <loc>https://ajayadesign.com/industries/restaurants/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/industries/legal/</loc>
+    <loc>https://ajayadesign.com/industries/legal/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/industries/contractors/</loc>
+    <loc>https://ajayadesign.com/industries/contractors/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/reviews/</loc>
+    <loc>https://ajayadesign.com/reviews/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/resources/</loc>
+    <loc>https://ajayadesign.com/resources/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/about/</loc>
+    <loc>https://ajayadesign.com/about/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/industries/real-estate/</loc>
+    <loc>https://ajayadesign.com/industries/real-estate/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/industries/healthcare/</loc>
+    <loc>https://ajayadesign.com/industries/healthcare/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/industries/fitness/</loc>
+    <loc>https://ajayadesign.com/industries/fitness/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/industries/salons/</loc>
+    <loc>https://ajayadesign.com/industries/salons/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/industries/churches/</loc>
+    <loc>https://ajayadesign.com/industries/churches/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/best-website-builders-2026.html</loc>
+    <loc>https://ajayadesign.com/blog/best-website-builders-2026.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/local-seo-guide-austin.html</loc>
+    <loc>https://ajayadesign.com/blog/local-seo-guide-austin.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/website-mistakes-small-business.html</loc>
+    <loc>https://ajayadesign.com/blog/website-mistakes-small-business.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/ai-chatbot-small-business-guide.html</loc>
+    <loc>https://ajayadesign.com/blog/ai-chatbot-small-business-guide.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/how-much-website-maintenance-cost.html</loc>
+    <loc>https://ajayadesign.com/blog/how-much-website-maintenance-cost.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ajayadesign.github.io/blog/restaurant-website-must-haves.html</loc>
+    <loc>https://ajayadesign.com/blog/restaurant-website-must-haves.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

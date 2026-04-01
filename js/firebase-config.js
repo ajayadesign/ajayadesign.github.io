@@ -1,5 +1,5 @@
 // Firebase configuration — loaded at runtime
-// API key is restricted to ajayadesign.github.io via Google Cloud Console
+// API key is restricted to ajayadesign.com via Google Cloud Console
 // See: https://console.cloud.google.com/apis/credentials?project=ajayadesign-6d739
 (function () {
   'use strict';

@@ -1,7 +1,7 @@
 const { chromium } = require('playwright-core');
 const path = require('path');
 
-const SCREENSHOT_DIR = '/home/aj/website/ajayadesign.github.io/enc-printing/screenshots';
+const SCREENSHOT_DIR = '/home/aj/website/ajayadesign.com/enc-printing/screenshots';
 const BASE = 'http://localhost:9222';
 
 async function fixLazyAndCapture(page, url, filename, opts = {}) {

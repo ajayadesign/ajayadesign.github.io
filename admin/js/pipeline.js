@@ -563,7 +563,7 @@ async function demoPipeline() {
   pipeline.nodes.deploy.time = new Date();
   renderPipeline();
   await sleep(1000);
-  pipeline.liveUrl = 'https://ajayadesign.github.io/sunrise-bakery';
+  pipeline.liveUrl = 'https://ajayadesign.com/sunrise-bakery';
   pipeline.nodes.deploy.status = 'done';
   pipeline.nodes.deploy.detail = 'GitHub Pages live';
   renderPipeline();

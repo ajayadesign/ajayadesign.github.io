@@ -1,5 +1,5 @@
 # AjayaDesign Robots.txt
-# https://ajayadesign.github.io
+# https://ajayadesign.com
 
 User-agent: *
 Allow: /
@@ -16,4 +16,4 @@ Disallow: /tests/
 Disallow: /*report.html
 Disallow: /index.html.bak
 
-Sitemap: https://ajayadesign.github.io/sitemap.xml
+Sitemap: https://ajayadesign.com/sitemap.xml

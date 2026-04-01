@@ -42,7 +42,7 @@ module.exports = defineConfig({
     },
   ],
   webServer: {
-    command: 'python3 -m http.server 3011 --directory /home/aj/website/ajayadesign.github.io',
+    command: 'python3 -m http.server 3011 --directory /home/aj/website/ajayadesign.com',
     url: BASE_URL,
     reuseExistingServer: true,
     timeout: 10000,

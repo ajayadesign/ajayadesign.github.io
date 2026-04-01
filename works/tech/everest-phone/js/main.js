@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════
    Everest Phones — Main JavaScript
-   Built by AjayaDesign (https://ajayadesign.github.io)
+   Built by AjayaDesign (https://ajayadesign.com)
    Build ID: EP-2026-0307-AD | Demo Only
    ═══════════════════════════════════════════════ */
 

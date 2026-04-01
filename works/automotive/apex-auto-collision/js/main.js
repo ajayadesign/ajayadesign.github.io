@@ -1,7 +1,7 @@
 /* =============================================================================
    PROPRIETARY & CONFIDENTIAL — DO NOT COPY, DISTRIBUTE, OR REUSE
    =============================================================================
-   © 2024–2026 AjayaDesign (https://ajayadesign.github.io). All rights reserved.
+   © 2024–2026 AjayaDesign (https://ajayadesign.com). All rights reserved.
 
    This source code is the exclusive intellectual property of AjayaDesign.
 
@@ -14,7 +14,7 @@
      • Cease-and-desist orders
      • Civil litigation for damages and injunctive relief
 
-   Owner: AjayaDesign (https://ajayadesign.github.io)
+   Owner: AjayaDesign (https://ajayadesign.com)
    Licensee: Apex Auto Collision, Plainview, TX (demo use only).
    Apex Auto Collision is granted a limited, non-transferable, revocable demo
    license only. All ownership and IP rights remain solely with AjayaDesign.

@@ -9,13 +9,13 @@
   <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <meta name="theme-color" content="#0A0A0F" />
-  <link rel="canonical" href="https://ajayadesign.github.io/3D-print/referral/" />
+  <link rel="canonical" href="https://ajayadesign.com/3D-print/referral/" />
 
   <meta property="og:title" content="Refer & Earn — 3D Print Academy" />
   <meta property="og:description" content="Share your unique link. Friends get 10% off, you earn $10 credit or bonus STL packs." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://ajayadesign.github.io/3D-print/referral/" />
-  <meta property="og:image" content="https://ajayadesign.github.io/3D-print/promo-card.png" />
+  <meta property="og:url" content="https://ajayadesign.com/3D-print/referral/" />
+  <meta property="og:image" content="https://ajayadesign.com/3D-print/promo-card.png" />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -291,7 +291,7 @@
 
       try {
         const code = await generateRefCode(email);
-        currentRefLink = 'https://ajayadesign.github.io/3D-print/?ref=' + code;
+        currentRefLink = 'https://ajayadesign.com/3D-print/?ref=' + code;
 
         // Store in Firebase
         await fetch(FIREBASE_URL + '/referrals/' + code + '.json', {
