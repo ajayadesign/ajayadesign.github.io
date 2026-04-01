@@ -54,12 +54,44 @@ def _ref(path: str):
         return None
 
 
+def _sanitize(obj):
+    """Recursively sanitize data for Firebase JSON serialization.
+
+    Converts Decimal → float, sanitizes dict keys (no ., $, #, [, ], /),
+    and strips None values.
+    """
+    from decimal import Decimal
+    import re
+
+    if isinstance(obj, dict):
+        clean = {}
+        for k, v in obj.items():
+            # Firebase disallows . $ # [ ] / in keys
+            safe_key = re.sub(r'[.$#\[\]/]', '_', str(k))
+            sanitized = _sanitize(v)
+            if sanitized is not None:
+                clean[safe_key] = sanitized
+        return clean
+    elif isinstance(obj, (list, tuple)):
+        return [_sanitize(item) for item in obj]
+    elif isinstance(obj, Decimal):
+        return float(obj)
+    elif isinstance(obj, (datetime, )):
+        return obj.isoformat()
+    elif isinstance(obj, (str, int, float, bool)):
+        return obj
+    elif obj is None:
+        return None
+    else:
+        return str(obj)
+
+
 async def _safe_set(path: str, data):
     """Set data at path. Silently skip if Firebase is unavailable."""
     ref = _ref(path)
     if ref:
         try:
-            ref.set(data)
+            ref.set(_sanitize(data))
         except Exception as e:
             logger.error(f"Firebase set {path} failed: {e}")
 
@@ -69,7 +101,7 @@ async def _safe_push(path: str, data):
     ref = _ref(path)
     if ref:
         try:
-            ref.push(data)
+            ref.push(_sanitize(data))
         except Exception as e:
             logger.error(f"Firebase push {path} failed: {e}")
 

@@ -15,6 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.database import async_session_factory, async_session_factory as async_session
 from api.models.prospect import Prospect
+from api.models.quote import Quote, QuoteItem
 from api.services.ai import call_ai, extract_json
 from api.config import settings
 
@@ -152,7 +153,6 @@ Generate a detailed proposal with scope, deliverables, timeline, and pricing."""
 
             # Create Quote record
             async with async_session() as session:
-                from api.models.quote import Quote, QuoteItem
 
                 quote = Quote(
                     prospect_id=prospect.id,
