@@ -51,6 +51,37 @@
     return access.modules.indexOf(num) !== -1;
   }
 
+  /* ── Helpers for auth error messages ── */
+  function authErrorMessage(code) {
+    var messages = {
+      'auth/email-already-in-use': 'An account with this email already exists. Try signing in instead.',
+      'auth/invalid-email': 'Please enter a valid email address.',
+      'auth/weak-password': 'Password must be at least 6 characters.',
+      'auth/user-not-found': 'No account found with this email. Try signing up instead.',
+      'auth/wrong-password': 'Incorrect password. Try again or reset your password.',
+      'auth/invalid-credential': 'Incorrect email or password. Try again or reset your password.',
+      'auth/too-many-requests': 'Too many attempts. Please wait a moment and try again.',
+      'auth/popup-blocked': 'Popup was blocked. Trying redirect sign-in instead...',
+      'auth/popup-closed-by-user': 'Sign-in popup was closed. Please try again.',
+      'auth/cancelled-popup-request': 'Sign-in was cancelled. Please try again.',
+      'auth/operation-not-allowed': 'This sign-in method is not enabled. Please contact support.',
+      'auth/network-request-failed': 'Network error. Please check your connection and try again.',
+    };
+    return messages[code] || 'Sign-in failed. Please try again.';
+  }
+
+  function showError($el, msg) {
+    if (!$el) return;
+    $el.textContent = msg;
+    $el.classList.remove('hidden');
+  }
+
+  function hideError($el) {
+    if (!$el) return;
+    $el.textContent = '';
+    $el.classList.add('hidden');
+  }
+
   /* ── Portal Dashboard (index.html) ── */
   function initDashboard() {
     var $login = document.getElementById('login-screen');
@@ -63,9 +94,105 @@
     var $progressBar = document.getElementById('progress-bar');
     var $progressText = document.getElementById('progress-text');
 
-    document.getElementById('google-signin').addEventListener('click', function () {
-      auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    // Handle ?success=true from Stripe redirect
+    var urlParams = new URLSearchParams(window.location.search);
+    var isPostPayment = urlParams.get('success') === 'true';
+    var $successBanner = document.getElementById('payment-success-banner');
+    if (isPostPayment && $successBanner) {
+      $successBanner.classList.remove('hidden');
+    }
+
+    // Google sign-in: popup first, fallback to redirect
+    var $googleBtn = document.getElementById('google-signin');
+    if ($googleBtn) {
+      $googleBtn.addEventListener('click', function () {
+        hideError($error);
+        var provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider).catch(function (err) {
+          if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+            // Fallback to redirect for mobile/blocked popups
+            auth.signInWithRedirect(provider);
+          } else {
+            showError($error, authErrorMessage(err.code));
+          }
+        });
+      });
+    }
+
+    // Handle redirect result (for mobile fallback)
+    auth.getRedirectResult().catch(function (err) {
+      if (err.code && err.code !== 'auth/popup-closed-by-user') {
+        showError($error, authErrorMessage(err.code));
+      }
     });
+
+    // Email/password sign-in
+    var $emailForm = document.getElementById('email-auth-form');
+    var $emailInput = document.getElementById('email-input');
+    var $passwordInput = document.getElementById('password-input');
+    var $emailSubmit = document.getElementById('email-submit');
+    var $emailToggle = document.getElementById('email-toggle');
+    var $emailError = document.getElementById('email-error');
+    var $forgotPassword = document.getElementById('forgot-password');
+    var isSignUp = false;
+
+    if ($emailToggle) {
+      $emailToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        isSignUp = !isSignUp;
+        $emailSubmit.textContent = isSignUp ? 'Create Account' : 'Sign In';
+        $emailToggle.textContent = isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up";
+        if ($forgotPassword) $forgotPassword.classList.toggle('hidden', isSignUp);
+        hideError($emailError);
+      });
+    }
+
+    if ($emailForm) {
+      $emailForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        hideError($emailError);
+        var email = ($emailInput.value || '').trim();
+        var password = ($passwordInput.value || '').trim();
+        if (!email || !password) {
+          showError($emailError, 'Please enter both email and password.');
+          return;
+        }
+
+        if (isSignUp) {
+          auth.createUserWithEmailAndPassword(email, password).then(function (cred) {
+            // Send verification email
+            if (cred.user) {
+              cred.user.sendEmailVerification().catch(function () { /* best effort */ });
+            }
+          }).catch(function (err) {
+            showError($emailError, authErrorMessage(err.code));
+          });
+        } else {
+          auth.signInWithEmailAndPassword(email, password).catch(function (err) {
+            showError($emailError, authErrorMessage(err.code));
+          });
+        }
+      });
+    }
+
+    // Forgot password
+    if ($forgotPassword) {
+      $forgotPassword.addEventListener('click', function (e) {
+        e.preventDefault();
+        var email = ($emailInput.value || '').trim();
+        if (!email) {
+          showError($emailError, 'Enter your email above, then click "Forgot password?"');
+          return;
+        }
+        auth.sendPasswordResetEmail(email).then(function () {
+          showError($emailError, ''); // clear
+          $emailError.classList.remove('hidden');
+          $emailError.innerHTML = '<span class="text-neon-green">Password reset email sent! Check your inbox.</span>';
+        }).catch(function (err) {
+          showError($emailError, authErrorMessage(err.code));
+        });
+      });
+    }
 
     $signout.addEventListener('click', function () {
       auth.signOut();
@@ -166,7 +293,7 @@
       if ($pending) $pending.classList.add('hidden');
       $dash.classList.remove('hidden');
       $signout.classList.remove('hidden');
-      $userName.textContent = user.displayName ? user.displayName.split(' ')[0] : 'Student';
+      $userName.textContent = user.displayName ? user.displayName.split(' ')[0] : (user.email ? user.email.split('@')[0] : 'Student');
       $userTier.textContent = data.tier;
 
       var progress = data.progress || {};
@@ -242,6 +369,12 @@
         $pending.classList.remove('hidden');
         var $pendingEmail = document.getElementById('pending-email');
         if ($pendingEmail) $pendingEmail.textContent = user.email;
+
+        // Show email verification notice for email/password users
+        var $verifyNotice = document.getElementById('verify-email-notice');
+        if ($verifyNotice && !user.emailVerified && user.providerData && user.providerData[0] && user.providerData[0].providerId === 'password') {
+          $verifyNotice.classList.remove('hidden');
+        }
       }
     }
   }
@@ -906,11 +1039,11 @@
   /* ── Register user as pending (write-once to /pending_users/{uid}) ── */
   function registerPending(user) {
     // Atomic write — RTDB rule (!data.exists()) prevents overwrites server-side.
-    // No read-then-write race: just attempt the set; if the record exists, the rule rejects it.
     db.ref('pending_users/' + user.uid).set({
       email: user.email,
-      name: user.displayName || '',
+      name: user.displayName || user.email.split('@')[0],
       photo: user.photoURL || '',
+      provider: user.providerData && user.providerData[0] ? user.providerData[0].providerId : 'unknown',
       requested_at: firebase.database.ServerValue.TIMESTAMP
     }).catch(function () {
       // Expected: PERMISSION_DENIED if record already exists (write-once rule)
