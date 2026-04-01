@@ -31,6 +31,8 @@ monument-pilates/old-site-assets
 # 3D Print Academy — binary/proprietary assets (hosted on Drive & YouTube)
 *.stl
 *.zip
+# Allow free STL pack download
+!3D-print/free-stl-pack/free-stl-pack.zip
 *.mp4
 *.mp3
 *.webm
