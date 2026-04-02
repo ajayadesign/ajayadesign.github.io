@@ -1459,6 +1459,14 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning("Lead watcher failed to start: %s", e)
 
+    # Start Stripe checkout poller (auto-provision + Telegram notifications)
+    stripe_poller_task = None
+    try:
+        from api.services.stripe_poller import poll_stripe_sessions
+        stripe_poller_task = asyncio.create_task(poll_stripe_sessions())
+    except Exception as e:
+        logger.warning("Stripe poller failed to start: %s", e)
+
     # ── Start APScheduler for outreach engine jobs ──
     outreach_scheduler = None
     try:
