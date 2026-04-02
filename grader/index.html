@@ -298,14 +298,40 @@
 
   <script>
     const API = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
+    const API_KEY = ''; // Set a Google PageSpeed API key here for 25K/day quota (free)
+    const CACHE_TTL = 3600000; // 1 hour cache
     let scannedUrl = '';
     let gradeData = {};
+
+    // LocalStorage cache to avoid burning API quota
+    function getCachedResult(url) {
+      try {
+        const key = 'psi_cache_' + url;
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        const cached = JSON.parse(raw);
+        if (Date.now() - cached.ts > CACHE_TTL) { localStorage.removeItem(key); return null; }
+        return cached.data;
+      } catch { return null; }
+    }
+    function setCachedResult(url, data) {
+      try { localStorage.setItem('psi_cache_' + url, JSON.stringify({ ts: Date.now(), data })); } catch {}
+    }
 
     document.getElementById('grader-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       let url = document.getElementById('url-input').value.trim();
       if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
       scannedUrl = url;
+
+      // Check cache first
+      const cached = getCachedResult(url);
+      if (cached) {
+        hide('results'); hide('error-state'); hide('loading');
+        show('results');
+        renderResults(cached);
+        return;
+      }
 
       // Show loading
       hide('results'); hide('error-state');
@@ -335,22 +361,46 @@
         }
       }, 1800);
 
-      try {
-        const resp = await fetch(`${API}?url=${encodeURIComponent(url)}&strategy=mobile&category=performance&category=seo&category=accessibility`);
-        clearInterval(stepInterval);
-        if (!resp.ok) throw new Error(`API returned ${resp.status}`);
-        const data = await resp.json();
-        bar.style.width = '100%';
-        log.innerHTML += '<p class="text-electric-blue font-bold">✓ Scan complete!</p>';
-        setTimeout(() => renderResults(data), 600);
-      } catch (err) {
-        clearInterval(stepInterval);
-        hide('loading');
-        show('error-state');
-        document.getElementById('error-msg').textContent = `Could not analyze that URL. ${err.message}. Make sure the site is publicly accessible.`;
-        document.getElementById('grade-btn').disabled = false;
-        document.getElementById('grade-btn').textContent = 'Grade My Website';
+      // Retry with exponential backoff
+      const maxRetries = 3;
+      let lastErr = null;
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          if (attempt > 0) {
+            log.innerHTML += `<p class="text-yellow-400">▸ Retrying (attempt ${attempt + 1})…</p>`;
+            await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
+          }
+          const apiUrl = `${API}?url=${encodeURIComponent(url)}&strategy=mobile&category=performance&category=seo&category=accessibility${API_KEY ? '&key=' + API_KEY : ''}`;
+          const resp = await fetch(apiUrl);
+          if (resp.status === 429) {
+            lastErr = new Error('rate_limit');
+            continue; // retry
+          }
+          clearInterval(stepInterval);
+          if (!resp.ok) throw new Error(`API returned ${resp.status}`);
+          const data = await resp.json();
+          setCachedResult(url, data);
+          bar.style.width = '100%';
+          log.innerHTML += '<p class="text-electric-blue font-bold">✓ Scan complete!</p>';
+          setTimeout(() => renderResults(data), 600);
+          return; // success, exit
+        } catch (err) {
+          lastErr = err;
+          if (err.message !== 'rate_limit') break; // only retry on rate limit
+        }
       }
+
+      // All retries failed
+      clearInterval(stepInterval);
+      hide('loading');
+      show('error-state');
+      if (lastErr && lastErr.message === 'rate_limit') {
+        document.getElementById('error-msg').textContent = 'Google PageSpeed API is temporarily rate-limited. Please wait a minute and try again.';
+      } else {
+        document.getElementById('error-msg').textContent = `Could not analyze that URL. ${lastErr?.message || 'Unknown error'}. Make sure the site is publicly accessible.`;
+      }
+      document.getElementById('grade-btn').disabled = false;
+      document.getElementById('grade-btn').textContent = 'Grade My Website';
     });
 
     function renderResults(data) {
