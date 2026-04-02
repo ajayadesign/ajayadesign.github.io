@@ -226,8 +226,21 @@ test('navigating between pages preserves scroll-canvas architecture', async ({ p
     if (isMobile) {
       await page.evaluate(() => window.scrollTo(0, 0));
       await page.waitForFunction(() => window.scrollY === 0, { timeout: 3000 }).catch(() => {});
+      
       const menuBtn = page.locator('#mobile-menu-btn');
-      await menuBtn.click({ force: true });
+      const mobileMenu = page.locator('#mobile-menu');
+      
+      // Ensure menu is open — may need multiple clicks if state is stale
+      for (let attempt = 0; attempt < 3; attempt++) {
+        await menuBtn.click({ force: true });
+        try {
+          await mobileMenu.waitFor({ state: 'visible', timeout: 2000 });
+          break;
+        } catch {
+          // Menu might have toggled closed — try again
+        }
+      }
+      
       const link = page.locator(`#mobile-menu a[href="${href}"]`);
       await link.waitFor({ state: 'visible', timeout: 5000 });
       await link.click();
