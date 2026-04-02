@@ -3,13 +3,7 @@ const { test, expect } = require('@playwright/test');
 
 /**
  * Scrollytelling canvas frame-sequence tests.
- *
- * Each page with a canvas background:
- * 1. Canvas element exists with correct data-frames / data-frame-count
- * 2. Canvas is position:fixed, fills viewport
- * 3. Opacity ramps from ~0.55 → ~0.80 as user scrolls
- * 4. Canvas stays fixed while content scrolls
- * 5. Content-over-video sections have dark overlay
+ * CI-hardened: uses waitForFunction/waitFor instead of raw timeouts.
  */
 
 const PAGES_WITH_CANVAS = [
@@ -18,14 +12,24 @@ const PAGES_WITH_CANVAS = [
   { path: '/works/', name: 'Works', frameDir: '/assets/frames/nozzle', posterSrc: 'nozzle-hero.webp' },
 ];
 
+/** Wait for the canvas element to be ready (attached + has dimensions) */
+async function waitForCanvas(page, timeoutMs = 15000) {
+  await page.waitForFunction(() => {
+    const c = document.getElementById('scroll-canvas');
+    return c && c.getBoundingClientRect().width > 100;
+  }, { timeout: timeoutMs });
+}
+
 for (const pg of PAGES_WITH_CANVAS) {
   test.describe(`${pg.name} page (${pg.path}) — scrollytelling`, () => {
+    // Give CI plenty of room
+    test.setTimeout(60000);
 
     test(`canvas element exists with correct data attributes`, async ({ page }) => {
-      await page.goto(pg.path);
+      await page.goto(pg.path, { waitUntil: 'domcontentloaded' });
 
       const canvas = page.locator('#scroll-canvas');
-      await expect(canvas).toBeAttached();
+      await expect(canvas).toBeAttached({ timeout: 10000 });
 
       const attrs = await page.evaluate(() => {
         const c = document.getElementById('scroll-canvas');
@@ -44,8 +48,8 @@ for (const pg of PAGES_WITH_CANVAS) {
     });
 
     test(`canvas is position:fixed and fills viewport`, async ({ page }) => {
-      await page.goto(pg.path);
-      await page.waitForTimeout(1000);
+      await page.goto(pg.path, { waitUntil: 'domcontentloaded' });
+      await waitForCanvas(page);
 
       const canvasStyle = await page.evaluate(() => {
         const c = document.getElementById('scroll-canvas');
@@ -70,10 +74,9 @@ for (const pg of PAGES_WITH_CANVAS) {
       const isMobile = testInfo.project.name === 'Mobile Chrome';
       if (!isMobile) { test.skip(); return; }
 
-      await page.goto(pg.path);
-      await page.waitForTimeout(1500);
+      await page.goto(pg.path, { waitUntil: 'domcontentloaded' });
+      await waitForCanvas(page);
 
-      // Canvas should still be present and visible on mobile
       const canvasInfo = await page.evaluate(() => {
         const c = document.getElementById('scroll-canvas');
         if (!c) return { error: 'no canvas' };
@@ -84,8 +87,8 @@ for (const pg of PAGES_WITH_CANVAS) {
     });
 
     test(`hero section is transparent (canvas shows through)`, async ({ page }) => {
-      await page.goto(pg.path);
-      await page.waitForTimeout(500);
+      await page.goto(pg.path, { waitUntil: 'domcontentloaded' });
+      await waitForCanvas(page);
 
       const heroInfo = await page.evaluate(() => {
         const hero = document.querySelector('.hero-section');
@@ -100,7 +103,7 @@ for (const pg of PAGES_WITH_CANVAS) {
     });
 
     test(`content sections have opaque overlay`, async ({ page }) => {
-      await page.goto(pg.path, { waitUntil: 'networkidle' });
+      await page.goto(pg.path, { waitUntil: 'domcontentloaded' });
       await page.locator('.content-over-video').first().waitFor({ state: 'attached', timeout: 15000 });
 
       const contentInfo = await page.evaluate(() => {
@@ -122,9 +125,10 @@ for (const pg of PAGES_WITH_CANVAS) {
     });
 
     test(`scroll-synced canvas scrub: opacity ramps up`, async ({ page }) => {
-      test.setTimeout(60000);
       await page.goto(pg.path, { waitUntil: 'domcontentloaded' });
-      await page.waitForTimeout(2000);
+      await waitForCanvas(page);
+      // Extra settle time for frame images to start loading
+      await page.waitForTimeout(1000);
 
       const checkpoints = [0, 0.5, 1.0];
       const results = [];
@@ -134,7 +138,13 @@ for (const pg of PAGES_WITH_CANVAS) {
           const maxScroll = document.body.scrollHeight - window.innerHeight;
           window.scrollTo(0, maxScroll * scrollPct);
         }, pct);
-        await page.waitForTimeout(200);
+        // Wait for scroll handler to fire and repaint
+        await page.waitForFunction((expectedPct) => {
+          const maxScroll = document.body.scrollHeight - window.innerHeight;
+          const currentPct = window.scrollY / maxScroll;
+          return Math.abs(currentPct - expectedPct) < 0.1;
+        }, pct, { timeout: 5000 }).catch(() => {});
+        await page.waitForTimeout(150);
 
         const state = await page.evaluate(() => {
           const c = document.getElementById('scroll-canvas');
@@ -149,8 +159,8 @@ for (const pg of PAGES_WITH_CANVAS) {
     });
 
     test(`canvas stays fixed while scrolling`, async ({ page }) => {
-      await page.goto(pg.path);
-      await page.waitForTimeout(500);
+      await page.goto(pg.path, { waitUntil: 'domcontentloaded' });
+      await waitForCanvas(page);
 
       const rectTop = await page.evaluate(() => {
         const c = document.getElementById('scroll-canvas');
@@ -161,7 +171,7 @@ for (const pg of PAGES_WITH_CANVAS) {
       await page.evaluate(() => {
         window.scrollTo(0, (document.body.scrollHeight - window.innerHeight) * 0.5);
       });
-      await page.waitForTimeout(200);
+      await page.waitForFunction(() => window.scrollY > 100, { timeout: 5000 });
 
       const rectMiddle = await page.evaluate(() => {
         const c = document.getElementById('scroll-canvas');
@@ -174,8 +184,13 @@ for (const pg of PAGES_WITH_CANVAS) {
     });
 
     test(`poster hidden when canvas is active`, async ({ page }) => {
-      await page.goto(pg.path);
-      await page.waitForTimeout(1500);
+      await page.goto(pg.path, { waitUntil: 'domcontentloaded' });
+      // Wait for poster to hide (JS draws frame 0 then hides poster)
+      await page.waitForFunction(() => {
+        const poster = document.querySelector('.scroll-video-poster');
+        if (!poster) return true; // no poster element = fine
+        return window.getComputedStyle(poster).display === 'none';
+      }, { timeout: 15000 });
 
       const posterDisplay = await page.evaluate(() => {
         const poster = document.querySelector('.scroll-video-poster');
@@ -183,7 +198,6 @@ for (const pg of PAGES_WITH_CANVAS) {
         return window.getComputedStyle(poster).display;
       });
 
-      // Poster should be hidden once canvas draws frame 1 (both desktop & mobile)
       expect(posterDisplay).toBe('none');
     });
   });
@@ -192,42 +206,40 @@ for (const pg of PAGES_WITH_CANVAS) {
 /* ─── Contact page: no canvas expected ─── */
 test.describe('Contact page — no canvas expected', () => {
   test('contact page loads without canvas element', async ({ page }) => {
-    await page.goto('/contact/');
+    await page.goto('/contact/', { waitUntil: 'domcontentloaded' });
     const count = await page.locator('#scroll-canvas').count();
     expect(count).toBe(0);
   });
 
   test('form is visible and usable', async ({ page }) => {
-    await page.goto('/contact/');
-    await expect(page.locator('#ajayadesign-intake-form')).toBeAttached();
+    await page.goto('/contact/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#ajayadesign-intake-form')).toBeAttached({ timeout: 10000 });
   });
 });
 
 /* ─── Cross-page navigation ─── */
 test('navigating between pages preserves scroll-canvas architecture', async ({ page }, testInfo) => {
+  test.setTimeout(60000);
   const isMobile = testInfo.project.name === 'Mobile Chrome';
 
   async function clickNavLink(href) {
     if (isMobile) {
-      // Ensure we're at the top so navbar is fully visible
       await page.evaluate(() => window.scrollTo(0, 0));
-      await page.waitForTimeout(300);
+      await page.waitForFunction(() => window.scrollY === 0, { timeout: 3000 }).catch(() => {});
       const menuBtn = page.locator('#mobile-menu-btn');
       await menuBtn.click({ force: true });
       const link = page.locator(`#mobile-menu a[href="${href}"]`);
       await link.waitFor({ state: 'visible', timeout: 5000 });
       await link.click();
     } else {
-      // Try direct visible nav link first, otherwise use More dropdown
       const directLink = page.locator(`nav a[href="${href}"]:visible`).first();
       if (await directLink.count() > 0) {
         await directLink.click();
       } else {
-        // Link is in the "More" dropdown — hover to reveal
         const moreBtn = page.locator('nav button:has-text("More")');
         if (await moreBtn.count() > 0) {
           await moreBtn.hover();
-          await page.waitForTimeout(400);
+          await page.locator(`a[href="${href}"]`).first().waitFor({ state: 'visible', timeout: 5000 });
         }
         const dropdownLink = page.locator(`a[href="${href}"]:visible`).first();
         await dropdownLink.click();
@@ -235,21 +247,21 @@ test('navigating between pages preserves scroll-canvas architecture', async ({ p
     }
   }
 
-  await page.goto('/');
-  await expect(page.locator('#scroll-canvas')).toBeAttached();
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#scroll-canvas')).toBeAttached({ timeout: 10000 });
 
   const homeFrames = await page.evaluate(() => document.getElementById('scroll-canvas')?.dataset.frames);
   expect(homeFrames).toContain('drone');
 
   await clickNavLink('/edge/');
-  await page.waitForURL('**/edge/');
-  await expect(page.locator('#scroll-canvas')).toBeAttached();
+  await page.waitForURL('**/edge/', { timeout: 15000 });
+  await expect(page.locator('#scroll-canvas')).toBeAttached({ timeout: 10000 });
   const edgeFrames = await page.evaluate(() => document.getElementById('scroll-canvas')?.dataset.frames);
   expect(edgeFrames).toContain('pcb');
 
   await clickNavLink('/works/');
-  await page.waitForURL('**/works/');
-  await expect(page.locator('#scroll-canvas')).toBeAttached();
+  await page.waitForURL('**/works/', { timeout: 15000 });
+  await expect(page.locator('#scroll-canvas')).toBeAttached({ timeout: 10000 });
   const worksFrames = await page.evaluate(() => document.getElementById('scroll-canvas')?.dataset.frames);
   expect(worksFrames).toContain('nozzle');
 });

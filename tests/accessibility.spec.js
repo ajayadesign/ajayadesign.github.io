@@ -27,7 +27,7 @@ test('all nav links point to valid pages', async ({ page }) => {
 });
 
 test('intake form has all required fields and submits', async ({ page }) => {
-  await page.goto('/contact/');
+  await page.goto('/contact/', { waitUntil: 'domcontentloaded' });
   const form = page.locator('#ajayadesign-intake-form');
   await expect(form).toBeAttached();
 
@@ -85,7 +85,7 @@ test('intake form has all required fields and submits', async ({ page }) => {
 });
 
 test('optional fields toggle reveals additional inputs', async ({ page }) => {
-  await page.goto('/contact/');
+  await page.goto('/contact/', { waitUntil: 'domcontentloaded' });
   const form = page.locator('#ajayadesign-intake-form');
 
   // Optional section is hidden by default
@@ -109,7 +109,7 @@ test('optional fields toggle reveals additional inputs', async ({ page }) => {
 });
 
 test('rebuild checkbox shows confirmation panel', async ({ page }) => {
-  await page.goto('/contact/');
+  await page.goto('/contact/', { waitUntil: 'domcontentloaded' });
   const form = page.locator('#ajayadesign-intake-form');
 
   // Expand optional fields
@@ -155,7 +155,7 @@ test('axe accessibility audit — home page', async ({ page }) => {
   await page.evaluate(() => {
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
   });
-  await page.waitForTimeout(700); // wait for opacity transitions to complete
+  await page.waitForTimeout(1500); // wait for opacity transitions to complete (CI needs more time)
 
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'])
@@ -207,7 +207,7 @@ test('axe accessibility audit — works page', async ({ page }) => {
 });
 
 test('axe accessibility audit — contact page', async ({ page }) => {
-  await page.goto('/contact/');
+  await page.goto('/contact/', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
   });
@@ -298,8 +298,8 @@ test('mobile canvas is active with lighter mode (1x DPR, fewer frames)', async (
   if (!testInfo.project.name.toLowerCase().includes('mobile')) {
     test.skip();
   }
-  await page.goto('/');
-  await page.waitForTimeout(1500);
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(2500);
   const canvasDisplay = await page.evaluate(() => {
     const c = document.getElementById('scroll-canvas');
     return c ? window.getComputedStyle(c).display : 'no-element';

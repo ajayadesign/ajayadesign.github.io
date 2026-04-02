@@ -43,7 +43,7 @@ const EXPECTED_MOBILE_LINKS = [
 
 for (const pagePath of PAGES) {
   test(`${pagePath} has consistent desktop nav links`, async ({ page }) => {
-    await page.goto(pagePath);
+    await page.goto(pagePath, { waitUntil: 'domcontentloaded' });
 
     // Get all desktop nav links (inside the hidden md:flex ul)
     const desktopLinks = await page.evaluate(() => {
@@ -68,7 +68,7 @@ for (const pagePath of PAGES) {
     const isMobile = testInfo.project.name === 'Mobile Chrome';
     if (!isMobile) { test.skip(); return; }
 
-    await page.goto(pagePath);
+    await page.goto(pagePath, { waitUntil: 'domcontentloaded' });
 
     // Mobile menu button exists
     const menuBtn = page.locator('#mobile-menu-btn');
@@ -97,7 +97,7 @@ for (const pagePath of PAGES) {
   });
 
   test(`${pagePath} has "Start Free" CTA button`, async ({ page }) => {
-    await page.goto(pagePath);
+    await page.goto(pagePath, { waitUntil: 'domcontentloaded' });
 
     const ctaBtn = page.locator('nav#navbar a:has-text("Start Free")');
     const count = await ctaBtn.count();
@@ -108,7 +108,7 @@ for (const pagePath of PAGES) {
     const isMobile = testInfo.project.name === 'Mobile Chrome';
     if (isMobile) { test.skip(); return; }
 
-    await page.goto(pagePath);
+    await page.goto(pagePath, { waitUntil: 'domcontentloaded' });
 
     const moreBtn = page.locator('nav#navbar button:has-text("More")');
     await expect(moreBtn).toBeVisible();

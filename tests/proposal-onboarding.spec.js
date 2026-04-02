@@ -24,12 +24,12 @@ async function stubFirebase(page) {
 test.describe('Proposal Generator', () => {
 
   test('page loads with correct title', async ({ page }) => {
-    await page.goto('/tools/proposal-generator.html');
+    await page.goto('/tools/proposal-generator.html', { waitUntil: 'domcontentloaded' });
     await expect(page).toHaveTitle(/Proposal Generator/i);
   });
 
   test('form has all required fields', async ({ page }) => {
-    await page.goto('/tools/proposal-generator.html');
+    await page.goto('/tools/proposal-generator.html', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#pg-business-name')).toBeAttached();
     await expect(page.locator('#pg-business-type')).toBeAttached();
     await expect(page.locator('#pg-contact-name')).toBeAttached();
@@ -38,14 +38,14 @@ test.describe('Proposal Generator', () => {
   });
 
   test('feature checkboxes are rendered', async ({ page }) => {
-    await page.goto('/tools/proposal-generator.html');
+    await page.goto('/tools/proposal-generator.html', { waitUntil: 'domcontentloaded' });
     const checks = page.locator('#features-grid input[type="checkbox"]');
     const count = await checks.count();
     expect(count).toBeGreaterThanOrEqual(10);
   });
 
   test('tier cards are selectable', async ({ page }) => {
-    await page.goto('/tools/proposal-generator.html');
+    await page.goto('/tools/proposal-generator.html', { waitUntil: 'domcontentloaded' });
     const tiers = page.locator('#tiers-grid .tier-card');
     expect(await tiers.count()).toBe(3);
     // Professional is pre-selected
@@ -57,7 +57,7 @@ test.describe('Proposal Generator', () => {
   });
 
   test('generates proposal on valid submit', async ({ page }) => {
-    await page.goto('/tools/proposal-generator.html');
+    await page.goto('/tools/proposal-generator.html', { waitUntil: 'domcontentloaded' });
     await stubFirebase(page);
 
     // Fill form
@@ -81,7 +81,7 @@ test.describe('Proposal Generator', () => {
   });
 
   test('download PDF button exists after generation', async ({ page }) => {
-    await page.goto('/tools/proposal-generator.html');
+    await page.goto('/tools/proposal-generator.html', { waitUntil: 'domcontentloaded' });
     await stubFirebase(page);
     await page.fill('#pg-business-name', 'PDF Test');
     await page.selectOption('#pg-business-type', 'Other');
@@ -92,7 +92,7 @@ test.describe('Proposal Generator', () => {
   });
 
   test('edit button hides proposal and returns to form', async ({ page }) => {
-    await page.goto('/tools/proposal-generator.html');
+    await page.goto('/tools/proposal-generator.html', { waitUntil: 'domcontentloaded' });
     await stubFirebase(page);
     await page.fill('#pg-business-name', 'Edit Test');
     await page.selectOption('#pg-business-type', 'Other');
@@ -105,7 +105,7 @@ test.describe('Proposal Generator', () => {
   });
 
   test('email modal opens and closes', async ({ page }) => {
-    await page.goto('/tools/proposal-generator.html');
+    await page.goto('/tools/proposal-generator.html', { waitUntil: 'domcontentloaded' });
     await stubFirebase(page);
     await page.fill('#pg-business-name', 'Modal Test');
     await page.selectOption('#pg-business-type', 'Other');
@@ -119,7 +119,7 @@ test.describe('Proposal Generator', () => {
   });
 
   test('axe accessibility audit — proposal generator', async ({ page }) => {
-    await page.goto('/tools/proposal-generator.html');
+    await page.goto('/tools/proposal-generator.html', { waitUntil: 'domcontentloaded' });
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'])
       .analyze();
@@ -143,18 +143,18 @@ test.describe('Proposal Generator', () => {
 test.describe('Client Onboarding', () => {
 
   test('page loads with correct title', async ({ page }) => {
-    await page.goto('/onboarding/');
+    await page.goto('/onboarding/', { waitUntil: 'domcontentloaded' });
     await expect(page).toHaveTitle(/Onboarding/i);
   });
 
   test('step 1 is visible by default', async ({ page }) => {
-    await page.goto('/onboarding/');
+    await page.goto('/onboarding/', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.step-panel[data-step="1"]')).toBeVisible();
     await expect(page.locator('.step-panel[data-step="2"]')).toBeHidden();
   });
 
   test('progress bar updates on navigation', async ({ page }) => {
-    await page.goto('/onboarding/');
+    await page.goto('/onboarding/', { waitUntil: 'domcontentloaded' });
     const bar = page.locator('#progress-bar');
     const initialWidth = await bar.evaluate(el => el.style.width);
     expect(initialWidth).toBe('17%');
@@ -166,7 +166,7 @@ test.describe('Client Onboarding', () => {
   });
 
   test('can navigate forward and back through all steps', async ({ page }) => {
-    await page.goto('/onboarding/');
+    await page.goto('/onboarding/', { waitUntil: 'domcontentloaded' });
     for (let i = 2; i <= 7; i++) {
       await page.click('#next-btn');
       await expect(page.locator(`.step-panel[data-step="${i}"]`)).toBeVisible();
@@ -181,7 +181,7 @@ test.describe('Client Onboarding', () => {
   });
 
   test('goals checkboxes are rendered', async ({ page }) => {
-    await page.goto('/onboarding/');
+    await page.goto('/onboarding/', { waitUntil: 'domcontentloaded' });
     // Navigate to step 3
     await page.click('#next-btn');
     await page.click('#next-btn');
@@ -190,7 +190,7 @@ test.describe('Client Onboarding', () => {
   });
 
   test('voice selector works', async ({ page }) => {
-    await page.goto('/onboarding/');
+    await page.goto('/onboarding/', { waitUntil: 'domcontentloaded' });
     await page.click('#next-btn'); // step 2
     const casual = page.locator('#voice-selector .voice-btn[data-voice="casual"]');
     await casual.click();
@@ -198,7 +198,7 @@ test.describe('Client Onboarding', () => {
   });
 
   test('file upload area responds to click', async ({ page }) => {
-    await page.goto('/onboarding/');
+    await page.goto('/onboarding/', { waitUntil: 'domcontentloaded' });
     await page.click('#next-btn'); // step 2
     // File input exists
     await expect(page.locator('#ob-logo-upload')).toBeAttached();
@@ -207,7 +207,7 @@ test.describe('Client Onboarding', () => {
   });
 
   test('summary step shows collected data', async ({ page }) => {
-    await page.goto('/onboarding/');
+    await page.goto('/onboarding/', { waitUntil: 'domcontentloaded' });
 
     // Fill step 1
     await page.fill('#ob-biz-name', 'Summary Test Biz');
@@ -222,7 +222,7 @@ test.describe('Client Onboarding', () => {
   });
 
   test('submit shows success state', async ({ page }) => {
-    await page.goto('/onboarding/');
+    await page.goto('/onboarding/', { waitUntil: 'domcontentloaded' });
     await stubFirebase(page);
 
     // Fill minimum required
@@ -246,7 +246,7 @@ test.describe('Client Onboarding', () => {
   });
 
   test('axe accessibility audit — onboarding', async ({ page }) => {
-    await page.goto('/onboarding/');
+    await page.goto('/onboarding/', { waitUntil: 'domcontentloaded' });
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'])
       .analyze();
