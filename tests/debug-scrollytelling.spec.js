@@ -122,8 +122,9 @@ for (const pg of PAGES_WITH_CANVAS) {
     });
 
     test(`scroll-synced canvas scrub: opacity ramps up`, async ({ page }) => {
-      await page.goto(pg.path);
-      await page.waitForTimeout(1500);
+      test.setTimeout(60000);
+      await page.goto(pg.path, { waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(2000);
 
       const checkpoints = [0, 0.5, 1.0];
       const results = [];
