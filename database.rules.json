@@ -183,6 +183,22 @@
       }
     },
 
+    "audit-requests": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      "$requestId": {
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['email', 'business', 'submitted_at']) && newData.child('email').isString() && newData.child('email').val().length < 256"
+      }
+    },
+
+    "referrals": {
+      ".read": true,
+      "$code": {
+        ".write": true,
+        ".validate": "newData.isNumber() || newData.hasChildren()"
+      }
+    },
+
     "$other": {
       ".read": false,
       ".write": false
