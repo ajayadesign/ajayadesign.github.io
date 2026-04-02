@@ -102,6 +102,10 @@ class Settings(BaseSettings):
     host_uid: int = Field(default=1000)
     host_gid: int = Field(default=1000)
 
+    # Stripe
+    stripe_secret_key: str = Field(default="", description="Stripe secret key (sk_live_ or sk_test_)")
+    stripe_webhook_secret: str = Field(default="", description="Stripe webhook signing secret (whsec_)")
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
 
 

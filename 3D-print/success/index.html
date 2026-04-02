@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Successful — Welcome to 3D Print Academy!</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'amd-red': '#ED1C24',
+            'amd-red-text': '#FF6B6B',
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-card': '#16161F',
+            'border-dim': '#1E1E2A',
+            'neon-green': '#39FF14',
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-08QNJSTGZ2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-08QNJSTGZ2');
+    // Track purchase conversion
+    gtag('event', 'purchase', { transaction_id: 'stripe_redirect', value: 0, currency: 'USD' });
+  </script>
+</head>
+<body class="font-sans text-gray-300 antialiased min-h-screen flex items-center justify-center" style="background:#0A0A0F;">
+
+  <div class="max-w-lg mx-auto px-6 text-center py-20">
+    <!-- Success animation -->
+    <div class="w-24 h-24 mx-auto mb-8 rounded-full bg-neon-green/10 border-2 border-neon-green flex items-center justify-center">
+      <svg class="w-12 h-12 text-neon-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+
+    <h1 class="font-mono font-bold text-3xl text-white mb-4">
+      Payment <span class="text-neon-green">Successful!</span>
+    </h1>
+
+    <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+      Welcome to 3D Print Academy! Your account is being set up automatically.
+      You'll receive a confirmation email shortly.
+    </p>
+
+    <div class="p-6 rounded-xl bg-surface-card border border-border-dim mb-8 text-left">
+      <h2 class="font-mono text-sm text-neon-green tracking-widest uppercase mb-4">Next Steps</h2>
+      <ol class="space-y-3 text-gray-400 text-sm">
+        <li class="flex items-start gap-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-neon-green/10 text-neon-green font-mono text-xs flex items-center justify-center font-bold">1</span>
+          <span><strong class="text-white">Check your email</strong> — confirmation + receipt from Stripe</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-neon-green/10 text-neon-green font-mono text-xs flex items-center justify-center font-bold">2</span>
+          <span><strong class="text-white">Log in to the Student Portal</strong> — use the email you just paid with</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-neon-green/10 text-neon-green font-mono text-xs flex items-center justify-center font-bold">3</span>
+          <span><strong class="text-white">Start Module 1</strong> — your first print is ~45 minutes away!</span>
+        </li>
+      </ol>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="/3D-print/portal/" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-neon-green text-black rounded-lg font-mono text-sm font-bold hover:bg-green-400 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        Go to Student Portal
+      </a>
+      <a href="/3D-print/" class="inline-flex items-center justify-center gap-2 px-8 py-4 border border-border-dim text-gray-400 rounded-lg font-mono text-sm hover:text-white hover:border-amd-red/50 transition-colors">
+        Back to Academy
+      </a>
+    </div>
+
+    <p class="mt-8 text-gray-400 text-xs font-mono">
+      Having trouble? Email <a href="mailto:ajayadesign@gmail.com" class="text-electric-blue underline">ajayadesign@gmail.com</a>
+    </p>
+  </div>
+
+</body>
+</html>

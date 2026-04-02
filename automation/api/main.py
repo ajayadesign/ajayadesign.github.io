@@ -3,6 +3,7 @@ FastAPI Application — entry point.
 """
 
 import asyncio
+import json
 import uuid
 import logging
 from contextlib import asynccontextmanager
@@ -1449,6 +1450,15 @@ async def lifespan(app: FastAPI):
         periodic_firebase_poll(interval=settings.firebase_poll_interval)
     )
 
+    # Start Firebase lead/audit watcher (Telegram notifications)
+    lead_watcher_task = None
+    try:
+        from api.services.lead_watcher import poll_firebase_leads
+        lead_watcher_task = asyncio.create_task(poll_firebase_leads())
+        logger.info("🔔 Lead watcher started (Telegram notifications for new leads/audits)")
+    except Exception as e:
+        logger.warning("Lead watcher failed to start: %s", e)
+
     # ── Start APScheduler for outreach engine jobs ──
     outreach_scheduler = None
     try:
@@ -1934,6 +1944,44 @@ app.include_router(mass_router, prefix="/api/v1")
 # Paperclip agent heartbeat routes
 from api.routes.agents import router as agents_router
 app.include_router(agents_router, prefix="/api/v1")
+
+
+# ── Stripe Webhook Endpoint ──
+from fastapi import Request as FastAPIRequest
+
+@app.post("/api/v1/stripe/webhook", include_in_schema=False)
+async def stripe_webhook(request: FastAPIRequest):
+    """Handle Stripe checkout.session.completed events."""
+    from api.services.stripe_webhook import (
+        verify_stripe_signature,
+        handle_checkout_completed,
+    )
+
+    payload = await request.body()
+    sig_header = request.headers.get("stripe-signature", "")
+
+    # Verify signature if secret is configured
+    if settings.stripe_webhook_secret:
+        if not verify_stripe_signature(payload, sig_header, settings.stripe_webhook_secret):
+            logger.warning("⚠️ Stripe webhook signature verification failed")
+            return {"error": "Invalid signature"}, 400
+
+    try:
+        event = json.loads(payload)
+    except Exception:
+        return {"error": "Invalid JSON"}, 400
+
+    event_type = event.get("type", "")
+    logger.info(f"Stripe webhook: {event_type}")
+
+    if event_type == "checkout.session.completed":
+        session_data = event.get("data", {}).get("object", {})
+        result = await handle_checkout_completed(session_data)
+        logger.info(f"Stripe checkout processed: {result}")
+        return {"status": "ok", "result": result}
+
+    # Accept but ignore other event types
+    return {"status": "ok", "event": event_type}
 
 
 @app.get("/", include_in_schema=False)
