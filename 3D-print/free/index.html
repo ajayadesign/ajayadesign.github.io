@@ -124,7 +124,7 @@
 
         <div class="relative rounded-2xl overflow-hidden bg-surface-card border border-border-dim">
           <div class="aspect-video bg-gray-800 blurred-video flex items-center justify-center">
-            <img src="https://img.youtube.com/vi/WPeKPltNxps/maxresdefault.jpg" alt="Lesson 1 thumbnail" class="w-full h-full object-cover" onerror="this.style.display='none'" />
+            <div class="w-full h-full" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)"></div>
           </div>
           <div class="play-overlay" onclick="document.getElementById('signup-email').focus()">
             <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -137,7 +137,7 @@
 
         <div class="relative rounded-2xl overflow-hidden bg-surface-card border border-border-dim">
           <div class="aspect-video bg-gray-800 blurred-video flex items-center justify-center">
-            <img src="https://img.youtube.com/vi/jotOTFPBR80/maxresdefault.jpg" alt="Lesson 2 thumbnail" class="w-full h-full object-cover" onerror="this.style.display='none'" />
+            <div class="w-full h-full" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)"></div>
           </div>
           <div class="play-overlay" onclick="document.getElementById('signup-email').focus()">
             <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -150,7 +150,7 @@
 
         <div class="relative rounded-2xl overflow-hidden bg-surface-card border border-border-dim">
           <div class="aspect-video bg-gray-800 blurred-video flex items-center justify-center">
-            <img src="https://img.youtube.com/vi/HqJu2iY9pA0/maxresdefault.jpg" alt="Lesson 3 thumbnail" class="w-full h-full object-cover" onerror="this.style.display='none'" />
+            <div class="w-full h-full" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)"></div>
           </div>
           <div class="play-overlay" onclick="document.getElementById('signup-email').focus()">
             <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -162,41 +162,53 @@
         </div>
       </div>
 
-      <!-- UNLOCKED VIDEOS (hidden until signup) -->
+      <!-- UNLOCKED VIDEOS (hidden until signup) — videos available in portal only -->
       <div id="unlocked-videos" class="hidden space-y-8">
         <div class="text-center mb-4">
-          <p class="text-neon-green font-mono text-sm">✅ Lessons unlocked! Enjoy your free course.</p>
+          <p class="text-neon-green font-mono text-sm">✅ Email confirmed! Watch your free lessons in the student portal.</p>
         </div>
 
-        <div class="rounded-2xl overflow-hidden bg-surface-card border border-border-dim">
-          <div class="aspect-video">
-            <iframe class="w-full h-full" src="" data-src="https://www.youtube.com/embed/WPeKPltNxps" title="Lesson 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <a href="/3D-print/portal/" class="block rounded-2xl overflow-hidden bg-surface-card border border-neon-green/30 hover:border-neon-green/60 transition-colors">
+          <div class="aspect-video bg-gray-800 flex items-center justify-center">
+            <div class="text-center p-8">
+              <span class="text-5xl mb-4 block">🎬</span>
+              <p class="text-neon-green font-mono text-sm font-bold">Lesson 1 — Ready to Watch</p>
+              <p class="text-gray-400 text-xs mt-2">Introduction to 3D Printed Magnet Frames</p>
+            </div>
           </div>
           <div class="p-4">
             <p class="font-mono text-neon-green text-xs uppercase">Lesson 1 — Free</p>
             <h3 class="text-white font-bold">Introduction to 3D Printed Magnet Frames</h3>
           </div>
-        </div>
+        </a>
 
-        <div class="rounded-2xl overflow-hidden bg-surface-card border border-border-dim">
-          <div class="aspect-video">
-            <iframe class="w-full h-full" src="" data-src="https://www.youtube.com/embed/jotOTFPBR80" title="Lesson 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <a href="/3D-print/portal/" class="block rounded-2xl overflow-hidden bg-surface-card border border-neon-green/30 hover:border-neon-green/60 transition-colors">
+          <div class="aspect-video bg-gray-800 flex items-center justify-center">
+            <div class="text-center p-8">
+              <span class="text-5xl mb-4 block">🎬</span>
+              <p class="text-neon-green font-mono text-sm font-bold">Lesson 2 — Ready to Watch</p>
+              <p class="text-gray-400 text-xs mt-2">Choosing Your First 3D Printer</p>
+            </div>
           </div>
           <div class="p-4">
             <p class="font-mono text-neon-green text-xs uppercase">Lesson 2 — Free</p>
             <h3 class="text-white font-bold">Choosing Your First 3D Printer</h3>
           </div>
-        </div>
+        </a>
 
-        <div class="rounded-2xl overflow-hidden bg-surface-card border border-border-dim">
-          <div class="aspect-video">
-            <iframe class="w-full h-full" src="" data-src="https://www.youtube.com/embed/HqJu2iY9pA0" title="Lesson 3" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <a href="/3D-print/portal/" class="block rounded-2xl overflow-hidden bg-surface-card border border-neon-green/30 hover:border-neon-green/60 transition-colors">
+          <div class="aspect-video bg-gray-800 flex items-center justify-center">
+            <div class="text-center p-8">
+              <span class="text-5xl mb-4 block">🎬</span>
+              <p class="text-neon-green font-mono text-sm font-bold">Lesson 3 — Ready to Watch</p>
+              <p class="text-gray-400 text-xs mt-2">Understanding Filament Types for Magnets</p>
+            </div>
           </div>
           <div class="p-4">
             <p class="font-mono text-neon-green text-xs uppercase">Lesson 3 — Free</p>
             <h3 class="text-white font-bold">Understanding Filament Types for Magnets</h3>
           </div>
-        </div>
+        </a>
 
         <!-- CTA -->
         <div class="bg-surface-card border border-amd-red/30 rounded-2xl p-8 text-center mt-12">
@@ -275,13 +287,6 @@
       document.getElementById('signup-gate').style.display = 'none';
       document.getElementById('locked-videos').classList.add('hidden');
       document.getElementById('unlocked-videos').classList.remove('hidden');
-
-      // Load iframes
-      document.querySelectorAll('#unlocked-videos iframe').forEach(iframe => {
-        if (iframe.dataset.src && !iframe.src.includes('youtube')) {
-          iframe.src = iframe.dataset.src;
-        }
-      });
     }
   </script>
 </body>
