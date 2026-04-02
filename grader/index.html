@@ -191,21 +191,23 @@
     </div>
   </nav>
 
-  <main class="pt-24 pb-12 px-4 flex-1 flex flex-col">
+  <main class="pt-24 pb-12 px-4 flex-1 flex flex-col min-h-[calc(100vh-180px)]">
     <!-- Hero / Input -->
-    <section class="max-w-3xl mx-auto text-center mb-8 flex-1 flex flex-col justify-center">
-      <div class="inline-block px-4 py-1 mb-6 rounded-full border border-amd-red/30 text-xs font-mono text-amd-red-text tracking-wider uppercase">Free Website Audit Tool</div>
-      <h1 class="text-4xl md:text-5xl font-bold font-mono text-white mb-4 leading-tight">
-        Grade Your Website<br/><span class="text-amd-red">In Seconds</span>
-      </h1>
-      <p class="text-gray-400 text-lg mb-8 max-w-xl mx-auto">Enter any URL and get an instant performance, SEO, mobile, and security report card — powered by Google PageSpeed Insights.</p>
+    <section class="max-w-3xl mx-auto text-center mb-8 flex-1 flex flex-col justify-center items-center">
+      <div>
+        <div class="inline-block px-4 py-1 mb-6 rounded-full border border-amd-red/30 text-xs font-mono text-amd-red-text tracking-wider uppercase">Free Website Audit Tool</div>
+        <h1 class="text-4xl md:text-5xl font-bold font-mono text-white mb-4 leading-tight">
+          Grade Your Website<br/><span class="text-amd-red">In Seconds</span>
+        </h1>
+        <p class="text-gray-400 text-lg mb-8 max-w-xl mx-auto">Enter any URL and get an instant performance, SEO, mobile, and security report card — powered by Google PageSpeed Insights.</p>
 
-      <form id="grader-form" class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
-        <input id="url-input" type="url" required placeholder="https://example.com" class="flex-1 px-5 py-4 rounded-lg bg-surface-card border border-border-dim text-white font-mono text-sm placeholder-gray-400 focus:outline-none focus:border-amd-red/60 transition-colors" />
-        <button type="submit" id="grade-btn" class="px-8 py-4 bg-amd-red-btn text-white font-mono font-bold rounded-lg hover:bg-red-800 transition-colors whitespace-nowrap">
-          Grade My Website
-        </button>
-      </form>
+        <form id="grader-form" class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+          <input id="url-input" type="url" required placeholder="https://example.com" class="flex-1 px-5 py-4 rounded-lg bg-surface-card border border-border-dim text-white font-mono text-sm placeholder-gray-400 focus:outline-none focus:border-amd-red/60 transition-colors" />
+          <button type="submit" id="grade-btn" class="px-8 py-4 bg-amd-red-btn text-white font-mono font-bold rounded-lg hover:bg-red-800 transition-colors whitespace-nowrap">
+            Grade My Website
+          </button>
+        </form>
+      </div>
     </section>
 
     <!-- Loading State -->
