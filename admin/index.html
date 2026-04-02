@@ -613,10 +613,10 @@
       </button>
       <div id="connection-status" class="hidden sm:flex items-center gap-2 text-xs font-mono">
         <span class="w-2 h-2 rounded-full bg-gray-600" id="conn-dot"></span>
-        <span id="conn-text" class="text-gray-500">Disconnected</span>
+        <span id="conn-text" class="text-gray-400">Disconnected</span>
       </div>
-      <a href="/" class="hidden md:inline text-xs font-mono text-gray-500 hover:text-electric transition">← Site</a>
-      <button onclick="signOut()" class="text-xs font-mono text-gray-500 hover:text-brand-link transition">Sign Out</button>
+      <a href="/" class="hidden md:inline text-xs font-mono text-gray-400 hover:text-electric transition">← Site</a>
+      <button onclick="signOut()" class="text-xs font-mono text-gray-400 hover:text-brand-link transition">Sign Out</button>
     </div>
   </header>
 
@@ -645,28 +645,28 @@
         <div class="p-4 border-b border-border">
           <div class="flex items-center justify-between mb-3">
             <h2 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">History</h2>
-            <button onclick="refreshBuilds()" class="text-gray-500 hover:text-electric transition" title="Refresh">
+            <button onclick="refreshBuilds()" class="text-gray-400 hover:text-electric transition" title="Refresh">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
             </button>
           </div>
           <div class="grid grid-cols-3 gap-2">
             <div class="bg-surface-2 rounded-lg p-2 text-center">
               <div id="stat-total" class="font-mono text-lg font-bold text-white">0</div>
-              <div class="text-[0.65rem] text-gray-500 uppercase">Total</div>
+              <div class="text-[0.65rem] text-gray-400 uppercase">Total</div>
             </div>
             <div class="bg-surface-2 rounded-lg p-2 text-center">
               <div id="stat-success" class="font-mono text-lg font-bold text-neon-green">0</div>
-              <div class="text-[0.65rem] text-gray-500 uppercase">Pass</div>
+              <div class="text-[0.65rem] text-gray-400 uppercase">Pass</div>
             </div>
             <div class="bg-surface-2 rounded-lg p-2 text-center">
               <div id="stat-failed" class="font-mono text-lg font-bold text-brand-link">0</div>
-              <div class="text-[0.65rem] text-gray-500 uppercase">Fail</div>
+              <div class="text-[0.65rem] text-gray-400 uppercase">Fail</div>
             </div>
           </div>
         </div>
         <!-- Build List -->
         <div id="build-list" class="flex-1 overflow-y-auto no-scrollbar p-2 space-y-1">
-          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading builds...</div>
+          <div class="text-center text-gray-400 text-xs font-mono py-8">Loading builds...</div>
         </div>
       </div>
 
@@ -682,17 +682,17 @@
             Active <span id="stat-leads-active" class="ml-1 px-1.5 py-0.5 rounded-full bg-electric/20 text-electric text-[0.55rem]">0</span>
           </button>
           <button onclick="switchLeadsSubTab('archived')" id="leads-subtab-archived"
-            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
-            Archived <span id="stat-leads-archived" class="ml-1 px-1.5 py-0.5 rounded-full bg-gray-800 text-gray-500 text-[0.55rem]">0</span>
+            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">
+            Archived <span id="stat-leads-archived" class="ml-1 px-1.5 py-0.5 rounded-full bg-gray-800 text-gray-400 text-[0.55rem]">0</span>
           </button>
         </div>
         <!-- Active leads list -->
         <div id="leads-panel-content" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3">
-          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading leads...</div>
+          <div class="text-center text-gray-400 text-xs font-mono py-8">Loading leads...</div>
         </div>
         <!-- Archived leads list (hidden initially) -->
         <div id="archived-panel-content" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3 hidden">
-          <div class="text-center text-gray-600 text-xs font-mono py-8">No archived leads</div>
+          <div class="text-center text-gray-400 text-xs font-mono py-8">No archived leads</div>
         </div>
       </div>
 
@@ -713,33 +713,33 @@
             🌐 Sites
           </button>
           <button onclick="switchPortfolioSubTab('contracts')" id="portfolio-subtab-contracts"
-            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">
             📝 Contracts
           </button>
           <button onclick="switchPortfolioSubTab('invoices')" id="portfolio-subtab-invoices"
-            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">
             💰 Invoices
           </button>
           <button onclick="switchPortfolioSubTab('quotes')" id="portfolio-subtab-quotes"
-            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">
             📋 Quotes
           </button>
         </div>
         <!-- Sites list -->
         <div id="portfolio-sites-list" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3">
-          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading portfolio...</div>
+          <div class="text-center text-gray-400 text-xs font-mono py-8">Loading portfolio...</div>
         </div>
         <!-- Contracts list (hidden) -->
         <div id="portfolio-contracts-list" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3 hidden">
-          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading contracts...</div>
+          <div class="text-center text-gray-400 text-xs font-mono py-8">Loading contracts...</div>
         </div>
         <!-- Invoices list (hidden) -->
         <div id="portfolio-invoices-list" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3 hidden">
-          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading invoices...</div>
+          <div class="text-center text-gray-400 text-xs font-mono py-8">Loading invoices...</div>
         </div>
         <!-- Quotes list (hidden) -->
         <div id="portfolio-quotes-list" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3 hidden">
-          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading quotes...</div>
+          <div class="text-center text-gray-400 text-xs font-mono py-8">Loading quotes...</div>
         </div>
       </div>
 
@@ -748,7 +748,7 @@
         <div class="p-4 border-b border-border">
           <div class="flex items-center justify-between">
             <h2 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">Activity Trail</h2>
-            <button onclick="loadActivityLog()" class="text-gray-500 hover:text-electric transition" title="Refresh">
+            <button onclick="loadActivityLog()" class="text-gray-400 hover:text-electric transition" title="Refresh">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
             </button>
           </div>
@@ -760,17 +760,17 @@
             All
           </button>
           <button onclick="filterActivityLog('contract')" id="history-filter-contract"
-            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">
             📝 Contracts
           </button>
           <button onclick="filterActivityLog('invoice')" id="history-filter-invoice"
-            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+            class="flex-1 py-2 text-[0.65rem] font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">
             💰 Invoices
           </button>
         </div>
         <!-- Activity timeline -->
         <div id="history-list" class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-1">
-          <div class="text-center text-gray-600 text-xs font-mono py-8">Loading activity...</div>
+          <div class="text-center text-gray-400 text-xs font-mono py-8">Loading activity...</div>
         </div>
       </div>
 
@@ -779,7 +779,7 @@
         <div class="p-4 border-b border-border">
           <div class="flex items-center justify-between">
             <h2 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">Insights</h2>
-            <button onclick="refreshAnalytics()" class="text-gray-500 hover:text-electric transition" title="Refresh">
+            <button onclick="refreshAnalytics()" class="text-gray-400 hover:text-electric transition" title="Refresh">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
             </button>
           </div>
@@ -789,25 +789,25 @@
           <div class="grid grid-cols-2 gap-2">
             <div class="bg-surface-2 rounded-lg p-2.5 text-center">
               <div id="kpi-revenue" class="font-mono text-lg font-bold text-neon-green">$0</div>
-              <div class="text-[0.6rem] text-gray-500 uppercase">Revenue</div>
+              <div class="text-[0.6rem] text-gray-400 uppercase">Revenue</div>
             </div>
             <div class="bg-surface-2 rounded-lg p-2.5 text-center">
               <div id="kpi-clients" class="font-mono text-lg font-bold text-electric">0</div>
-              <div class="text-[0.6rem] text-gray-500 uppercase">Clients</div>
+              <div class="text-[0.6rem] text-gray-400 uppercase">Clients</div>
             </div>
             <div class="bg-surface-2 rounded-lg p-2.5 text-center">
               <div id="kpi-contracts" class="font-mono text-lg font-bold text-neon-purple">0</div>
-              <div class="text-[0.6rem] text-gray-500 uppercase">Contracts</div>
+              <div class="text-[0.6rem] text-gray-400 uppercase">Contracts</div>
             </div>
             <div class="bg-surface-2 rounded-lg p-2.5 text-center">
               <div id="kpi-invoices" class="font-mono text-lg font-bold text-neon-yellow">0</div>
-              <div class="text-[0.6rem] text-gray-500 uppercase">Invoices</div>
+              <div class="text-[0.6rem] text-gray-400 uppercase">Invoices</div>
             </div>
           </div>
         </div>
         <!-- Section jump links -->
         <div class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-1">
-          <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Jump to</p>
+          <p class="text-[0.6rem] text-gray-400 uppercase tracking-wider font-mono mb-2">Jump to</p>
           <button onclick="scrollAnalytics('sec-revenue')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">💰 Revenue & Payments</button>
           <button onclick="scrollAnalytics('sec-pipeline')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">🔄 Client Pipeline</button>
           <button onclick="scrollAnalytics('sec-engagement')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">📈 Customer Engagement</button>
@@ -822,7 +822,7 @@
         <div class="p-4 border-b border-border">
           <div class="flex items-center justify-between">
             <h2 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">Site Traffic</h2>
-            <button onclick="refreshTraffic()" class="text-gray-500 hover:text-electric transition" title="Refresh">
+            <button onclick="refreshTraffic()" class="text-gray-400 hover:text-electric transition" title="Refresh">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
             </button>
           </div>
@@ -832,25 +832,25 @@
           <div class="grid grid-cols-2 gap-2">
             <div class="bg-surface-2 rounded-lg p-2.5 text-center">
               <div id="traffic-kpi-live" class="font-mono text-lg font-bold text-neon-green">0</div>
-              <div class="text-[0.6rem] text-gray-500 uppercase">Live Now</div>
+              <div class="text-[0.6rem] text-gray-400 uppercase">Live Now</div>
             </div>
             <div class="bg-surface-2 rounded-lg p-2.5 text-center">
               <div id="traffic-kpi-pageviews" class="font-mono text-lg font-bold text-electric">0</div>
-              <div class="text-[0.6rem] text-gray-500 uppercase">Views Today</div>
+              <div class="text-[0.6rem] text-gray-400 uppercase">Views Today</div>
             </div>
             <div class="bg-surface-2 rounded-lg p-2.5 text-center">
               <div id="traffic-kpi-sessions" class="font-mono text-lg font-bold text-neon-purple">0</div>
-              <div class="text-[0.6rem] text-gray-500 uppercase">Sessions</div>
+              <div class="text-[0.6rem] text-gray-400 uppercase">Sessions</div>
             </div>
             <div class="bg-surface-2 rounded-lg p-2.5 text-center">
               <div id="traffic-kpi-avg-duration" class="font-mono text-lg font-bold text-neon-yellow">0s</div>
-              <div class="text-[0.6rem] text-gray-500 uppercase">Avg Duration</div>
+              <div class="text-[0.6rem] text-gray-400 uppercase">Avg Duration</div>
             </div>
           </div>
         </div>
         <!-- Section jump links -->
         <div class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-1">
-          <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Jump to</p>
+          <p class="text-[0.6rem] text-gray-400 uppercase tracking-wider font-mono mb-2">Jump to</p>
           <button onclick="scrollTraffic('sec-live-visitors')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">👁️ Live Visitors</button>
           <button onclick="scrollTraffic('sec-traffic-overview')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">📈 Traffic Overview</button>
           <button onclick="scrollTraffic('sec-top-pages')" class="w-full text-left px-3 py-2 text-xs font-mono text-gray-400 hover:text-electric hover:bg-surface-2 rounded-lg transition">📄 Top Pages</button>
@@ -875,8 +875,8 @@
           <div id="outreach-agent-indicator" class="flex items-center gap-3 mb-3">
             <div class="text-2xl">⚪</div>
             <div>
-              <div class="text-xs font-mono font-bold uppercase text-gray-500">Not started</div>
-              <div id="outreach-agent-task" class="text-[0.6rem] font-mono text-gray-600 truncate max-w-[180px]"></div>
+              <div class="text-xs font-mono font-bold uppercase text-gray-400">Not started</div>
+              <div id="outreach-agent-task" class="text-[0.6rem] font-mono text-gray-400 truncate max-w-[180px]"></div>
             </div>
           </div>
           <div class="flex gap-2">
@@ -896,18 +896,18 @@
         </div>
         <!-- KPI Cards -->
         <div class="p-3 space-y-1.5 border-b border-border">
-          <div id="kpi-prospects" class="flex justify-between text-xs font-mono"><span class="text-gray-500">📊 Prospects</span> <span class="text-gray-200">0</span></div>
-          <div id="kpi-audited" class="flex justify-between text-xs font-mono"><span class="text-gray-500">🔍 Audited</span> <span class="text-gray-200">0</span></div>
-          <div id="kpi-enriched" class="flex justify-between text-xs font-mono"><span class="text-gray-500">🧬 Enriched</span> <span class="text-gray-200">0</span></div>
-          <div id="kpi-contacted" class="flex justify-between text-xs font-mono"><span class="text-gray-500">📧 Contacted</span> <span class="text-gray-200">0</span></div>
-          <div id="kpi-replied" class="flex justify-between text-xs font-mono"><span class="text-gray-500">⭐ Replied</span> <span class="text-gray-200">0</span></div>
-          <div id="kpi-meetings" class="flex justify-between text-xs font-mono"><span class="text-gray-500">📅 Meetings</span> <span class="text-gray-200">0</span></div>
+          <div id="kpi-prospects" class="flex justify-between text-xs font-mono"><span class="text-gray-400">📊 Prospects</span> <span class="text-gray-200">0</span></div>
+          <div id="kpi-audited" class="flex justify-between text-xs font-mono"><span class="text-gray-400">🔍 Audited</span> <span class="text-gray-200">0</span></div>
+          <div id="kpi-enriched" class="flex justify-between text-xs font-mono"><span class="text-gray-400">🧬 Enriched</span> <span class="text-gray-200">0</span></div>
+          <div id="kpi-contacted" class="flex justify-between text-xs font-mono"><span class="text-gray-400">📧 Contacted</span> <span class="text-gray-200">0</span></div>
+          <div id="kpi-replied" class="flex justify-between text-xs font-mono"><span class="text-gray-400">⭐ Replied</span> <span class="text-gray-200">0</span></div>
+          <div id="kpi-meetings" class="flex justify-between text-xs font-mono"><span class="text-gray-400">📅 Meetings</span> <span class="text-gray-200">0</span></div>
         </div>
         <!-- Ring Progress -->
         <div class="p-3 border-b border-border">
           <div class="flex items-center gap-1 mb-2">
-            <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono">Ring Progress</p>
-            <span class="text-gray-600 cursor-help relative group">
+            <p class="text-[0.6rem] text-gray-400 uppercase tracking-wider font-mono">Ring Progress</p>
+            <span class="text-gray-400 cursor-help relative group">
               ⓘ
               <span class="absolute hidden group-hover:block bg-gray-900 text-gray-300 text-[0.6rem] font-mono p-2 rounded shadow-lg border border-gray-700 z-50 w-52 left-0 top-4 leading-relaxed">
                 <strong class="text-electric">Geo-Ring System</strong><br>
@@ -917,14 +917,14 @@
             </span>
           </div>
           <div id="outreach-ring-progress">
-            <div class="text-xs text-gray-500 font-mono">No rings configured</div>
+            <div class="text-xs text-gray-400 font-mono">No rings configured</div>
           </div>
         </div>
         <!-- Recent Activity -->
         <div class="flex-1 overflow-y-auto no-scrollbar p-3">
-          <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Recent Activity</p>
+          <p class="text-[0.6rem] text-gray-400 uppercase tracking-wider font-mono mb-2">Recent Activity</p>
           <div id="outreach-activity-feed" class="space-y-0.5">
-            <div class="text-xs text-gray-500 font-mono">No activity yet</div>
+            <div class="text-xs text-gray-400 font-mono">No activity yet</div>
           </div>
         </div>
       </div>
@@ -937,8 +937,8 @@
       <div id="empty-state" class="flex-1 flex items-center justify-center">
         <div class="text-center">
           <div class="text-6xl mb-4 opacity-20">🔧</div>
-          <h2 class="font-mono text-xl text-gray-500 mb-2">No build selected</h2>
-          <p class="text-sm text-gray-600">Select a build from the sidebar or wait for a new one</p>
+          <h2 class="font-mono text-xl text-gray-400 mb-2">No build selected</h2>
+          <p class="text-sm text-gray-400">Select a build from the sidebar or wait for a new one</p>
         </div>
       </div>
 
@@ -977,19 +977,19 @@
           <!-- Info Grid -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <div class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1">Email</div>
+              <div class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1">Email</div>
               <div id="lead-email" class="text-sm text-electric font-mono"></div>
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <div class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1">Niche</div>
+              <div class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1">Niche</div>
               <div id="lead-niche" class="text-sm text-gray-300"></div>
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <div class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1">Submitted</div>
+              <div class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1">Submitted</div>
               <div id="lead-time" class="text-sm text-gray-300"></div>
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <div class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1">Source</div>
+              <div class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1">Source</div>
               <div id="lead-source" class="text-sm text-gray-300 font-mono"></div>
             </div>
           </div>
@@ -1007,7 +1007,7 @@
               <a id="lead-email-link" href="" class="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-2 text-gray-300 border border-border rounded-lg font-mono text-sm hover:border-border-glow transition">
                 ✉️ Send Email
               </a>
-              <button id="btn-archive-lead" onclick="archiveLead()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-2 text-gray-500 border border-border rounded-lg font-mono text-sm hover:text-brand-link hover:border-brand-link/30 transition">
+              <button id="btn-archive-lead" onclick="archiveLead()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-surface-2 text-gray-400 border border-border rounded-lg font-mono text-sm hover:text-brand-link hover:border-brand-link/30 transition">
                 🗃️ Archive
               </button>
               <button id="btn-restore-lead" onclick="restoreLead()" class="hidden inline-flex items-center gap-2 px-5 py-2.5 bg-neon-green/10 text-neon-green border border-neon-green/30 rounded-lg font-mono text-sm hover:bg-neon-green/20 transition">
@@ -1041,39 +1041,39 @@
             <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">📋 Client Details</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Name</label>
+                <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Client Name</label>
                 <input id="pf-edit-name" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Email</label>
+                <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Email</label>
                 <input id="pf-edit-email" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Phone</label>
+                <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Phone</label>
                 <input id="pf-edit-phone" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Niche</label>
+                <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Niche</label>
                 <input id="pf-edit-niche" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Location</label>
+                <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Location</label>
                 <input id="pf-edit-location" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Live URL</label>
+                <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Live URL</label>
                 <input id="pf-edit-url" class="w-full bg-transparent border-b border-border text-sm text-electric font-mono focus:border-electric focus:outline-none py-1" />
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Brand Colors</label>
+                <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Brand Colors</label>
                 <input id="pf-edit-colors" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Tagline</label>
+                <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Tagline</label>
                 <input id="pf-edit-tagline" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
               </div>
               <div class="md:col-span-2 bg-surface-2 rounded-xl border border-border p-4">
-                <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Goals</label>
+                <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Goals</label>
                 <textarea id="pf-edit-goals" rows="3" class="w-full bg-transparent border-b border-border text-sm text-gray-300 font-mono focus:border-electric focus:outline-none py-1 resize-none"></textarea>
               </div>
             </div>
@@ -1082,21 +1082,21 @@
           <div id="pf-contracts-section">
             <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">📝 Contracts</h3>
             <div id="pf-contracts-list" class="space-y-2">
-              <p class="text-xs text-gray-600 font-mono">No contracts yet</p>
+              <p class="text-xs text-gray-400 font-mono">No contracts yet</p>
             </div>
           </div>
           <!-- Site Invoices -->
           <div id="pf-invoices-section">
             <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">💰 Invoices</h3>
             <div id="pf-invoices-list" class="space-y-2">
-              <p class="text-xs text-gray-600 font-mono">No invoices yet</p>
+              <p class="text-xs text-gray-400 font-mono">No invoices yet</p>
             </div>
           </div>
           <!-- Site Quotes -->
           <div id="pf-quotes-section">
             <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">📋 Quotes</h3>
             <div id="pf-quotes-list" class="space-y-2">
-              <p class="text-xs text-gray-600 font-mono">No quotes yet</p>
+              <p class="text-xs text-gray-400 font-mono">No quotes yet</p>
             </div>
           </div>
         </div>
@@ -1118,7 +1118,7 @@
               <button id="ct-btn-delete" onclick="deleteContract()" class="hidden text-xs font-mono px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition" title="Delete this draft contract">🗑️ Delete</button>
             </div>
           </div>
-          <div id="ct-meta" class="text-xs font-mono text-gray-500"></div>
+          <div id="ct-meta" class="text-xs font-mono text-gray-400"></div>
         </div>
         <div class="flex-1 overflow-y-auto p-3 md:p-6 pb-20 md:pb-6 space-y-6">
           <!-- Signed Contract View (populated by JS when status=signed) -->
@@ -1129,35 +1129,35 @@
           <!-- Client & Project Info -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Name *</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Client Name *</label>
               <input id="ct-client-name" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Email *</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Client Email *</label>
               <input id="ct-client-email" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Phone</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Client Phone</label>
               <input id="ct-client-phone" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Address</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Client Address</label>
               <input id="ct-client-address" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Project Name *</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Project Name *</label>
               <input id="ct-project-name" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Total Amount ($)</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Total Amount ($)</label>
               <input id="ct-total-amount" type="number" step="0.01" class="w-full bg-transparent border-b border-border text-sm text-neon-green font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Deposit Amount ($)</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Deposit Amount ($)</label>
               <input id="ct-deposit-amount" type="number" step="0.01" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Payment Method</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Payment Method</label>
               <select id="ct-payment-method" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1">
                 <option value="" class="bg-surface">Select...</option>
                 <option value="venmo" class="bg-surface">Venmo</option>
@@ -1167,19 +1167,19 @@
               </select>
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Start Date</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Start Date</label>
               <input id="ct-start-date" type="date" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Est. Completion</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Est. Completion</label>
               <input id="ct-completion-date" type="date" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="md:col-span-2 bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Project Description</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Project Description</label>
               <textarea id="ct-project-desc" rows="3" class="w-full bg-transparent border-b border-border text-sm text-gray-300 font-mono focus:border-electric focus:outline-none py-1 resize-none"></textarea>
             </div>
             <div class="md:col-span-2 bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Payment Terms</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Payment Terms</label>
               <textarea id="ct-payment-terms" rows="2" class="w-full bg-transparent border-b border-border text-sm text-gray-300 font-mono focus:border-electric focus:outline-none py-1 resize-none"></textarea>
             </div>
           </div>
@@ -1190,7 +1190,7 @@
               <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">📋 Contract Clauses</h3>
               <div class="flex items-center gap-2">
                 <button onclick="addCustomClause()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-electric/10 text-electric hover:bg-electric/20 transition">+ Add Clause</button>
-                <button onclick="resetClausesToDefault()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-surface-2 text-gray-500 hover:text-gray-300 transition">↻ Reset Defaults</button>
+                <button onclick="resetClausesToDefault()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-surface-2 text-gray-400 hover:text-gray-300 transition">↻ Reset Defaults</button>
               </div>
             </div>
             <div id="ct-clauses-container" class="space-y-3">
@@ -1212,7 +1212,7 @@
                 <img id="ct-signature-img" src="" class="h-16 border border-border rounded" alt="Client signature" />
                 <div>
                   <p id="ct-signer-name" class="font-mono text-sm text-white"></p>
-                  <p id="ct-signed-at" class="text-xs text-gray-500 font-mono"></p>
+                  <p id="ct-signed-at" class="text-xs text-gray-400 font-mono"></p>
                 </div>
               </div>
             </div>
@@ -1243,15 +1243,15 @@
           <!-- Client Info -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Name</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Client Name</label>
               <input id="inv-client-name" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Email</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Client Email</label>
               <input id="inv-client-email" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Payment Method</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Payment Method</label>
               <select id="inv-payment-method" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1">
                 <option value="" class="bg-surface">Select...</option>
                 <option value="venmo" class="bg-surface">Venmo</option>
@@ -1261,7 +1261,7 @@
               </select>
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Due Date</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Due Date</label>
               <input id="inv-due-date" type="date" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
           </div>
@@ -1280,11 +1280,11 @@
           <!-- Totals -->
           <div class="bg-surface-2 rounded-xl border border-border p-4">
             <div class="grid grid-cols-2 gap-3 text-sm font-mono">
-              <div class="text-gray-500">Subtotal</div>
+              <div class="text-gray-400">Subtotal</div>
               <div id="inv-subtotal" class="text-right text-white">$0.00</div>
-              <div class="text-gray-500">Tax Rate (%)</div>
+              <div class="text-gray-400">Tax Rate (%)</div>
               <div><input id="inv-tax-rate" type="number" step="0.01" value="0" class="w-full bg-transparent text-right text-white font-mono focus:outline-none" onchange="recalcInvoice()" /></div>
-              <div class="text-gray-500">Tax</div>
+              <div class="text-gray-400">Tax</div>
               <div id="inv-tax-amount" class="text-right text-white">$0.00</div>
               <div class="text-white font-bold text-lg border-t border-border pt-2">Total</div>
               <div id="inv-total" class="text-right text-neon-green font-bold text-lg border-t border-border pt-2">$0.00</div>
@@ -1304,7 +1304,7 @@
                 <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest">📅 Payment Plan</h3>
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" id="inv-payment-plan-enabled" onchange="togglePaymentPlan()" class="rounded border-border bg-surface text-electric focus:ring-electric focus:ring-offset-0 w-4 h-4">
-                  <span class="text-xs text-gray-500 font-mono">Enable</span>
+                  <span class="text-xs text-gray-400 font-mono">Enable</span>
                 </label>
               </div>
               <div id="pp-controls" class="hidden flex flex-wrap items-center gap-2">
@@ -1318,15 +1318,15 @@
               <div class="grid grid-cols-3 gap-3 text-center">
                 <div class="bg-surface rounded-lg p-2">
                   <div id="pp-paid-count" class="text-neon-green font-mono font-bold text-lg">0</div>
-                  <div class="text-[0.6rem] text-gray-600 uppercase">Paid</div>
+                  <div class="text-[0.6rem] text-gray-400 uppercase">Paid</div>
                 </div>
                 <div class="bg-surface rounded-lg p-2">
                   <div id="pp-pending-count" class="text-neon-yellow font-mono font-bold text-lg">0</div>
-                  <div class="text-[0.6rem] text-gray-600 uppercase">Pending</div>
+                  <div class="text-[0.6rem] text-gray-400 uppercase">Pending</div>
                 </div>
                 <div class="bg-surface rounded-lg p-2">
                   <div id="pp-overdue-count" class="text-red-400 font-mono font-bold text-lg">0</div>
-                  <div class="text-[0.6rem] text-gray-600 uppercase">Overdue</div>
+                  <div class="text-[0.6rem] text-gray-400 uppercase">Overdue</div>
                 </div>
               </div>
             </div>
@@ -1345,7 +1345,7 @@
             <div class="flex items-center gap-3">
               <span id="qt-status-badge" class="px-2.5 py-1 rounded-full text-xs font-mono font-semibold bg-gray-800 text-gray-400">DRAFT</span>
               <h2 class="font-mono text-lg font-bold text-white">📋 Quote Builder</h2>
-              <span id="qt-revision" class="text-xs font-mono text-gray-500">v1</span>
+              <span id="qt-revision" class="text-xs font-mono text-gray-400">v1</span>
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <button onclick="saveQuote()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-neon-green/10 text-neon-green border border-neon-green/30 hover:bg-neon-green/20 transition">💾 Save</button>
@@ -1355,7 +1355,7 @@
               <button id="qt-btn-delete" onclick="deleteQuote()" class="hidden text-xs font-mono px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition" title="Delete this quote">🗑️ Delete</button>
             </div>
           </div>
-          <div id="qt-meta" class="text-xs font-mono text-gray-500"></div>
+          <div id="qt-meta" class="text-xs font-mono text-gray-400"></div>
         </div>
         <div class="flex-1 overflow-y-auto p-3 md:p-6 pb-20 md:pb-6 space-y-6">
           <!-- Approved Quote View (populated by JS when status=approved) -->
@@ -1366,27 +1366,27 @@
           <!-- Client & Project Info -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Name *</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Client Name *</label>
               <input id="qt-client-name" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Client Email *</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Client Email *</label>
               <input id="qt-client-email" type="email" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Project Name *</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Project Name *</label>
               <input id="qt-project-name" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Valid Days</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Valid Days</label>
               <input id="qt-valid-days" type="number" value="30" min="1" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Payment Schedule</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Payment Schedule</label>
               <input id="qt-payment-schedule" value="50% upfront · 50% at launch" class="w-full bg-transparent border-b border-border text-sm text-white font-mono focus:border-electric focus:outline-none py-1" />
             </div>
             <div class="md:col-span-2 bg-surface-2 rounded-xl border border-border p-4">
-              <label class="text-[0.65rem] font-mono text-gray-600 uppercase tracking-widest mb-1 block">Project Description</label>
+              <label class="text-[0.65rem] font-mono text-gray-400 uppercase tracking-widest mb-1 block">Project Description</label>
               <textarea id="qt-project-desc" rows="5" class="w-full bg-transparent border-b border-border text-sm text-gray-300 font-mono focus:border-electric focus:outline-none py-1 resize-none"></textarea>
             </div>
           </div>
@@ -1399,7 +1399,7 @@
                 <button onclick="addQuoteDeliverable()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-electric/10 text-electric hover:bg-electric/20 transition">+ Add Item</button>
                 <button onclick="quickUpdateRate()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-neon-yellow/10 text-neon-yellow hover:bg-neon-yellow/20 transition" title="Change hourly rate for all items">💲 Rate</button>
                 <button onclick="quickUpdateTotal()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-neon-green/10 text-neon-green hover:bg-neon-green/20 transition" title="Set a target total and auto-scale rates">🎯 Set Total</button>
-                <button onclick="resetQuoteDeliverables()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-surface-2 text-gray-500 hover:text-gray-300 transition">↻ Reset</button>
+                <button onclick="resetQuoteDeliverables()" class="text-[0.65rem] font-mono px-2 py-1 rounded bg-surface-2 text-gray-400 hover:text-gray-300 transition">↻ Reset</button>
               </div>
             </div>
             <div id="qt-deliverables-container" class="space-y-2">
@@ -1410,7 +1410,7 @@
           <!-- Totals -->
           <div class="bg-surface-2 rounded-xl border border-border p-4">
             <div class="grid grid-cols-2 gap-3 text-sm font-mono">
-              <div class="text-gray-500">Total Hours</div>
+              <div class="text-gray-400">Total Hours</div>
               <div id="qt-total-hours" class="text-right text-white">0h</div>
               <div class="text-white font-bold text-lg border-t border-border pt-2">Project Total</div>
               <div id="qt-total-cost" class="text-right text-neon-green font-bold text-lg border-t border-border pt-2">$0</div>
@@ -1431,7 +1431,7 @@
                 <img id="qt-signature-img" src="" class="h-16 border border-border rounded" alt="Client signature" />
                 <div>
                   <p id="qt-signer-name" class="font-mono text-sm text-white"></p>
-                  <p id="qt-signed-at" class="text-xs text-gray-500 font-mono"></p>
+                  <p id="qt-signed-at" class="text-xs text-gray-400 font-mono"></p>
                 </div>
               </div>
             </div>
@@ -1453,7 +1453,7 @@
               <button id="build-protect-btn" onclick="toggleProtection()" class="hidden px-3 py-1 rounded-lg text-xs font-mono font-semibold transition" title="Toggle protection"></button>
               <button id="build-delete-btn" onclick="deleteBuild()" class="hidden px-3 py-1 rounded-lg text-xs font-mono font-semibold bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition" title="Delete build">🗑️ Delete</button>
             </div>
-            <div class="flex items-center gap-3 text-xs font-mono text-gray-500">
+            <div class="flex items-center gap-3 text-xs font-mono text-gray-400">
               <span id="build-id-display"></span>
               <span id="build-time"></span>
             </div>
@@ -1492,15 +1492,15 @@
               ⚡ Pipeline
             </button>
             <button onclick="switchContentTab('ai')" id="ctab-ai"
-              class="px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+              class="px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">
               🤖 AI Activity
             </button>
             <button onclick="switchContentTab('log')" id="ctab-log"
-              class="px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
-              📟 Log <span id="log-count" class="ml-1 text-gray-600">0</span>
+              class="px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">
+              📟 Log <span id="log-count" class="ml-1 text-gray-400">0</span>
             </button>
             <div class="ml-auto hidden sm:flex items-center gap-2 pr-4">
-              <label class="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer">
+              <label class="flex items-center gap-1.5 text-xs text-gray-400 cursor-pointer">
                 <input type="checkbox" id="auto-scroll" checked class="rounded border-border bg-surface-2 text-electric focus:ring-electric focus:ring-offset-0 w-3.5 h-3.5">
                 Auto-scroll
               </label>
@@ -1513,21 +1513,21 @@
             <div id="content-pipeline" class="flex-1 overflow-y-auto p-3 md:p-6">
               <div id="pipeline-graph" class="pipeline-container max-w-4xl mx-auto">
                 <!-- Rendered by JS -->
-                <div class="text-center text-gray-600 text-xs font-mono py-12">Waiting for build to start...</div>
+                <div class="text-center text-gray-400 text-xs font-mono py-12">Waiting for build to start...</div>
               </div>
             </div>
 
             <!-- ═══ AI Activity Panel (hidden initially) ═══ -->
             <div id="content-ai" class="flex-1 overflow-y-auto p-3 space-y-3 hidden">
               <div id="ai-panel" class="space-y-3">
-                <div class="text-center text-gray-600 text-xs font-mono py-8">No AI activity yet</div>
+                <div class="text-center text-gray-400 text-xs font-mono py-8">No AI activity yet</div>
               </div>
             </div>
 
             <!-- ═══ Build Log Panel (hidden initially) ═══ -->
             <div id="content-log" class="flex-1 overflow-y-auto p-4 font-mono text-xs leading-relaxed hidden">
               <div id="log-panel">
-                <div class="text-gray-600">Waiting for build output...</div>
+                <div class="text-gray-400">Waiting for build output...</div>
               </div>
             </div>
           </div>
@@ -1544,7 +1544,7 @@
               <span class="text-2xl">📊</span>
               <div>
                 <h2 class="font-mono text-xl font-bold text-white">Business Analytics</h2>
-                <p id="analytics-updated" class="text-xs text-gray-500 font-mono">Loading...</p>
+                <p id="analytics-updated" class="text-xs text-gray-400 font-mono">Loading...</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
@@ -1570,28 +1570,28 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
               <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
                 <div id="an-total-revenue" class="font-mono text-xl font-bold text-neon-green">$0</div>
-                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Total Revenue</div>
+                <div class="text-[0.65rem] text-gray-400 uppercase mt-1">Total Revenue</div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
                 <div id="an-collected" class="font-mono text-xl font-bold text-electric">$0</div>
-                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Collected</div>
+                <div class="text-[0.65rem] text-gray-400 uppercase mt-1">Collected</div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
                 <div id="an-outstanding" class="font-mono text-xl font-bold text-neon-yellow">$0</div>
-                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Outstanding</div>
+                <div class="text-[0.65rem] text-gray-400 uppercase mt-1">Outstanding</div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
                 <div id="an-collection-rate" class="font-mono text-xl font-bold text-neon-purple">0%</div>
-                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Collection Rate</div>
+                <div class="text-[0.65rem] text-gray-400 uppercase mt-1">Collection Rate</div>
               </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Revenue Over Time</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Revenue Over Time</h4>
                 <div class="h-48"><canvas id="chart-revenue"></canvas></div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Payment Status Breakdown</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Payment Status Breakdown</h4>
                 <div class="h-48 flex items-center justify-center"><canvas id="chart-payment-status"></canvas></div>
               </div>
             </div>
@@ -1603,11 +1603,11 @@
             <div id="pipeline-funnel" class="space-y-2 mb-4"></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Lead Sources</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Lead Sources</h4>
                 <div class="h-48 flex items-center justify-center"><canvas id="chart-lead-sources"></canvas></div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Client Niches</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Client Niches</h4>
                 <div class="h-48 flex items-center justify-center"><canvas id="chart-niches"></canvas></div>
               </div>
             </div>
@@ -1619,34 +1619,34 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
               <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
                 <div id="an-avg-deal" class="font-mono text-xl font-bold text-electric">$0</div>
-                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Avg Deal Size</div>
+                <div class="text-[0.65rem] text-gray-400 uppercase mt-1">Avg Deal Size</div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
                 <div id="an-sign-rate" class="font-mono text-xl font-bold text-neon-green">0%</div>
-                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Contract Sign Rate</div>
+                <div class="text-[0.65rem] text-gray-400 uppercase mt-1">Contract Sign Rate</div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
                 <div id="an-avg-time-sign" class="font-mono text-xl font-bold text-neon-yellow">—</div>
-                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Avg Time to Sign</div>
+                <div class="text-[0.65rem] text-gray-400 uppercase mt-1">Avg Time to Sign</div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
                 <div id="an-repeat-rate" class="font-mono text-xl font-bold text-neon-purple">0%</div>
-                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Repeat Client Rate</div>
+                <div class="text-[0.65rem] text-gray-400 uppercase mt-1">Repeat Client Rate</div>
               </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Contract Status Flow</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Contract Status Flow</h4>
                 <div class="h-48 flex items-center justify-center"><canvas id="chart-contract-flow"></canvas></div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Monthly Activity</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Monthly Activity</h4>
                 <div class="h-48"><canvas id="chart-monthly-activity"></canvas></div>
               </div>
             </div>
             <!-- Top clients table -->
             <div class="bg-surface-2 rounded-xl border border-border p-4 mt-4">
-              <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Top Clients by Revenue</h4>
+              <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Top Clients by Revenue</h4>
               <div id="top-clients-table" class="overflow-x-auto"></div>
             </div>
           </section>
@@ -1657,28 +1657,28 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
               <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
                 <div id="an-total-builds" class="font-mono text-xl font-bold text-white">0</div>
-                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Total Builds</div>
+                <div class="text-[0.65rem] text-gray-400 uppercase mt-1">Total Builds</div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
                 <div id="an-build-success" class="font-mono text-xl font-bold text-neon-green">0%</div>
-                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Success Rate</div>
+                <div class="text-[0.65rem] text-gray-400 uppercase mt-1">Success Rate</div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
                 <div id="an-avg-build-time" class="font-mono text-xl font-bold text-electric">—</div>
-                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Avg Build Time</div>
+                <div class="text-[0.65rem] text-gray-400 uppercase mt-1">Avg Build Time</div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4 text-center">
                 <div id="an-sites-live" class="font-mono text-xl font-bold text-neon-yellow">0</div>
-                <div class="text-[0.65rem] text-gray-500 uppercase mt-1">Sites Live</div>
+                <div class="text-[0.65rem] text-gray-400 uppercase mt-1">Sites Live</div>
               </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Build Outcomes</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Build Outcomes</h4>
                 <div class="h-48 flex items-center justify-center"><canvas id="chart-build-outcomes"></canvas></div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Builds Over Time</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Builds Over Time</h4>
                 <div class="h-48"><canvas id="chart-builds-timeline"></canvas></div>
               </div>
             </div>
@@ -1697,17 +1697,17 @@
                 <div id="storage-bar" class="h-full rounded-full bg-gradient-to-r from-electric to-neon-green transition-all duration-700" style="width:0%"></div>
               </div>
               <div class="flex items-center justify-between mt-1">
-                <span class="text-[0.6rem] text-gray-600 font-mono">0 MB</span>
-                <span class="text-[0.6rem] text-gray-600 font-mono">1 GB (free tier)</span>
+                <span class="text-[0.6rem] text-gray-400 font-mono">0 MB</span>
+                <span class="text-[0.6rem] text-gray-400 font-mono">1 GB (free tier)</span>
               </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Storage by Node</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Storage by Node</h4>
                 <div class="h-48 flex items-center justify-center"><canvas id="chart-storage"></canvas></div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Node Details</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Node Details</h4>
                 <div id="storage-breakdown" class="space-y-2"></div>
               </div>
             </div>
@@ -1717,11 +1717,11 @@
           <section id="sec-activity">
             <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">📜 Activity Heatmap</h3>
             <div class="bg-surface-2 rounded-xl border border-border p-4 mb-4">
-              <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Daily Actions (last 30 days)</h4>
+              <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Daily Actions (last 30 days)</h4>
               <div class="h-48"><canvas id="chart-activity-heatmap"></canvas></div>
             </div>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
-              <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Recent Events</h4>
+              <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Recent Events</h4>
               <div id="recent-events-list" class="space-y-1 max-h-64 overflow-y-auto overflow-x-auto no-scrollbar"></div>
             </div>
           </section>
@@ -1738,7 +1738,7 @@
               <span class="text-2xl">🌐</span>
               <div>
                 <h2 class="font-mono text-xl font-bold text-white">Site Traffic</h2>
-                <p id="traffic-updated" class="text-xs text-gray-500 font-mono">Live data from site_analytics</p>
+                <p id="traffic-updated" class="text-xs text-gray-400 font-mono">Live data from site_analytics</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
@@ -1759,17 +1759,17 @@
               <div class="flex items-center gap-2 mb-3">
                 <span class="w-2.5 h-2.5 bg-neon-green rounded-full animate-pulse"></span>
                 <span id="traffic-live-count" class="font-mono text-sm text-neon-green font-bold">0</span>
-                <span class="text-xs text-gray-500 font-mono">visitors online now</span>
+                <span class="text-xs text-gray-400 font-mono">visitors online now</span>
               </div>
               <!-- Header row -->
-              <div class="flex items-center justify-between py-1.5 px-2 text-[0.6rem] text-gray-600 font-mono uppercase tracking-wider border-b border-border mb-1">
+              <div class="flex items-center justify-between py-1.5 px-2 text-[0.6rem] text-gray-400 font-mono uppercase tracking-wider border-b border-border mb-1">
                 <span class="w-24">Visitor</span>
                 <span class="flex-1">Page</span>
                 <span class="w-16">Device</span>
                 <span class="w-16 text-right">Time on</span>
               </div>
               <div id="traffic-live-table" class="overflow-x-auto">
-                <p class="text-gray-500 text-xs font-mono text-center py-6">Waiting for visitors…</p>
+                <p class="text-gray-400 text-xs font-mono text-center py-6">Waiting for visitors…</p>
               </div>
             </div>
           </section>
@@ -1787,15 +1787,15 @@
             <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">📄 Top Pages & Referrers</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Most Visited Pages</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Most Visited Pages</h4>
                 <div id="traffic-top-pages">
-                  <p class="text-gray-500 text-xs font-mono py-4">Loading…</p>
+                  <p class="text-gray-400 text-xs font-mono py-4">Loading…</p>
                 </div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Top Referrers</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Top Referrers</h4>
                 <div id="traffic-top-referrers">
-                  <p class="text-gray-500 text-xs font-mono py-4">Loading…</p>
+                  <p class="text-gray-400 text-xs font-mono py-4">Loading…</p>
                 </div>
               </div>
             </div>
@@ -1806,11 +1806,11 @@
             <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">🔗 Traffic Sources & Devices</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Source Breakdown</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Source Breakdown</h4>
                 <div class="h-48 flex items-center justify-center"><canvas id="traffic-chart-sources"></canvas></div>
               </div>
               <div class="bg-surface-2 rounded-xl border border-border p-4">
-                <h4 class="font-mono text-[0.65rem] text-gray-500 uppercase tracking-wider mb-3">Device Breakdown</h4>
+                <h4 class="font-mono text-[0.65rem] text-gray-400 uppercase tracking-wider mb-3">Device Breakdown</h4>
                 <div class="h-48 flex items-center justify-center"><canvas id="traffic-chart-devices"></canvas></div>
               </div>
             </div>
@@ -1842,7 +1842,7 @@
           <section id="sec-performance">
             <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">⚡ Performance Metrics</h3>
             <div id="traffic-perf-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3">
-              <p class="text-gray-500 text-xs font-mono text-center py-6 col-span-full">Loading…</p>
+              <p class="text-gray-400 text-xs font-mono text-center py-6 col-span-full">Loading…</p>
             </div>
           </section>
 
@@ -1851,7 +1851,7 @@
             <h3 class="font-mono text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">🗂️ Recent Sessions</h3>
             <div class="bg-surface-2 rounded-xl border border-border p-4">
               <!-- Header row -->
-              <div class="flex items-center gap-2 py-1.5 px-2 text-[0.6rem] text-gray-600 font-mono uppercase tracking-wider border-b border-border mb-1 min-w-0">
+              <div class="flex items-center gap-2 py-1.5 px-2 text-[0.6rem] text-gray-400 font-mono uppercase tracking-wider border-b border-border mb-1 min-w-0">
                 <span class="w-16 shrink-0">Visitor</span>
                 <span class="w-14 shrink-0 hidden sm:block">Device</span>
                 <span class="w-10 shrink-0">Pages</span>
@@ -1860,7 +1860,7 @@
                 <span class="flex-1 text-right">When</span>
               </div>
               <div id="traffic-sessions-list" class="overflow-x-auto">
-                <p class="text-gray-500 text-xs font-mono text-center py-6">Loading…</p>
+                <p class="text-gray-400 text-xs font-mono text-center py-6">Loading…</p>
               </div>
             </div>
           </section>
@@ -1880,7 +1880,7 @@
             🎯 Agent
           </button>
           <button onclick="switchOutreachMode('mass')" id="outreach-mode-mass"
-            class="flex-1 py-2 text-xs font-mono font-semibold uppercase tracking-widest text-center rounded-lg text-gray-500 hover:text-gray-300 transition">
+            class="flex-1 py-2 text-xs font-mono font-semibold uppercase tracking-widest text-center rounded-lg text-gray-400 hover:text-gray-300 transition">
             📨 Mass Outreach
           </button>
         </div>
@@ -1891,25 +1891,25 @@
           <!-- Pool Status Cards -->
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div class="bg-surface-1 rounded-xl border border-border p-4 text-center">
-              <div class="text-[0.6rem] font-mono text-gray-500 uppercase tracking-widest mb-1">Pool Capacity</div>
+              <div class="text-[0.6rem] font-mono text-gray-400 uppercase tracking-widest mb-1">Pool Capacity</div>
               <div id="mass-pool-total" class="text-2xl font-bold text-electric">0</div>
-              <div class="text-[0.55rem] text-gray-600">/day</div>
+              <div class="text-[0.55rem] text-gray-400">/day</div>
             </div>
             <div class="bg-surface-1 rounded-xl border border-border p-4 text-center">
-              <div class="text-[0.6rem] font-mono text-gray-500 uppercase tracking-widest mb-1">Sent Today</div>
+              <div class="text-[0.6rem] font-mono text-gray-400 uppercase tracking-widest mb-1">Sent Today</div>
               <div id="mass-pool-sent" class="text-2xl font-bold text-emerald-400">0</div>
               <div id="mass-pool-bar" class="mt-2 h-1.5 rounded-full bg-surface-2 overflow-hidden">
                 <div id="mass-pool-bar-fill" class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-electric transition-all duration-1000" style="width:0%"></div>
               </div>
             </div>
             <div class="bg-surface-1 rounded-xl border border-border p-4 text-center">
-              <div class="text-[0.6rem] font-mono text-gray-500 uppercase tracking-widest mb-1">Remaining</div>
+              <div class="text-[0.6rem] font-mono text-gray-400 uppercase tracking-widest mb-1">Remaining</div>
               <div id="mass-pool-remaining" class="text-2xl font-bold text-sky-400">0</div>
             </div>
             <div class="bg-surface-1 rounded-xl border border-border p-4 text-center">
-              <div class="text-[0.6rem] font-mono text-gray-500 uppercase tracking-widest mb-1">Providers</div>
+              <div class="text-[0.6rem] font-mono text-gray-400 uppercase tracking-widest mb-1">Providers</div>
               <div id="mass-pool-providers" class="text-2xl font-bold text-purple-400">0</div>
-              <div class="text-[0.55rem] text-gray-600">active</div>
+              <div class="text-[0.55rem] text-gray-400">active</div>
             </div>
           </div>
 
@@ -1920,7 +1920,7 @@
               <button onclick="massShowAddProvider()" class="px-3 py-1.5 bg-electric/10 text-electric border border-electric/30 rounded-lg text-xs font-mono font-semibold hover:bg-electric/20 transition">+ Add Provider</button>
             </div>
             <div id="mass-provider-list" class="space-y-2">
-              <div class="text-xs text-gray-600 font-mono text-center py-4">No providers configured. Add your first SMTP provider above.</div>
+              <div class="text-xs text-gray-400 font-mono text-center py-4">No providers configured. Add your first SMTP provider above.</div>
             </div>
           </div>
 
@@ -1929,42 +1929,42 @@
             <h3 id="mass-provider-form-title" class="font-mono text-sm font-semibold text-electric uppercase tracking-wide mb-4">Add SMTP Provider</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Name</label>
+                <label class="text-[0.6rem] font-mono text-gray-400 uppercase">Name</label>
                 <input id="mp-name" type="text" placeholder="e.g. gmail, brevo" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
               </div>
               <div>
-                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Host</label>
+                <label class="text-[0.6rem] font-mono text-gray-400 uppercase">Host</label>
                 <input id="mp-host" type="text" placeholder="smtp.gmail.com" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
               </div>
               <div>
-                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Port</label>
+                <label class="text-[0.6rem] font-mono text-gray-400 uppercase">Port</label>
                 <input id="mp-port" type="number" value="587" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
               </div>
               <div>
-                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Username</label>
+                <label class="text-[0.6rem] font-mono text-gray-400 uppercase">Username</label>
                 <input id="mp-username" type="text" placeholder="you@gmail.com" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
               </div>
               <div>
-                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Password / API Key</label>
+                <label class="text-[0.6rem] font-mono text-gray-400 uppercase">Password / API Key</label>
                 <input id="mp-password" type="password" placeholder="App password or SMTP key" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
               </div>
               <div>
-                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Daily Limit</label>
+                <label class="text-[0.6rem] font-mono text-gray-400 uppercase">Daily Limit</label>
                 <input id="mp-limit" type="number" value="100" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
               </div>
               <div>
-                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">From Email (optional)</label>
+                <label class="text-[0.6rem] font-mono text-gray-400 uppercase">From Email (optional)</label>
                 <input id="mp-from" type="text" placeholder="Override sender address" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
               </div>
               <div>
-                <label class="text-[0.6rem] font-mono text-gray-500 uppercase">Priority (0-10)</label>
+                <label class="text-[0.6rem] font-mono text-gray-400 uppercase">Priority (0-10)</label>
                 <input id="mp-priority" type="number" value="0" min="0" max="10" class="w-full mt-1 px-3 py-2 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 focus:outline-none focus:border-electric/50">
               </div>
             </div>
             <input id="mp-edit-id" type="hidden" value="">
             <div class="flex gap-2 mt-4">
               <button onclick="massSaveProvider()" class="px-4 py-2 bg-electric/10 text-electric border border-electric/30 rounded-lg text-xs font-mono font-semibold hover:bg-electric/20 transition">Save</button>
-              <button onclick="massCancelProvider()" class="px-4 py-2 text-gray-500 font-mono text-xs hover:text-white transition">Cancel</button>
+              <button onclick="massCancelProvider()" class="px-4 py-2 text-gray-400 font-mono text-xs hover:text-white transition">Cancel</button>
               <button onclick="massTestProvider()" class="ml-auto px-4 py-2 bg-emerald-600/10 text-emerald-400 border border-emerald-600/30 rounded-lg text-xs font-mono hover:bg-emerald-600/20 transition">⚡ Test Connection</button>
             </div>
             <div id="mass-provider-msg" class="hidden mt-2 text-xs font-mono px-3 py-2 rounded-lg"></div>
@@ -1974,7 +1974,7 @@
           <div class="bg-surface-1 rounded-xl border border-border p-4">
             <div class="flex items-center justify-between mb-4">
               <h3 class="font-mono text-sm font-semibold text-gray-300 uppercase tracking-wide">📥 Import Prospects</h3>
-              <div id="mass-import-stats" class="text-xs font-mono text-gray-500"></div>
+              <div id="mass-import-stats" class="text-xs font-mono text-gray-400"></div>
             </div>
             <div id="mass-import-dropzone" class="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-electric/50 transition cursor-pointer"
                  ondragover="event.preventDefault(); this.classList.add('border-electric/50')"
@@ -1984,7 +1984,7 @@
               <input id="mass-import-file" type="file" accept=".xlsx,.xls" class="hidden" onchange="massHandleFile(this)">
               <div class="text-3xl mb-2">📎</div>
               <div class="text-sm text-gray-400 font-mono">Drag &amp; drop Excel file or click to browse</div>
-              <div class="text-[0.6rem] text-gray-600 mt-1">.xlsx format — Registered Contractors</div>
+              <div class="text-[0.6rem] text-gray-400 mt-1">.xlsx format — Registered Contractors</div>
             </div>
             <!-- Preview Table (hidden until file selected) -->
             <div id="mass-import-preview" class="hidden mt-4">
@@ -2001,7 +2001,7 @@
               <div class="overflow-x-auto max-h-64 overflow-y-auto rounded-lg border border-border">
                 <table class="w-full text-xs font-mono">
                   <thead class="bg-surface-2 sticky top-0">
-                    <tr class="text-gray-500 uppercase">
+                    <tr class="text-gray-400 uppercase">
                       <th class="px-3 py-2 text-left">Name</th>
                       <th class="px-3 py-2 text-left">Email</th>
                       <th class="px-3 py-2 text-left">Type</th>
@@ -2022,7 +2022,7 @@
               <h3 class="font-mono text-sm font-semibold text-gray-300 uppercase tracking-wide">✉️ Email Verification</h3>
               <button onclick="massVerifyBatch()" class="px-3 py-1.5 bg-sky-600/10 text-sky-400 border border-sky-600/30 rounded-lg text-xs font-mono hover:bg-sky-600/20 transition">Verify Batch (50)</button>
             </div>
-            <div id="mass-verify-result" class="text-xs font-mono text-gray-500">Click to verify unverified imported emails via MX + SMTP probe</div>
+            <div id="mass-verify-result" class="text-xs font-mono text-gray-400">Click to verify unverified imported emails via MX + SMTP probe</div>
           </div>
 
           <!-- 🚀 Activate Imported Prospects -->
@@ -2040,7 +2040,7 @@
               </label>
               <input type="number" id="activate-limit" value="200" min="1" max="1000" class="w-20 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-xs text-white font-mono">
             </div>
-            <div id="mass-activate-result" class="text-xs font-mono text-gray-500">Preview to see eligible imported prospects, then activate to create email drafts (pending approval).</div>
+            <div id="mass-activate-result" class="text-xs font-mono text-gray-400">Preview to see eligible imported prospects, then activate to create email drafts (pending approval).</div>
           </div>
 
         </div>
@@ -2054,7 +2054,7 @@
           <div class="mc-header-bar">
             <div id="mc-status-dot" class="mc-dot idle"></div>
             <span class="font-mono text-[0.65rem] text-gray-400 tracking-wider uppercase flex-1">Mission Control</span>
-            <span id="mc-uptime" class="font-mono text-[0.6rem] text-gray-600">00:00:00</span>
+            <span id="mc-uptime" class="font-mono text-[0.6rem] text-gray-400">00:00:00</span>
             <span id="mc-heartbeat" class="text-[0.55rem] text-gray-700 font-mono">♡</span>
           </div>
 
@@ -2072,7 +2072,7 @@
                   <div id="mc-blips"></div>
                 </div>
                 <div class="text-center flex-1 md:flex-none">
-                  <div id="mc-status-text" class="font-mono text-xs text-gray-500 uppercase tracking-widest">Standby</div>
+                  <div id="mc-status-text" class="font-mono text-xs text-gray-400 uppercase tracking-widest">Standby</div>
                   <div id="mc-current-task" class="font-mono text-[0.6rem] text-electric/60 mt-0.5 truncate max-w-[160px] md:max-w-[120px]"></div>
                 </div>
               </div>
@@ -2136,7 +2136,7 @@
             <!-- Toolbar: filters + search -->
             <div class="flex flex-wrap items-center gap-2 mb-4">
               <h3 class="font-mono text-sm font-semibold text-gray-300 uppercase tracking-wide mr-auto">
-                Prospects <span id="outreach-prospects-count" class="text-gray-500 text-xs font-normal ml-1">(0)</span>
+                Prospects <span id="outreach-prospects-count" class="text-gray-400 text-xs font-normal ml-1">(0)</span>
               </h3>
               <input id="outreach-search" type="text" placeholder="Search..." onkeyup="outreachSearchProspects()" class="px-3 py-1.5 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-300 placeholder-gray-600 focus:outline-none focus:border-electric/50 w-36">
               <select id="outreach-filter-status" onchange="outreachSearchProspects()" class="px-2 py-1.5 bg-surface-2 border border-border rounded-lg text-xs font-mono text-gray-400 focus:outline-none focus:border-electric/50">
@@ -2174,18 +2174,18 @@
                 <div class="flex items-center gap-2">
                   <span id="outreach-enrich-dot" class="w-2 h-2 rounded-full bg-gray-600"></span>
                   <span class="text-[0.65rem] font-mono text-gray-300 font-semibold">Deep Enrichment</span>
-                  <span id="outreach-enrich-status" class="text-[0.65rem] font-mono text-gray-500">—</span>
+                  <span id="outreach-enrich-status" class="text-[0.65rem] font-mono text-gray-400">—</span>
                 </div>
                 <div class="flex items-center gap-3 text-[0.6rem] font-mono">
-                  <span class="text-gray-500"><span id="outreach-enrich-done" class="text-emerald-400 font-semibold">0</span> / <span id="outreach-enrich-total">0</span></span>
+                  <span class="text-gray-400"><span id="outreach-enrich-done" class="text-emerald-400 font-semibold">0</span> / <span id="outreach-enrich-total">0</span></span>
                   <span id="outreach-enrich-pct" class="text-electric font-semibold">0%</span>
-                  <span id="outreach-enrich-eta" class="text-gray-600"></span>
+                  <span id="outreach-enrich-eta" class="text-gray-400"></span>
                 </div>
               </div>
               <div class="w-full h-1.5 bg-surface-3 rounded-full overflow-hidden">
                 <div id="outreach-enrich-bar" class="h-full rounded-full transition-all duration-1000 ease-out" style="width:0%;background:linear-gradient(90deg,#00D4FF,#A855F7)"></div>
               </div>
-              <div class="flex items-center gap-4 mt-1 text-[0.55rem] font-mono text-gray-600">
+              <div class="flex items-center gap-4 mt-1 text-[0.55rem] font-mono text-gray-400">
                 <span>🔵 <span id="outreach-enrich-queued">0</span> queued</span>
                 <span>✅ <span id="outreach-enrich-enriched">0</span> enriched</span>
                 <span>💀 <span id="outreach-enrich-dead">0</span> dead</span>
@@ -2199,17 +2199,17 @@
               <div class="flex items-center gap-2">
                 <span id="outreach-pipeline-dot" class="w-2 h-2 rounded-full bg-gray-600"></span>
                 <span class="text-[0.65rem] font-mono text-gray-400">Pipeline Worker</span>
-                <span id="outreach-pipeline-status" class="text-[0.65rem] font-mono text-gray-500">—</span>
+                <span id="outreach-pipeline-status" class="text-[0.65rem] font-mono text-gray-400">—</span>
               </div>
               <div class="flex-1"></div>
-              <div class="flex items-center gap-1 text-[0.6rem] font-mono text-gray-600">
-                <span class="text-gray-500">DB:</span>
+              <div class="flex items-center gap-1 text-[0.6rem] font-mono text-gray-400">
+                <span class="text-gray-400">DB:</span>
                 <span id="outreach-pw-db-total" class="text-gray-300 font-semibold">0</span> prospects ·
                 <span id="outreach-pw-db-audited" class="text-emerald-400/70">0</span> audited ·
                 <span id="outreach-pw-db-enriched" class="text-blue-400/70">0</span> enriched ·
                 <span id="outreach-pw-db-queued" class="text-purple-400/70">0</span> queued
                 <span class="text-gray-700 mx-1">|</span>
-                <span class="text-gray-500" title="Processing totals this session">Session:</span>
+                <span class="text-gray-400" title="Processing totals this session">Session:</span>
                 <span title="Total crawl cycles completed — each discovers new businesses"><span id="outreach-pw-crawls">0</span> crawl</span> ·
                 <span title="Total website audits completed"><span id="outreach-pw-audits">0</span> audit</span> ·
                 <span title="Total recon lookups (email/owner discovery)"><span id="outreach-pw-recons">0</span> recon</span> ·
@@ -2242,27 +2242,27 @@
                 <thead>
                   <tr class="border-b border-border">
                     <th class="px-2 py-2 w-8"><input type="checkbox" id="outreach-select-all" onchange="outreachToggleSelectAll()" class="accent-electric cursor-pointer" /></th>
-                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('business_name')">Business <span id="sort-arrow-business_name" class="text-[0.5rem]"></span></th>
-                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('business_type')">Type <span id="sort-arrow-business_type" class="text-[0.5rem]"></span></th>
-                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('status')">Status <span id="sort-arrow-status" class="text-[0.5rem]"></span></th>
-                    <th class="text-center px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('priority_score')">Score <span id="sort-arrow-priority_score" class="text-[0.5rem]"></span></th>
-                    <th class="text-center px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('has_website')">🌐 <span id="sort-arrow-has_website" class="text-[0.5rem]"></span></th>
-                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('city')">City <span id="sort-arrow-city" class="text-[0.5rem]"></span></th>
-                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('google_rating')">Rating <span id="sort-arrow-google_rating" class="text-[0.5rem]"></span></th>
-                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-500 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('created_at')">Found <span id="sort-arrow-created_at" class="text-[0.5rem]"></span></th>
+                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-400 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('business_name')">Business <span id="sort-arrow-business_name" class="text-[0.5rem]"></span></th>
+                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-400 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('business_type')">Type <span id="sort-arrow-business_type" class="text-[0.5rem]"></span></th>
+                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-400 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('status')">Status <span id="sort-arrow-status" class="text-[0.5rem]"></span></th>
+                    <th class="text-center px-3 py-2 text-xs font-mono text-gray-400 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('priority_score')">Score <span id="sort-arrow-priority_score" class="text-[0.5rem]"></span></th>
+                    <th class="text-center px-3 py-2 text-xs font-mono text-gray-400 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('has_website')">🌐 <span id="sort-arrow-has_website" class="text-[0.5rem]"></span></th>
+                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-400 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('city')">City <span id="sort-arrow-city" class="text-[0.5rem]"></span></th>
+                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-400 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('google_rating')">Rating <span id="sort-arrow-google_rating" class="text-[0.5rem]"></span></th>
+                    <th class="text-left px-3 py-2 text-xs font-mono text-gray-400 uppercase cursor-pointer hover:text-electric select-none" onclick="outreachSort('created_at')">Found <span id="sort-arrow-created_at" class="text-[0.5rem]"></span></th>
                   </tr>
                 </thead>
                 <tbody id="outreach-prospects-tbody">
-                  <tr><td colspan="9" class="text-center text-gray-500 py-8 font-mono text-sm">Start the agent to begin discovery.</td></tr>
+                  <tr><td colspan="9" class="text-center text-gray-400 py-8 font-mono text-sm">Start the agent to begin discovery.</td></tr>
                 </tbody>
               </table>
             </div>
             <!-- Pagination -->
             <div class="flex items-center justify-between mt-3 pt-3 border-t border-border">
-              <div id="outreach-page-info" class="text-xs text-gray-500 font-mono">Page 1</div>
+              <div id="outreach-page-info" class="text-xs text-gray-400 font-mono">Page 1</div>
               <div class="flex gap-2">
-                <button id="outreach-prev-page" onclick="outreachPrevPage()" disabled class="px-3 py-1 bg-surface-2 border border-border rounded text-xs font-mono text-gray-500 disabled:opacity-30 hover:border-electric/50 transition">← Prev</button>
-                <button id="outreach-next-page" onclick="outreachNextPage()" disabled class="px-3 py-1 bg-surface-2 border border-border rounded text-xs font-mono text-gray-500 disabled:opacity-30 hover:border-electric/50 transition">Next →</button>
+                <button id="outreach-prev-page" onclick="outreachPrevPage()" disabled class="px-3 py-1 bg-surface-2 border border-border rounded text-xs font-mono text-gray-400 disabled:opacity-30 hover:border-electric/50 transition">← Prev</button>
+                <button id="outreach-next-page" onclick="outreachNextPage()" disabled class="px-3 py-1 bg-surface-2 border border-border rounded text-xs font-mono text-gray-400 disabled:opacity-30 hover:border-electric/50 transition">Next →</button>
               </div>
             </div>
           </div>
@@ -2317,21 +2317,21 @@
             <!-- Stage Tabs -->
             <div class="flex gap-1 mb-4 border-b border-border" id="email-queue-stage-tabs">
               <button onclick="outreachQueueStageFilter('')" id="eq-stage-all" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-electric text-electric transition">All <span id="eq-stage-all-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
-              <button onclick="outreachQueueStageFilter('1')" id="eq-stage-initial" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">Initial <span id="eq-stage-initial-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
-              <button onclick="outreachQueueStageFilter('2,3')" id="eq-stage-followup" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">Follow-up <span id="eq-stage-followup-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
-              <button onclick="outreachQueueStageFilter('4')" id="eq-stage-breakup" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">Breakup <span id="eq-stage-breakup-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
-              <button onclick="outreachQueueStageFilter('5')" id="eq-stage-resurrection" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">Resurrection <span id="eq-stage-resurrection-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
-              <button onclick="outreachQueueStageFilter('bounced')" id="eq-stage-bounced" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">Bounced <span id="eq-stage-bounced-count" class="ml-1 px-1.5 py-0.5 bg-red-500/30 text-red-400 text-[0.55rem] rounded-full">0</span></button>
+              <button onclick="outreachQueueStageFilter('1')" id="eq-stage-initial" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">Initial <span id="eq-stage-initial-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
+              <button onclick="outreachQueueStageFilter('2,3')" id="eq-stage-followup" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">Follow-up <span id="eq-stage-followup-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
+              <button onclick="outreachQueueStageFilter('4')" id="eq-stage-breakup" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">Breakup <span id="eq-stage-breakup-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
+              <button onclick="outreachQueueStageFilter('5')" id="eq-stage-resurrection" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">Resurrection <span id="eq-stage-resurrection-count" class="ml-1 px-1.5 py-0.5 bg-gray-700/50 text-gray-400 text-[0.55rem] rounded-full">0</span></button>
+              <button onclick="outreachQueueStageFilter('bounced')" id="eq-stage-bounced" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">Bounced <span id="eq-stage-bounced-count" class="ml-1 px-1.5 py-0.5 bg-red-500/30 text-red-400 text-[0.55rem] rounded-full">0</span></button>
             </div>
             <div id="outreach-pending-emails" class="space-y-3">
-              <div class="text-center text-gray-500 py-4 font-mono text-sm">No emails pending approval.</div>
+              <div class="text-center text-gray-400 py-4 font-mono text-sm">No emails pending approval.</div>
             </div>
             <!-- Bounced Prospects Panel (hidden by default, shown when BOUNCED tab clicked) -->
             <div id="outreach-bounced-panel" class="hidden space-y-3">
-              <div class="text-center text-gray-500 py-4 font-mono text-sm">Loading bounced prospects…</div>
+              <div class="text-center text-gray-400 py-4 font-mono text-sm">Loading bounced prospects…</div>
             </div>
             <div id="email-queue-pagination" class="hidden flex items-center justify-between mt-3 pt-3 border-t border-border">
-              <div id="email-queue-page-info" class="text-xs text-gray-500 font-mono"></div>
+              <div id="email-queue-page-info" class="text-xs text-gray-400 font-mono"></div>
               <div class="flex gap-2">
                 <button id="email-queue-prev" onclick="outreachEmailQueuePrev()" class="px-3 py-1 bg-gray-700/50 text-gray-400 rounded text-xs font-mono hover:bg-gray-700 transition disabled:opacity-40 disabled:cursor-not-allowed">← Prev</button>
                 <button id="email-queue-next" onclick="outreachEmailQueueNext()" class="px-3 py-1 bg-gray-700/50 text-gray-400 rounded text-xs font-mono hover:bg-gray-700 transition disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
@@ -2353,8 +2353,8 @@
             <!-- Tab Switcher: Overview | All Emails | Unsubscribed -->
             <div class="flex gap-1 mb-4 border-b border-border">
               <button onclick="outreachTrackingTab('overview')" id="tracking-tab-overview" class="px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-electric text-electric transition">Overview</button>
-              <button onclick="outreachTrackingTab('emails')" id="tracking-tab-emails" class="tracking-api-only px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">All Emails</button>
-              <button onclick="outreachTrackingTab('unsubscribed')" id="tracking-tab-unsubscribed" class="tracking-api-only px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">Unsubscribed <span id="unsub-badge" class="ml-1 px-1.5 py-0.5 bg-red-500/20 text-red-400 text-[0.55rem] rounded-full">0</span></button>
+              <button onclick="outreachTrackingTab('emails')" id="tracking-tab-emails" class="tracking-api-only px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">All Emails</button>
+              <button onclick="outreachTrackingTab('unsubscribed')" id="tracking-tab-unsubscribed" class="tracking-api-only px-3 py-1.5 text-[0.65rem] font-mono font-semibold uppercase tracking-widest border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">Unsubscribed <span id="unsub-badge" class="ml-1 px-1.5 py-0.5 bg-red-500/20 text-red-400 text-[0.55rem] rounded-full">0</span></button>
             </div>
 
             <!-- TAB: Overview (existing stats) -->
@@ -2363,35 +2363,35 @@
               <div class="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-4">
                 <div id="ts-pending" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                   <div class="text-lg font-bold text-amber-400 font-mono">0</div>
-                  <div class="text-[0.55rem] text-gray-500 uppercase">Pending</div>
+                  <div class="text-[0.55rem] text-gray-400 uppercase">Pending</div>
                 </div>
                 <div id="ts-scheduled" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                   <div class="text-lg font-bold text-blue-400 font-mono">0</div>
-                  <div class="text-[0.55rem] text-gray-500 uppercase">Scheduled</div>
+                  <div class="text-[0.55rem] text-gray-400 uppercase">Scheduled</div>
                 </div>
                 <div id="ts-sent" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                   <div class="text-lg font-bold text-cyan-400 font-mono">0</div>
-                  <div class="text-[0.55rem] text-gray-500 uppercase">Sent</div>
+                  <div class="text-[0.55rem] text-gray-400 uppercase">Sent</div>
                 </div>
                 <div id="ts-opened" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                   <div class="text-lg font-bold text-emerald-400 font-mono">0</div>
-                  <div class="text-[0.55rem] text-gray-500 uppercase">Opened</div>
+                  <div class="text-[0.55rem] text-gray-400 uppercase">Opened</div>
                 </div>
                 <div id="ts-clicked" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                   <div class="text-lg font-bold text-purple-400 font-mono">0</div>
-                  <div class="text-[0.55rem] text-gray-500 uppercase">Clicked</div>
+                  <div class="text-[0.55rem] text-gray-400 uppercase">Clicked</div>
                 </div>
                 <div id="ts-replied" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                   <div class="text-lg font-bold text-yellow-400 font-mono">0</div>
-                  <div class="text-[0.55rem] text-gray-500 uppercase">Replied</div>
+                  <div class="text-[0.55rem] text-gray-400 uppercase">Replied</div>
                 </div>
                 <div id="ts-bounced" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                   <div class="text-lg font-bold text-red-400 font-mono">0</div>
-                  <div class="text-[0.55rem] text-gray-500 uppercase">Bounced</div>
+                  <div class="text-[0.55rem] text-gray-400 uppercase">Bounced</div>
                 </div>
                 <div id="ts-unsub" class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                   <div class="text-lg font-bold text-gray-400 font-mono">0</div>
-                  <div class="text-[0.55rem] text-gray-500 uppercase">Unsub</div>
+                  <div class="text-[0.55rem] text-gray-400 uppercase">Unsub</div>
                 </div>
               </div>
 
@@ -2421,7 +2421,7 @@
 
               <!-- Per-Step Breakdown -->
               <div id="tracking-per-step" class="mb-4">
-                <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Per-Step Breakdown</p>
+                <p class="text-[0.6rem] text-gray-400 uppercase tracking-wider font-mono mb-2">Per-Step Breakdown</p>
                 <div id="tracking-steps-table" class="text-xs text-gray-400 font-mono">
                   No step data yet.
                 </div>
@@ -2429,9 +2429,9 @@
 
               <!-- Recent Engagement Feed -->
               <div>
-                <p class="text-[0.6rem] text-gray-600 uppercase tracking-wider font-mono mb-2">Recent Engagement</p>
+                <p class="text-[0.6rem] text-gray-400 uppercase tracking-wider font-mono mb-2">Recent Engagement</p>
                 <div id="tracking-recent" class="space-y-1 max-h-48 overflow-y-auto no-scrollbar">
-                  <div class="text-xs text-gray-500 font-mono text-center py-3">No engagement yet — send some emails first!</div>
+                  <div class="text-xs text-gray-400 font-mono text-center py-3">No engagement yet — send some emails first!</div>
                 </div>
               </div>
             </div>
@@ -2462,7 +2462,7 @@
 
               <!-- Results table -->
               <div id="tracking-list-body" class="space-y-1">
-                <div class="text-xs text-gray-500 font-mono text-center py-3">Click "All Emails" tab to load.</div>
+                <div class="text-xs text-gray-400 font-mono text-center py-3">Click "All Emails" tab to load.</div>
               </div>
 
               <!-- Pagination -->
@@ -2473,7 +2473,7 @@
                     <option value="25" selected>25 / page</option>
                     <option value="100">100 / page</option>
                   </select>
-                  <span id="tracking-list-page-info" class="text-[0.65rem] text-gray-500 font-mono">0–0 of 0</span>
+                  <span id="tracking-list-page-info" class="text-[0.65rem] text-gray-400 font-mono">0–0 of 0</span>
                 </div>
                 <div class="flex gap-1">
                   <button id="tracking-list-prev" onclick="outreachTrackingListPrev()" class="px-2 py-1 bg-surface-2 border border-border rounded text-xs text-gray-400 font-mono hover:border-electric/30 disabled:opacity-30 transition" disabled>‹ Prev</button>
@@ -2485,7 +2485,7 @@
             <!-- TAB: Unsubscribed -->
             <div id="tracking-panel-unsubscribed" class="hidden">
               <div id="unsub-list-body" class="space-y-1">
-                <div class="text-xs text-gray-500 font-mono text-center py-3">Loading…</div>
+                <div class="text-xs text-gray-400 font-mono text-center py-3">Loading…</div>
               </div>
             </div>
           </div>
@@ -2500,7 +2500,7 @@
                 <span id="sq-approved-badge" class="text-[0.6rem] bg-emerald-600/20 text-emerald-400 border border-emerald-600/30 rounded-full px-2 py-0.5 font-mono">0 ready</span>
               </div>
               <div class="flex items-center gap-2">
-                <span id="sq-next-run" class="text-[0.6rem] text-gray-500 font-mono"></span>
+                <span id="sq-next-run" class="text-[0.6rem] text-gray-400 font-mono"></span>
                 <button onclick="outreachSendNow()" id="sq-send-btn" class="px-3 py-1.5 bg-emerald-600/20 text-emerald-400 border border-emerald-600/30 rounded-lg text-xs font-mono font-semibold hover:bg-emerald-600/40 transition disabled:opacity-30 disabled:cursor-not-allowed" disabled>
                   ⚡ Send Now
                 </button>
@@ -2513,29 +2513,29 @@
             <div class="grid grid-cols-5 gap-2 mb-3">
               <div class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                 <div id="sq-stat-approved" class="text-lg font-bold text-emerald-400 font-mono">0</div>
-                <div class="text-[0.55rem] text-gray-500 font-mono uppercase">Approved</div>
+                <div class="text-[0.55rem] text-gray-400 font-mono uppercase">Approved</div>
               </div>
               <div class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                 <div id="sq-stat-sent" class="text-lg font-bold text-cyan-400 font-mono">0</div>
-                <div class="text-[0.55rem] text-gray-500 font-mono uppercase">Sent Today</div>
+                <div class="text-[0.55rem] text-gray-400 font-mono uppercase">Sent Today</div>
               </div>
               <div class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                 <div id="sq-stat-failed" class="text-lg font-bold text-red-400 font-mono">0</div>
-                <div class="text-[0.55rem] text-gray-500 font-mono uppercase">Failed</div>
+                <div class="text-[0.55rem] text-gray-400 font-mono uppercase">Failed</div>
               </div>
               <div class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                 <div id="sq-stat-bounced" class="text-lg font-bold text-orange-400 font-mono">0</div>
-                <div class="text-[0.55rem] text-gray-500 font-mono uppercase">Bounced</div>
+                <div class="text-[0.55rem] text-gray-400 font-mono uppercase">Bounced</div>
               </div>
               <div class="bg-surface-2 rounded-lg p-2 text-center border border-border">
                 <div id="sq-stat-remaining" class="text-lg font-bold text-blue-400 font-mono">20</div>
-                <div class="text-[0.55rem] text-gray-500 font-mono uppercase">Remaining</div>
+                <div class="text-[0.55rem] text-gray-400 font-mono uppercase">Remaining</div>
               </div>
             </div>
 
             <!-- Progress bar: sent / daily limit -->
             <div class="mb-3">
-              <div class="flex items-center justify-between text-[0.55rem] text-gray-500 font-mono mb-1">
+              <div class="flex items-center justify-between text-[0.55rem] text-gray-400 font-mono mb-1">
                 <span>Daily Send Progress</span>
                 <span id="sq-progress-label">0 / 20</span>
               </div>
@@ -2546,7 +2546,7 @@
 
             <!-- Approved emails list -->
             <div id="sq-email-list" class="space-y-1 max-h-52 overflow-y-auto no-scrollbar">
-              <div class="text-xs text-gray-500 font-mono text-center py-3">No approved emails waiting to send.</div>
+              <div class="text-xs text-gray-400 font-mono text-center py-3">No approved emails waiting to send.</div>
             </div>
           </div>
         </div>
@@ -2558,29 +2558,29 @@
               <h3 class="font-mono text-sm font-semibold text-gray-200">✏️ Edit & Approve Email</h3>
               <div class="flex items-center gap-2">
                 <button onclick="outreachRegenEmail()" class="px-2.5 py-1 bg-amber-600/20 text-amber-400 border border-amber-600/30 rounded text-[0.6rem] font-mono hover:bg-amber-600/30 transition" title="Regenerate with current audit data">🔄 Regen</button>
-                <button onclick="outreachCloseEditor()" class="text-gray-500 hover:text-gray-300 text-lg">&times;</button>
+                <button onclick="outreachCloseEditor()" class="text-gray-400 hover:text-gray-300 text-lg">&times;</button>
               </div>
             </div>
             <div class="p-4 space-y-3">
               <input type="hidden" id="email-editor-id">
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-xs text-gray-500 font-mono mb-1">TO</label>
+                  <label class="block text-xs text-gray-400 font-mono mb-1">TO</label>
                   <div id="email-editor-to" class="px-3 py-1.5 bg-surface-2 border border-border rounded-lg text-sm text-gray-300 font-mono"></div>
                 </div>
-                <div class="grid grid-cols-2 gap-2 text-xs text-gray-500 font-mono">
+                <div class="grid grid-cols-2 gap-2 text-xs text-gray-400 font-mono">
                   <div class="self-end pb-1">Prospect: <span id="email-editor-prospect" class="text-gray-300"></span></div>
                   <div class="self-end pb-1">Sends: <span id="email-editor-scheduled" class="text-gray-300">after approval</span></div>
                 </div>
               </div>
               <div>
-                <label class="block text-xs text-gray-500 font-mono mb-1">Subject</label>
+                <label class="block text-xs text-gray-400 font-mono mb-1">Subject</label>
                 <input id="email-editor-subject" type="text" class="w-full px-3 py-1.5 bg-surface-2 border border-border rounded-lg text-sm text-gray-200 font-mono focus:outline-none focus:border-electric/50">
               </div>
               <!-- Rendered email preview (editable iframe) -->
               <div>
                 <div class="flex items-center justify-between mb-1">
-                  <label class="text-xs text-gray-500 font-mono">Email Body</label>
+                  <label class="text-xs text-gray-400 font-mono">Email Body</label>
                   <div class="flex gap-1">
                     <button id="email-editor-mode-preview" onclick="outreachToggleEditorMode('preview')" class="px-2 py-0.5 bg-electric/20 text-electric border border-electric/30 rounded text-[0.6rem] font-mono">Preview</button>
                     <button id="email-editor-mode-source" onclick="outreachToggleEditorMode('source')" class="px-2 py-0.5 bg-gray-700/50 text-gray-400 border border-gray-700 rounded text-[0.6rem] font-mono">Source</button>
@@ -2682,7 +2682,7 @@
         <span class="text-white font-mono font-bold text-2xl">A</span>
       </div>
       <h1 class="font-mono text-2xl font-bold text-white mb-2">AjayaDesign<span class="text-electric">::</span>Admin</h1>
-      <p class="text-gray-500 text-sm mb-8">Sign in to access the dashboard</p>
+      <p class="text-gray-400 text-sm mb-8">Sign in to access the dashboard</p>
       <button id="google-login-btn" class="inline-flex items-center gap-3 px-6 py-3 bg-white text-gray-800 font-semibold rounded-lg hover:bg-gray-100 transition shadow-lg">
         <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
         Sign in with Google
@@ -2700,7 +2700,7 @@
       <!-- Header -->
       <div class="flex items-center justify-between p-5 border-b border-border">
         <h2 class="font-mono font-semibold text-white text-sm">➕ Add New Client</h2>
-        <button onclick="closeAddClientModal()" class="text-gray-500 hover:text-white transition text-xl leading-none">&times;</button>
+        <button onclick="closeAddClientModal()" class="text-gray-400 hover:text-white transition text-xl leading-none">&times;</button>
       </div>
 
       <!-- Tabs -->
@@ -2710,7 +2710,7 @@
           Manual Form
         </button>
         <button id="acm-tab-ai" onclick="switchAddClientTab('ai')"
-          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition">
+          class="flex-1 py-3 text-xs font-mono font-semibold uppercase tracking-widest text-center border-b-2 border-transparent text-gray-400 hover:text-gray-300 transition">
           AI Paste &amp; Parse
         </button>
       </div>
@@ -2736,73 +2736,73 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Business Name -->
             <div class="md:col-span-2">
-              <label class="block font-mono text-xs text-gray-500 mb-1">Business Name <span class="text-red-400">*</span></label>
+              <label class="block font-mono text-xs text-gray-400 mb-1">Business Name <span class="text-red-400">*</span></label>
               <input id="acm-business-name" type="text" required
                 class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="e.g. Sunrise Bakery" />
             </div>
             <!-- Niche -->
             <div>
-              <label class="block font-mono text-xs text-gray-500 mb-1">Niche / Industry <span class="text-red-400">*</span></label>
+              <label class="block font-mono text-xs text-gray-400 mb-1">Niche / Industry <span class="text-red-400">*</span></label>
               <input id="acm-niche" type="text" required
                 class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="e.g. Artisan Bakery" />
             </div>
             <!-- Email -->
             <div>
-              <label class="block font-mono text-xs text-gray-500 mb-1">Email <span class="text-red-400">*</span></label>
+              <label class="block font-mono text-xs text-gray-400 mb-1">Email <span class="text-red-400">*</span></label>
               <input id="acm-email" type="email" required
                 class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="hello@client.com" />
             </div>
             <!-- Goals -->
             <div class="md:col-span-2">
-              <label class="block font-mono text-xs text-gray-500 mb-1">Goals <span class="text-red-400">*</span></label>
+              <label class="block font-mono text-xs text-gray-400 mb-1">Goals <span class="text-red-400">*</span></label>
               <textarea id="acm-goals" rows="2"
                 class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition resize-none" placeholder="What should the website accomplish?"></textarea>
             </div>
             <!-- Phone -->
             <div>
-              <label class="block font-mono text-xs text-gray-500 mb-1">Phone</label>
+              <label class="block font-mono text-xs text-gray-400 mb-1">Phone</label>
               <input id="acm-phone" type="tel"
                 class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="(503) 555-1234" />
             </div>
             <!-- Location -->
             <div>
-              <label class="block font-mono text-xs text-gray-500 mb-1">Location</label>
+              <label class="block font-mono text-xs text-gray-400 mb-1">Location</label>
               <input id="acm-location" type="text"
                 class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="Portland, OR" />
             </div>
             <!-- Existing Website -->
             <div>
-              <label class="block font-mono text-xs text-gray-500 mb-1">Existing Website</label>
+              <label class="block font-mono text-xs text-gray-400 mb-1">Existing Website</label>
               <input id="acm-existing-website" type="url"
                 class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="https://current-site.com" />
             </div>
             <!-- Brand Colors -->
             <div>
-              <label class="block font-mono text-xs text-gray-500 mb-1">Brand Colors</label>
+              <label class="block font-mono text-xs text-gray-400 mb-1">Brand Colors</label>
               <input id="acm-brand-colors" type="text"
                 class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="Navy blue #1a365d, Gold" />
             </div>
             <!-- Tagline -->
             <div class="md:col-span-2">
-              <label class="block font-mono text-xs text-gray-500 mb-1">Tagline / Slogan</label>
+              <label class="block font-mono text-xs text-gray-400 mb-1">Tagline / Slogan</label>
               <input id="acm-tagline" type="text"
                 class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="e.g. Fresh Baked Daily Since 1985" />
             </div>
             <!-- Target Audience -->
             <div class="md:col-span-2">
-              <label class="block font-mono text-xs text-gray-500 mb-1">Target Audience</label>
+              <label class="block font-mono text-xs text-gray-400 mb-1">Target Audience</label>
               <input id="acm-target-audience" type="text"
                 class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition" placeholder="e.g. Young professionals aged 25-40" />
             </div>
             <!-- Competitor URLs -->
             <div class="md:col-span-2">
-              <label class="block font-mono text-xs text-gray-500 mb-1">Competitor URLs</label>
+              <label class="block font-mono text-xs text-gray-400 mb-1">Competitor URLs</label>
               <textarea id="acm-competitor-urls" rows="2"
                 class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition resize-none" placeholder="One URL per line"></textarea>
             </div>
             <!-- Additional Notes -->
             <div class="md:col-span-2">
-              <label class="block font-mono text-xs text-gray-500 mb-1">Additional Notes</label>
+              <label class="block font-mono text-xs text-gray-400 mb-1">Additional Notes</label>
               <textarea id="acm-additional-notes" rows="2"
                 class="w-full px-3 py-2.5 rounded-lg bg-surface border border-border text-white font-mono text-sm placeholder-gray-600 focus:outline-none focus:border-electric transition resize-none" placeholder="Special hours, certifications, awards..."></textarea>
             </div>
@@ -2819,7 +2819,7 @@
 
       <!-- Footer Actions -->
       <div class="p-5 border-t border-border flex items-center justify-between gap-3">
-        <button onclick="closeAddClientModal()" class="px-4 py-2.5 text-gray-500 font-mono text-xs hover:text-white transition">Cancel</button>
+        <button onclick="closeAddClientModal()" class="px-4 py-2.5 text-gray-400 font-mono text-xs hover:text-white transition">Cancel</button>
         <div class="flex gap-3">
           <button onclick="saveNewLead(false)" class="px-4 py-2.5 bg-surface-2 text-gray-300 border border-border rounded-lg font-mono text-xs hover:border-border-glow transition">
             Save Lead Only
@@ -2841,32 +2841,32 @@
         <span class="text-[0.5rem] font-mono font-semibold uppercase tracking-wider mt-0.5">Builds</span>
       </button>
       <button onclick="switchTab('leads')" id="mtab-leads"
-        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-500 transition">
+        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-400 transition">
         <span class="text-base leading-none">📬</span>
         <span class="text-[0.5rem] font-mono font-semibold uppercase tracking-wider mt-0.5">Leads</span>
       </button>
       <button onclick="switchTab('portfolio')" id="mtab-portfolio"
-        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-500 transition">
+        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-400 transition">
         <span class="text-base leading-none">📁</span>
         <span class="text-[0.5rem] font-mono font-semibold uppercase tracking-wider mt-0.5">Portfolio</span>
       </button>
       <button onclick="switchTab('history')" id="mtab-history"
-        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-500 transition">
+        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-400 transition">
         <span class="text-base leading-none">📜</span>
         <span class="text-[0.5rem] font-mono font-semibold uppercase tracking-wider mt-0.5">History</span>
       </button>
       <button onclick="switchTab('analytics')" id="mtab-analytics"
-        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-500 transition">
+        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-400 transition">
         <span class="text-base leading-none">📊</span>
         <span class="text-[0.5rem] font-mono font-semibold uppercase tracking-wider mt-0.5">Analytics</span>
       </button>
       <button onclick="switchTab('traffic')" id="mtab-traffic"
-        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-500 transition">
+        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-400 transition">
         <span class="text-base leading-none">🌐</span>
         <span class="text-[0.5rem] font-mono font-semibold uppercase tracking-wider mt-0.5">Traffic</span>
       </button>
       <button onclick="switchTab('outreach')" id="mtab-outreach"
-        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-500 transition">
+        class="mobile-tab flex-1 flex flex-col items-center justify-center text-gray-400 transition">
         <span class="text-base leading-none">🎯</span>
         <span class="text-[0.5rem] font-mono font-semibold uppercase tracking-wider mt-0.5">Outreach</span>
       </button>

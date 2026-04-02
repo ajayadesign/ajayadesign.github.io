@@ -146,7 +146,7 @@
           <div class="flex gap-2">
             <input
               type="text"
-              id="referral-link"
+              id="referral-link" aria-label="Your referral link"
               readonly
               aria-label="Your referral link"
               class="flex-1 px-4 py-3 bg-surface border border-border-dim rounded-lg text-electric-blue font-mono text-sm focus:outline-none"
@@ -185,7 +185,7 @@
       <div class="max-w-lg mx-auto px-6 reveal">
         <h2 class="font-mono font-bold text-2xl text-white text-center mb-8">Top Referrers 🏆</h2>
         <div id="leaderboard" class="space-y-3" role="list" aria-label="Referral leaderboard">
-          <p class="text-center text-gray-500 font-mono text-sm">Loading leaderboard...</p>
+          <p class="text-center text-gray-400 font-mono text-sm">Loading leaderboard...</p>
         </div>
       </div>
     </section>
@@ -200,28 +200,28 @@
           <details class="group bg-surface-card border border-border-dim rounded-lg">
             <summary class="px-6 py-4 cursor-pointer font-mono text-sm text-white hover:text-amd-red-text transition-colors list-none flex justify-between items-center">
               How is my referral code generated?
-              <span class="text-gray-500 group-open:rotate-45 transition-transform text-lg">+</span>
+              <span class="text-gray-400 group-open:rotate-45 transition-transform text-lg">+</span>
             </summary>
             <p class="px-6 pb-4 text-sm text-gray-400">Your code is a short hash derived from your email. It's unique, anonymous, and consistent — you'll always get the same code for the same email.</p>
           </details>
           <details class="group bg-surface-card border border-border-dim rounded-lg">
             <summary class="px-6 py-4 cursor-pointer font-mono text-sm text-white hover:text-amd-red-text transition-colors list-none flex justify-between items-center">
               When do I get my reward?
-              <span class="text-gray-500 group-open:rotate-45 transition-transform text-lg">+</span>
+              <span class="text-gray-400 group-open:rotate-45 transition-transform text-lg">+</span>
             </summary>
             <p class="px-6 pb-4 text-sm text-gray-400">Once your referral completes a purchase, we'll email you a $10 discount code or bonus STL pack within 48 hours.</p>
           </details>
           <details class="group bg-surface-card border border-border-dim rounded-lg">
             <summary class="px-6 py-4 cursor-pointer font-mono text-sm text-white hover:text-amd-red-text transition-colors list-none flex justify-between items-center">
               Is there a limit to referrals?
-              <span class="text-gray-500 group-open:rotate-45 transition-transform text-lg">+</span>
+              <span class="text-gray-400 group-open:rotate-45 transition-transform text-lg">+</span>
             </summary>
             <p class="px-6 pb-4 text-sm text-gray-400">No limit! The more you share, the more you earn. Top referrers get featured on our leaderboard.</p>
           </details>
           <details class="group bg-surface-card border border-border-dim rounded-lg">
             <summary class="px-6 py-4 cursor-pointer font-mono text-sm text-white hover:text-amd-red-text transition-colors list-none flex justify-between items-center">
               What does the new student get?
-              <span class="text-gray-500 group-open:rotate-45 transition-transform text-lg">+</span>
+              <span class="text-gray-400 group-open:rotate-45 transition-transform text-lg">+</span>
             </summary>
             <p class="px-6 pb-4 text-sm text-gray-400">Anyone who signs up through your link gets an automatic 10% discount applied at checkout.</p>
           </details>
@@ -237,12 +237,12 @@
         <span class="inline-block w-2.5 h-2.5 rounded-full bg-amd-red"></span>
         <span class="font-mono font-bold text-white text-sm">Ajaya<span class="text-amd-red-text">Design</span></span>
       </div>
-      <div class="flex gap-4 text-sm text-gray-500">
+      <div class="flex gap-4 text-sm text-gray-400">
         <a href="/3D-print/" class="hover:text-white transition-colors">Course</a>
         <a href="/3D-print/free/" class="hover:text-white transition-colors">Free Lessons</a>
         <a href="/contact/" class="hover:text-white transition-colors">Contact</a>
       </div>
-      <p class="text-gray-600 text-xs font-mono">&copy; <script>document.write(new Date().getFullYear())</script> AjayaDesign</p>
+      <p class="text-gray-400 text-xs font-mono">&copy; <script>document.write(new Date().getFullYear())</script> AjayaDesign</p>
     </div>
   </footer>
 
@@ -354,7 +354,7 @@
         const res = await fetch(FIREBASE_URL + '/referrals.json');
         const data = await res.json();
         if (!data) {
-          lb.innerHTML = '<p class="text-center text-gray-500 font-mono text-sm">No referrals yet — be the first! 🚀</p>';
+          lb.innerHTML = '<p class="text-center text-gray-400 font-mono text-sm">No referrals yet — be the first! 🚀</p>';
           return;
         }
 
@@ -366,7 +366,7 @@
           .slice(0, 10);
 
         if (entries.length === 0 || entries.every(e => e.count === 0)) {
-          lb.innerHTML = '<p class="text-center text-gray-500 font-mono text-sm">No referrals yet — be the first! 🚀</p>';
+          lb.innerHTML = '<p class="text-center text-gray-400 font-mono text-sm">No referrals yet — be the first! 🚀</p>';
           return;
         }
 
@@ -379,7 +379,7 @@
               '<span class="font-mono text-sm text-electric-blue">' + e.count + ' referred</span></div>';
           }).join('');
       } catch {
-        lb.innerHTML = '<p class="text-center text-gray-500 font-mono text-sm">Could not load leaderboard.</p>';
+        lb.innerHTML = '<p class="text-center text-gray-400 font-mono text-sm">Could not load leaderboard.</p>';
       }
     })();
   </script>

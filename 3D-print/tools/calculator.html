@@ -18,7 +18,7 @@
   </style>
 </head>
 <body class="min-h-screen">
-  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim"><div class="max-w-3xl mx-auto flex items-center justify-between px-6 py-4"><a href="/3D-print/portal/" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Dashboard</a><button onclick="window.print()" class="no-print text-sm font-mono text-gray-500 hover:text-white transition-colors">🖨️ Print</button></div></nav>
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim"><div class="max-w-3xl mx-auto flex items-center justify-between px-6 py-4"><a href="/3D-print/portal/" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Dashboard</a><button onclick="window.print()" class="no-print text-sm font-mono text-gray-400 hover:text-white transition-colors">🖨️ Print</button></div></nav>
 
   <div class="max-w-3xl mx-auto px-6 pt-24 pb-16">
     <div class="mb-8">
@@ -34,27 +34,27 @@
 
         <div>
           <label class="block text-gray-400 text-xs mb-1 font-mono">Filament cost per kg ($)</label>
-          <input type="number" id="filament-cost" value="20" step="0.5" min="0" />
+          <input type="number" id="filament-cost" aria-label="Filament cost per kg in dollars" value="20" step="0.5" min="0" />
         </div>
         <div>
           <label class="block text-gray-400 text-xs mb-1 font-mono">Filament per frame (grams)</label>
-          <input type="number" id="filament-grams" value="15" step="1" min="0" />
+          <input type="number" id="filament-grams" aria-label="Filament grams per frame" value="15" step="1" min="0" />
         </div>
         <div>
           <label class="block text-gray-400 text-xs mb-1 font-mono">Magnets per frame (qty)</label>
-          <input type="number" id="magnet-qty" value="4" step="1" min="0" />
+          <input type="number" id="magnet-qty" aria-label="Magnets per frame" value="4" step="1" min="0" />
         </div>
         <div>
           <label class="block text-gray-400 text-xs mb-1 font-mono">Cost per magnet ($)</label>
-          <input type="number" id="magnet-cost" value="0.05" step="0.01" min="0" />
+          <input type="number" id="magnet-cost" aria-label="Magnet cost each in dollars" value="0.05" step="0.01" min="0" />
         </div>
         <div>
           <label class="block text-gray-400 text-xs mb-1 font-mono">Packaging cost per unit ($)</label>
-          <input type="number" id="packaging-cost" value="0.25" step="0.05" min="0" />
+          <input type="number" id="packaging-cost" aria-label="Packaging cost per unit" value="0.25" step="0.05" min="0" />
         </div>
         <div>
           <label class="block text-gray-400 text-xs mb-1 font-mono">Electricity per print ($)</label>
-          <input type="number" id="electricity-cost" value="0.05" step="0.01" min="0" />
+          <input type="number" id="electricity-cost" aria-label="Electricity cost per print" value="0.05" step="0.01" min="0" />
         </div>
       </div>
 
@@ -63,27 +63,27 @@
 
         <div>
           <label class="block text-gray-400 text-xs mb-1 font-mono">Your retail price ($)</label>
-          <input type="number" id="retail-price" value="8" step="0.5" min="0" />
+          <input type="number" id="retail-price" aria-label="Retail price per frame" value="8" step="0.5" min="0" />
         </div>
         <div>
           <label class="block text-gray-400 text-xs mb-1 font-mono">Print time per frame (minutes)</label>
-          <input type="number" id="print-time" value="45" step="5" min="0" />
+          <input type="number" id="print-time" aria-label="Print time in minutes" value="45" step="5" min="0" />
         </div>
         <div>
           <label class="block text-gray-400 text-xs mb-1 font-mono">Post-processing time (minutes)</label>
-          <input type="number" id="post-time" value="10" step="5" min="0" />
+          <input type="number" id="post-time" aria-label="Post processing time in minutes" value="10" step="5" min="0" />
         </div>
         <div>
           <label class="block text-gray-400 text-xs mb-1 font-mono">Your hourly rate ($) for labor</label>
-          <input type="number" id="hourly-rate" value="15" step="1" min="0" />
+          <input type="number" id="hourly-rate" aria-label="Your hourly rate in dollars" value="15" step="1" min="0" />
         </div>
         <div>
           <label class="block text-gray-400 text-xs mb-1 font-mono">Units per month (goal)</label>
-          <input type="number" id="units-month" value="100" step="10" min="1" />
+          <input type="number" id="units-month" aria-label="Units sold per month" value="100" step="10" min="1" />
         </div>
         <div>
           <label class="block text-gray-400 text-xs mb-1 font-mono">Platform fee % (Shopify = 2.9, none = 0)</label>
-          <input type="number" id="platform-fee" value="2.9" step="0.5" min="0" max="100" />
+          <input type="number" id="platform-fee" aria-label="Platform fee percentage" value="2.9" step="0.5" min="0" max="100" />
         </div>
       </div>
     </div>
@@ -91,34 +91,34 @@
     <!-- Results -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       <div class="result-card">
-        <p class="text-gray-500 text-xs font-mono mb-1">Material Cost</p>
+        <p class="text-gray-400 text-xs font-mono mb-1">Material Cost</p>
         <p id="r-material" class="text-2xl font-mono font-bold text-electric-blue">$0.00</p>
       </div>
       <div class="result-card">
-        <p class="text-gray-500 text-xs font-mono mb-1">Labor Cost</p>
+        <p class="text-gray-400 text-xs font-mono mb-1">Labor Cost</p>
         <p id="r-labor" class="text-2xl font-mono font-bold text-electric-blue">$0.00</p>
       </div>
       <div class="result-card">
-        <p class="text-gray-500 text-xs font-mono mb-1">Total Cost/Unit</p>
+        <p class="text-gray-400 text-xs font-mono mb-1">Total Cost/Unit</p>
         <p id="r-total" class="text-2xl font-mono font-bold text-amd-red-text">$0.00</p>
       </div>
       <div class="result-card">
-        <p class="text-gray-500 text-xs font-mono mb-1">Profit/Unit</p>
+        <p class="text-gray-400 text-xs font-mono mb-1">Profit/Unit</p>
         <p id="r-profit" class="text-2xl font-mono font-bold text-neon-green">$0.00</p>
       </div>
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
       <div class="result-card">
-        <p class="text-gray-500 text-xs font-mono mb-1">Profit Margin</p>
+        <p class="text-gray-400 text-xs font-mono mb-1">Profit Margin</p>
         <p id="r-margin" class="text-2xl font-mono font-bold text-neon-green">0%</p>
       </div>
       <div class="result-card">
-        <p class="text-gray-500 text-xs font-mono mb-1">Monthly Revenue</p>
+        <p class="text-gray-400 text-xs font-mono mb-1">Monthly Revenue</p>
         <p id="r-revenue" class="text-2xl font-mono font-bold text-white">$0</p>
       </div>
       <div class="result-card">
-        <p class="text-gray-500 text-xs font-mono mb-1">Monthly Profit</p>
+        <p class="text-gray-400 text-xs font-mono mb-1">Monthly Profit</p>
         <p id="r-monthly-profit" class="text-2xl font-mono font-bold text-neon-green">$0</p>
       </div>
     </div>
@@ -129,7 +129,7 @@
     </div>
 
     <div class="text-center no-print">
-      <a href="/3D-print/" class="text-gray-500 text-sm hover:text-white transition-colors font-mono">← Back to 3D Print Academy</a>
+      <a href="/3D-print/" class="text-gray-400 text-sm hover:text-white transition-colors font-mono">← Back to 3D Print Academy</a>
     </div>
   </div>
 

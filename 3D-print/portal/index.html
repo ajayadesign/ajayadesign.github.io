@@ -48,7 +48,7 @@
       </a>
       <div class="flex items-center gap-4">
         <a href="/3D-print/" class="text-sm text-gray-400 hover:text-white transition-colors">← Course Page</a>
-        <button id="signout-btn" class="hidden text-sm font-mono text-gray-500 hover:text-amd-red transition-colors">Sign Out</button>
+        <button id="signout-btn" class="hidden text-sm font-mono text-gray-400 hover:text-amd-red transition-colors">Sign Out</button>
       </div>
     </div>
   </nav>
@@ -80,18 +80,18 @@
       <!-- Divider -->
       <div class="flex items-center gap-3 my-6">
         <div class="flex-1 h-px bg-border-dim"></div>
-        <span class="text-gray-600 text-xs font-mono">or use email</span>
+        <span class="text-gray-400 text-xs font-mono">or use email</span>
         <div class="flex-1 h-px bg-border-dim"></div>
       </div>
 
       <!-- Email/Password Form -->
       <form id="email-auth-form" class="text-left space-y-3">
         <div>
-          <input id="email-input" type="email" placeholder="Email address" required autocomplete="email"
+          <input id="email-input" type="email" aria-label="Email address" placeholder="Email address" required autocomplete="email"
             class="w-full px-4 py-3 bg-surface-card border border-border-dim rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-electric-blue/50 transition-colors" />
         </div>
         <div>
-          <input id="password-input" type="password" placeholder="Password (min 6 characters)" required autocomplete="current-password" minlength="6"
+          <input id="password-input" type="password" aria-label="Password" placeholder="Password (min 6 characters)" required autocomplete="current-password" minlength="6"
             class="w-full px-4 py-3 bg-surface-card border border-border-dim rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-electric-blue/50 transition-colors" />
         </div>
         <button id="email-submit" type="submit"
@@ -100,12 +100,12 @@
         </button>
         <p id="email-error" class="hidden text-amd-red-text text-xs font-mono"></p>
         <div class="flex items-center justify-between pt-1">
-          <a id="forgot-password" href="#" class="text-gray-500 text-xs hover:text-electric-blue transition-colors">Forgot password?</a>
+          <a id="forgot-password" href="#" class="text-gray-400 text-xs hover:text-electric-blue transition-colors">Forgot password?</a>
           <a id="email-toggle" href="#" class="text-electric-blue text-xs hover:underline">Don't have an account? Sign up</a>
         </div>
       </form>
 
-      <p class="mt-8 text-gray-600 text-xs">Don't have access? <a href="/3D-print/#enroll" class="text-electric-blue hover:underline">Enroll here</a></p>
+      <p class="mt-8 text-gray-400 text-xs">Don't have access? <a href="/3D-print/#enroll" class="text-electric-blue underline hover:no-underline">Enroll here</a></p>
     </div>
   </div>
 
@@ -120,7 +120,7 @@
       <div class="p-4 rounded-xl bg-surface-card border border-border-dim text-left mb-6">
         <p class="text-gray-400 text-sm leading-relaxed">
           <strong class="text-white">Next steps:</strong><br>
-          1. Complete your purchase via the <a href="/3D-print/#enroll" class="text-electric-blue hover:underline">course page</a><br>
+          1. Complete your purchase via the <a href="/3D-print/#enroll" class="text-electric-blue underline hover:no-underline">course page</a><br>
           2. Our admin will verify your payment and activate your account<br>
           3. You'll have full access the next time you log in
         </p>
@@ -128,7 +128,7 @@
       <div id="verify-email-notice" class="hidden p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-left mb-6">
         <p class="text-yellow-400 text-sm font-mono">📧 Check your inbox for a verification email. Click the link to verify your email address.</p>
       </div>
-      <p class="text-gray-600 text-xs">Questions? <a href="/contact/?ref=3d-access" class="text-electric-blue hover:underline">Contact us</a></p>
+      <p class="text-gray-400 text-xs">Questions? <a href="/contact/?ref=3d-access" class="text-electric-blue underline hover:no-underline">Contact us</a></p>
     </div>
   </div>
 
@@ -139,7 +139,7 @@
       <!-- Welcome -->
       <div class="mb-10">
         <h1 class="font-mono text-white text-2xl font-bold mb-1">Welcome back, <span id="user-name" class="text-amd-red-text">Student</span></h1>
-        <p class="text-gray-500 text-sm font-mono">Your 3D Print Academy Dashboard</p>
+        <p class="text-gray-400 text-sm font-mono">Your 3D Print Academy Dashboard</p>
       </div>
 
       <!-- Progress Bar -->
@@ -162,7 +162,7 @@
             <span id="check-1" class="hidden text-neon-green text-lg">✓</span>
           </div>
           <h3 class="font-mono text-white font-semibold mb-1 group-hover:text-electric-blue transition-colors">3D Printing Fundamentals</h3>
-          <p class="text-gray-500 text-xs">2 hours • Beginner</p>
+          <p class="text-gray-400 text-xs">2 hours • Beginner</p>
         </a>
 
         <a href="/3D-print/portal/module-2.html" id="mod-2" class="group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-electric-blue/40 transition-all">
@@ -171,7 +171,7 @@
             <span id="check-2" class="hidden text-neon-green text-lg">✓</span>
           </div>
           <h3 class="font-mono text-white font-semibold mb-1 group-hover:text-amd-red-text transition-colors">Magnet Frame Design — CAD Basics</h3>
-          <p class="text-gray-500 text-xs">3 hours • Beginner–Intermediate</p>
+          <p class="text-gray-400 text-xs">3 hours • Beginner–Intermediate</p>
         </a>
 
         <a href="/3D-print/portal/module-3.html" id="mod-3" class="group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-electric-blue/40 transition-all">
@@ -180,7 +180,7 @@
             <span id="check-3" class="hidden text-neon-green text-lg">✓</span>
           </div>
           <h3 class="font-mono text-white font-semibold mb-1 group-hover:text-electric-blue transition-colors">Advanced Frame Designs</h3>
-          <p class="text-gray-500 text-xs">3 hours • Intermediate</p>
+          <p class="text-gray-400 text-xs">3 hours • Intermediate</p>
         </a>
 
         <a href="/3D-print/portal/module-4.html" id="mod-4" class="group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-electric-blue/40 transition-all">
@@ -189,7 +189,7 @@
             <span id="check-4" class="hidden text-neon-green text-lg">✓</span>
           </div>
           <h3 class="font-mono text-white font-semibold mb-1 group-hover:text-neon-green transition-colors">Print Optimization & Troubleshooting</h3>
-          <p class="text-gray-500 text-xs">2 hours • Intermediate</p>
+          <p class="text-gray-400 text-xs">2 hours • Intermediate</p>
         </a>
 
         <a href="/3D-print/portal/module-5.html" id="mod-5" class="group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-electric-blue/40 transition-all">
@@ -198,7 +198,7 @@
             <span id="check-5" class="hidden text-neon-green text-lg">✓</span>
           </div>
           <h3 class="font-mono text-white font-semibold mb-1 group-hover:text-amd-red-text transition-colors">Post-Processing & Finishing</h3>
-          <p class="text-gray-500 text-xs">2 hours • All Levels</p>
+          <p class="text-gray-400 text-xs">2 hours • All Levels</p>
         </a>
 
         <a href="/3D-print/portal/module-6.html" id="mod-6" class="group p-5 rounded-xl bg-surface-card border border-border-dim hover:border-electric-blue/40 transition-all">
@@ -207,7 +207,7 @@
             <span id="check-6" class="hidden text-neon-green text-lg">✓</span>
           </div>
           <h3 class="font-mono text-white font-semibold mb-1 group-hover:text-neon-green transition-colors">Launch Your Magnet Business</h3>
-          <p class="text-gray-500 text-xs">2 hours • Business</p>
+          <p class="text-gray-400 text-xs">2 hours • Business</p>
         </a>
 
       </div>
@@ -235,28 +235,28 @@
             <span class="text-xl">📁</span>
             <div>
               <p class="font-mono text-white text-sm font-semibold group-hover:text-electric-blue transition-colors">STL Files (15+)</p>
-              <p class="text-gray-500 text-xs">All frame designs, ready to print</p>
+              <p class="text-gray-400 text-xs">All frame designs, ready to print</p>
             </div>
           </a>
           <a href="/3D-print/tools/calculator.html" class="flex items-center gap-3 p-3 rounded-lg bg-surface hover:bg-surface-alt transition-colors group">
             <span class="text-xl">🧮</span>
             <div>
               <p class="font-mono text-white text-sm font-semibold group-hover:text-neon-green transition-colors">Pricing Calculator</p>
-              <p class="text-gray-500 text-xs">Cost per unit + profit margins</p>
+              <p class="text-gray-400 text-xs">Cost per unit + profit margins</p>
             </div>
           </a>
           <a href="/3D-print/tools/checklist.html" class="flex items-center gap-3 p-3 rounded-lg bg-surface hover:bg-surface-alt transition-colors group">
             <span class="text-xl">✅</span>
             <div>
               <p class="font-mono text-white text-sm font-semibold group-hover:text-amd-red-text transition-colors">QC Checklist</p>
-              <p class="text-gray-500 text-xs">Quality control for every print</p>
+              <p class="text-gray-400 text-xs">Quality control for every print</p>
             </div>
           </a>
           <a href="/3D-print/tools/materials.html" class="flex items-center gap-3 p-3 rounded-lg bg-surface hover:bg-surface-alt transition-colors group">
             <span class="text-xl">🛒</span>
             <div>
               <p class="font-mono text-white text-sm font-semibold group-hover:text-electric-blue transition-colors">Materials List</p>
-              <p class="text-gray-500 text-xs">Everything you need with links</p>
+              <p class="text-gray-400 text-xs">Everything you need with links</p>
             </div>
           </a>
         </div>
@@ -264,7 +264,7 @@
 
       <!-- Tier info -->
       <div class="p-4 rounded-xl border border-border-dim text-center">
-        <p class="text-gray-500 text-xs font-mono">Your plan: <span id="user-tier" class="text-amd-red-text font-semibold uppercase">—</span> • Need help? <a href="/contact/" class="text-electric-blue hover:underline">Contact us</a></p>
+        <p class="text-gray-400 text-xs font-mono">Your plan: <span id="user-tier" class="text-amd-red-text font-semibold uppercase">—</span> • Need help? <a href="/contact/" class="text-electric-blue underline hover:no-underline">Contact us</a></p>
       </div>
 
       <!-- Admin Command Center (hidden, shown only for admin) -->
@@ -272,10 +272,10 @@
         <div class="flex items-center gap-3 mb-6">
           <span class="px-2 py-0.5 bg-amd-red/20 text-amd-red-text text-xs font-mono font-bold rounded">ADMIN</span>
           <h2 class="font-mono text-white text-xl font-bold">Command Center</h2>
-          <a href="/3D-print/portal/admin.html" class="ml-auto text-xs font-mono text-gray-500 hover:text-white transition-colors">Full Admin Panel →</a>
+          <a href="/3D-print/portal/admin.html" class="ml-auto text-xs font-mono text-gray-400 hover:text-white transition-colors">Full Admin Panel →</a>
         </div>
         <div id="admin-cc-content">
-          <p class="text-gray-500 text-sm font-mono mb-6">Loading analytics...</p>
+          <p class="text-gray-400 text-sm font-mono mb-6">Loading analytics...</p>
         </div>
       </div>
 
@@ -285,7 +285,7 @@
   <!-- Footer -->
   <footer class="border-t border-border-dim py-8">
     <div class="max-w-6xl mx-auto px-6 text-center">
-      <p class="text-gray-600 text-xs font-mono">&copy; <script>document.write(new Date().getFullYear())</script> AjayaDesign — 3D Print Academy</p>
+      <p class="text-gray-400 text-xs font-mono">&copy; <script>document.write(new Date().getFullYear())</script> AjayaDesign — 3D Print Academy</p>
     </div>
   </footer>
 

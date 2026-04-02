@@ -89,7 +89,7 @@ tailwind.config = {
       <button class="bg-electric-blue text-surface font-semibold px-6 py-4 hover:bg-electric-blue/80 transition">Search</button>
     </div>
     <!-- Trust signals -->
-    <div class="flex flex-wrap justify-center gap-6 mt-10 text-sm text-gray-500">
+    <div class="flex flex-wrap justify-center gap-6 mt-10 text-sm text-gray-400">
       <span>⭐ 4.9 avg rating</span>
       <span>🏠 500+ homes sold</span>
       <span>⚡ &lt; 5 min AI response</span>
@@ -107,9 +107,9 @@ tailwind.config = {
       <p class="text-gray-400 mt-2">seconds average response</p>
     </div>
     <div class="bg-surface-card border border-border rounded-2xl p-8 text-center">
-      <p class="text-sm font-mono text-gray-500 mb-2 uppercase tracking-wider">Industry Average</p>
-      <p class="text-5xl md:text-6xl font-extrabold text-gray-600 counter-num">24–48</p>
-      <p class="text-gray-500 mt-2">hours to respond</p>
+      <p class="text-sm font-mono text-gray-400 mb-2 uppercase tracking-wider">Industry Average</p>
+      <p class="text-5xl md:text-6xl font-extrabold text-gray-400 counter-num">24–48</p>
+      <p class="text-gray-400 mt-2">hours to respond</p>
     </div>
   </div>
 </section>
@@ -158,11 +158,11 @@ tailwind.config = {
         <div class="text-center">
           <p class="text-sm text-gray-400 mb-2 font-mono">ESTIMATED VALUE RANGE</p>
           <p class="text-4xl font-extrabold gradient-text mb-2" id="estValue"></p>
-          <p class="text-gray-500 text-sm" id="estAddr2"></p>
+          <p class="text-gray-400 text-sm" id="estAddr2"></p>
           <div class="mt-6 grid grid-cols-3 gap-4 text-center text-sm">
-            <div><p class="text-gray-500">Low</p><p class="font-bold text-white" id="estLow"></p></div>
-            <div><p class="text-gray-500">Median</p><p class="font-bold text-electric-blue" id="estMid"></p></div>
-            <div><p class="text-gray-500">High</p><p class="font-bold text-white" id="estHigh"></p></div>
+            <div><p class="text-gray-400">Low</p><p class="font-bold text-white" id="estLow"></p></div>
+            <div><p class="text-gray-400">Median</p><p class="font-bold text-electric-blue" id="estMid"></p></div>
+            <div><p class="text-gray-400">High</p><p class="font-bold text-white" id="estHigh"></p></div>
           </div>
           <button onclick="openChat()" class="mt-6 text-sm text-electric-blue hover:underline">Want an accurate valuation? Chat with our AI →</button>
         </div>
@@ -181,13 +181,13 @@ tailwind.config = {
       <a href="/ai-automation/" class="bg-amd-red text-white font-semibold px-8 py-4 rounded-xl hover:bg-amd-red/80 transition text-lg">Get Started →</a>
       <a href="/contact/" class="border border-border text-white font-semibold px-8 py-4 rounded-xl hover:border-electric-blue hover:text-electric-blue transition text-lg">Book a Demo</a>
     </div>
-    <p class="text-gray-600 text-xs mt-6 font-mono">Setup in 48 hours • No monthly contracts • Cancel anytime</p>
+    <p class="text-gray-400 text-xs mt-6 font-mono">Setup in 48 hours • No monthly contracts • Cancel anytime</p>
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer class="border-t border-border py-8 px-4 text-center text-gray-600 text-sm">
-  <p>This is a <strong>demo</strong> by <a href="/" class="text-electric-blue hover:underline">AjayaDesign</a>. Hill Country Realty is fictional.</p>
+<footer class="border-t border-border py-8 px-4 text-center text-gray-400 text-sm">
+  <p>This is a <strong>demo</strong> by <a href="/" class="text-electric-blue underline hover:no-underline">AjayaDesign</a>. Hill Country Realty is fictional.</p>
   <p class="mt-1">No data is collected. All interactions stay in your browser.</p>
 </footer>
 
@@ -230,14 +230,14 @@ listings.forEach(l => {
   const tagColor = {'New':'bg-green-500','Hot':'bg-amd-red','Price Drop':'bg-yellow-500','Luxury':'bg-purple-500','Open House':'bg-electric-blue'}[l.tag] || '';
   grid.innerHTML += `
     <div class="bg-surface-card border border-border rounded-2xl overflow-hidden card-hover transition-all duration-300">
-      <div class="listing-img h-48 flex items-center justify-center text-gray-600 relative">
+      <div class="listing-img h-48 flex items-center justify-center text-gray-400 relative">
         <svg class="w-12 h-12 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"/></svg>
         ${l.tag ? `<span class="absolute top-3 left-3 ${tagColor} text-white text-xs font-bold px-2 py-1 rounded-md">${l.tag}</span>` : ''}
       </div>
       <div class="p-5">
         <p class="text-2xl font-bold text-white mb-1">${l.price}</p>
         <p class="text-sm text-gray-400 mb-3">${l.addr}</p>
-        <div class="flex gap-4 text-sm text-gray-500">
+        <div class="flex gap-4 text-sm text-gray-400">
           <span>${l.beds} bed</span><span>${l.baths} bath</span><span>${l.sqft} sqft</span>
         </div>
         <p class="text-xs text-electric-blue mt-3 font-mono">${l.area}</p>
@@ -472,7 +472,7 @@ function finishLead() {
     : `🎉 Awesome, ${leadData.name}! An agent will reach out within <strong>1 hour</strong> to help you find the perfect ${leadData.intent === 'rent' ? 'rental' : 'home'}.`
   );
   setTimeout(() => {
-    addMsg(`<div class="text-xs text-gray-500 font-mono mt-1">📋 Lead captured:<br>Intent: ${leadData.intent}<br>Name: ${leadData.name}<br>Phone: ${leadData.phone}${leadData.email ? '<br>Email: '+leadData.email : ''}${leadData.budget ? '<br>Budget: '+leadData.budget : ''}${leadData.area ? '<br>Area: '+leadData.area : ''}${leadData.address ? '<br>Address: '+leadData.address : ''}<br><br><em>In production, this goes to your CRM instantly.</em></div>`);
+    addMsg(`<div class="text-xs text-gray-400 font-mono mt-1">📋 Lead captured:<br>Intent: ${leadData.intent}<br>Name: ${leadData.name}<br>Phone: ${leadData.phone}${leadData.email ? '<br>Email: '+leadData.email : ''}${leadData.budget ? '<br>Budget: '+leadData.budget : ''}${leadData.area ? '<br>Area: '+leadData.area : ''}${leadData.address ? '<br>Address: '+leadData.address : ''}<br><br><em>In production, this goes to your CRM instantly.</em></div>`);
     setTimeout(() => addOptions(['Start Over']), 600);
     state = 'restart';
   }, 800);

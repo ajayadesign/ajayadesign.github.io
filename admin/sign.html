@@ -23,7 +23,7 @@
   <div id="loading" class="min-h-screen flex items-center justify-center">
     <div class="text-center">
       <div class="text-4xl mb-4">📝</div>
-      <p class="text-gray-500">Loading contract...</p>
+      <p class="text-gray-400">Loading contract...</p>
     </div>
   </div>
 
@@ -32,7 +32,7 @@
     <div class="text-center max-w-md">
       <div class="text-4xl mb-4">⚠️</div>
       <h1 class="text-xl font-bold text-gray-800 mb-2">Contract Not Found</h1>
-      <p id="error-message" class="text-gray-500">This link may have expired or is invalid.</p>
+      <p id="error-message" class="text-gray-400">This link may have expired or is invalid.</p>
     </div>
   </div>
 
@@ -41,7 +41,7 @@
     <div class="text-center max-w-md animate-in">
       <div class="text-5xl mb-4">✅</div>
       <h1 class="text-2xl font-bold text-green-700 mb-2">Contract Signed!</h1>
-      <p id="signed-info" class="text-gray-500">This contract has already been signed.</p>
+      <p id="signed-info" class="text-gray-400">This contract has already been signed.</p>
     </div>
   </div>
 
@@ -55,7 +55,7 @@
           <span class="text-white font-bold text-xl">A</span>
         </div>
         <h1 class="text-2xl font-bold text-gray-900">Service Agreement</h1>
-        <p class="text-gray-500 mt-1">AjayaDesign Web Development Services</p>
+        <p class="text-gray-400 mt-1">AjayaDesign Web Development Services</p>
         <p class="text-xs text-gray-400 mt-2">Contract #<span id="sign-contract-id"></span></p>
       </div>
 
@@ -64,13 +64,13 @@
         <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Parties</h2>
         <div class="grid grid-cols-2 gap-6 text-sm">
           <div>
-            <p class="text-gray-500 text-xs mb-1">Provider</p>
+            <p class="text-gray-400 text-xs mb-1">Provider</p>
             <p class="font-semibold" id="sign-provider-name">AjayaDesign</p>
-            <p class="text-gray-500" id="sign-provider-address">13721 Andrew Abernathy Pass, Manor, TX 78653</p>
-            <p class="text-gray-500" id="sign-provider-email">ajayadesign@gmail.com</p>
+            <p class="text-gray-400" id="sign-provider-address">13721 Andrew Abernathy Pass, Manor, TX 78653</p>
+            <p class="text-gray-400" id="sign-provider-email">ajayadesign@gmail.com</p>
           </div>
           <div>
-            <p class="text-gray-500 text-xs mb-1">Client</p>
+            <p class="text-gray-400 text-xs mb-1">Client</p>
             <p class="font-semibold" id="sign-client-name"></p>
           </div>
         </div>
@@ -80,8 +80,8 @@
       <div class="bg-white rounded-xl border p-6 mb-6 shadow-sm">
         <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Project Details</h2>
         <div class="space-y-3 text-sm">
-          <div><span class="text-gray-500">Project:</span> <span id="sign-project-name" class="font-semibold"></span></div>
-          <div><span class="text-gray-500">Description:</span> <span id="sign-project-desc" class="text-gray-700"></span></div>
+          <div><span class="text-gray-400">Project:</span> <span id="sign-project-name" class="font-semibold"></span></div>
+          <div><span class="text-gray-400">Description:</span> <span id="sign-project-desc" class="text-gray-700"></span></div>
         </div>
       </div>
 
@@ -90,27 +90,27 @@
         <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Financial Terms</h2>
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span class="text-gray-500">Total Amount:</span>
+            <span class="text-gray-400">Total Amount:</span>
             <span id="sign-total" class="font-bold text-green-600 ml-1"></span>
           </div>
           <div>
-            <span class="text-gray-500">Deposit:</span>
+            <span class="text-gray-400">Deposit:</span>
             <span id="sign-deposit" class="font-semibold ml-1"></span>
           </div>
           <div>
-            <span class="text-gray-500">Payment Method:</span>
+            <span class="text-gray-400">Payment Method:</span>
             <span id="sign-payment-method" class="ml-1"></span>
           </div>
           <div>
-            <span class="text-gray-500">Payment Terms:</span>
+            <span class="text-gray-400">Payment Terms:</span>
             <span id="sign-payment-terms" class="ml-1"></span>
           </div>
           <div>
-            <span class="text-gray-500">Start Date:</span>
+            <span class="text-gray-400">Start Date:</span>
             <span id="sign-start-date" class="ml-1"></span>
           </div>
           <div>
-            <span class="text-gray-500">Est. Completion:</span>
+            <span class="text-gray-400">Est. Completion:</span>
             <span id="sign-end-date" class="ml-1"></span>
           </div>
         </div>
@@ -132,16 +132,16 @@
         <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">✍️ Electronic Signature</h2>
 
         <div class="mb-4">
-          <label class="text-sm text-gray-600 block mb-1">Your Full Name *</label>
+          <label class="text-sm text-gray-400 block mb-1">Your Full Name *</label>
           <input id="sign-your-name" type="text" placeholder="Type your full legal name"
             class="w-full border rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
         </div>
 
         <div class="mb-4">
-          <label class="text-sm text-gray-600 block mb-2">Draw Your Signature *</label>
+          <label class="text-sm text-gray-400 block mb-2">Draw Your Signature *</label>
           <div class="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden bg-white relative">
             <canvas id="sign-canvas" class="sign-pad w-full" height="150"></canvas>
-            <button onclick="clearSignature()" class="absolute top-2 right-2 text-xs text-gray-400 hover:text-gray-600 bg-white rounded px-2 py-1 shadow-sm">Clear</button>
+            <button onclick="clearSignature()" class="absolute top-2 right-2 text-xs text-gray-400 hover:text-gray-400 bg-white rounded px-2 py-1 shadow-sm">Clear</button>
           </div>
           <p class="text-xs text-gray-400 mt-1">Use your mouse or finger to draw your signature</p>
         </div>
@@ -255,7 +255,7 @@
       $clauses.innerHTML = enabledClauses.map((cl, i) => `
         <div class="bg-white rounded-xl border p-6 shadow-sm">
           <h3 class="text-sm font-bold text-gray-900 mb-2">${i + 1}. ${escH(cl.title)}</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">${escH(cl.body)}</p>
+          <p class="text-sm text-gray-400 leading-relaxed">${escH(cl.body)}</p>
         </div>
       `).join('');
 

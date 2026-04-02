@@ -92,7 +92,7 @@
         <li><a href="/blog/" class="nav-link hover:text-amd-red transition-colors">Blog</a></li>
         <li><a href="/contact/" class="nav-link hover:text-amd-red transition-colors">Contact</a></li>
         <li class="relative group">
-          <button class="nav-link hover:text-amd-red transition-colors flex items-center gap-1">More <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+          <button class="nav-link hover:text-amd-red transition-colors flex items-center gap-1" aria-label="More navigation options">More <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
           <ul class="absolute top-full right-0 mt-2 w-48 bg-surface-card border border-border-dim rounded-lg py-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
             <li><a href="/edge/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">The Edge</a></li>
             <li><a href="/grader/" class="block px-4 py-2 text-sm hover:text-amd-red hover:bg-surface-alt transition-colors">Grader</a></li>
@@ -116,7 +116,7 @@
         <li><a href="/works/" class="nav-link block py-2 hover:text-amd-red transition-colors">Works</a></li>
         <li><a href="/blog/" class="nav-link block py-2 hover:text-amd-red transition-colors">Blog</a></li>
         <li><a href="/contact/" class="nav-link block py-2 hover:text-amd-red transition-colors">Contact</a></li>
-        <li class="pt-2 border-t border-border-dim mt-2"><p class="text-xs text-gray-500 font-mono py-1">More</p></li>
+        <li class="pt-2 border-t border-border-dim mt-2"><p class="text-xs text-gray-400 font-mono py-1">More</p></li>
         <li><a href="/edge/" class="nav-link block py-2 hover:text-amd-red transition-colors">The Edge</a></li>
         <li><a href="/grader/" class="nav-link block py-2 hover:text-amd-red transition-colors">Grader</a></li>
         <li><a href="/3D-print/" class="nav-link block py-2 hover:text-amd-red transition-colors">3D Academy</a></li>
@@ -180,7 +180,7 @@
       <!-- Score Gauges -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-surface-card border border-border-dim rounded-xl p-6 text-center">
-          <p class="text-xs font-mono text-gray-500 mb-3">PERFORMANCE</p>
+          <p class="text-xs font-mono text-gray-400 mb-3">PERFORMANCE</p>
           <div class="flex justify-center">
             <div class="gauge-ring" id="gauge-perf" style="background:conic-gradient(#888 0deg,#333 0deg)">
               <span id="score-perf">--</span>
@@ -188,7 +188,7 @@
           </div>
         </div>
         <div class="bg-surface-card border border-border-dim rounded-xl p-6 text-center">
-          <p class="text-xs font-mono text-gray-500 mb-3">SEO</p>
+          <p class="text-xs font-mono text-gray-400 mb-3">SEO</p>
           <div class="flex justify-center">
             <div class="gauge-ring" id="gauge-seo" style="background:conic-gradient(#888 0deg,#333 0deg)">
               <span id="score-seo">--</span>
@@ -196,7 +196,7 @@
           </div>
         </div>
         <div class="bg-surface-card border border-border-dim rounded-xl p-6 text-center">
-          <p class="text-xs font-mono text-gray-500 mb-3">ACCESSIBILITY</p>
+          <p class="text-xs font-mono text-gray-400 mb-3">ACCESSIBILITY</p>
           <div class="flex justify-center">
             <div class="gauge-ring" id="gauge-a11y" style="background:conic-gradient(#888 0deg,#333 0deg)">
               <span id="score-a11y">--</span>
@@ -208,15 +208,15 @@
       <!-- Core Web Vitals -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-surface-card border border-border-dim rounded-xl p-6 text-center">
-          <p class="text-xs font-mono text-gray-500 mb-2">LCP (Largest Contentful Paint)</p>
+          <p class="text-xs font-mono text-gray-400 mb-2">LCP (Largest Contentful Paint)</p>
           <p class="text-3xl font-mono font-bold" id="metric-lcp">--</p>
         </div>
         <div class="bg-surface-card border border-border-dim rounded-xl p-6 text-center">
-          <p class="text-xs font-mono text-gray-500 mb-2">FID (First Input Delay)</p>
+          <p class="text-xs font-mono text-gray-400 mb-2">FID (First Input Delay)</p>
           <p class="text-3xl font-mono font-bold" id="metric-fid">--</p>
         </div>
         <div class="bg-surface-card border border-border-dim rounded-xl p-6 text-center">
-          <p class="text-xs font-mono text-gray-500 mb-2">CLS (Cumulative Layout Shift)</p>
+          <p class="text-xs font-mono text-gray-400 mb-2">CLS (Cumulative Layout Shift)</p>
           <p class="text-3xl font-mono font-bold" id="metric-cls">--</p>
         </div>
       </div>
@@ -225,11 +225,11 @@
       <div class="bg-surface-card border border-border-dim rounded-xl p-8 mb-8" id="comparison-card">
         <div class="grid grid-cols-2 gap-6 text-center">
           <div>
-            <p class="text-xs font-mono text-gray-500 mb-2">YOUR SITE</p>
+            <p class="text-xs font-mono text-gray-400 mb-2">YOUR SITE</p>
             <p class="text-5xl font-mono font-bold" id="compare-yours">--</p>
           </div>
           <div>
-            <p class="text-xs font-mono text-gray-500 mb-2">AJAYADESIGN AVERAGE</p>
+            <p class="text-xs font-mono text-gray-400 mb-2">AJAYADESIGN AVERAGE</p>
             <p class="text-5xl font-mono font-bold text-green-400">95</p>
           </div>
         </div>
@@ -267,7 +267,7 @@
           Built with engineering precision in Austin, Texas &nbsp;·&nbsp; &copy; <span id="footer-year"></span> AjayaDesign
         </p>
         <div class="flex items-center gap-2 text-xs font-mono text-gray-400">
-          <a href="/admin/" class="text-gray-600 hover:text-electric-blue transition mr-3 text-sm" title="Admin Dashboard">⚙️</a>
+          <a href="/admin/" class="text-gray-400 hover:text-electric-blue transition mr-3 text-sm" title="Admin Dashboard">⚙️</a>
         </div>
       </div>
     </div>
@@ -428,7 +428,7 @@
     <div class="bg-surface-card/95 backdrop-blur-lg border-t border-border-dim px-6 py-3 flex items-center justify-center gap-4 flex-wrap">
       <span class="text-sm text-gray-300 font-mono">Want to see how AI can grow your business?</span>
       <a href="/free-audit/" id="sticky-audit-btn" class="inline-flex items-center gap-2 px-5 py-2 bg-electric-blue text-surface font-mono text-sm font-bold rounded hover:bg-cyan-300 transition-colors">Get Free AI Audit</a>
-      <button id="sticky-audit-close" class="text-gray-500 hover:text-white ml-2 text-lg" aria-label="Dismiss">&times;</button>
+      <button id="sticky-audit-close" class="text-gray-400 hover:text-white ml-2 text-lg" aria-label="Dismiss">&times;</button>
     </div>
   </div>
   <script>

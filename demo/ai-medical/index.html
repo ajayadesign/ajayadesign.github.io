@@ -68,7 +68,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#00D4FF;box-sh
           <a href="#intake-form" class="px-6 py-3 bg-electric-blue text-surface font-semibold rounded-xl hover:bg-electric-blue-dim transition">Start Digital Intake</a>
           <button onclick="toggleChat()" class="px-6 py-3 glass text-electric-blue rounded-xl hover:bg-electric-blue/10 transition font-medium">💬 Chat with AI Assistant</button>
         </div>
-        <div class="flex items-center gap-6 mt-8 text-sm text-gray-500">
+        <div class="flex items-center gap-6 mt-8 text-sm text-gray-400">
           <span>🏥 Delta Dental</span><span>🏥 Cigna</span><span>🏥 Aetna</span><span>🏥 MetLife</span>
         </div>
       </div>
@@ -91,17 +91,17 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#00D4FF;box-sh
     <div class="glass rounded-2xl p-8 text-center glow-blue">
       <div class="text-4xl font-extrabold text-electric-blue mb-2">40%</div>
       <div class="text-gray-300 font-medium">Reduction in No-Shows</div>
-      <p class="text-gray-500 text-sm mt-2">Automated reminders & easy rescheduling</p>
+      <p class="text-gray-400 text-sm mt-2">Automated reminders & easy rescheduling</p>
     </div>
     <div class="glass rounded-2xl p-8 text-center glow-red">
       <div class="text-4xl font-extrabold text-amd-red mb-2">2 hrs</div>
       <div class="text-gray-300 font-medium">Saved Per Day on Calls</div>
-      <p class="text-gray-500 text-sm mt-2">AI handles booking & intake questions</p>
+      <p class="text-gray-400 text-sm mt-2">AI handles booking & intake questions</p>
     </div>
     <div class="glass rounded-2xl p-8 text-center glow-blue">
       <div class="text-4xl font-extrabold text-electric-blue mb-2">24/7</div>
       <div class="text-gray-300 font-medium">Patient Booking</div>
-      <p class="text-gray-500 text-sm mt-2">Never miss a patient — even at 2 AM</p>
+      <p class="text-gray-400 text-sm mt-2">Never miss a patient — even at 2 AM</p>
     </div>
   </div>
 </section>
@@ -143,7 +143,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#00D4FF;box-sh
 
     <!-- Progress Bar -->
     <div class="mb-8">
-      <div class="flex justify-between text-xs text-gray-500 mb-2 font-mono">
+      <div class="flex justify-between text-xs text-gray-400 mb-2 font-mono">
         <span id="stepLabel">Step 1 of 5 — Personal Info</span>
         <span id="stepPercent">20%</span>
       </div>
@@ -229,7 +229,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#00D4FF;box-sh
         <div class="text-5xl mb-4">✅</div>
         <h3 class="text-2xl font-bold text-white mb-2">Intake Submitted!</h3>
         <p class="text-gray-400 mb-4">We'll confirm your appointment within 1 business hour.</p>
-        <p class="text-xs text-gray-600 font-mono">(This is a demo — no real data was submitted)</p>
+        <p class="text-xs text-gray-400 font-mono">(This is a demo — no real data was submitted)</p>
       </div>
 
       <!-- Nav Buttons -->
@@ -250,12 +250,12 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#00D4FF;box-sh
       <a href="/ai-automation/" class="px-8 py-3 bg-amd-red text-white font-semibold rounded-xl hover:bg-red-700 transition">See AI Automation Services</a>
       <a href="/ai-automation/#contact" class="px-8 py-3 glass text-electric-blue rounded-xl hover:bg-electric-blue/10 transition font-medium">Get a Free Consultation</a>
     </div>
-    <p class="text-xs text-gray-600 mt-6 font-mono">AjayaDesign — AI Automation for Austin Businesses</p>
+    <p class="text-xs text-gray-400 mt-6 font-mono">AjayaDesign — AI Automation for Austin Businesses</p>
   </div>
 </section>
 
-<footer class="border-t border-gray-800 py-8 px-4 text-center text-sm text-gray-600">
-  <p>This is a demo for <strong class="text-gray-400">Austin Smile Dental</strong> (fictional). Built by <a href="/" class="text-electric-blue hover:underline">AjayaDesign</a>.</p>
+<footer class="border-t border-gray-800 py-8 px-4 text-center text-sm text-gray-400">
+  <p>This is a demo for <strong class="text-gray-400">Austin Smile Dental</strong> (fictional). Built by <a href="/" class="text-electric-blue underline hover:no-underline">AjayaDesign</a>.</p>
 </footer>
 
 <!-- Chat Widget -->
@@ -298,25 +298,25 @@ function checked(id){return [...document.querySelectorAll('#'+id+' input:checked
 function buildReview(){
   document.getElementById('reviewContent').innerHTML=`
     <div class="glass rounded-lg p-4 space-y-2">
-      <p><span class="text-gray-500">Name:</span> <strong class="text-white">${v('f_name')}</strong></p>
-      <p><span class="text-gray-500">DOB:</span> ${v('f_dob')}</p>
-      <p><span class="text-gray-500">Phone:</span> ${v('f_phone')}</p>
-      <p><span class="text-gray-500">Email:</span> ${v('f_email')}</p>
+      <p><span class="text-gray-400">Name:</span> <strong class="text-white">${v('f_name')}</strong></p>
+      <p><span class="text-gray-400">DOB:</span> ${v('f_dob')}</p>
+      <p><span class="text-gray-400">Phone:</span> ${v('f_phone')}</p>
+      <p><span class="text-gray-400">Email:</span> ${v('f_email')}</p>
     </div>
     <div class="glass rounded-lg p-4 space-y-2">
-      <p><span class="text-gray-500">Insurance:</span> ${v('f_insurance')} &nbsp; <span class="text-gray-500">ID:</span> ${v('f_memberid')} &nbsp; <span class="text-gray-500">Group:</span> ${v('f_group')}</p>
+      <p><span class="text-gray-400">Insurance:</span> ${v('f_insurance')} &nbsp; <span class="text-gray-400">ID:</span> ${v('f_memberid')} &nbsp; <span class="text-gray-400">Group:</span> ${v('f_group')}</p>
     </div>
     <div class="glass rounded-lg p-4 space-y-2">
-      <p><span class="text-gray-500">Allergies:</span> ${checked('allergyChecks')}</p>
-      <p><span class="text-gray-500">Medications:</span> ${v('f_meds')}</p>
-      <p><span class="text-gray-500">Conditions:</span> ${checked('conditionChecks')}</p>
+      <p><span class="text-gray-400">Allergies:</span> ${checked('allergyChecks')}</p>
+      <p><span class="text-gray-400">Medications:</span> ${v('f_meds')}</p>
+      <p><span class="text-gray-400">Conditions:</span> ${checked('conditionChecks')}</p>
     </div>
     <div class="glass rounded-lg p-4 space-y-2">
-      <p><span class="text-gray-500">Reason:</span> ${v('f_reason')}</p>
-      <p><span class="text-gray-500">Preferred:</span> ${v('f_date')} — ${v('f_time')}</p>
-      <p><span class="text-gray-500">Notes:</span> ${v('f_notes')}</p>
+      <p><span class="text-gray-400">Reason:</span> ${v('f_reason')}</p>
+      <p><span class="text-gray-400">Preferred:</span> ${v('f_date')} — ${v('f_time')}</p>
+      <p><span class="text-gray-400">Notes:</span> ${v('f_notes')}</p>
     </div>
-    <p class="text-xs text-gray-600 font-mono">Demo only — no data will be stored or transmitted.</p>`;
+    <p class="text-xs text-gray-400 font-mono">Demo only — no data will be stored or transmitted.</p>`;
 }
 
 // ── Chatbot ──
@@ -392,7 +392,7 @@ function showSummary(){
   if(chatData.insurance)s+=`<strong>Insurance:</strong> ${chatData.insurance}<br>`;
   s+=`<strong>Reason:</strong> ${chatData.reason}<br>`;
   s+=`<strong>Preferred Time:</strong> ${chatData.schedule}<br><br>`;
-  s+=`✅ <strong>Appointment request submitted!</strong><br><span class="text-gray-500 text-xs">We'll confirm within 1 business hour. (Demo only)</span>`;
+  s+=`✅ <strong>Appointment request submitted!</strong><br><span class="text-gray-400 text-xs">We'll confirm within 1 business hour. (Demo only)</span>`;
   addBot(s,['Office Hours','Parking','Thanks!']);
 }
 </script>

@@ -1,6 +1,6 @@
 # 3D Print Academy — Lesson Video Tracker
 
-> **Last updated:** 2025-03-30
+> **Last updated:** 2026-04-01
 > **YouTube Channel:** [AJ DESIGN](https://www.youtube.com/@AJDESIGN-y8m) (UCUDAzAh-qpKR4z1b9KaHNsg)
 > **Video storage:** `3D-print/content/video/notebooklm/` (33 NotebookLM videos, 1.1GB)
 > **Upload staging:** `~/video-uploads/` (40 mp4 files)
@@ -63,45 +63,45 @@
 | 2-2 | Design Your First Magnet Frame in TinkerCAD | ✅ `lesson-2-2-first-frame-tinkercad.txt` | ✅ `62a60d80` (ajayadesign) | 📥 `lesson-2-2-first-frame-tinkercad.mp4` (TinkerCAD recording) | `oYfl_sYNnr0` | ✅ On YouTube |
 | 2-3 | Fusion 360 Introduction & Interface | ✅ `lesson-2-3-fusion360-intro.txt` | ✅ `5bd1f448` (ajayadesign) | 📥 `Fusion-360-Parametric-Design.mp4` | `BpPHJGe4txk` | ✅ On YouTube |
 | 2-4 | Magnet Slot Tolerances & Photo Insert Sizing | ✅ `lesson-2-4-tolerances.txt` | ✅ `b340058e` (ajayadesign) | 📥 `Mastering-3D-Tolerances.mp4` | `m_b_Lxa18UA` | ✅ On YouTube |
-| 2-5 | Snap-Fit Clip Design | ✅ `lesson-2-5-snap-fit-clips.txt` | ✅ `bf0bb892` (ajayadesign) | 📥 `Snap-Fit-Clip-Design.mp4` (slide video) | — | 📥 Upload needed |
-| 2-6 | Export STL & Test Slice | ✅ `lesson-2-6-export-stl.txt` | ❌ No notebook | 📥 `Export-STL-&-Test-Slice.mp4` (slide video) | — | 📥 Upload needed |
-| 2-7 | Module 2 Recap | ✅ `lesson-2-7-module2-recap.txt` | ✅ `0c85515e` (ajayadahal1000 PRO) | 📥 `lesson-2-7-cad-design.mp4` | — | 📥 Upload needed |
+| 2-5 | Snap-Fit Clip Design | ✅ `lesson-2-5-snap-fit-clips.txt` | ✅ `bf0bb892` (ajayadesign) | 📥 `Snap-Fit-Clip-Design.mp4` (slide video) | `mcDrHiftX34` | ✅ On YouTube |
+| 2-6 | Export STL & Test Slice | ✅ `lesson-2-6-export-stl.txt` | ❌ No notebook | 📥 `Export-STL-&-Test-Slice.mp4` (slide video) | `4Y-N55HXdVE` | ✅ On YouTube |
+| 2-7 | Module 2 Recap | ✅ `lesson-2-7-module2-recap.txt` | ✅ `0c85515e` (ajayadahal1000 PRO) | 📥 `lesson-2-7-cad-design.mp4` | `GOdjJmQ8ReM` | ✅ On YouTube |
 
 ## Module 3: Advanced Frame Designs (7 lessons)
 
 | # | Lesson | Content | NotebookLM | Video File | YouTube ID | Status |
 |---|--------|---------|------------|------------|------------|--------|
-| 3-1 | Multi-Piece Magnetic Assemblies | ✅ `lesson-3-1-multi-piece-assemblies.txt` | ✅ `541133fa` (ajayadahal1000 PRO) | 📥 `lesson-3-1-modular-frames.mp4` | — | 📥 Upload needed |
-| 3-2 | Retro TV Frame Design | ✅ `lesson-3-2-retro-tv-frame.txt` | ❌ No notebook | 📥 `Retro-TV-Frame-Design.mp4` (slide video) | — | 📥 Upload needed |
-| 3-3 | Polaroid-Style Frame | ✅ `lesson-3-3-polaroid-frame.txt` | ❌ No notebook | 📥 `lesson-3-3-polaroid-frame.mp4` (TinkerCAD recording) | — | 📥 Upload needed |
-| 3-4 | Instax Mini Frame | ✅ `lesson-3-4-instax-mini-frame.txt` | ❌ No notebook | 📥 `lesson-3-4-instax-mini-frame.mp4` (TinkerCAD recording) | — | 📥 Upload needed |
-| 3-5 | Multi-Photo Collage Frame | ✅ `lesson-3-5-multi-photo-collage.txt` | ❌ No notebook | 📥 `lesson-3-5-multi-photo-collage.mp4` (TinkerCAD recording) | — | 📥 Upload needed |
-| 3-6 | Custom Text Inserts | ✅ `lesson-3-6-custom-text-inserts.txt` | ❌ No notebook | 📥 `lesson-3-6-custom-text-frame.mp4` (TinkerCAD recording) | — | 📥 Upload needed |
-| 3-7 | Quality Showcase & Review | ✅ `lesson-3-7-quality-showcase.txt` | ✅ `84c55b71` (ajayadahal1000 PRO) | 📥 `lesson-3-7-quality-control.mp4` | — | 📥 Upload needed |
+| 3-1 | Multi-Piece Magnetic Assemblies | ✅ `lesson-3-1-multi-piece-assemblies.txt` | ✅ `541133fa` (ajayadahal1000 PRO) | 📥 `lesson-3-1-modular-frames.mp4` | `F4JdWlyhwGQ` | ✅ On YouTube |
+| 3-2 | Retro TV Frame Design | ✅ `lesson-3-2-retro-tv-frame.txt` | ❌ No notebook | 📥 `Retro-TV-Frame-Design.mp4` (slide video) | `hBWgIdxLH7c` | ✅ On YouTube |
+| 3-3 | Polaroid-Style Frame | ✅ `lesson-3-3-polaroid-frame.txt` | ❌ No notebook | 📥 `lesson-3-3-polaroid-frame.mp4` (TinkerCAD recording) | `IXA2rkAeERE` | ✅ On YouTube |
+| 3-4 | Instax Mini Frame | ✅ `lesson-3-4-instax-mini-frame.txt` | ❌ No notebook | 📥 `lesson-3-4-instax-mini-frame.mp4` (TinkerCAD recording) | `nuJH8TKCLHU` | ✅ On YouTube |
+| 3-5 | Multi-Photo Collage Frame | ✅ `lesson-3-5-multi-photo-collage.txt` | ❌ No notebook | 📥 `lesson-3-5-multi-photo-collage.mp4` (TinkerCAD recording) | `5r67PMTYVrs` | ✅ On YouTube |
+| 3-6 | Custom Text Inserts | ✅ `lesson-3-6-custom-text-inserts.txt` | ❌ No notebook | 📥 `lesson-3-6-custom-text-frame.mp4` (TinkerCAD recording) | `ZIooa1KeHxs` | ✅ On YouTube |
+| 3-7 | Quality Showcase & Review | ✅ `lesson-3-7-quality-showcase.txt` | ✅ `84c55b71` (ajayadahal1000 PRO) | 📥 `lesson-3-7-quality-control.mp4` | `KF4S2XcG64g` | ✅ On YouTube |
 
 ## Module 4: Print Optimization & Troubleshooting (8 lessons)
 
 | # | Lesson | Content | NotebookLM | Video File | YouTube ID | Status |
 |---|--------|---------|------------|------------|------------|--------|
-| 4-1 | Layer Height Comparison | ✅ `lesson-4-1-layer-height.txt` | ✅ `27ee751e` (ajayadahal1000 PRO) | 📥 `lesson-4-1-layer-height.mp4` | — | 📥 Upload needed |
+| 4-1 | Layer Height Comparison | ✅ `lesson-4-1-layer-height.txt` | ✅ `27ee751e` (ajayadahal1000 PRO) | 📥 `lesson-4-1-layer-height.mp4` | `1jMvQMgPljE` | ✅ On YouTube |
 | 4-2 | Infill Patterns & Strength | ✅ `lesson-4-2-infill-patterns.txt` | ❌ No notebook | — | `ZvLwDYEo7eU` | ✅ On YouTube |
-| 4-3 | Speed vs Quality Tuning | ✅ `lesson-4-3-speed-quality.txt` | ✅ `15e30e2b` (ajayadahal1000 PRO) | 📥 `lesson-4-3-speed-quality.mp4` | — | 📥 Upload needed |
-| 4-4 | Temperature Tower Test | ✅ `lesson-4-4-temperature-tower.txt` | ✅ `ce1636af` (ajayadahal1000 PRO) | 📥 `lesson-4-4-temperature-tower.mp4` | — | 📥 Upload needed |
-| 4-5 | Fix Stringing | ✅ `lesson-4-5-fix-stringing.txt` | ✅ `f2f13d35` (ajayadahal1000 PRO) | 📥 `lesson-4-5-stringing.mp4` | — | 📥 Upload needed |
-| 4-6 | Fix Warping | ✅ `lesson-4-6-fix-warping.txt` | ✅ `4a49e768` (ajayadahal1000 PRO) | 📥 `lesson-4-6-bed-adhesion.mp4` | — | 📥 Upload needed |
-| 4-7 | Fix Elephant's Foot | ✅ `lesson-4-7-fix-elephants-foot.txt` | ✅ `c0d22343` (ajayadahal1000 PRO) | 📥 `lesson-4-7-elephants-foot.mp4` | — | 📥 Upload needed |
-| 4-8 | Batch Printing for Production | ✅ `lesson-4-8-batch-printing.txt` | ✅ `345f44ba` (ajayadahal1000 PRO) | 📥 `lesson-4-8-batch-production.mp4` | — | 📥 Upload needed |
+| 4-3 | Speed vs Quality Tuning | ✅ `lesson-4-3-speed-quality.txt` | ✅ `15e30e2b` (ajayadahal1000 PRO) | 📥 `lesson-4-3-speed-quality.mp4` | `iaoVbVF53g0` | ✅ On YouTube |
+| 4-4 | Temperature Tower Test | ✅ `lesson-4-4-temperature-tower.txt` | ✅ `ce1636af` (ajayadahal1000 PRO) | 📥 `lesson-4-4-temperature-tower.mp4` | `RMjqq-qc_J0` | ✅ On YouTube |
+| 4-5 | Fix Stringing | ✅ `lesson-4-5-fix-stringing.txt` | ✅ `f2f13d35` (ajayadahal1000 PRO) | 📥 `lesson-4-5-stringing.mp4` | `op2hy3QPinI` | ✅ On YouTube |
+| 4-6 | Fix Warping | ✅ `lesson-4-6-fix-warping.txt` | ✅ `4a49e768` (ajayadahal1000 PRO) | 📥 `lesson-4-6-bed-adhesion.mp4` | `ZU6az5iG0Kw` | ✅ On YouTube |
+| 4-7 | Fix Elephant's Foot | ✅ `lesson-4-7-fix-elephants-foot.txt` | ✅ `c0d22343` (ajayadahal1000 PRO) | 📥 `lesson-4-7-elephants-foot.mp4` | `Cf6hWy3vgX0` | ✅ On YouTube |
+| 4-8 | Batch Printing for Production | ✅ `lesson-4-8-batch-printing.txt` | ✅ `345f44ba` (ajayadahal1000 PRO) | 📥 `lesson-4-8-batch-production.mp4` | `IyH43Ph04Fo` | ✅ On YouTube |
 
 ## Module 5: Post-Processing & Finishing (7 lessons)
 
 | # | Lesson | Content | NotebookLM | Video File | YouTube ID | Status |
 |---|--------|---------|------------|------------|------------|--------|
-| 5-1 | Sanding Technique — Grit Progression | ✅ `lesson-5-1-sanding-technique.txt` | ✅ `89dc3f5f` (ajayadahal1000 PRO) | 📥 `lesson-5-1-sanding.mp4` | — | 📥 Upload needed |
-| 5-2 | Priming with Filler Primer | ✅ `lesson-5-2-filler-primer.txt` | ✅ `152eceae` (ajayadahal1000 PRO) | 📥 `lesson-5-2-filler-primer.mp4` | — | 📥 Upload needed |
-| 5-3 | Spray Painting Technique | ✅ `lesson-5-3-spray-painting.txt` | ✅ `744d28e7` (ajayadahal1000 PRO) | 📥 `lesson-5-3-spray-painting.mp4` | — | 📥 Upload needed |
-| 5-4 | Clear Coating for Durability | ✅ `lesson-5-4-clear-coating.txt` | ✅ `91a5b84e` (ajayadahal1000 PRO) | 📥 `lesson-5-4-clear-coat.mp4` | — | 📥 Upload needed |
-| 5-5 | Magnet Installation — Mid-Print Pause | ✅ `lesson-5-5-magnet-install-pause.txt` | ✅ `39e49d8c` (ajayadahal1000 PRO) | 📥 `lesson-5-5-mid-print-magnet.mp4` | — | 📥 Upload needed |
-| 5-6 | Magnet Installation — Post-Glue | ✅ `lesson-5-6-magnet-install-glue.txt` | ✅ `14aa7f6c` (ajayadahal1000 PRO) | 📥 `lesson-5-6-post-glue-magnet.mp4` | — | 📥 Upload needed |
+| 5-1 | Sanding Technique — Grit Progression | ✅ `lesson-5-1-sanding-technique.txt` | ✅ `89dc3f5f` (ajayadahal1000 PRO) | 📥 `lesson-5-1-sanding.mp4` | `240mKi5ye9Y` | ✅ On YouTube |
+| 5-2 | Priming with Filler Primer | ✅ `lesson-5-2-filler-primer.txt` | ✅ `152eceae` (ajayadahal1000 PRO) | 📥 `lesson-5-2-filler-primer.mp4` | `qe0Zli7MkZE` | ✅ On YouTube |
+| 5-3 | Spray Painting Technique | ✅ `lesson-5-3-spray-painting.txt` | ✅ `744d28e7` (ajayadahal1000 PRO) | 📥 `lesson-5-3-spray-painting.mp4` | `vNXmJLvWmF8` | ✅ On YouTube |
+| 5-4 | Clear Coating for Durability | ✅ `lesson-5-4-clear-coating.txt` | ✅ `91a5b84e` (ajayadahal1000 PRO) | 📥 `lesson-5-4-clear-coat.mp4` | `DRe7qEIG2fs` | ✅ On YouTube |
+| 5-5 | Magnet Installation — Mid-Print Pause | ✅ `lesson-5-5-magnet-install-pause.txt` | ✅ `39e49d8c` (ajayadahal1000 PRO) | 📥 `lesson-5-5-mid-print-magnet.mp4` | `4wATOqKK_Y4` | ✅ On YouTube |
+| 5-6 | Magnet Installation — Post-Glue | ✅ `lesson-5-6-magnet-install-glue.txt` | ✅ `14aa7f6c` (ajayadahal1000 PRO) | 📥 `lesson-5-6-post-glue-magnet.mp4` | `oHkE1K-oad4` | ✅ On YouTube |
 | 5-7 | Quality Control Checklist | ✅ `lesson-5-7-quality-control.txt` | ❌ No notebook | — | `Dtqan6u2vq8` | ✅ On YouTube |
 
 ## Module 6: Launch Your Magnet Business (7 lessons)
@@ -109,11 +109,11 @@
 | # | Lesson | Content | NotebookLM | Video File | YouTube ID | Status |
 |---|--------|---------|------------|------------|------------|--------|
 | 6-1 | Cost Per Unit Breakdown | ✅ `lesson-6-1-cost-breakdown.txt` | ❌ No notebook | — | `Uh5EkN99acA` | ✅ On YouTube |
-| 6-2 | Pricing Strategy ($5–$15 Retail) | ✅ `lesson-6-2-pricing-strategy.txt` | ✅ `332c769c` (ajayadahal1000 PRO) | 📥 `lesson-6-2-pricing.mp4` | — | 📥 Upload needed |
-| 6-3 | Shopify Store Setup | ✅ `lesson-6-3-shopify-store.txt` | ❌ No notebook | 📥 `Shopify-Store-Setup.mp4` (slide video) | — | 📥 Upload needed |
+| 6-2 | Pricing Strategy ($5–$15 Retail) | ✅ `lesson-6-2-pricing-strategy.txt` | ✅ `332c769c` (ajayadahal1000 PRO) | 📥 `lesson-6-2-pricing.mp4` | `cAnnAhwwKDQ` | ✅ On YouTube |
+| 6-3 | Shopify Store Setup | ✅ `lesson-6-3-shopify-store.txt` | ❌ No notebook | 📥 `Shopify-Store-Setup.mp4` (slide video) | `EvyiIvS634E` | ✅ On YouTube |
 | 6-4 | Craft Fair Strategy | ✅ `lesson-6-4-craft-fair-strategy.txt` | ❌ No notebook | — | `51QcjC82HYI` | ✅ On YouTube |
-| 6-5 | Product Photography | ✅ `lesson-6-5-product-photography.txt` | ✅ `73a4c861` (ajayadahal1000 PRO) | 📥 `lesson-6-5-product-photography.mp4` | — | 📥 Upload needed |
-| 6-6 | Packaging & Shipping | ✅ `lesson-6-6-packaging-shipping.txt` | ✅ `3727d639` (ajayadahal1000 PRO) | 📥 `lesson-6-6-packaging-shipping.mp4` | — | 📥 Upload needed |
+| 6-5 | Product Photography | ✅ `lesson-6-5-product-photography.txt` | ✅ `73a4c861` (ajayadahal1000 PRO) | 📥 `lesson-6-5-product-photography.mp4` | `2XAViGcj58U` | ✅ On YouTube |
+| 6-6 | Packaging & Shipping | ✅ `lesson-6-6-packaging-shipping.txt` | ✅ `3727d639` (ajayadahal1000 PRO) | 📥 `lesson-6-6-packaging-shipping.mp4` | `WMvZMI1J9BE` | ✅ On YouTube |
 | 6-7 | Scaling: Hobby → Income | ✅ `lesson-6-7-scaling-business.txt` | ❌ No notebook | — | `0ZIRmG6vtIY` | ✅ On YouTube |
 
 ---
@@ -150,8 +150,8 @@
 | **All lessons with video** | **43/43** ✅ (mix of NotebookLM, TinkerCAD, slides, YouTube-only) |
 | **Videos in `~/video-uploads/`** | 40 mp4 files |
 | **Videos in `content/video/notebooklm/`** | 33 files (19 lesson + 14 module/other) |
-| **On YouTube (unique IDs)** | 20 (10 prior + 10 new today) |
-| **Awaiting YouTube upload** | 30 videos |
+| **On YouTube (unique IDs)** | 40 (all complete! 🎉) |
+| **Awaiting YouTube upload** | 0 videos ✅ |
 | **Upload script entries** | 40 (in `yt_upload_api.py`) |
 
 ---

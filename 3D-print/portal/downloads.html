@@ -29,13 +29,13 @@
   <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
     <div class="max-w-6xl mx-auto flex items-center justify-between h-14 px-6">
       <a href="/3D-print/portal/" class="font-mono text-sm text-gray-400 hover:text-white transition-colors">← Dashboard</a>
-      <span class="font-mono text-xs text-gray-500">Downloads</span>
+      <span class="font-mono text-xs text-gray-400">Downloads</span>
     </div>
   </nav>
 
   <!-- Auth Gate -->
   <div id="auth-gate" class="flex-1 flex items-center justify-center pt-14">
-    <p class="font-mono text-gray-500 text-sm">Verifying access…</p>
+    <p class="font-mono text-gray-400 text-sm">Verifying access…</p>
   </div>
 
   <!-- Content (hidden until auth) -->
@@ -62,7 +62,7 @@
               </div>
             </div>
             <div class="flex items-center justify-between mt-3 pt-3 border-t border-border-dim">
-              <span class="text-gray-500 text-xs font-mono">12 STL files · 259 KB zip</span>
+              <span class="text-gray-400 text-xs font-mono">12 STL files · 259 KB zip</span>
               <span class="text-electric-blue font-mono text-xs group-hover:translate-x-1 transition-transform">Download ZIP →</span>
             </div>
           </a>
@@ -75,7 +75,7 @@
               </div>
             </div>
             <div class="flex items-center justify-between mt-3 pt-3 border-t border-border-dim">
-              <span class="text-gray-500 text-xs font-mono">10 STL files · 293 KB zip</span>
+              <span class="text-gray-400 text-xs font-mono">10 STL files · 293 KB zip</span>
               <span class="text-electric-blue font-mono text-xs group-hover:translate-x-1 transition-transform">Download ZIP →</span>
             </div>
           </a>
@@ -88,26 +88,26 @@
 
         <!-- Individual files (populated by JS after auth) -->
         <details id="dl-details" class="mt-2">
-          <summary class="text-gray-500 text-xs font-mono cursor-pointer hover:text-gray-300 transition-colors">Show all included STL files (27 individual + 2 ZIPs)</summary>
+          <summary class="text-gray-400 text-xs font-mono cursor-pointer hover:text-gray-300 transition-colors">Show all included STL files (27 individual + 2 ZIPs)</summary>
 
           <h4 class="text-white font-mono text-sm mt-4 mb-2">🎓 Lesson Exports</h4>
           <div id="dl-lessons" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-            <p class="text-gray-600 font-mono text-xs col-span-full">Loading…</p>
+            <p class="text-gray-400 font-mono text-xs col-span-full">Loading…</p>
           </div>
 
           <h4 class="text-white font-mono text-sm mb-2">🖼️ General Frames</h4>
           <div id="dl-general" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-            <p class="text-gray-600 font-mono text-xs col-span-full">Loading…</p>
+            <p class="text-gray-400 font-mono text-xs col-span-full">Loading…</p>
           </div>
 
           <h4 class="text-white font-mono text-sm mb-2">👶 Baby Milestone Frames</h4>
           <div id="dl-baby" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-4">
-            <p class="text-gray-600 font-mono text-xs col-span-full">Loading…</p>
+            <p class="text-gray-400 font-mono text-xs col-span-full">Loading…</p>
           </div>
 
           <h4 class="text-white font-mono text-sm mb-2">🎁 Thingiverse Bonus</h4>
           <div id="dl-thingiverse" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <p class="text-gray-600 font-mono text-xs col-span-full">Loading…</p>
+            <p class="text-gray-400 font-mono text-xs col-span-full">Loading…</p>
           </div>
         </details>
       </section>
@@ -122,25 +122,25 @@
             <span class="text-2xl">⚙️</span>
             <div class="flex-1">
               <p class="text-white font-mono text-sm">Cura Profile — PLA Magnet Frames</p>
-              <p class="text-gray-500 text-xs">0.2mm layer, 20% gyroid, optimized retraction</p>
+              <p class="text-gray-400 text-xs">0.2mm layer, 20% gyroid, optimized retraction</p>
             </div>
-            <span class="text-gray-600 font-mono text-xs">.curaprofile</span>
+            <span class="text-gray-400 font-mono text-xs">.curaprofile</span>
           </div>
           <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3">
             <span class="text-2xl">⚙️</span>
             <div class="flex-1">
               <p class="text-white font-mono text-sm">PrusaSlicer Profile — PLA Magnet Frames</p>
-              <p class="text-gray-500 text-xs">Matching settings for Prusa MK3S+/MK4</p>
+              <p class="text-gray-400 text-xs">Matching settings for Prusa MK3S+/MK4</p>
             </div>
-            <span class="text-gray-600 font-mono text-xs">.ini</span>
+            <span class="text-gray-400 font-mono text-xs">.ini</span>
           </div>
           <div class="p-4 bg-surface-card border border-border-dim rounded-xl flex items-center gap-3">
             <span class="text-2xl">⚙️</span>
             <div class="flex-1">
               <p class="text-white font-mono text-sm">Cura Profile — PETG Batch Production</p>
-              <p class="text-gray-500 text-xs">Higher temp, slower speed for PETG durability</p>
+              <p class="text-gray-400 text-xs">Higher temp, slower speed for PETG durability</p>
             </div>
-            <span class="text-gray-600 font-mono text-xs">.curaprofile</span>
+            <span class="text-gray-400 font-mono text-xs">.curaprofile</span>
           </div>
         </div>
       </section>
@@ -155,7 +155,7 @@
             <span class="text-2xl">🧮</span>
             <div class="flex-1">
               <p class="text-white font-mono text-sm">Pricing Calculator</p>
-              <p class="text-gray-500 text-xs">Interactive cost-per-unit & profit margin tool</p>
+              <p class="text-gray-400 text-xs">Interactive cost-per-unit & profit margin tool</p>
             </div>
             <span class="text-electric-blue font-mono text-xs">Open →</span>
           </a>
@@ -163,7 +163,7 @@
             <span class="text-2xl">✅</span>
             <div class="flex-1">
               <p class="text-white font-mono text-sm">QC Checklist</p>
-              <p class="text-gray-500 text-xs">Print quality control — check every frame before shipping</p>
+              <p class="text-gray-400 text-xs">Print quality control — check every frame before shipping</p>
             </div>
             <span class="text-electric-blue font-mono text-xs">Open →</span>
           </a>
@@ -171,7 +171,7 @@
             <span class="text-2xl">🛒</span>
             <div class="flex-1">
               <p class="text-white font-mono text-sm">Materials List</p>
-              <p class="text-gray-500 text-xs">Everything you need — filament, magnets, tools, packaging</p>
+              <p class="text-gray-400 text-xs">Everything you need — filament, magnets, tools, packaging</p>
             </div>
             <span class="text-electric-blue font-mono text-xs">Open →</span>
           </a>

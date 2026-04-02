@@ -101,7 +101,7 @@
 
           <div>
             <label class="block text-sm text-gray-400 mb-2 font-mono">Printer</label>
-            <select id="printer" class="w-full px-4 py-3 bg-surface border border-border-dim rounded-lg text-white font-mono text-sm focus:outline-none focus:border-amd-red/50">
+            <select id="printer" aria-label="Select 3D printer model" class="w-full px-4 py-3 bg-surface border border-border-dim rounded-lg text-white font-mono text-sm focus:outline-none focus:border-amd-red/50">
               <option value="200">Ender 3 (~$200)</option>
               <option value="799">Prusa MK3S+ (~$799)</option>
               <option value="599" selected>Bambu Lab P1S (~$599)</option>
@@ -112,31 +112,31 @@
           <!-- Filament cost -->
           <div>
             <label class="block text-sm text-gray-400 mb-2 font-mono">Filament Cost per kg: <span id="filament-val" class="text-white">$20</span></label>
-            <input type="range" id="filament" min="15" max="30" value="20" step="1" class="w-full" />
+            <input type="range" id="filament" aria-label="Filament grams per frame" min="15" max="30" value="20" step="1" class="w-full" />
           </div>
 
           <!-- Print time -->
           <div>
             <label class="block text-sm text-gray-400 mb-2 font-mono">Print Time per Frame: <span id="time-val" class="text-white">45 min</span></label>
-            <input type="range" id="printTime" min="15" max="120" value="45" step="5" class="w-full" />
+            <input type="range" id="printTime" aria-label="Print time in minutes" min="15" max="120" value="45" step="5" class="w-full" />
           </div>
 
           <!-- Selling price -->
           <div>
             <label class="block text-sm text-gray-400 mb-2 font-mono">Selling Price per Frame: <span id="price-val" class="text-white">$12</span></label>
-            <input type="range" id="sellPrice" min="5" max="25" value="12" step="0.5" class="w-full" />
+            <input type="range" id="sellPrice" aria-label="Selling price per frame" min="5" max="25" value="12" step="0.5" class="w-full" />
           </div>
 
           <!-- Hours per day -->
           <div>
             <label class="block text-sm text-gray-400 mb-2 font-mono">Hours Printing per Day: <span id="hours-val" class="text-white">4</span></label>
-            <input type="range" id="hoursDay" min="1" max="12" value="4" step="1" class="w-full" />
+            <input type="range" id="hoursDay" aria-label="Print hours per day" min="1" max="12" value="4" step="1" class="w-full" />
           </div>
 
           <!-- Days per week -->
           <div>
             <label class="block text-sm text-gray-400 mb-2 font-mono">Days per Week: <span id="days-val" class="text-white">5</span></label>
-            <input type="range" id="daysWeek" min="1" max="7" value="5" step="1" class="w-full" />
+            <input type="range" id="daysWeek" aria-label="Print days per week" min="1" max="7" value="5" step="1" class="w-full" />
           </div>
         </div>
 
@@ -147,35 +147,35 @@
             <h2 class="font-mono text-white font-bold text-lg mb-6">Your Profit Breakdown</h2>
             <div class="grid grid-cols-2 gap-4">
               <div class="p-4 rounded-xl bg-surface border border-border-dim">
-                <p class="text-xs text-gray-500 font-mono uppercase">Cost/Unit</p>
+                <p class="text-xs text-gray-400 font-mono uppercase">Cost/Unit</p>
                 <p id="out-cost" class="text-xl font-bold text-red-400 font-mono mt-1">$0.00</p>
               </div>
               <div class="p-4 rounded-xl bg-surface border border-border-dim">
-                <p class="text-xs text-gray-500 font-mono uppercase">Profit/Unit</p>
+                <p class="text-xs text-gray-400 font-mono uppercase">Profit/Unit</p>
                 <p id="out-profit-unit" class="text-xl font-bold text-neon-green font-mono mt-1">$0.00</p>
               </div>
               <div class="p-4 rounded-xl bg-surface border border-border-dim">
-                <p class="text-xs text-gray-500 font-mono uppercase">Daily Profit</p>
+                <p class="text-xs text-gray-400 font-mono uppercase">Daily Profit</p>
                 <p id="out-daily" class="text-xl font-bold text-neon-green font-mono mt-1">$0</p>
               </div>
               <div class="p-4 rounded-xl bg-surface border border-border-dim">
-                <p class="text-xs text-gray-500 font-mono uppercase">Weekly Profit</p>
+                <p class="text-xs text-gray-400 font-mono uppercase">Weekly Profit</p>
                 <p id="out-weekly" class="text-xl font-bold text-neon-green font-mono mt-1">$0</p>
               </div>
               <div class="p-4 rounded-xl bg-surface border border-border-dim">
-                <p class="text-xs text-gray-500 font-mono uppercase">Monthly Profit</p>
+                <p class="text-xs text-gray-400 font-mono uppercase">Monthly Profit</p>
                 <p id="out-monthly" class="text-2xl font-bold text-neon-green font-mono mt-1">$0</p>
               </div>
               <div class="p-4 rounded-xl bg-surface border border-border-dim">
-                <p class="text-xs text-gray-500 font-mono uppercase">Annual Projection</p>
+                <p class="text-xs text-gray-400 font-mono uppercase">Annual Projection</p>
                 <p id="out-annual" class="text-2xl font-bold text-neon-green font-mono mt-1">$0</p>
               </div>
               <div class="p-4 rounded-xl bg-surface border border-border-dim">
-                <p class="text-xs text-gray-500 font-mono uppercase">Break-Even</p>
+                <p class="text-xs text-gray-400 font-mono uppercase">Break-Even</p>
                 <p id="out-breakeven" class="text-xl font-bold text-electric-blue font-mono mt-1">0 units</p>
               </div>
               <div class="p-4 rounded-xl bg-surface border border-border-dim">
-                <p class="text-xs text-gray-500 font-mono uppercase">ROI (Year 1)</p>
+                <p class="text-xs text-gray-400 font-mono uppercase">ROI (Year 1)</p>
                 <p id="out-roi" class="text-xl font-bold text-electric-blue font-mono mt-1">0%</p>
               </div>
             </div>
@@ -187,15 +187,15 @@
             <div class="flex items-end justify-around gap-4 h-48">
               <div class="flex flex-col items-center flex-1">
                 <div id="bar-daily" class="bar-animate w-full rounded-t-lg bg-neon-green/80" style="height:10%"></div>
-                <span class="text-xs text-gray-500 font-mono mt-2">Daily</span>
+                <span class="text-xs text-gray-400 font-mono mt-2">Daily</span>
               </div>
               <div class="flex flex-col items-center flex-1">
                 <div id="bar-weekly" class="bar-animate w-full rounded-t-lg bg-neon-green" style="height:10%"></div>
-                <span class="text-xs text-gray-500 font-mono mt-2">Weekly</span>
+                <span class="text-xs text-gray-400 font-mono mt-2">Weekly</span>
               </div>
               <div class="flex flex-col items-center flex-1">
                 <div id="bar-monthly" class="bar-animate w-full rounded-t-lg bg-electric-blue" style="height:10%"></div>
-                <span class="text-xs text-gray-500 font-mono mt-2">Monthly</span>
+                <span class="text-xs text-gray-400 font-mono mt-2">Monthly</span>
               </div>
             </div>
           </div>
@@ -215,7 +215,7 @@
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-border-dim py-8 text-center text-gray-600 text-sm font-mono">
+  <footer class="border-t border-border-dim py-8 text-center text-gray-400 text-sm font-mono">
     <a href="/3D-print/" class="hover:text-white transition-colors">← Back to 3D Print Academy</a>
   </footer>
 
