@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Print Failure Diagnostic Tree — 3D Print Academy</title>
+  <meta name="description" content="Interactive diagnostic tree to troubleshoot common 3D print failures with PETG and PLA magnet frames. Free tool from AjayaDesign 3D Print Academy." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" /><meta name="theme-color" content="#0A0A0F" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{'surface':'#0A0A0F','surface-alt':'#111118','surface-card':'#1a1a2e','border-dim':'#1E1E2A','electric-blue':'#00D4FF','neon-green':'#39FF14','error-red':'#FF6B6B'},fontFamily:{mono:['"JetBrains Mono"','monospace'],sans:['"Inter"','system-ui','sans-serif']}}}};</script>
+  <style>
+    body{background:#0A0A0F;color:#e5e7eb;font-family:'Inter',sans-serif}
+    .card-hover{transition:all .2s ease}
+    .card-hover:hover{border-color:#00D4FF;transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,212,255,.15)}
+    .fade-in{animation:fadeIn .3s ease-out}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .breadcrumb-arrow::after{content:'›';margin:0 8px;color:#555}
+    .breadcrumb-arrow:last-child::after{display:none}
+    .setting-pill{display:inline-block;padding:2px 10px;border-radius:9999px;font-size:12px;font-family:'JetBrains Mono',monospace}
+  </style>
+  <link rel="stylesheet" href="../mobile-responsive.css" />
+</head>
+<body class="min-h-screen">
+  <!-- Nav -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
+    <div class="max-w-4xl mx-auto flex items-center justify-between px-6 py-4">
+      <a href="/3D-print/portal/" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Dashboard
+      </a>
+      <div class="flex items-center gap-4">
+        <a href="/3D-print/tools/calculator.html" class="text-sm font-mono text-gray-400 hover:text-white transition-colors">🧮 Calculator</a>
+        <button onclick="showHistory()" class="text-sm font-mono text-gray-400 hover:text-white transition-colors">📋 History</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-4xl mx-auto px-6 pt-24 pb-16">
+    <!-- Breadcrumb -->
+    <div id="breadcrumb" class="mb-6 flex flex-wrap items-center text-xs font-mono text-gray-500 min-h-[20px]"></div>
+
+    <!-- Main Content Area -->
+    <div id="content" class="fade-in"></div>
+
+    <!-- Start Over (hidden initially) -->
+    <div id="start-over-wrap" class="mt-8 text-center hidden">
+      <button onclick="goToRoot()" class="px-6 py-3 rounded-xl bg-surface-card border border-border-dim text-gray-400 hover:text-white hover:border-electric-blue transition-all font-mono text-sm">
+        ↺ Start Over
+      </button>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="hidden fixed inset-0 z-[60] bg-black/70 flex items-center justify-center p-4">
+      <div class="bg-surface-card border border-border-dim rounded-2xl max-w-lg w-full max-h-[70vh] overflow-y-auto p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-mono text-white font-bold">📋 Diagnostic History</h3>
+          <button onclick="closeHistory()" class="text-gray-400 hover:text-white text-xl">&times;</button>
+        </div>
+        <div id="history-list" class="space-y-3"></div>
+        <div class="mt-4 flex gap-3">
+          <button onclick="clearHistory()" class="text-xs font-mono text-error-red hover:underline">Clear All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // ─── Diagnostic Tree Data ───
+  const tree = {
+    id: 'root',
+    question: "What's wrong with your print?",
+    subtitle: 'Select the category that best describes your issue',
+    options: [
+      {
+        id: 'warping',
+        label: '🔥 Warping / Bed Adhesion',
+        desc: 'Part lifting, not sticking, or detaching',
+        question: 'What exactly is happening?',
+        options: [
+          {
+            id: 'first-layer-not-sticking',
+            label: '🔲 First layer not sticking',
+            desc: 'Filament not adhering to the bed at all',
+            question: 'Is the first layer being laid down but peeling, or not sticking at all?',
+            options: [
+              {
+                id: 'not-sticking-at-all',
+                label: 'Not sticking at all — filament dragging',
+                leaf: true,
+                cause: 'Nozzle too far from bed, bed not clean, or bed temp too low.',
+                fix: '1. Re-level your bed (paper test — slight drag)\n2. Clean bed with IPA (isopropyl alcohol)\n3. Increase bed temperature\n4. Slow down first layer speed',
+                settings: {
+                  PLA: { 'Bed Temp': '60–65°C', 'First Layer Speed': '20 mm/s', 'First Layer Height': '0.28mm', 'Z-Offset': 'Decrease by 0.02mm' },
+                  PETG: { 'Bed Temp': '80–85°C', 'First Layer Speed': '15 mm/s', 'First Layer Height': '0.28mm', 'Z-Offset': 'Decrease by 0.02mm' }
+                }
+              },
+              {
+                id: 'peeling-after-laying',
+                label: 'Lays down but peels up after a few lines',
+                leaf: true,
+                cause: 'Bed adhesion is marginal — usually a combo of temp and surface prep.',
+                fix: '1. Apply adhesive (glue stick or hairspray)\n2. Add a brim (5–8mm) in slicer\n3. Ensure bed is fully heated before print starts\n4. Check for drafts near printer',
+                settings: {
+                  PLA: { 'Bed Temp': '60°C', 'Brim Width': '5mm', 'Adhesive': 'Glue stick (PVA)' },
+                  PETG: { 'Bed Temp': '80°C', 'Brim Width': '8mm', 'Adhesive': 'Glue stick (also prevents PETG bonding too hard)' }
+                }
+              }
+            ]
+          },
+          {
+            id: 'corners-lifting',
+            label: '📐 Corners lifting / curling',
+            desc: 'Edges and corners pulling up from bed',
+            leaf: true,
+            cause: 'Thermal contraction as layers cool. Worse with large flat parts and no enclosure.',
+            fix: '1. Add a brim (8–10mm for large parts)\n2. Use an enclosure or block drafts\n3. Increase bed temp slightly\n4. For PETG: ensure bed is clean but with thin glue layer\n5. Consider mouse-ear pads on corners in CAD',
+            settings: {
+              PLA: { 'Bed Temp': '60–65°C', 'Brim': '8mm', 'Enclosure': 'Optional but helps', 'Fan': '100% after layer 3' },
+              PETG: { 'Bed Temp': '80–85°C', 'Brim': '10mm', 'Enclosure': 'Recommended', 'Fan': '30–50%' }
+            }
+          },
+          {
+            id: 'detaching-mid-print',
+            label: '💥 Part detaches mid-print',
+            desc: 'Print comes loose partway through',
+            leaf: true,
+            cause: 'Accumulated warping forces exceed adhesion, or nozzle knocked it loose.',
+            fix: '1. Use brim + glue stick combo\n2. Enable Z-hop to avoid nozzle hitting the part\n3. Lower print speed for small cross-sections\n4. Check belt tension — loose belts cause layer shift + knocks\n5. Ensure bed surface is appropriate (PEI, glass, etc.)',
+            settings: {
+              PLA: { 'Z-Hop': '0.4mm', 'Print Speed': '50 mm/s', 'Adhesive': 'Glue stick', 'Brim': '8mm' },
+              PETG: { 'Z-Hop': '0.6mm', 'Print Speed': '40 mm/s', 'Adhesive': 'Glue stick (mandatory on PEI)', 'Brim': '10mm' }
+            }
+          }
+        ]
+      },
+      {
+        id: 'stringing',
+        label: '🕸️ Stringing / Oozing',
+        desc: 'Thin strings, blobs, or oozing between parts',
+        question: 'What does the issue look like?',
+        options: [
+          {
+            id: 'thin-strings',
+            label: '🧵 Thin strings between parts',
+            desc: 'Hair-like strands connecting features',
+            leaf: true,
+            cause: 'Filament oozes from nozzle during travel moves. PETG is especially prone.',
+            fix: '1. Increase retraction distance\n2. Increase retraction speed\n3. Lower nozzle temperature (5°C at a time)\n4. Increase travel speed\n5. Enable "Combing" or "Avoid crossing perimeters"',
+            settings: {
+              PLA: { 'Retraction Distance': '5–6mm (Bowden) / 1–2mm (Direct)', 'Retraction Speed': '45 mm/s', 'Nozzle Temp': '195–205°C', 'Travel Speed': '150 mm/s' },
+              PETG: { 'Retraction Distance': '4–5mm (Bowden) / 0.8–1.5mm (Direct)', 'Retraction Speed': '35 mm/s', 'Nozzle Temp': '225–235°C', 'Travel Speed': '150 mm/s' }
+            }
+          },
+          {
+            id: 'blobs-surface',
+            label: '💧 Blobs or zits on surface',
+            desc: 'Small bumps or raised spots on walls',
+            leaf: true,
+            cause: 'Pressure build-up at seam points, over-extrusion, or retraction not tuned.',
+            fix: '1. Enable "Wipe" nozzle on retraction\n2. Use "Coasting" (0.2–0.5mm³)\n3. Set seam position to "Sharpest Corner" or "Rear"\n4. Calibrate E-steps / flow rate\n5. Try Linear Advance / Pressure Advance if firmware supports it',
+            settings: {
+              PLA: { 'Wipe Distance': '2mm', 'Coasting': '0.3mm³', 'Seam': 'Sharpest Corner', 'Flow': '95–100%' },
+              PETG: { 'Wipe Distance': '3mm', 'Coasting': '0.4mm³', 'Seam': 'Sharpest Corner', 'Flow': '92–97%' }
+            }
+          }
+        ]
+      },
+      {
+        id: 'layers',
+        label: '📏 Layer Issues',
+        desc: 'Separation, inconsistency, or banding in layers',
+        question: 'What type of layer problem?',
+        options: [
+          {
+            id: 'delamination',
+            label: '🧱 Layer separation / delamination',
+            desc: 'Layers splitting apart or not bonding',
+            leaf: true,
+            cause: 'Nozzle temp too low for layer bonding, or cooling too aggressive.',
+            fix: '1. Increase nozzle temperature (+5–10°C)\n2. Reduce part cooling fan speed\n3. Increase line width slightly (0.44mm for 0.4 nozzle)\n4. Check for clogs — partial clogs cause under-extrusion\n5. Ensure filament is dry (especially PETG)',
+            settings: {
+              PLA: { 'Nozzle Temp': '210–215°C', 'Fan': '70–100%', 'Line Width': '0.44mm', 'Layer Height': '≤75% of nozzle diameter' },
+              PETG: { 'Nozzle Temp': '240–245°C', 'Fan': '20–40%', 'Line Width': '0.44mm', 'Dry Filament': 'Critical — dry at 65°C for 4–6hrs' }
+            }
+          },
+          {
+            id: 'inconsistent-layers',
+            label: '〰️ Inconsistent layer lines',
+            desc: 'Some layers thicker/thinner than others',
+            leaf: true,
+            cause: 'Extruder tension, filament diameter variation, partial clog, or wet filament.',
+            fix: '1. Check extruder gear tension and for worn teeth\n2. Calibrate E-steps\n3. Measure filament diameter in 3+ spots (should be ±0.02mm)\n4. Dry your filament\n5. Check bowden tube for gaps at hotend coupling',
+            settings: {
+              PLA: { 'E-Steps': 'Calibrate to actual extrusion', 'Flow': '100% after E-step cal', 'Filament Diameter': 'Measure & enter exact value' },
+              PETG: { 'E-Steps': 'Calibrate to actual extrusion', 'Flow': '95–100% after E-step cal', 'Filament Diameter': 'Measure & enter exact value', 'Drying': '65°C / 4–6hrs' }
+            }
+          },
+          {
+            id: 'z-banding',
+            label: '📊 Z-banding / repeating pattern',
+            desc: 'Visible horizontal lines at regular intervals',
+            leaf: true,
+            cause: 'Z-axis lead screw issues — binding, inconsistent steps, or coupling misalignment.',
+            fix: '1. Clean and lubricate Z lead screw (white lithium grease)\n2. Check Z coupler for looseness or misalignment\n3. Ensure anti-backlash nut is snug but not overtight\n4. Check for Z-axis binding by moving it by hand\n5. If using Klipper: tune pressure_advance and input_shaper',
+            settings: {
+              PLA: { 'Layer Height': '0.2mm (or multiples of your lead screw pitch)', 'Print Speed': '50 mm/s', 'Acceleration': '500 mm/s²' },
+              PETG: { 'Layer Height': '0.2mm', 'Print Speed': '40 mm/s', 'Acceleration': '500 mm/s²' }
+            }
+          }
+        ]
+      },
+      {
+        id: 'dimensional',
+        label: '📐 Dimensional Accuracy',
+        desc: 'Magnets too tight, too loose, or holes wrong size',
+        question: 'What fitment issue are you seeing?',
+        options: [
+          {
+            id: 'magnet-too-tight',
+            label: '🔴 Magnet doesn\'t fit (too tight)',
+            desc: 'Pocket or hole is smaller than expected',
+            leaf: true,
+            cause: 'Over-extrusion, elephant\'s foot on first layer, or no tolerance designed in.',
+            fix: '1. Calibrate flow rate (target: 0.4mm walls measure 0.4mm)\n2. Use "Horizontal Expansion" with negative value (-0.1 to -0.2mm)\n3. Ensure first layer isn\'t squished too much\n4. Design pockets with 0.15–0.25mm clearance per side\n5. Use the Tolerance Calculator to dial in exact fit',
+            settings: {
+              PLA: { 'Horizontal Expansion': '-0.1mm', 'Flow': 'Calibrate precisely', 'First Layer Flow': '95%', 'Tolerance': '+0.2mm per side' },
+              PETG: { 'Horizontal Expansion': '-0.15mm', 'Flow': 'Calibrate precisely', 'First Layer Flow': '93%', 'Tolerance': '+0.25mm per side' }
+            },
+            links: [{ label: '🧮 Pricing Calculator', href: '/3D-print/tools/calculator.html' }]
+          },
+          {
+            id: 'magnet-too-loose',
+            label: '🟡 Magnet falls out (too loose)',
+            desc: 'Pocket or hole is larger than expected',
+            leaf: true,
+            cause: 'Under-extrusion, too much tolerance in design, or horizontal expansion set too aggressively.',
+            fix: '1. Check flow rate — under-extrusion makes everything slightly bigger\n2. Reduce "Horizontal Expansion" (set to 0 or small positive)\n3. Reduce designed tolerance (try 0.1mm per side)\n4. Use a thin layer of super glue (CA) to secure magnets\n5. Consider press-fit interference: design pocket 0.05mm smaller than magnet',
+            settings: {
+              PLA: { 'Horizontal Expansion': '0mm', 'Flow': '100% (calibrated)', 'Design Tolerance': '0.1mm per side' },
+              PETG: { 'Horizontal Expansion': '0mm', 'Flow': '97–100%', 'Design Tolerance': '0.1–0.15mm per side' }
+            }
+          },
+          {
+            id: 'hole-diameter-wrong',
+            label: '⭕ Hole diameter wrong',
+            desc: 'Circular holes print smaller or larger than CAD',
+            leaf: true,
+            cause: 'Circles are approximated by straight segments. Inner holes print smaller due to filament bulging inward.',
+            fix: '1. Increase hole diameter by 0.2–0.4mm in CAD\n2. Use "Hole Horizontal Expansion" in slicer (Cura: 0.2mm)\n3. Calibrate flow rate precisely\n4. For critical fits: drill/ream holes after printing\n5. Use more perimeter segments (higher resolution circles) in slicer',
+            settings: {
+              PLA: { 'Hole Horizontal Expansion': '0.2mm', 'Minimum Circle Segments': '64', 'Flow': 'Calibrated' },
+              PETG: { 'Hole Horizontal Expansion': '0.25mm', 'Minimum Circle Segments': '64', 'Flow': 'Calibrated' }
+            }
+          }
+        ]
+      },
+      {
+        id: 'surface',
+        label: '✨ Surface Quality',
+        desc: 'Rough tops, elephant\'s foot, or ghosting',
+        question: 'What surface issue are you seeing?',
+        options: [
+          {
+            id: 'rough-top',
+            label: '🪨 Rough top surface',
+            desc: 'Top layers look uneven or have gaps',
+            leaf: true,
+            cause: 'Not enough top layers, under-extrusion on top, or no ironing.',
+            fix: '1. Increase top layers (minimum 4–5 at 0.2mm layer height)\n2. Enable "Ironing" in slicer for smooth flat tops\n3. Increase flow rate for top layers specifically\n4. Slow down top layer speed\n5. Check that infill percentage supports the top (≥20%)',
+            settings: {
+              PLA: { 'Top Layers': '5', 'Ironing': 'On (Monotonic)', 'Top Speed': '25 mm/s', 'Infill': '≥20%' },
+              PETG: { 'Top Layers': '5', 'Ironing': 'On (Monotonic)', 'Top Speed': '20 mm/s', 'Infill': '≥20%' }
+            }
+          },
+          {
+            id: 'elephants-foot',
+            label: '🐘 Elephant\'s foot',
+            desc: 'First layer bulges outward wider than the rest',
+            leaf: true,
+            cause: 'First layer squished too much, bed too hot, or initial layer flow too high.',
+            fix: '1. Raise Z-offset slightly (+0.02mm at a time)\n2. Lower bed temperature by 5°C\n3. Reduce first layer flow to 90–95%\n4. Use "Elephant Foot Compensation" in slicer (0.1–0.2mm)\n5. Wait for bed to fully stabilize before printing',
+            settings: {
+              PLA: { 'Elephant Foot Comp': '0.15mm', 'First Layer Flow': '93%', 'Bed Temp': '55–60°C' },
+              PETG: { 'Elephant Foot Comp': '0.2mm', 'First Layer Flow': '90%', 'Bed Temp': '75–80°C' }
+            }
+          },
+          {
+            id: 'ghosting-ringing',
+            label: '👻 Ghosting / ringing',
+            desc: 'Ripple patterns after sharp corners or features',
+            leaf: true,
+            cause: 'Vibrations from too-high speed or acceleration, loose belts, or heavy toolhead.',
+            fix: '1. Lower print speed (40–50 mm/s)\n2. Lower acceleration (500–1000 mm/s²)\n3. Tighten belts (should twang, not be floppy)\n4. If using Klipper: run input_shaper calibration\n5. Check for loose frame bolts and wobbly table',
+            settings: {
+              PLA: { 'Speed': '50 mm/s', 'Acceleration': '1000 mm/s²', 'Jerk/Junction': '8 mm/s' },
+              PETG: { 'Speed': '40 mm/s', 'Acceleration': '800 mm/s²', 'Jerk/Junction': '8 mm/s' }
+            }
+          }
+        ]
+      },
+      {
+        id: 'magnet-specific',
+        label: '🧲 Magnet-Specific Issues',
+        desc: 'Polarity, pocket depth, or adhesive problems',
+        question: 'What magnet issue are you having?',
+        options: [
+          {
+            id: 'polarity-wrong',
+            label: '🔄 Polarity wrong (repelling)',
+            desc: 'Magnets push apart instead of attracting',
+            leaf: true,
+            cause: 'Magnets inserted with wrong orientation. Easy mistake with small disc magnets.',
+            fix: '1. Mark ALL magnets before insertion: dot on North with Sharpie\n2. Use a "polarity jig" — stack magnets in a column, mark the exposed face of each\n3. Test every magnet against a reference before gluing\n4. Convention: dot faces UP on one half, dot faces DOWN on the other\n5. For frames: make a test piece with one magnet, use it to verify all others',
+            settings: {
+              PLA: { 'Tip': 'Pause print at magnet layer, insert + verify, then resume' },
+              PETG: { 'Tip': 'Same pause method — PETG is more forgiving of re-heating during pause' }
+            }
+          },
+          {
+            id: 'pocket-depth',
+            label: '📏 Pocket too shallow or deep',
+            desc: 'Magnet sits proud or recessed too far',
+            leaf: true,
+            cause: 'Design tolerance not accounting for layer height rounding or elephant\'s foot.',
+            fix: '1. Design pocket depth = magnet thickness + 0.1mm (for glue)\n2. Ensure depth is a multiple of your layer height (e.g. 3mm magnet → 3.0mm pocket at 0.2mm layers = 15 layers exactly)\n3. If too shallow: sand the magnet seat or increase pocket by one layer\n4. If too deep: add a thin cardboard shim under the magnet, or reduce by one layer\n5. Test print a single pocket before full batch',
+            settings: {
+              PLA: { 'Pocket Depth': 'Magnet thickness + 0.1mm', 'Layer Height': 'Use values that divide evenly into pocket depth' },
+              PETG: { 'Pocket Depth': 'Magnet thickness + 0.15mm (PETG shrinks slightly less)', 'Layer Height': 'Same rule — even divisions' }
+            }
+          },
+          {
+            id: 'glue-not-holding',
+            label: '🧴 Glue not holding magnets',
+            desc: 'Magnets falling out after assembly',
+            leaf: true,
+            cause: 'Wrong adhesive, surface not clean, or gap too large for adhesive type.',
+            fix: '1. Best adhesive: medium CA (super glue) + activator spray\n2. Clean pocket with IPA before gluing\n3. Apply glue to pocket, NOT the magnet (easier to control)\n4. For PETG: lightly sand the pocket with 220 grit for better adhesion\n5. Alternative: 2-part epoxy for maximum strength (5-min cure)\n6. If gap is large: use gel CA instead of thin CA',
+            settings: {
+              PLA: { 'Best Glue': 'Medium CA (super glue)', 'Cure Time': '10–30 seconds with activator', 'Surface Prep': 'IPA wipe' },
+              PETG: { 'Best Glue': 'Medium CA + light sanding', 'Cure Time': '10–30 seconds with activator', 'Surface Prep': 'IPA wipe + 220 grit scuff' }
+            }
+          }
+        ]
+      }
+    ]
+  };
+
+  // ─── State ───
+  let path = [];
+  let currentNode = tree;
+
+  function getNodeByPath(p) {
+    let node = tree;
+    for (const id of p) {
+      node = node.options.find(o => o.id === id);
+      if (!node) return tree;
+    }
+    return node;
+  }
+
+  // ─── Render ───
+  function render() {
+    const content = document.getElementById('content');
+    const bc = document.getElementById('breadcrumb');
+    const startOver = document.getElementById('start-over-wrap');
+
+    // Breadcrumb
+    if (path.length === 0) {
+      bc.innerHTML = '';
+      startOver.classList.add('hidden');
+    } else {
+      startOver.classList.remove('hidden');
+      let crumbs = '<span class="breadcrumb-arrow cursor-pointer hover:text-electric-blue transition-colors" onclick="goToRoot()">🏠 Start</span>';
+      for (let i = 0; i < path.length; i++) {
+        const node = getNodeByPath(path.slice(0, i + 1));
+        const isLast = i === path.length - 1;
+        crumbs += `<span class="breadcrumb-arrow ${isLast ? 'text-electric-blue' : 'cursor-pointer hover:text-electric-blue transition-colors'}" ${isLast ? '' : `onclick="goToStep(${i})"`}>${node.label.replace(/^[^\s]+ /, '')}</span>`;
+      }
+      bc.innerHTML = crumbs;
+    }
+
+    currentNode = getNodeByPath(path);
+
+    if (currentNode.leaf) {
+      renderLeaf(currentNode);
+    } else {
+      renderQuestion(currentNode);
+    }
+  }
+
+  function renderQuestion(node) {
+    const content = document.getElementById('content');
+    const isRoot = path.length === 0;
+    let html = `<div class="fade-in">`;
+    if (isRoot) {
+      html += `<div class="text-center mb-10">
+        <div class="text-5xl mb-4">🔧</div>
+        <h1 class="font-mono text-white text-2xl md:text-3xl font-bold mb-2">${node.question}</h1>
+        <p class="text-gray-400 text-sm">${node.subtitle || ''}</p>
+      </div>`;
+    } else {
+      html += `<h2 class="font-mono text-white text-xl font-bold mb-6">${node.question}</h2>`;
+    }
+
+    html += `<div class="grid grid-cols-1 ${isRoot ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2'} gap-4">`;
+    for (const opt of node.options) {
+      html += `<button onclick="selectOption('${opt.id}')" class="card-hover text-left p-5 rounded-2xl bg-surface-card border border-border-dim">
+        <div class="text-lg font-semibold text-white mb-1">${opt.label}</div>
+        <div class="text-sm text-gray-400">${opt.desc || ''}</div>
+      </button>`;
+    }
+    html += `</div></div>`;
+    content.innerHTML = html;
+  }
+
+  function renderLeaf(node) {
+    const content = document.getElementById('content');
+    let html = `<div class="fade-in space-y-6">`;
+    html += `<h2 class="font-mono text-white text-xl font-bold">${node.label}</h2>`;
+
+    // Cause
+    html += `<div class="p-5 rounded-2xl bg-surface-card border border-error-red/30">
+      <h3 class="font-mono text-error-red text-sm font-bold uppercase tracking-wider mb-2">⚠️ Cause</h3>
+      <p class="text-gray-300 text-sm">${node.cause}</p>
+    </div>`;
+
+    // Fix
+    html += `<div class="p-5 rounded-2xl bg-surface-card border border-neon-green/30">
+      <h3 class="font-mono text-neon-green text-sm font-bold uppercase tracking-wider mb-2">🔧 Fix</h3>
+      <div class="text-gray-300 text-sm whitespace-pre-line">${node.fix}</div>
+    </div>`;
+
+    // Settings
+    if (node.settings) {
+      html += `<div class="p-5 rounded-2xl bg-surface-card border border-electric-blue/30">
+        <h3 class="font-mono text-electric-blue text-sm font-bold uppercase tracking-wider mb-3">⚙️ Recommended Settings</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+      for (const mat of ['PLA', 'PETG']) {
+        if (node.settings[mat]) {
+          html += `<div>
+            <div class="setting-pill ${mat === 'PLA' ? 'bg-blue-900/50 text-blue-300' : 'bg-orange-900/50 text-orange-300'} mb-3">${mat}</div>
+            <div class="space-y-1.5">`;
+          for (const [key, val] of Object.entries(node.settings[mat])) {
+            html += `<div class="flex justify-between text-xs gap-2">
+              <span class="text-gray-400 font-mono">${key}</span>
+              <span class="text-white font-mono text-right">${val}</span>
+            </div>`;
+          }
+          html += `</div></div>`;
+        }
+      }
+      html += `</div></div>`;
+    }
+
+    // Links
+    if (node.links) {
+      html += `<div class="flex flex-wrap gap-3">`;
+      for (const link of node.links) {
+        html += `<a href="${link.href}" class="px-4 py-2 rounded-xl bg-surface-card border border-border-dim text-electric-blue hover:border-electric-blue transition-all font-mono text-sm">${link.label}</a>`;
+      }
+      html += `</div>`;
+    }
+
+    html += `</div>`;
+    content.innerHTML = html;
+
+    // Save to history
+    saveDiagnosis(node);
+  }
+
+  // ─── Navigation ───
+  function selectOption(id) {
+    path.push(id);
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goToRoot() {
+    path = [];
+    render();
+  }
+
+  function goToStep(index) {
+    path = path.slice(0, index + 1);
+    render();
+  }
+
+  // ─── History (localStorage) ───
+  const HISTORY_KEY = '3dp-diagnostic-history';
+
+  function getHistory() {
+    try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { return []; }
+  }
+
+  function saveDiagnosis(node) {
+    const history = getHistory();
+    history.unshift({
+      id: node.id,
+      label: node.label,
+      cause: node.cause,
+      path: [...path],
+      timestamp: new Date().toISOString()
+    });
+    // Keep last 50
+    if (history.length > 50) history.length = 50;
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  }
+
+  function showHistory() {
+    const modal = document.getElementById('history-modal');
+    const list = document.getElementById('history-list');
+    const history = getHistory();
+
+    if (history.length === 0) {
+      list.innerHTML = '<p class="text-gray-400 text-sm">No diagnostics yet. Start by selecting a symptom!</p>';
+    } else {
+      list.innerHTML = history.map((h, i) => `
+        <button onclick="replayDiagnosis(${i})" class="w-full text-left p-3 rounded-xl bg-surface border border-border-dim hover:border-electric-blue transition-all">
+          <div class="text-sm text-white font-semibold">${h.label}</div>
+          <div class="text-xs text-gray-500 mt-1">${new Date(h.timestamp).toLocaleDateString()} ${new Date(h.timestamp).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
+        </button>
+      `).join('');
+    }
+    modal.classList.remove('hidden');
+  }
+
+  function closeHistory() {
+    document.getElementById('history-modal').classList.add('hidden');
+  }
+
+  function replayDiagnosis(index) {
+    const history = getHistory();
+    if (history[index]) {
+      path = history[index].path;
+      render();
+      closeHistory();
+    }
+  }
+
+  function clearHistory() {
+    localStorage.removeItem(HISTORY_KEY);
+    showHistory();
+  }
+
+  // Close modal on outside click
+  document.getElementById('history-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeHistory();
+  });
+
+  // ─── Init ───
+  render();
+  </script>
+</body>
+</html>
