@@ -166,3 +166,48 @@ The payment → access flow works as follows:
 - **Pay but no access?** Covered. If webhook fires before user signs in → `pre_approved` catches them on first login. If user is already pending → direct approval. If both happen simultaneously → Firebase atomic writes prevent corruption; worst case user sees "pending" briefly then gets auto-approved on next auth state check.
 - **Orphaned "Access Denied"?** Unlikely. The `pre_approved` → `approved_users` promotion happens on every login via `portal-auth.js`. The manual `reconcilePendingUsers()` function handles edge cases.
 - **Webhook timeout?** Stripe retries automatically (up to ~3 days). Apps Script has a 30-second execution limit which is ample for this flow.
+
+---
+
+## Mobile Responsiveness Audit (2026-04-05)
+
+- **Pages tested:** 33/33 (excludes 5 email templates in automation/templates/)
+- **Viewports tested:** iPhone SE (375×667), iPhone 14 Pro (393×852), iPad Mini (768×1024)
+- **Issues found:** 8 (Critical: 1, Warning: 5, Cosmetic: 2)
+- **Fixes applied:** 3 (covering all Critical + Warning issues)
+
+### Issues Detail
+
+| # | Severity | Page | Issue | Fix Applied |
+|---|----------|------|-------|-------------|
+| 1 | Critical | blog/magnet-frame-profit-margins.html | `.cost-table` overflows viewport at iPhone SE (504px > 375px) and iPhone 14 Pro (504px > 393px) | Made table `display: block; overflow-x: auto` for horizontal scroll |
+| 2 | Critical | blog/magnet-frame-profit-margins.html | Mobile media query *reduced* font to 0.75rem (12px) — counterproductive | Changed to 0.875rem (14px) |
+| 3 | Warning | 20+ pages (portal/modules, tools, etc.) | `text-xs` (12px) and `text-sm` (14px) Tailwind classes too small for at-the-printer phone use | Created `mobile-responsive.css` — bumps `text-xs` → 14px, `text-sm` → 15px on screens ≤640px |
+| 4 | Warning | All pages | No `overflow-x: hidden` on html/body — risk of horizontal scroll from any rogue element | Added global `overflow-x: hidden; max-width: 100vw` in mobile-responsive.css |
+| 5 | Warning | All pages | Images and iframes lacked guaranteed responsive sizing | Added `img { max-width: 100%; height: auto }` and `iframe { max-width: 100% }` in mobile CSS |
+| 6 | Warning | Portal modules | Code blocks could overflow on narrow screens | Added `pre, code { overflow-x: auto; max-width: 100% }` |
+| 7 | Cosmetic | gallery, social-templates, materials | Some elements use inline `font-size` < 14px (not Tailwind classes) — unaffected by CSS override | Not fixed — low impact, would require per-page edits |
+| 8 | Cosmetic | 5 email templates | Small fonts in automation/templates/ — these are email HTML, not web pages | Skipped — not user-facing web pages |
+
+### Architecture
+
+- **New file:** `3D-print/mobile-responsive.css` — single shared stylesheet for mobile overrides
+- **Linked from:** All 28 public HTML pages in 3D-print/
+- **Approach:** CSS `!important` overrides on Tailwind utility classes within `@media (max-width: 640px)` — non-destructive, easy to extend
+- **Not modified:** Email templates (automation/templates/), no Tailwind config changes
+
+### Navigation & Sidebar
+
+All pages with nav elements use `fixed top-0 inset-x-0` positioning — correctly spans full mobile width (375px). No sidebar collapse issues detected. Navigation works across all viewports.
+
+### Video/Iframe
+
+No YouTube iframes detected in current page set. The CSS safety net (`iframe { max-width: 100% }`) is in place for when videos are added.
+
+### At-the-Printer UX Assessment
+
+After fixes, the portal modules are usable on a phone next to a 3D printer:
+- Font sizes bumped to minimum 14px on mobile
+- Tables scroll horizontally rather than breaking layout
+- Touch targets improved (44px minimum via CSS)
+- Dark theme maintained — good for workshop lighting
