@@ -91,3 +91,78 @@ No fixes were needed — the 3D Print Academy link structure is clean and well-m
 1. **Firebase SDK version alignment:** `free/index.html` uses v9.23.0 while all portal pages use v11.4.0. Upgrading the free page would ensure consistent behavior.
 2. **Gallery images:** Replace Unsplash stock photos with actual product photography for better conversion.
 3. **STL download links:** Portal module pages display STL filenames but don't provide direct download links. Consider adding download buttons pointing to `stl-files/` directory.
+
+---
+
+## Webhook & Access Audit
+
+**Date:** 2026-04-05  
+**Auditor:** CBabe (automated)
+
+- **Payment processor:** Stripe (Checkout Sessions via `buy.stripe.com` links)
+- **Webhook endpoint:** Google Apps Script Web App (`https://script.google.com/macros/s/AKfycbw.../exec`)
+- **Access control mechanism:** Firebase RTDB with admin-approved access model
+- **Issues found:** 2 (0 Critical, 1 Medium, 1 Low)
+
+### Architecture Overview
+
+The payment → access flow works as follows:
+
+1. **User clicks Stripe link** → Stripe Checkout (4 tiers: STL $29, Course $97, Session $149, Bundle $349)
+2. **Stripe sends `checkout.session.completed` webhook** → Google Apps Script `doPost()`
+3. **Apps Script verifies event** by re-fetching from Stripe API (not HMAC — Apps Script limitation, acceptable)
+4. **Apps Script checks `pending_users`** in Firebase RTDB for matching email:
+   - If found → moves user to `approved_users` (direct approval)
+   - If not found → writes to `pre_approved` for deferred approval
+5. **When user signs into portal**, `portal-auth.js` checks:
+   - `approved_users/{uid}` → if exists, grant access
+   - `pre_approved` (query by email) → if match, auto-promote to `approved_users`
+   - Otherwise → register in `pending_users`, show "pending" screen, listen for live approval
+6. **Welcome email + drip sequence** sent via Gmail (Day 0, 1, 3, 7, 14)
+
+### What Works Well ✅
+
+- **Event verification:** Webhook re-fetches event from Stripe API — prevents forged payloads
+- **Idempotency:** Pre-approved entries are keyed by push ID with email matching, so duplicate webhooks create duplicate `pre_approved` entries but the portal only consumes the first match (acceptable, not harmful)
+- **Tier-based access control:** `TIER_ACCESS` map enforces module-level gating per tier
+- **Firebase security rules:** Well-structured — users can only read their own data, only admin can write to `approved_users`, `pending_users` is write-once per UID
+- **Reconciliation function:** `reconcilePendingUsers()` exists as a manual recovery mechanism for orphaned states
+- **Unsubscribe handling:** Follow-up emails respect unsubscribe list
+- **Admin notification:** Admin gets email on every purchase
+- **Live approval listener:** Pending users get real-time access when admin approves (Firebase `.on('value')`)
+- **XSS prevention:** `escapeHtml()` and `escapeAttr()` used consistently, event delegation instead of inline handlers
+- **Firebase API key:** Base64-obfuscated (not encrypted, but Firebase API keys are designed to be public — restricted by domain referrer in Google Cloud console per the comment)
+
+### Issues Detail
+
+#### Issue 1: Duplicate `pre_approved` entries on webhook retry (Medium)
+
+**Severity:** Medium  
+**Description:** If Stripe retries the webhook (e.g., on timeout), `processApproval()` calls `fbPush('pre_approved', ...)` which creates a new entry each time. While the portal only consumes the first match and removes it, leftover duplicates accumulate in `pre_approved` and show up in the admin dashboard as "Paid Not Logged In" ghosts.  
+**Impact:** Admin sees inflated "Paid Not Logged In" count; no access impact.  
+**Fix:** Add idempotency check in `processApproval()` — query `pre_approved` by email before pushing. If an entry for this email+tier already exists, skip the push.  
+**Status:** Not fixed (requires Apps Script redeployment — flagged for AJ)
+
+#### Issue 2: Leads endpoint writes without authentication (Low)
+
+**Severity:** Low  
+**Description:** The lead capture form on `3D-print/index.html:1401` writes directly to `https://...firebaseio.com/leads.json` via unauthenticated POST. The Firebase rules allow write-once per lead ID (`!data.exists()`), which limits abuse, but an attacker could spam the leads collection with junk entries.  
+**Impact:** Potential spam pollution of leads data. No access control impact.  
+**Fix:** Rate-limit at the Firebase rules level isn't possible, but the write-once rule provides reasonable protection. Consider adding reCAPTCHA or moving lead capture to the Apps Script endpoint.  
+**Status:** Not fixed (by design — trade-off for frictionless lead capture)
+
+### Security
+
+- ✅ **No leaked credentials in repo.** The Stripe secret key is stored in Google Apps Script Properties (server-side), not in client code. The `Code.gs` comment mentions `sk_live_51TFlQz...` but it's truncated documentation, not the actual key.
+- ✅ **Firebase API key is public by design.** It's base64-encoded in `firebase-config.js` but Firebase API keys are meant to be client-side; security is enforced by RTDB rules + auth.
+- ✅ **RTDB rules are solid.** Admin-only writes to `approved_users`, write-once for `pending_users`, auth-gated reads for course content.
+- ✅ **No replay attack vulnerability.** Webhook verifies events by re-fetching from Stripe API with the secret key server-side.
+- ✅ **No self-elevation path.** Users cannot write to `approved_users` — only admin email can.
+- ⚠️ **Apps Script Web App is "Anyone" accessible** — required for Stripe webhooks, but also means anyone can send POST requests. The Stripe event verification mitigates this.
+- ⚠️ **`pre_approved` cleanup:** Duplicate entries from webhook retries should be cleaned up periodically. The `reconcilePendingUsers()` function helps but doesn't deduplicate `pre_approved`.
+
+### Race Condition Analysis
+
+- **Pay but no access?** Covered. If webhook fires before user signs in → `pre_approved` catches them on first login. If user is already pending → direct approval. If both happen simultaneously → Firebase atomic writes prevent corruption; worst case user sees "pending" briefly then gets auto-approved on next auth state check.
+- **Orphaned "Access Denied"?** Unlikely. The `pre_approved` → `approved_users` promotion happens on every login via `portal-auth.js`. The manual `reconcilePendingUsers()` function handles edge cases.
+- **Webhook timeout?** Stripe retries automatically (up to ~3 days). Apps Script has a 30-second execution limit which is ample for this flow.
