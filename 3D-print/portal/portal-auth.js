@@ -111,21 +111,19 @@
       $googleBtn.addEventListener('click', function () {
         hideError($error);
         var provider = new firebase.auth.GoogleAuthProvider();
-        // Use redirect on mobile (popups are unreliable), popup on desktop
-        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        if (isMobile) {
-          auth.signInWithRedirect(provider);
-        } else {
-          auth.signInWithPopup(provider).catch(function (err) {
-            console.error('Google sign-in error:', err.code, err.message);
-            if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
-              // Fallback to redirect for blocked popups
-              auth.signInWithRedirect(provider);
-            } else {
-              showError($error, authErrorMessage(err.code));
-            }
-          });
-        }
+        // Try popup first on ALL devices, fall back to redirect if blocked
+        auth.signInWithPopup(provider).then(function(result) {
+          console.log('Popup sign-in successful:', result.user.email);
+        }).catch(function (err) {
+          console.error('Google sign-in error:', err.code, err.message);
+          var dbg = document.getElementById('auth-debug');
+          if (dbg) { dbg.textContent = 'POPUP ERROR: ' + err.code + ' — trying redirect...'; dbg.style.color = '#FFD700'; }
+          if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+            auth.signInWithRedirect(provider);
+          } else {
+            showError($error, authErrorMessage(err.code));
+          }
+        });
       });
     }
 
@@ -134,8 +132,12 @@
       if (result && result.user) {
         console.log('Redirect sign-in successful:', result.user.email);
       }
+      var dbg = document.getElementById('auth-debug');
+      if (dbg) dbg.textContent = 'Redirect result: ' + (result && result.user ? result.user.email : 'no user returned') + ' | credential: ' + (result && result.credential ? 'yes' : 'none');
     }).catch(function (err) {
       console.error('Redirect sign-in error:', err.code, err.message, err);
+      var dbg = document.getElementById('auth-debug');
+      if (dbg) { dbg.textContent = 'REDIRECT ERROR: ' + err.code + ' — ' + err.message; dbg.style.color = '#FF6B6B'; }
       if (err.code && err.code !== 'auth/popup-closed-by-user') {
         showError($error, authErrorMessage(err.code));
       }
