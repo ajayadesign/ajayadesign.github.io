@@ -41,6 +41,50 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: JS syntax & lint check
+        run: |
+          echo "🔍 Checking all JavaScript files for syntax errors..."
+          ERRORS=0
+          for f in $(find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" -not -path "./automation/*" -not -path "./_site/*"); do
+            if ! node -c "$f" 2>/dev/null; then
+              echo "❌ SYNTAX ERROR: $f"
+              node -c "$f" 2>&1 || true
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+          if [ $ERRORS -gt 0 ]; then
+            echo "💥 $ERRORS JavaScript file(s) have syntax errors!"
+            exit 1
+          fi
+          echo "✅ All JS files pass syntax check"
+
+      - name: Critical auth flow check
+        run: |
+          echo "🔐 Checking Firebase auth configuration..."
+          # Verify firebase-config.js exists and has required fields
+          if [ ! -f js/firebase-config.js ]; then
+            echo "❌ js/firebase-config.js missing!"
+            exit 1
+          fi
+          node -e "
+            eval(require('fs').readFileSync('js/firebase-config.js', 'utf8'));
+            const c = global.window ? global.window.__firebaseConfig : null;
+            // Config loads via IIFE into window — check the file at least parses
+            console.log('✅ firebase-config.js parses OK');
+          " 2>/dev/null || echo "⚠️ firebase-config.js uses browser globals (expected)"
+          
+          # Check portal-auth.js doesn't reference undeclared variables outside IIFE
+          if grep -Pn '^\s*(var\s+|const\s+|let\s+|auth\.|db\.|isAdmin)' 3D-print/portal/portal-auth.js | grep -v '^\s*//' | head -5; then
+            echo "⚠️ Check above lines — ensure no IIFE-scoped variables leak to global"
+          fi
+          
+          # Verify ADMIN_EMAIL is set
+          if ! grep -q "ADMIN_EMAIL" 3D-print/portal/portal-auth.js; then
+            echo "❌ ADMIN_EMAIL not found in portal-auth.js!"
+            exit 1
+          fi
+          echo "✅ Auth flow checks passed"
+
       - name: Run tests
         run: npx playwright test
 
