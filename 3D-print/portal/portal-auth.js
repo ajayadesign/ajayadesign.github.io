@@ -135,7 +135,7 @@
         console.log('Redirect sign-in successful:', result.user.email);
       }
     }).catch(function (err) {
-      console.error('Redirect sign-in error:', err.code, err.message);
+      console.error('Redirect sign-in error:', err.code, err.message, err);
       if (err.code && err.code !== 'auth/popup-closed-by-user') {
         showError($error, authErrorMessage(err.code));
       }
