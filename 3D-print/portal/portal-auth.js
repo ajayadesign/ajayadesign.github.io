@@ -66,8 +66,11 @@
       'auth/cancelled-popup-request': 'Sign-in was cancelled. Please try again.',
       'auth/operation-not-allowed': 'This sign-in method is not enabled. Please contact support.',
       'auth/network-request-failed': 'Network error. Please check your connection and try again.',
+      'auth/unauthorized-domain': 'This domain is not authorized for sign-in. Please contact support.',
+      'auth/internal-error': 'An internal error occurred. Please try again.',
+      'auth/user-disabled': 'This account has been disabled. Please contact support.',
     };
-    return messages[code] || 'Sign-in failed. Please try again.';
+    return messages[code] || 'Sign-in failed (' + code + '). Please try again.';
   }
 
   function showError($el, msg) {
@@ -108,19 +111,31 @@
       $googleBtn.addEventListener('click', function () {
         hideError($error);
         var provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider).catch(function (err) {
-          if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
-            // Fallback to redirect for mobile/blocked popups
-            auth.signInWithRedirect(provider);
-          } else {
-            showError($error, authErrorMessage(err.code));
-          }
-        });
+        // Use redirect on mobile (popups are unreliable), popup on desktop
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          auth.signInWithRedirect(provider);
+        } else {
+          auth.signInWithPopup(provider).catch(function (err) {
+            console.error('Google sign-in error:', err.code, err.message);
+            if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+              // Fallback to redirect for blocked popups
+              auth.signInWithRedirect(provider);
+            } else {
+              showError($error, authErrorMessage(err.code));
+            }
+          });
+        }
       });
     }
 
     // Handle redirect result (for mobile fallback)
-    auth.getRedirectResult().catch(function (err) {
+    auth.getRedirectResult().then(function(result) {
+      if (result && result.user) {
+        console.log('Redirect sign-in successful:', result.user.email);
+      }
+    }).catch(function (err) {
+      console.error('Redirect sign-in error:', err.code, err.message);
       if (err.code && err.code !== 'auth/popup-closed-by-user') {
         showError($error, authErrorMessage(err.code));
       }
