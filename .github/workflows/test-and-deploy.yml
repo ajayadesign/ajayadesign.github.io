@@ -18,10 +18,210 @@ concurrency:
 
 jobs:
   # ──────────────────────────────────────
+  # Job 0 — Pre-flight integrity checks
+  #   Fast checks that catch broken JS,
+  #   missing configs, leaked secrets, etc.
+  #   Must pass before tests or deploy.
+  # ──────────────────────────────────────
+  preflight:
+    name: Pre-flight Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: "Check 1: JS syntax & scope"
+        run: |
+          echo "🔍 Syntax-checking all JavaScript files..."
+          ERRORS=0
+          for f in $(find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" -not -path "./.venv/*" -not -path "./automation/*" -not -path "./_site/*"); do
+            if ! node -c "$f" 2>/dev/null; then
+              echo "❌ SYNTAX ERROR: $f"
+              node -c "$f" 2>&1 || true
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+          if [ $ERRORS -gt 0 ]; then
+            echo "💥 $ERRORS JavaScript file(s) have syntax errors!"
+            exit 1
+          fi
+          echo "✅ JS syntax: ALL PASS"
+
+          # portal-auth.js IIFE closure check
+          node -e "
+            const code = require('fs').readFileSync('3D-print/portal/portal-auth.js', 'utf8');
+            const iifeCount = (code.match(/\(function\s*\(/g) || []).length;
+            const closureCount = (code.match(/\}\)\(\);/g) || []).length;
+            if (iifeCount !== closureCount) {
+              console.error('❌ IIFE mismatch: ' + iifeCount + ' opens vs ' + closureCount + ' closes');
+              process.exit(1);
+            }
+            if (!code.includes('ADMIN_EMAIL')) {
+              console.error('❌ ADMIN_EMAIL not found in portal-auth.js!');
+              process.exit(1);
+            }
+            console.log('✅ portal-auth.js: IIFE balanced, ADMIN_EMAIL present');
+          "
+
+      - name: "Check 2: Firebase config"
+        run: |
+          node -e "
+            const code = require('fs').readFileSync('js/firebase-config.js', 'utf8');
+            if (!code.includes('__firebaseConfig')) {
+              console.error('❌ firebase-config.js missing __firebaseConfig!');
+              process.exit(1);
+            }
+            for (const field of ['apiKey', 'authDomain', 'databaseURL', 'projectId']) {
+              if (!code.includes(field)) {
+                console.error('❌ Missing Firebase field: ' + field);
+                process.exit(1);
+              }
+            }
+            console.log('✅ firebase-config.js: OK');
+          "
+
+      - name: "Check 3: Stripe links"
+        run: |
+          URLS=$(grep -roh 'https://buy.stripe.com/[a-zA-Z0-9_]*' 3D-print/ | sort -u)
+          if [ -z "$URLS" ]; then
+            echo "⚠️ No Stripe links found — skipping"
+            exit 0
+          fi
+          BROKEN=0
+          echo "$URLS" | while read url; do
+            status=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 10 "$url")
+            if [ "$status" != "200" ] && [ "$status" != "303" ]; then
+              echo "❌ BROKEN Stripe link: $url (HTTP $status)"
+              exit 1
+            fi
+            echo "  ✅ $url"
+          done
+          echo "✅ Stripe links: OK"
+
+      - name: "Check 4: HTML structure (portal pages)"
+        run: |
+          ERRORS=0
+          for page in 3D-print/portal/index.html 3D-print/portal/admin.html; do
+            if [ -f "$page" ]; then
+              grep -q "firebase-app-compat\|firebase/app" "$page" || { echo "❌ Missing Firebase SDK: $page"; ERRORS=$((ERRORS+1)); }
+              grep -q "firebase-config.js" "$page" || { echo "❌ Missing firebase-config: $page"; ERRORS=$((ERRORS+1)); }
+              grep -q "portal-auth.js" "$page" || { echo "❌ Missing portal-auth: $page"; ERRORS=$((ERRORS+1)); }
+            fi
+          done
+          for page in $(find 3D-print/portal -name "module-*.html" 2>/dev/null); do
+            if [ -f "$page" ]; then
+              grep -q "firebase-app-compat\|firebase/app" "$page" || { echo "❌ Missing Firebase SDK: $page"; ERRORS=$((ERRORS+1)); }
+              grep -q "firebase-config.js" "$page" || { echo "❌ Missing firebase-config: $page"; ERRORS=$((ERRORS+1)); }
+              grep -q "portal-auth.js" "$page" || { echo "❌ Missing portal-auth: $page"; ERRORS=$((ERRORS+1)); }
+            fi
+          done
+          if [ $ERRORS -gt 0 ]; then
+            echo "💥 $ERRORS HTML structure errors found!"
+            exit 1
+          fi
+          echo "✅ HTML structure: OK"
+
+      - name: "Check 5: Secret leak scan"
+        run: |
+          LEAKS=0
+          for pattern in "sk_live_" "sk_test_" "AKIA" "ghp_" "gho_" "-----BEGIN.*KEY"; do
+            if grep -rn "$pattern" --include="*.js" --include="*.html" --include="*.json" . 2>/dev/null | grep -v node_modules | grep -v ".git/" | grep -v ".env"; then
+              echo "⚠️ POTENTIAL SECRET LEAK: $pattern"
+              LEAKS=$((LEAKS + 1))
+            fi
+          done
+          if [ $LEAKS -gt 0 ]; then
+            echo "💥 Found $LEAKS potential secret leak pattern(s)!"
+            exit 1
+          fi
+          echo "✅ No secrets leaked: OK"
+
+      - name: "Check 6: Asset references"
+        run: |
+          node -e "
+            const fs = require('fs');
+            const { execSync } = require('child_process');
+            const files = execSync('find 3D-print -name \"*.html\" 2>/dev/null').toString().trim().split('\n').filter(Boolean);
+            let broken = 0;
+            for (const file of files) {
+              const html = fs.readFileSync(file, 'utf8');
+              const refs = html.match(/src=\"\/([^\"]+)\"|href=\"\/([^\"]+\.(?:js|css))\"/g) || [];
+              for (const ref of refs) {
+                const match = ref.match(/[\"']\/([^\"']+)[\"']/);
+                if (match) {
+                  if (!fs.existsSync(match[1])) {
+                    console.error('❌ Broken ref in ' + file + ': /' + match[1]);
+                    broken++;
+                  }
+                }
+              }
+            }
+            if (broken > 0) { console.error(broken + ' broken asset references!'); process.exit(1); }
+            console.log('✅ Asset references: OK');
+          "
+
+      - name: "Check 7: Mobile viewport meta (warning only)"
+        run: |
+          MISSING=0
+          for page in $(find 3D-print -name "*.html" -not -path "*/automation/*" -not -path "*/templates/*" 2>/dev/null); do
+            if ! grep -q "viewport" "$page"; then
+              echo "⚠️ Missing viewport meta: $page"
+              MISSING=$((MISSING + 1))
+            fi
+          done
+          if [ $MISSING -gt 0 ]; then
+            echo "⚠️ $MISSING pages missing viewport meta (non-blocking)"
+          else
+            echo "✅ All pages have viewport meta"
+          fi
+
+      - name: "Check 8: Performance budget"
+        run: |
+          OVERSIZED=$(find 3D-print -name "*.html" -size +500k 2>/dev/null)
+          if [ -n "$OVERSIZED" ]; then
+            echo "❌ Oversized HTML files:"
+            echo "$OVERSIZED" | while read f; do echo "  $f ($(du -h "$f" | cut -f1))"; done
+            exit 1
+          fi
+          SIZE=$(du -sm 3D-print 2>/dev/null | cut -f1)
+          echo "📦 3D-print directory: ${SIZE}MB"
+          if [ "$SIZE" -gt 200 ]; then
+            echo "⚠️ WARNING: 3D-print directory exceeds 200MB budget"
+          fi
+          echo "✅ Performance budget: OK"
+
+      - name: "📊 Pre-flight summary"
+        if: always()
+        run: |
+          echo "═══════════════════════════════════════"
+          echo "  PRE-FLIGHT CHECKS COMPLETE"
+          echo "═══════════════════════════════════════"
+          echo "Job status: ${{ job.status }}"
+          echo ""
+          echo "Checks run:"
+          echo "  1. JS syntax & scope"
+          echo "  2. Firebase config"
+          echo "  3. Stripe links"
+          echo "  4. HTML structure"
+          echo "  5. Secret leak scan"
+          echo "  6. Asset references"
+          echo "  7. Mobile viewport (warning)"
+          echo "  8. Performance budget"
+          echo "═══════════════════════════════════════"
+
+  # ──────────────────────────────────────
   # Job 1 — Run Playwright + Axe tests
   # ──────────────────────────────────────
   test:
     name: Playwright & Accessibility Tests
+    needs: preflight
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -40,50 +240,6 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-
-      - name: JS syntax & lint check
-        run: |
-          echo "🔍 Checking all JavaScript files for syntax errors..."
-          ERRORS=0
-          for f in $(find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" -not -path "./automation/*" -not -path "./_site/*"); do
-            if ! node -c "$f" 2>/dev/null; then
-              echo "❌ SYNTAX ERROR: $f"
-              node -c "$f" 2>&1 || true
-              ERRORS=$((ERRORS + 1))
-            fi
-          done
-          if [ $ERRORS -gt 0 ]; then
-            echo "💥 $ERRORS JavaScript file(s) have syntax errors!"
-            exit 1
-          fi
-          echo "✅ All JS files pass syntax check"
-
-      - name: Critical auth flow check
-        run: |
-          echo "🔐 Checking Firebase auth configuration..."
-          # Verify firebase-config.js exists and has required fields
-          if [ ! -f js/firebase-config.js ]; then
-            echo "❌ js/firebase-config.js missing!"
-            exit 1
-          fi
-          node -e "
-            eval(require('fs').readFileSync('js/firebase-config.js', 'utf8'));
-            const c = global.window ? global.window.__firebaseConfig : null;
-            // Config loads via IIFE into window — check the file at least parses
-            console.log('✅ firebase-config.js parses OK');
-          " 2>/dev/null || echo "⚠️ firebase-config.js uses browser globals (expected)"
-          
-          # Check portal-auth.js doesn't reference undeclared variables outside IIFE
-          if grep -Pn '^\s*(var\s+|const\s+|let\s+|auth\.|db\.|isAdmin)' 3D-print/portal/portal-auth.js | grep -v '^\s*//' | head -5; then
-            echo "⚠️ Check above lines — ensure no IIFE-scoped variables leak to global"
-          fi
-          
-          # Verify ADMIN_EMAIL is set
-          if ! grep -q "ADMIN_EMAIL" 3D-print/portal/portal-auth.js; then
-            echo "❌ ADMIN_EMAIL not found in portal-auth.js!"
-            exit 1
-          fi
-          echo "✅ Auth flow checks passed"
 
       - name: Run tests
         run: npx playwright test
