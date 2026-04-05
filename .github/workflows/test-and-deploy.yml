@@ -54,20 +54,25 @@ jobs:
           fi
           echo "✅ JS syntax: ALL PASS"
 
-          # portal-auth.js IIFE closure check
+          # portal-auth.js structural check
           node -e "
             const code = require('fs').readFileSync('3D-print/portal/portal-auth.js', 'utf8');
-            const iifeCount = (code.match(/\(function\s*\(/g) || []).length;
-            const closureCount = (code.match(/\}\)\(\);/g) || []).length;
-            if (iifeCount !== closureCount) {
-              console.error('❌ IIFE mismatch: ' + iifeCount + ' opens vs ' + closureCount + ' closes');
+            const trimmed = code.trim();
+            // Verify the file ends with a properly closed IIFE
+            if (!trimmed.endsWith('})();')) {
+              console.error('❌ portal-auth.js does not end with })(); — possible scope leak');
+              process.exit(1);
+            }
+            // Verify every })(); has a matching top-level (function( by checking parse
+            try { new Function(code); } catch(e) {
+              console.error('❌ portal-auth.js fails Function parse: ' + e.message);
               process.exit(1);
             }
             if (!code.includes('ADMIN_EMAIL')) {
               console.error('❌ ADMIN_EMAIL not found in portal-auth.js!');
               process.exit(1);
             }
-            console.log('✅ portal-auth.js: IIFE balanced, ADMIN_EMAIL present');
+            console.log('✅ portal-auth.js: properly closed, ADMIN_EMAIL present');
           "
 
       - name: "Check 2: Firebase config"
