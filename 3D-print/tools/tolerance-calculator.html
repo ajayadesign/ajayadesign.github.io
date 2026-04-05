@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tolerance &amp; Fit Calculator — 3D Print Academy</title>
+  <meta name="description" content="Calculate exact magnet pocket dimensions for your 3D printer's tolerance. Adjust for shrinkage, safety margins, and get STL-specific results." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" /><meta name="theme-color" content="#0A0A0F" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{'surface':'#0A0A0F','surface-alt':'#111118','surface-card':'#16161F','border-dim':'#1E1E2A','electric-blue':'#00D4FF','neon-green':'#39FF14','warn-amber':'#FBBF24'},fontFamily:{mono:['"JetBrains Mono"','monospace'],sans:['"Inter"','system-ui','sans-serif']}}}};</script>
+  <style>
+    body{background:#0A0A0F;color:#e5e7eb;font-family:'Inter',sans-serif}
+    input[type="number"],select{background:#111118;border:1px solid #1E1E2A;color:#fff;padding:8px 12px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:14px;width:100%}
+    input[type="number"]:focus,select:focus{outline:none;border-color:#00D4FF;box-shadow:0 0 0 2px rgba(0,212,255,.15)}
+    .fit-btn{padding:8px 16px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;border:2px solid #1E1E2A;background:#111118;color:#9ca3af;cursor:pointer;transition:all .15s}
+    .fit-btn.active{border-color:#00D4FF;color:#00D4FF;background:rgba(0,212,255,.08)}
+    .fit-btn:hover:not(.active){border-color:#333;color:#fff}
+    .result-card{background:linear-gradient(135deg,#16161F,#111118);border:1px solid #1E1E2A;border-radius:12px;padding:16px;transition:border-color .15s}
+    .result-card:hover{border-color:#00D4FF33}
+    .dim-value{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.1rem;color:#00D4FF}
+    .dim-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em}
+    .copy-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#39FF14;color:#000;padding:10px 24px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px;transition:transform .3s ease;z-index:99}
+    .copy-toast.show{transform:translateX(-50%) translateY(0)}
+    @media print{body{background:#fff;color:#000}nav,.no-print{display:none!important}.result-card{border:2px solid #000;background:#f5f5f5}.dim-value{color:#0066cc}}
+  </style>
+  <link rel="stylesheet" href="../mobile-responsive.css" />
+</head>
+<body class="min-h-screen">
+  <!-- Nav -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim">
+    <div class="max-w-4xl mx-auto flex items-center justify-between px-6 py-4">
+      <div class="flex items-center gap-4">
+        <a href="/3D-print/portal/" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Dashboard
+        </a>
+        <a href="/3D-print/tools/calculator.html" class="text-sm text-gray-500 hover:text-gray-300 transition-colors font-mono">Tools Hub</a>
+      </div>
+      <button onclick="window.print()" class="no-print text-sm font-mono text-gray-400 hover:text-white transition-colors">🖨️ Print</button>
+    </div>
+  </nav>
+
+  <div class="max-w-4xl mx-auto px-6 pt-24 pb-16">
+
+    <!-- Header -->
+    <div class="mb-10">
+      <h1 class="font-mono text-white text-2xl md:text-3xl font-bold mb-2">📐 Tolerance &amp; Fit Calculator</h1>
+      <p class="text-gray-400 text-sm">Dial in your magnet pockets. Enter your printer's offset, pick a fit mode, and get exact dimensions for every frame STL.</p>
+    </div>
+
+    <!-- Inputs Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+
+      <!-- Left: Printer & Magnet -->
+      <div class="space-y-5">
+        <h3 class="font-mono text-white font-semibold text-sm uppercase tracking-wider">🔧 Printer &amp; Magnet</h3>
+
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Printer Offset (mm)</label>
+          <input type="number" id="printer-offset" value="0" step="0.05" min="-1" max="1" />
+          <p class="text-gray-600 text-xs mt-1">Measured from test print. Negative = prints smaller, Positive = prints larger.</p>
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Magnet Diameter (mm)</label>
+          <input type="number" id="magnet-diameter" value="10" step="0.5" min="1" max="50" />
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Magnet Thickness (mm)</label>
+          <input type="number" id="magnet-thickness" value="2" step="0.5" min="0.5" max="20" />
+        </div>
+
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Filament Material</label>
+          <select id="material">
+            <option value="pla">PLA (0.3–0.5% shrinkage)</option>
+            <option value="petg">PETG (0.5–0.8% shrinkage)</option>
+            <option value="abs">ABS (0.7–1.0% shrinkage)</option>
+            <option value="tpu">TPU (0.5–1.5% shrinkage)</option>
+            <option value="none">None / Custom</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-gray-400 text-xs mb-1 font-mono">Custom Shrinkage Override (%)</label>
+          <input type="number" id="shrinkage-override" value="" step="0.1" min="0" max="10" placeholder="Leave blank to use material default" />
+        </div>
+      </div>
+
+      <!-- Right: Fit Mode & Preview -->
+      <div class="space-y-5">
+        <h3 class="font-mono text-white font-semibold text-sm uppercase tracking-wider">🎯 Safety Margin</h3>
+
+        <div class="flex flex-wrap gap-2" id="fit-buttons">
+          <button class="fit-btn" data-fit="tight" onclick="setFit('tight')">Tight (-0.1mm)</button>
+          <button class="fit-btn active" data-fit="standard" onclick="setFit('standard')">Standard (+0.1mm)</button>
+          <button class="fit-btn" data-fit="loose" onclick="setFit('loose')">Loose (+0.3mm)</button>
+        </div>
+        <div id="fit-desc" class="text-gray-500 text-xs font-mono">Standard: 0.1mm clearance — works for most printers.</div>
+
+        <!-- SVG Preview -->
+        <div class="mt-4">
+          <h3 class="font-mono text-white font-semibold text-sm uppercase tracking-wider mb-3">Pocket Cross-Section</h3>
+          <div class="bg-surface-alt rounded-xl border border-border-dim p-4 flex justify-center">
+            <svg id="pocket-svg" viewBox="0 0 260 180" width="260" height="180" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+              <!-- Pocket outline -->
+              <rect id="svg-pocket" x="30" y="30" rx="4" ry="4" fill="none" stroke="#00D4FF" stroke-width="2" stroke-dasharray="6,3"/>
+              <!-- Magnet -->
+              <rect id="svg-magnet" rx="3" ry="3" fill="#39FF1433" stroke="#39FF14" stroke-width="1.5"/>
+              <!-- Dimension lines -->
+              <line id="dim-h-line" stroke="#555" stroke-width="1" stroke-dasharray="3,3"/>
+              <text id="dim-h-text" fill="#00D4FF" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle"></text>
+              <line id="dim-v-line" stroke="#555" stroke-width="1" stroke-dasharray="3,3"/>
+              <text id="dim-v-text" fill="#00D4FF" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle"></text>
+              <!-- Labels -->
+              <text x="130" y="16" fill="#9ca3af" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">POCKET (cyan) vs MAGNET (green)</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Shrinkage Info -->
+        <div class="bg-surface-alt rounded-xl border border-border-dim p-4">
+          <h4 class="font-mono text-white text-xs font-semibold uppercase tracking-wider mb-2">📊 Material Shrinkage</h4>
+          <table class="w-full text-xs font-mono">
+            <tr class="text-gray-500"><td>PLA</td><td class="text-right">0.3–0.5%</td></tr>
+            <tr class="text-gray-500"><td>PETG</td><td class="text-right">0.5–0.8%</td></tr>
+            <tr class="text-gray-500"><td>ABS</td><td class="text-right">0.7–1.0%</td></tr>
+            <tr class="text-gray-500"><td>TPU</td><td class="text-right">0.5–1.5%</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Card -->
+    <div class="bg-surface-card border border-border-dim rounded-2xl p-6 mb-10">
+      <h3 class="font-mono text-white font-semibold text-sm uppercase tracking-wider mb-4">📏 Calculated Pocket Dimensions</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div><div class="dim-label">Pocket Ø</div><div class="dim-value" id="out-pocket-dia">—</div></div>
+        <div><div class="dim-label">Pocket Depth</div><div class="dim-value" id="out-pocket-depth">—</div></div>
+        <div><div class="dim-label">Shrinkage Comp.</div><div class="dim-value" id="out-shrinkage">—</div></div>
+        <div><div class="dim-label">Net Clearance</div><div class="dim-value" id="out-clearance">—</div></div>
+      </div>
+    </div>
+
+    <!-- STL Results -->
+    <div class="mb-10">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-mono text-white font-semibold text-sm uppercase tracking-wider">🗂️ STL-Specific Adjustments</h3>
+        <button onclick="copyResults()" class="no-print fit-btn text-xs" style="border-color:#39FF14;color:#39FF14">📋 Copy All</button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="stl-results"></div>
+    </div>
+
+    <!-- How-to -->
+    <details class="bg-surface-card border border-border-dim rounded-2xl p-6 no-print">
+      <summary class="font-mono text-white font-semibold text-sm uppercase tracking-wider cursor-pointer">❓ How to Measure Your Printer Offset</summary>
+      <ol class="text-gray-400 text-sm mt-4 space-y-2 list-decimal list-inside">
+        <li>Print a 20mm calibration cube at your normal settings.</li>
+        <li>Measure X and Y with calipers. Example: if it measures 20.15mm, your offset is <span class="text-electric-blue font-mono">+0.15</span>.</li>
+        <li>If it measures 19.8mm, your offset is <span class="text-electric-blue font-mono">-0.20</span>.</li>
+        <li>Enter the average of X and Y into "Printer Offset" above.</li>
+        <li>Choose a safety margin based on your confidence level.</li>
+      </ol>
+    </details>
+  </div>
+
+  <!-- Toast -->
+  <div class="copy-toast" id="copy-toast">✅ Copied to clipboard!</div>
+
+<script>
+// === DATA ===
+const SHRINKAGE = { pla:[0.3,0.5], petg:[0.5,0.8], abs:[0.7,1.0], tpu:[0.5,1.5], none:[0,0] };
+const FIT_CLEARANCE = { tight:-0.1, standard:0.1, loose:0.3 };
+const FIT_DESC = {
+  tight:'Tight: press-fit, -0.1mm clearance — for experienced printers with tight tolerances.',
+  standard:'Standard: 0.1mm clearance — works for most printers.',
+  loose:'Loose: 0.3mm clearance — for cheap PETG or printers with poor dimensional accuracy.'
+};
+
+const STL_FRAMES = [
+  { name:'Basic Magnet Frame', lesson:'Lesson 2.2', magnets:4, file:'general-frames/4x6-magnet-frame.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Circle Magnet Frame', lesson:'Lesson 2.2', magnets:4, file:'general-frames/circle-magnet-frame.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Heart Magnet Frame', lesson:'Lesson 2.2', magnets:4, file:'general-frames/heart-magnet-frame.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Hexagon Magnet Frame', lesson:'Lesson 2.2', magnets:4, file:'general-frames/hexagon-magnet-frame.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Star Magnet Frame', lesson:'Lesson 2.2', magnets:4, file:'general-frames/star-magnet-frame.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Polaroid-Style Frame', lesson:'Lesson 3.3', magnets:4, file:'general-frames/thingiverse-floating-photo-frame.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Fuji Instax Mini Frame', lesson:'Lesson 3.4', magnets:4, file:'general-frames/instax-mini-magnet-frame.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Instax Photo Frame (Alt)', lesson:'Lesson 3.4', magnets:4, file:'general-frames/thingiverse-instax-photo-frame.stl', pocketDia:10, pocketDepth:2 },
+  { name:'3-Photo Collage Frame', lesson:'Lesson 3.5', magnets:6, file:'general-frames/collage-3-photo-frame.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Customizable Text Frame', lesson:'Lesson 3.6', magnets:4, file:'general-frames/thingiverse-customizable-fridge-magnet-frame.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Baby Milestone Month 01', lesson:'Bonus', magnets:4, file:'baby-milestones/month-01.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Baby Milestone Month 02', lesson:'Bonus', magnets:4, file:'baby-milestones/month-02.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Baby Milestone Month 03', lesson:'Bonus', magnets:4, file:'baby-milestones/month-03.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Baby Milestone Month 04', lesson:'Bonus', magnets:4, file:'baby-milestones/month-04.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Baby Milestone Month 05', lesson:'Bonus', magnets:4, file:'baby-milestones/month-05.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Baby Milestone Month 06', lesson:'Bonus', magnets:4, file:'baby-milestones/month-06.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Baby Milestone Month 07', lesson:'Bonus', magnets:4, file:'baby-milestones/month-07.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Baby Milestone Month 08', lesson:'Bonus', magnets:4, file:'baby-milestones/month-08.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Baby Milestone Month 09', lesson:'Bonus', magnets:4, file:'baby-milestones/month-09.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Baby Milestone Month 10', lesson:'Bonus', magnets:4, file:'baby-milestones/month-10.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Baby Milestone Month 11', lesson:'Bonus', magnets:4, file:'baby-milestones/month-11.stl', pocketDia:10, pocketDepth:2 },
+  { name:'Baby Milestone Month 12', lesson:'Bonus', magnets:4, file:'baby-milestones/month-12.stl', pocketDia:10, pocketDepth:2 },
+];
+
+// === STATE ===
+let currentFit = 'standard';
+
+// === PERSISTENCE ===
+const STORAGE_KEY = 'tol-calc-v1';
+function saveState(){
+  const s = {
+    offset: g('printer-offset'),
+    dia: g('magnet-diameter'),
+    thick: g('magnet-thickness'),
+    material: document.getElementById('material').value,
+    shrinkOver: g('shrinkage-override'),
+    fit: currentFit
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+}
+function loadState(){
+  try {
+    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(!s) return;
+    if(s.offset!=null) document.getElementById('printer-offset').value=s.offset;
+    if(s.dia!=null) document.getElementById('magnet-diameter').value=s.dia;
+    if(s.thick!=null) document.getElementById('magnet-thickness').value=s.thick;
+    if(s.material) document.getElementById('material').value=s.material;
+    if(s.shrinkOver!=null && s.shrinkOver!=='') document.getElementById('shrinkage-override').value=s.shrinkOver;
+    if(s.fit) setFit(s.fit, true);
+  } catch(e){}
+}
+
+// === HELPERS ===
+function g(id){ return parseFloat(document.getElementById(id).value)||0; }
+function fmt(n){ return n.toFixed(2); }
+
+function setFit(f, noRecalc){
+  currentFit = f;
+  document.querySelectorAll('.fit-btn').forEach(b=>b.classList.toggle('active',b.dataset.fit===f));
+  document.getElementById('fit-desc').textContent = FIT_DESC[f];
+  if(!noRecalc) recalc();
+}
+
+// === CALCULATION ===
+function getShrinkage(){
+  const ov = parseFloat(document.getElementById('shrinkage-override').value);
+  if(!isNaN(ov) && ov>0) return ov;
+  const mat = document.getElementById('material').value;
+  const range = SHRINKAGE[mat]||[0,0];
+  return (range[0]+range[1])/2; // use midpoint
+}
+
+function calcPocket(nominalDia, nominalDepth){
+  const offset = g('printer-offset');
+  const clearance = FIT_CLEARANCE[currentFit];
+  const shrinkPct = getShrinkage()/100;
+
+  // The pocket in the STL needs to end up, after printing, large enough for the magnet + clearance.
+  // If printer prints larger by offset, we need a smaller STL pocket (and vice versa).
+  // Shrinkage makes the printed part smaller, so we compensate by making STL larger.
+  const targetPrintedDia = nominalDia + clearance;
+  const targetPrintedDepth = nominalDepth + Math.max(clearance, 0.05); // always at least 0.05 depth clearance
+
+  // STL dimension = (target_printed + offset_correction) / (1 - shrinkage)
+  // offset > 0 means printer adds material → pocket prints smaller than STL → need bigger STL
+  // Wait: offset > 0 means features print LARGER. A hole (pocket) with offset>0 prints SMALLER (material expands into hole).
+  // So: printed_pocket = stl_pocket - offset  → stl_pocket = printed_pocket + offset
+  // Shrinkage: printed = stl * (1-shrink) → stl = printed / (1-shrink)
+  // Combined: stl = (target_printed + offset) / (1 - shrink)
+
+  const stlDia = (targetPrintedDia + offset) / (1 - shrinkPct);
+  const stlDepth = (targetPrintedDepth + offset * 0.5) / (1 - shrinkPct); // offset affects depth less (Z is usually more accurate)
+
+  return { stlDia, stlDepth, targetPrintedDia, targetPrintedDepth, shrinkPct, clearance };
+}
+
+function recalc(){
+  saveState();
+  const magDia = g('magnet-diameter');
+  const magThick = g('magnet-thickness');
+  const r = calcPocket(magDia, magThick);
+
+  document.getElementById('out-pocket-dia').textContent = fmt(r.stlDia) + 'mm';
+  document.getElementById('out-pocket-depth').textContent = fmt(r.stlDepth) + 'mm';
+  document.getElementById('out-shrinkage').textContent = '+' + fmt(r.shrinkPct*100) + '%';
+  document.getElementById('out-clearance').textContent = (r.clearance>=0?'+':'') + fmt(r.clearance) + 'mm';
+
+  updateSVG(magDia, magThick, r.stlDia, r.stlDepth);
+  updateSTLCards(magDia, magThick);
+}
+
+// === SVG ===
+function updateSVG(magDia, magThick, pocketDia, pocketDepth){
+  const svg = document.getElementById('pocket-svg');
+  const scale = 8;
+  const cx = 130, cy = 100;
+  const pw = pocketDia*scale, ph = pocketDepth*scale;
+  const mw = magDia*scale, mh = magThick*scale;
+
+  const pocket = document.getElementById('svg-pocket');
+  pocket.setAttribute('x', cx-pw/2); pocket.setAttribute('y', cy-ph/2);
+  pocket.setAttribute('width', pw); pocket.setAttribute('height', ph);
+
+  const magnet = document.getElementById('svg-magnet');
+  magnet.setAttribute('x', cx-mw/2); magnet.setAttribute('y', cy-mh/2);
+  magnet.setAttribute('width', mw); magnet.setAttribute('height', mh);
+
+  // Horizontal dim
+  const hl = document.getElementById('dim-h-line');
+  hl.setAttribute('x1', cx-pw/2); hl.setAttribute('x2', cx+pw/2);
+  hl.setAttribute('y1', cy+ph/2+14); hl.setAttribute('y2', cy+ph/2+14);
+  const ht = document.getElementById('dim-h-text');
+  ht.setAttribute('x', cx); ht.setAttribute('y', cy+ph/2+26);
+  ht.textContent = fmt(pocketDia)+'mm Ø';
+
+  // Vertical dim
+  const vl = document.getElementById('dim-v-line');
+  vl.setAttribute('x1', cx+pw/2+14); vl.setAttribute('x2', cx+pw/2+14);
+  vl.setAttribute('y1', cy-ph/2); vl.setAttribute('y2', cy+ph/2);
+  const vt = document.getElementById('dim-v-text');
+  vt.setAttribute('x', cx+pw/2+14); vt.setAttribute('y', cy-ph/2-6);
+  vt.textContent = fmt(pocketDepth)+'mm';
+}
+
+// === STL CARDS ===
+function updateSTLCards(magDia, magThick){
+  const container = document.getElementById('stl-results');
+  container.innerHTML = '';
+  STL_FRAMES.forEach(frame => {
+    const r = calcPocket(frame.pocketDia || magDia, frame.pocketDepth || magThick);
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = `
+      <div class="flex items-start justify-between mb-2">
+        <div>
+          <div class="text-white font-semibold text-sm">${frame.name}</div>
+          <div class="text-gray-500 font-mono text-xs">${frame.lesson} · ${frame.magnets} magnets</div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mt-3">
+        <div><div class="dim-label">Pocket Ø</div><div class="dim-value text-sm">${fmt(r.stlDia)}mm</div></div>
+        <div><div class="dim-label">Depth</div><div class="dim-value text-sm">${fmt(r.stlDepth)}mm</div></div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// === COPY ===
+function copyResults(){
+  const magDia = g('magnet-diameter');
+  const magThick = g('magnet-thickness');
+  const offset = g('printer-offset');
+  const mat = document.getElementById('material').value.toUpperCase();
+  const shrink = getShrinkage();
+
+  let text = `Tolerance & Fit Calculator Results\n`;
+  text += `Printer Offset: ${offset}mm | Material: ${mat} | Shrinkage: ${shrink}% | Fit: ${currentFit}\n`;
+  text += `Magnet: ${magDia}mm Ø × ${magThick}mm\n`;
+  text += `${'—'.repeat(50)}\n`;
+
+  STL_FRAMES.forEach(frame => {
+    const r = calcPocket(frame.pocketDia || magDia, frame.pocketDepth || magThick);
+    text += `${frame.name} (${frame.lesson}): Pocket ${fmt(r.stlDia)}mm Ø × ${fmt(r.stlDepth)}mm deep\n`;
+  });
+
+  navigator.clipboard.writeText(text).then(()=>{
+    const toast = document.getElementById('copy-toast');
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'), 2000);
+  });
+}
+
+// === INIT ===
+document.querySelectorAll('input, select').forEach(el=>el.addEventListener('input', recalc));
+loadState();
+recalc();
+</script>
+</body>
+</html>
