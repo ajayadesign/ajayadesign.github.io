@@ -1303,11 +1303,13 @@
   };
 })();
 
-  // Debug banner
+// Debug banner (outside IIFE — uses global firebase)
+(function() {
   var $dbg = document.getElementById('auth-debug');
-  if ($dbg) {
-    var origOnAuth = auth.onAuthStateChanged;
-    auth.onAuthStateChanged(function(u) {
-      $dbg.textContent = u ? 'Auth: ' + u.email + ' (uid: ' + u.uid.substring(0,8) + '...) isAdmin: ' + isAdmin(u.email) : 'Auth: not signed in';
+  if ($dbg && window.firebase) {
+    firebase.auth().onAuthStateChanged(function(u) {
+      $dbg.textContent = u ? 'Auth: ' + u.email + ' (uid: ' + u.uid.substring(0,8) + '...)' : 'Auth: not signed in';
+      $dbg.style.color = u ? '#39FF14' : '#FF6B6B';
     });
   }
+})();
