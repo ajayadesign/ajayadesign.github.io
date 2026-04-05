@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Production Cost Dashboard — 3D Print Academy</title>
+  <meta name="description" content="Comprehensive cost-per-unit calculator for 3D printed magnet frames. Batch pricing, profit margins, Etsy fee calculator, and exportable cost sheets." />
+  <meta name="keywords" content="3D print cost calculator, production cost dashboard, magnet frame pricing, Etsy pricing calculator, 3D print business" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#0A0A0F" />
+  <link rel="canonical" href="https://ajayadesign.com/3D-print/tools/cost-dashboard.html" />
+  <meta property="og:title" content="Production Cost Dashboard — 3D Print Academy" />
+  <meta property="og:description" content="Calculate true production costs, optimize pricing, and maximize profit on your 3D printed products." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ajayadesign.com/3D-print/tools/cost-dashboard.html" />
+  <meta property="og:image" content="https://ajayadesign.com/3D-print/promo-card.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'electric-blue': '#00D4FF',
+            'surface': '#0A0A0F',
+            'surface-alt': '#111118',
+            'surface-card': '#1a1a2e',
+            'border-dim': '#1E1E2A',
+            'neon-green': '#39FF14',
+            'amd-red': '#ED1C24',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Inter"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #0A0A0F; color: #e5e7eb; font-family: 'Inter', sans-serif; }
+    .grid-bg {
+      background-image: linear-gradient(rgba(0,212,255,.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,212,255,.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    input[type="number"], input[type="text"], select {
+      background: #111118; border: 1px solid #1E1E2A; color: #fff;
+      padding: 8px 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; width: 100%; transition: border-color 0.2s;
+    }
+    input:focus, select:focus { outline: none; border-color: #00D4FF; box-shadow: 0 0 0 2px rgba(0,212,255,0.15); }
+    .card { background: #1a1a2e; border: 1px solid #1E1E2A; border-radius: 16px; padding: 24px; }
+    .mono-num { font-family: 'JetBrains Mono', monospace; }
+    .pill { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    /* Pie chart */
+    .pie-chart { width: 200px; height: 200px; border-radius: 50%; position: relative; }
+    /* Slider */
+    input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: #1E1E2A; outline: none; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #00D4FF; cursor: pointer; border: 2px solid #0A0A0F; }
+    input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #00D4FF; cursor: pointer; border: 2px solid #0A0A0F; }
+    /* Print mode */
+    @media print {
+      body { background: #fff !important; color: #000 !important; }
+      .card { background: #f5f5f5 !important; border: 2px solid #ccc !important; }
+      nav, .no-print { display: none !important; }
+      input[type="number"], input[type="text"], select { background: #fff; border: 1px solid #999; color: #000; }
+      .mono-num { color: #000 !important; }
+      .text-gray-400, .text-gray-500 { color: #555 !important; }
+      .text-white { color: #000 !important; }
+      .text-electric-blue { color: #0077aa !important; }
+      .text-neon-green { color: #008800 !important; }
+    }
+    /* Transitions */
+    .bar-fill { transition: width 0.4s ease-out; }
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    /* Tooltip */
+    .tooltip { position: relative; }
+    .tooltip::after { content: attr(data-tip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #111118; color: #e5e7eb; padding: 4px 10px; border-radius: 6px; font-size: 11px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; border: 1px solid #1E1E2A; }
+    .tooltip:hover::after { opacity: 1; }
+  </style>
+  <link rel="stylesheet" href="../mobile-responsive.css" />
+</head>
+<body class="min-h-screen grid-bg">
+
+  <!-- Nav -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-border-dim no-print">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
+      <a href="/3D-print/tools/calculator.html" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Tools Hub
+      </a>
+      <div class="flex items-center gap-3">
+        <button onclick="exportCostSheet()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-surface-alt border border-border-dim text-gray-300 hover:text-white hover:border-electric-blue transition-all">📋 Copy Cost Sheet</button>
+        <button onclick="window.print()" class="text-xs font-mono px-3 py-1.5 rounded-lg bg-surface-alt border border-border-dim text-gray-300 hover:text-white hover:border-electric-blue transition-all">🖨️ Print</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-16">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="font-mono text-white text-2xl sm:text-3xl font-bold mb-2">📊 Production Cost Dashboard</h1>
+      <p class="text-gray-400 text-sm max-w-2xl">Calculate your true cost per unit, optimize pricing for Etsy &amp; markets, and project profits at scale. All inputs auto-save.</p>
+    </div>
+
+    <!-- Preset Selector -->
+    <div class="card mb-6 no-print">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-xs font-mono text-gray-500 uppercase tracking-wider">Quick Load:</span>
+        <button onclick="loadPreset('basic')" class="pill bg-electric-blue/10 text-electric-blue hover:bg-electric-blue/20 transition-colors cursor-pointer">Basic Magnet Frame</button>
+        <button onclick="loadPreset('polaroid')" class="pill bg-electric-blue/10 text-electric-blue hover:bg-electric-blue/20 transition-colors cursor-pointer">Polaroid Frame</button>
+        <button onclick="loadPreset('instax')" class="pill bg-electric-blue/10 text-electric-blue hover:bg-electric-blue/20 transition-colors cursor-pointer">Instax Mini</button>
+        <button onclick="loadPreset('collage')" class="pill bg-electric-blue/10 text-electric-blue hover:bg-electric-blue/20 transition-colors cursor-pointer">Multi-Photo Collage</button>
+        <button onclick="loadPreset('custom')" class="pill bg-electric-blue/10 text-electric-blue hover:bg-electric-blue/20 transition-colors cursor-pointer">Custom Text Frame</button>
+      </div>
+    </div>
+
+    <!-- Main Grid: Inputs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+
+      <!-- Filament Costs -->
+      <div class="card">
+        <h3 class="font-mono text-electric-blue text-xs font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
+          <span>🧵</span> Filament Costs
+        </h3>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Filament Type</label>
+            <select id="filamentType" onchange="onFilamentTypeChange(); recalc();">
+              <option value="PLA">PLA ($20/kg)</option>
+              <option value="PETG">PETG ($25/kg)</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Price per kg ($)</label>
+            <input type="number" id="filamentPrice" value="20" step="0.50" min="0" oninput="recalc()" />
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Weight per unit (g)</label>
+            <input type="number" id="unitWeight" value="18" step="1" min="0" oninput="recalc()" />
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Waste factor (%)</label>
+            <input type="number" id="wasteFactor" value="10" step="1" min="0" max="100" oninput="recalc()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Hardware -->
+      <div class="card">
+        <h3 class="font-mono text-electric-blue text-xs font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
+          <span>🧲</span> Hardware / Magnets
+        </h3>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Magnets per unit</label>
+            <input type="number" id="magnetsPerUnit" value="4" step="1" min="0" oninput="recalc()" />
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Cost per magnet ($)</label>
+            <input type="number" id="magnetCost" value="0.15" step="0.01" min="0" oninput="recalc()" />
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Other hardware / unit ($)</label>
+            <input type="number" id="otherHardware" value="0.25" step="0.05" min="0" oninput="recalc()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Time / Labor -->
+      <div class="card">
+        <h3 class="font-mono text-electric-blue text-xs font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
+          <span>⏱️</span> Time / Labor
+        </h3>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Print time (minutes)</label>
+            <input type="number" id="printMinutes" value="45" step="5" min="0" oninput="recalc()" />
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Post-processing (minutes)</label>
+            <input type="number" id="postMinutes" value="10" step="1" min="0" oninput="recalc()" />
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Your hourly rate ($)</label>
+            <input type="number" id="hourlyRate" value="15" step="1" min="0" oninput="recalc()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Overhead -->
+      <div class="card">
+        <h3 class="font-mono text-electric-blue text-xs font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
+          <span>⚡</span> Overhead
+        </h3>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Electricity ($/kWh)</label>
+            <input type="number" id="elecRate" value="0.12" step="0.01" min="0" oninput="recalc()" />
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Printer watts</label>
+            <input type="number" id="printerWatts" value="200" step="10" min="0" oninput="recalc()" />
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Printer cost ($)</label>
+            <input type="number" id="printerCost" value="250" step="10" min="0" oninput="recalc()" />
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Expected lifetime prints</label>
+            <input type="number" id="lifetimePrints" value="2000" step="100" min="1" oninput="recalc()" />
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Monthly fixed costs ($)</label>
+            <input type="number" id="monthlyFixed" value="30" step="5" min="0" oninput="recalc()" />
+          </div>
+          <div>
+            <label class="block text-gray-500 text-[11px] mb-1 font-mono">Est. units/month</label>
+            <input type="number" id="unitsPerMonth" value="50" step="5" min="1" oninput="recalc()" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Output Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+      <!-- Cost Breakdown -->
+      <div class="card lg:col-span-1">
+        <h3 class="font-mono text-white text-sm font-bold mb-4">Cost Breakdown</h3>
+        <div class="flex flex-col items-center">
+          <!-- SVG Pie Chart -->
+          <svg id="pieChart" viewBox="0 0 200 200" class="w-48 h-48 mb-4" style="transform: rotate(-90deg);">
+            <circle id="pie-filament" cx="100" cy="100" r="80" fill="none" stroke="#00D4FF" stroke-width="35" stroke-dasharray="0 502.65" />
+            <circle id="pie-hardware" cx="100" cy="100" r="80" fill="none" stroke="#39FF14" stroke-width="35" stroke-dasharray="0 502.65" />
+            <circle id="pie-electricity" cx="100" cy="100" r="80" fill="none" stroke="#FFD700" stroke-width="35" stroke-dasharray="0 502.65" />
+            <circle id="pie-labor" cx="100" cy="100" r="80" fill="none" stroke="#FF6B6B" stroke-width="35" stroke-dasharray="0 502.65" />
+            <circle id="pie-overhead" cx="100" cy="100" r="80" fill="none" stroke="#A78BFA" stroke-width="35" stroke-dasharray="0 502.65" />
+          </svg>
+          <div id="totalCostCenter" class="text-center mb-4">
+            <div class="text-gray-500 text-[11px] font-mono uppercase">Total Cost / Unit</div>
+            <div class="mono-num text-white text-3xl font-bold" id="totalCostDisplay">$0.00</div>
+          </div>
+          <div id="costLegend" class="w-full space-y-2 text-xs font-mono"></div>
+        </div>
+      </div>
+
+      <!-- Pricing Recommendations -->
+      <div class="card lg:col-span-1">
+        <h3 class="font-mono text-white text-sm font-bold mb-4">Pricing Tiers</h3>
+        <div id="pricingTiers" class="space-y-3"></div>
+        <div class="mt-4 pt-4 border-t border-border-dim">
+          <h4 class="font-mono text-gray-500 text-[11px] uppercase tracking-wider mb-2">Etsy Fee Impact</h4>
+          <div id="etsyFees" class="space-y-1 text-xs font-mono"></div>
+        </div>
+      </div>
+
+      <!-- Profit Margin Visualizer -->
+      <div class="card lg:col-span-1">
+        <h3 class="font-mono text-white text-sm font-bold mb-4">Profit Visualizer</h3>
+        <div class="mb-4">
+          <label class="block text-gray-500 text-[11px] mb-2 font-mono">Your Selling Price: <span id="sliderPriceLabel" class="text-electric-blue">$10.00</span></label>
+          <input type="range" id="priceSlider" min="1" max="50" step="0.25" value="10" oninput="recalc()" />
+        </div>
+        <div id="profitMetrics" class="space-y-4"></div>
+      </div>
+    </div>
+
+    <!-- Batch Calculator -->
+    <div class="card mb-8">
+      <h3 class="font-mono text-white text-sm font-bold mb-4">📦 Batch Calculator</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs font-mono">
+          <thead>
+            <tr class="text-gray-500 border-b border-border-dim">
+              <th class="text-left py-2 px-2">Qty</th>
+              <th class="text-right py-2 px-2">Unit Cost</th>
+              <th class="text-right py-2 px-2">Filament (g)</th>
+              <th class="text-right py-2 px-2">Print Time</th>
+              <th class="text-right py-2 px-2">Total Cost</th>
+              <th class="text-right py-2 px-2">Rev @ Sustainable</th>
+              <th class="text-right py-2 px-2">Rev @ Premium</th>
+              <th class="text-right py-2 px-2">Profit @ Premium</th>
+            </tr>
+          </thead>
+          <tbody id="batchTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Cross-links -->
+    <div class="flex flex-wrap gap-3 no-print">
+      <a href="/3D-print/tools/calculator.html" class="pill bg-surface-alt border border-border-dim text-gray-400 hover:text-white hover:border-electric-blue transition-all text-xs">🧮 Pricing Calculator</a>
+      <a href="/3D-print/tools/profit-calculator.html" class="pill bg-surface-alt border border-border-dim text-gray-400 hover:text-white hover:border-electric-blue transition-all text-xs">💰 Profit Projector</a>
+      <a href="/3D-print/tools/materials.html" class="pill bg-surface-alt border border-border-dim text-gray-400 hover:text-white hover:border-electric-blue transition-all text-xs">🧪 Materials Guide</a>
+      <a href="/3D-print/tools/etsy-optimizer.html" class="pill bg-surface-alt border border-border-dim text-gray-400 hover:text-white hover:border-electric-blue transition-all text-xs">🏪 Etsy Optimizer</a>
+    </div>
+  </div>
+
+  <script>
+    // ── Presets ──
+    const PRESETS = {
+      basic:    { name: 'Basic Magnet Frame',  unitWeight: 18, magnetsPerUnit: 4, printMinutes: 45 },
+      polaroid: { name: 'Polaroid Frame',      unitWeight: 25, magnetsPerUnit: 4, printMinutes: 75 },
+      instax:   { name: 'Instax Mini Frame',   unitWeight: 22, magnetsPerUnit: 4, printMinutes: 60 },
+      collage:  { name: 'Multi-Photo Collage', unitWeight: 45, magnetsPerUnit: 8, printMinutes: 150 },
+      custom:   { name: 'Custom Text Frame',   unitWeight: 30, magnetsPerUnit: 4, printMinutes: 90 },
+    };
+
+    // ── All input IDs for persistence ──
+    const INPUT_IDS = [
+      'filamentType','filamentPrice','unitWeight','wasteFactor',
+      'magnetsPerUnit','magnetCost','otherHardware',
+      'printMinutes','postMinutes','hourlyRate',
+      'elecRate','printerWatts','printerCost','lifetimePrints','monthlyFixed','unitsPerMonth',
+      'priceSlider'
+    ];
+
+    // ── localStorage ──
+    function saveAll() {
+      const data = {};
+      INPUT_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        data[id] = el.value;
+      });
+      localStorage.setItem('costDashboard', JSON.stringify(data));
+    }
+    function loadAll() {
+      try {
+        const data = JSON.parse(localStorage.getItem('costDashboard'));
+        if (!data) return;
+        INPUT_IDS.forEach(id => {
+          if (data[id] !== undefined) {
+            document.getElementById(id).value = data[id];
+          }
+        });
+      } catch(e) {}
+    }
+
+    function loadPreset(key) {
+      const p = PRESETS[key];
+      if (!p) return;
+      document.getElementById('unitWeight').value = p.unitWeight;
+      document.getElementById('magnetsPerUnit').value = p.magnetsPerUnit;
+      document.getElementById('printMinutes').value = p.printMinutes;
+      recalc();
+    }
+
+    function onFilamentTypeChange() {
+      const t = document.getElementById('filamentType').value;
+      if (t === 'PLA') document.getElementById('filamentPrice').value = 20;
+      else if (t === 'PETG') document.getElementById('filamentPrice').value = 25;
+    }
+
+    function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+    // ── Core calculation ──
+    function calcCosts() {
+      const filamentPrice = v('filamentPrice');
+      const unitWeight = v('unitWeight');
+      const waste = v('wasteFactor') / 100;
+      const effectiveWeight = unitWeight * (1 + waste);
+      const filamentCost = (effectiveWeight / 1000) * filamentPrice;
+
+      const magnetsCost = v('magnetsPerUnit') * v('magnetCost');
+      const hardwareCost = magnetsCost + v('otherHardware');
+
+      const printHrs = v('printMinutes') / 60;
+      const elecCost = printHrs * (v('printerWatts') / 1000) * v('elecRate');
+
+      const totalLaborHrs = (v('printMinutes') + v('postMinutes')) / 60;
+      const laborCost = totalLaborHrs * v('hourlyRate');
+
+      const depreciation = v('printerCost') / Math.max(v('lifetimePrints'), 1);
+      const fixedPerUnit = v('monthlyFixed') / Math.max(v('unitsPerMonth'), 1);
+      const overheadCost = depreciation + fixedPerUnit;
+
+      const totalCost = filamentCost + hardwareCost + elecCost + laborCost + overheadCost;
+      const materialCost = filamentCost + hardwareCost + elecCost;
+
+      return { filamentCost, hardwareCost, elecCost, laborCost, overheadCost, totalCost, materialCost, effectiveWeight, printHrs, totalLaborHrs };
+    }
+
+    function etsyNet(price) {
+      // Etsy: 6.5% transaction + $0.20 listing + 3% + $0.25 payment processing
+      const transactionFee = price * 0.065;
+      const listingFee = 0.20;
+      const paymentFee = price * 0.03 + 0.25;
+      return { net: price - transactionFee - listingFee - paymentFee, fees: transactionFee + listingFee + paymentFee };
+    }
+
+    // ── Pie Chart ──
+    const CIRC = 2 * Math.PI * 80; // ~502.65
+    const PIE_COLORS = [
+      { id: 'pie-filament',    color: '#00D4FF', label: 'Filament' },
+      { id: 'pie-hardware',    color: '#39FF14', label: 'Hardware' },
+      { id: 'pie-electricity', color: '#FFD700', label: 'Electricity' },
+      { id: 'pie-labor',       color: '#FF6B6B', label: 'Labor' },
+      { id: 'pie-overhead',    color: '#A78BFA', label: 'Overhead' },
+    ];
+
+    function updatePie(costs) {
+      const vals = [costs.filamentCost, costs.hardwareCost, costs.elecCost, costs.laborCost, costs.overheadCost];
+      const total = costs.totalCost || 1;
+      let offset = 0;
+      const legend = document.getElementById('costLegend');
+      legend.innerHTML = '';
+
+      PIE_COLORS.forEach((seg, i) => {
+        const pct = vals[i] / total;
+        const dash = pct * CIRC;
+        const el = document.getElementById(seg.id);
+        el.setAttribute('stroke-dasharray', `${dash} ${CIRC - dash}`);
+        el.setAttribute('stroke-dashoffset', `${-offset}`);
+        offset += dash;
+
+        legend.innerHTML += `<div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-sm inline-block" style="background:${seg.color}"></span>
+            <span class="text-gray-400">${seg.label}</span>
+          </div>
+          <span class="text-white">$${vals[i].toFixed(2)} <span class="text-gray-500">(${(pct*100).toFixed(1)}%)</span></span>
+        </div>`;
+      });
+    }
+
+    // ── Pricing Tiers ──
+    function updatePricing(costs) {
+      const mc = costs.materialCost;
+      const tc = costs.totalCost;
+      const tiers = [
+        { name: 'Material Only',  price: mc,        color: 'text-gray-400',     desc: 'Covers filament + hardware + electricity' },
+        { name: 'Break Even',     price: tc,        color: 'text-yellow-400',   desc: 'Material + labor + overhead' },
+        { name: 'Sustainable',    price: mc * 2,    color: 'text-neon-green',   desc: '2× material cost' },
+        { name: 'Premium',        price: mc * 3 + costs.laborCost, color: 'text-electric-blue', desc: '3× material + labor' },
+      ];
+
+      const container = document.getElementById('pricingTiers');
+      container.innerHTML = tiers.map(t => `
+        <div class="flex items-center justify-between py-2 border-b border-border-dim/50">
+          <div>
+            <div class="text-white text-sm font-medium">${t.name}</div>
+            <div class="text-gray-500 text-[10px]">${t.desc}</div>
+          </div>
+          <div class="mono-num ${t.color} text-lg font-bold">$${t.price.toFixed(2)}</div>
+        </div>
+      `).join('');
+
+      // Etsy fees
+      const etsyContainer = document.getElementById('etsyFees');
+      etsyContainer.innerHTML = tiers.filter(t => t.name !== 'Material Only').map(t => {
+        const e = etsyNet(t.price);
+        return `<div class="flex justify-between text-gray-400">
+          <span>${t.name}: $${t.price.toFixed(2)}</span>
+          <span>→ net <span class="text-white">$${e.net.toFixed(2)}</span> <span class="text-amd-red">(-$${e.fees.toFixed(2)})</span></span>
+        </div>`;
+      }).join('');
+    }
+
+    // ── Profit Visualizer ──
+    function updateProfitViz(costs) {
+      const price = parseFloat(document.getElementById('priceSlider').value);
+      document.getElementById('sliderPriceLabel').textContent = '$' + price.toFixed(2);
+
+      const etsy = etsyNet(price);
+      const profitDirect = price - costs.totalCost;
+      const profitEtsy = etsy.net - costs.totalCost;
+      const marginDirect = costs.totalCost > 0 ? (profitDirect / price * 100) : 0;
+      const marginEtsy = costs.totalCost > 0 ? (profitEtsy / price * 100) : 0;
+      const breakEvenUnits = v('monthlyFixed') > 0 ? Math.ceil(v('monthlyFixed') / Math.max(profitDirect, 0.01)) : 0;
+      const monthlyRevenue = price * v('unitsPerMonth');
+      const monthlyProfit = profitDirect * v('unitsPerMonth');
+
+      const marginColor = marginDirect > 50 ? 'text-neon-green' : marginDirect > 20 ? 'text-yellow-400' : 'text-amd-red';
+
+      document.getElementById('profitMetrics').innerHTML = `
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400 text-xs">Direct Profit</span>
+            <span class="mono-num ${profitDirect >= 0 ? 'text-neon-green' : 'text-amd-red'} text-lg font-bold">$${profitDirect.toFixed(2)}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400 text-xs">After Etsy Fees</span>
+            <span class="mono-num ${profitEtsy >= 0 ? 'text-neon-green' : 'text-amd-red'} text-lg font-bold">$${profitEtsy.toFixed(2)}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400 text-xs">Margin (Direct)</span>
+            <span class="mono-num ${marginColor} text-lg font-bold">${marginDirect.toFixed(1)}%</span>
+          </div>
+          <!-- Margin bar -->
+          <div class="w-full bg-surface-alt rounded-full h-3 overflow-hidden">
+            <div class="h-full rounded-full bar-fill ${marginDirect > 50 ? 'bg-neon-green' : marginDirect > 20 ? 'bg-yellow-400' : 'bg-amd-red'}" style="width: ${Math.max(0, Math.min(100, marginDirect))}%"></div>
+          </div>
+          <div class="pt-2 border-t border-border-dim space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Break-even units/mo</span>
+              <span class="mono-num text-white font-semibold">${breakEvenUnits}</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Monthly revenue</span>
+              <span class="mono-num text-white font-semibold">$${monthlyRevenue.toFixed(0)}</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-gray-500">Monthly profit (direct)</span>
+              <span class="mono-num ${monthlyProfit >= 0 ? 'text-neon-green' : 'text-amd-red'} font-semibold">$${monthlyProfit.toFixed(0)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ── Batch Calculator ──
+    function updateBatch(costs) {
+      const qtys = [1, 5, 10, 25, 50, 100];
+      const mc = costs.materialCost;
+      const tbody = document.getElementById('batchTableBody');
+
+      // Bulk discount: 5% off magnets at 50+, 10% at 100+
+      tbody.innerHTML = qtys.map(q => {
+        let bulkDiscount = q >= 100 ? 0.10 : q >= 50 ? 0.05 : 0;
+        let adjHardware = costs.hardwareCost * (1 - bulkDiscount);
+        let unitCost = costs.filamentCost + adjHardware + costs.elecCost + costs.laborCost + costs.overheadCost;
+        let totalFilament = costs.effectiveWeight * q;
+        let totalPrintHrs = costs.printHrs * q;
+        let printTimeStr = totalPrintHrs < 1 ? `${Math.round(totalPrintHrs*60)}m` : `${Math.floor(totalPrintHrs)}h ${Math.round((totalPrintHrs%1)*60)}m`;
+        let totalCost = unitCost * q;
+        let sustainable = mc * 2;
+        let premium = mc * 3 + costs.laborCost;
+        let revSust = sustainable * q;
+        let revPrem = premium * q;
+        let profitPrem = revPrem - totalCost;
+
+        return `<tr class="border-b border-border-dim/30 hover:bg-surface-alt/50 transition-colors">
+          <td class="py-2 px-2 text-white font-semibold">${q}</td>
+          <td class="py-2 px-2 text-right text-gray-300">$${unitCost.toFixed(2)}${bulkDiscount ? ` <span class="text-neon-green text-[10px]">-${(bulkDiscount*100).toFixed(0)}%</span>` : ''}</td>
+          <td class="py-2 px-2 text-right text-gray-400">${totalFilament.toFixed(0)}g</td>
+          <td class="py-2 px-2 text-right text-gray-400">${printTimeStr}</td>
+          <td class="py-2 px-2 text-right text-white">$${totalCost.toFixed(2)}</td>
+          <td class="py-2 px-2 text-right text-yellow-400">$${revSust.toFixed(2)}</td>
+          <td class="py-2 px-2 text-right text-electric-blue">$${revPrem.toFixed(2)}</td>
+          <td class="py-2 px-2 text-right ${profitPrem >= 0 ? 'text-neon-green' : 'text-amd-red'} font-semibold">$${profitPrem.toFixed(2)}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // ── Export ──
+    function exportCostSheet() {
+      const c = calcCosts();
+      const price = parseFloat(document.getElementById('priceSlider').value);
+      const etsy = etsyNet(price);
+      const sheet = `
+═══════════════════════════════════════
+  PRODUCTION COST SHEET
+  Generated: ${new Date().toLocaleDateString()}
+═══════════════════════════════════════
+
+COST BREAKDOWN (per unit)
+  Filament:      $${c.filamentCost.toFixed(2)}
+  Hardware:      $${c.hardwareCost.toFixed(2)}
+  Electricity:   $${c.elecCost.toFixed(2)}
+  Labor:         $${c.laborCost.toFixed(2)}
+  Overhead:      $${c.overheadCost.toFixed(2)}
+  ─────────────────────
+  TOTAL COST:    $${c.totalCost.toFixed(2)}
+
+PRICING TIERS
+  Material Only:  $${c.materialCost.toFixed(2)}
+  Break Even:     $${c.totalCost.toFixed(2)}
+  Sustainable:    $${(c.materialCost * 2).toFixed(2)}
+  Premium:        $${(c.materialCost * 3 + c.laborCost).toFixed(2)}
+
+AT SELLING PRICE: $${price.toFixed(2)}
+  Direct Profit:  $${(price - c.totalCost).toFixed(2)}
+  After Etsy:     $${(etsy.net - c.totalCost).toFixed(2)}
+  Etsy Fees:      $${etsy.fees.toFixed(2)}
+  Margin:         ${((price - c.totalCost) / price * 100).toFixed(1)}%
+
+═══════════════════════════════════════
+`.trim();
+
+      navigator.clipboard.writeText(sheet).then(() => {
+        const btn = document.querySelector('[onclick="exportCostSheet()"]');
+        const orig = btn.textContent;
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => btn.textContent = orig, 2000);
+      });
+    }
+
+    // ── Master recalc ──
+    function recalc() {
+      const costs = calcCosts();
+      document.getElementById('totalCostDisplay').textContent = '$' + costs.totalCost.toFixed(2);
+      updatePie(costs);
+      updatePricing(costs);
+      updateProfitViz(costs);
+      updateBatch(costs);
+      saveAll();
+    }
+
+    // ── Init ──
+    loadAll();
+    recalc();
+  </script>
+</body>
+</html>
