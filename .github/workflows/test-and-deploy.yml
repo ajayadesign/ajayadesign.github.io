@@ -161,8 +161,8 @@ jobs:
               for (const ref of refs) {
                 const match = ref.match(/[\"']\/([^\"']+)[\"']/);
                 if (match) {
-                  if (!fs.existsSync(match[1])) {
-                    console.error('❌ Broken ref in ' + file + ': /' + match[1]);
+                  const cleanPath = match[1].split('?')[0]; if (!fs.existsSync(cleanPath)) {
+                    console.error('❌ Broken ref in ' + file + ': /' + cleanPath);
                     broken++;
                   }
                 }
