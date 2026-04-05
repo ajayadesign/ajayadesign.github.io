@@ -91,10 +91,12 @@ async def _request_openai(
         "messages": messages,
         "max_tokens": max_tokens,
         "temperature": temperature,
+        "priority": 3,  # high priority — client-facing
     }
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
+        "X-Project": "auto-api",
     }
     async with aiohttp.ClientSession(timeout=TIMEOUT) as session:
         async with session.post(

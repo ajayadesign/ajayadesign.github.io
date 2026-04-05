@@ -214,13 +214,17 @@
     });
 
     auth.onAuthStateChanged(function (user) {
+      console.log('AUTH STATE CHANGED:', user ? user.email : 'NO USER', user ? user.uid : '');
       if (!user) {
+        console.log('No user — showing login screen');
         $login.classList.remove('hidden');
         $dash.classList.add('hidden');
         if ($pending) $pending.classList.add('hidden');
         $signout.classList.add('hidden');
         return;
       }
+
+      console.log('User signed in:', user.email, 'isAdmin:', isAdmin(user.email));
 
       // Admin bypass — full access + command center
       if (isAdmin(user.email)) {
@@ -1298,3 +1302,12 @@
     initAdmin: initAdmin
   };
 })();
+
+  // Debug banner
+  var $dbg = document.getElementById('auth-debug');
+  if ($dbg) {
+    var origOnAuth = auth.onAuthStateChanged;
+    auth.onAuthStateChanged(function(u) {
+      $dbg.textContent = u ? 'Auth: ' + u.email + ' (uid: ' + u.uid.substring(0,8) + '...) isAdmin: ' + isAdmin(u.email) : 'Auth: not signed in';
+    });
+  }

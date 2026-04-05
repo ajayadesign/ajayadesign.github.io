@@ -90,9 +90,9 @@ async def execute_sales_qualification_cycle(
             select(Prospect)
             .where(
                 Prospect.status == "replied",
-                Prospect.last_reply_at.isnot(None),
+                Prospect.last_opened_at.isnot(None),
             )
-            .order_by(Prospect.last_reply_at.desc())
+            .order_by(Prospect.last_opened_at.desc())
             .limit(batch_size)
         )
         result = await session.execute(stmt)

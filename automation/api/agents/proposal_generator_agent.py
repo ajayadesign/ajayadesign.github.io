@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.database import async_session_factory, async_session_factory as async_session
 from api.models.prospect import Prospect
-from api.models.quote import Quote, QuoteItem
+from api.models.quote import Quote
 from api.services.ai import call_ai, extract_json
 from api.config import settings
 
@@ -88,9 +88,9 @@ async def execute_proposal_generator_cycle(
             select(Prospect)
             .where(
                 Prospect.status == "meeting_scheduled",
-                # Don't generate if already have a quote
-                ~Prospect.id.in_(
-                    select(Quote.prospect_id).where(Quote.status != "declined")
+                # Don't generate if already have a quote for this email
+                ~Prospect.owner_email.in_(
+                    select(Quote.client_email).where(Quote.status != "declined")
                 )
             )
             .order_by(Prospect.wp_score.desc())  # Prioritize high-value leads
@@ -154,41 +154,42 @@ Generate a detailed proposal with scope, deliverables, timeline, and pricing."""
             # Create Quote record
             async with async_session() as session:
 
+                # Build deliverables list for JSON column
+                deliverables_json = []
+                for deliverable in proposal_data.get("deliverables", []):
+                    deliverables_json.append({
+                        "description": deliverable.get("item", ""),
+                        "detail": deliverable.get("description", ""),
+                        "hours": deliverable.get("hours", 0),
+                        "rate": 100.00,
+                        "amount": deliverable.get("hours", 0) * 100.00,
+                    })
+
+                import secrets as _secrets
+                short_id = _secrets.token_hex(4)[:8]
+
                 quote = Quote(
-                    prospect_id=prospect.id,
-                    business_name=prospect.business_name,
-                    contact_name=prospect.owner_name,
-                    contact_email=prospect.owner_email,
-                    title=f"Website Redesign Proposal - {prospect.business_name}",
-                    executive_summary=proposal_data.get("executive_summary", ""),
-                    total_price=proposal_data.get("recommended_price", 5000.00),
-                    timeline_weeks=proposal_data.get("timeline_weeks", 8),
-                    payment_schedule=proposal_data.get("payment_schedule", []),
-                    risks=proposal_data.get("risks", []),
-                    assumptions=proposal_data.get("assumptions", []),
+                    short_id=short_id,
+                    client_name=prospect.owner_name or prospect.business_name,
+                    client_email=prospect.owner_email or "",
+                    project_name=f"Website Redesign - {prospect.business_name}",
+                    project_description=proposal_data.get("executive_summary", ""),
+                    deliverables=deliverables_json,
+                    subtotal=proposal_data.get("recommended_price", 5000.00),
+                    total_amount=proposal_data.get("recommended_price", 5000.00),
+                    payment_schedule=str(proposal_data.get("payment_schedule", "")),
+                    custom_notes=(
+                        "Risks: " + "; ".join(proposal_data.get("risks", [])) + "\n"
+                        "Assumptions: " + "; ".join(proposal_data.get("assumptions", []))
+                    ),
                     status="draft",
-                    generated_by="ai_agent",
                 )
                 session.add(quote)
-                await session.flush()  # Get quote.id
 
-                # Add deliverable line items
-                for deliverable in proposal_data.get("deliverables", []):
-                    item = QuoteItem(
-                        quote_id=quote.id,
-                        item_name=deliverable.get("item", ""),
-                        description=deliverable.get("description", ""),
-                        hours=deliverable.get("hours", 0),
-                        rate=100.00,  # $100/hr
-                        total=deliverable.get("hours", 0) * 100.00,
-                    )
-                    session.add(item)
-
-                # Update prospect
+                # Update prospect status
                 prospect_obj = await session.get(Prospect, prospect.id)
                 if prospect_obj:
                     prospect_obj.status = "proposal_sent"
-                    prospect_obj.last_proposal_at = datetime.now(timezone.utc)
 
                 await session.commit()
 
@@ -226,24 +227,19 @@ Generate a detailed proposal with scope, deliverables, timeline, and pricing."""
 async def get_proposal_generator_stats() -> Dict[str, Any]:
     """Get Proposal Generator performance statistics."""
     async with async_session() as session:
-        # Total proposals generated
-        stmt = select(func.count(Quote.id)).where(
-            Quote.generated_by == "ai_agent"
-        )
+        # Total proposals generated (status=draft implies AI-generated)
+        stmt = select(func.count(Quote.id))
         result = await session.execute(stmt)
         total_generated = result.scalar() or 0
 
         # Average quote value
-        stmt = select(func.avg(Quote.total_price)).where(
-            Quote.generated_by == "ai_agent"
-        )
+        stmt = select(func.avg(Quote.total_amount))
         result = await session.execute(stmt)
         avg_value = result.scalar() or 0.0
 
         # Acceptance rate
         stmt = select(func.count(Quote.id)).where(
-            Quote.generated_by == "ai_agent",
-            Quote.status == "accepted"
+            Quote.status == "approved"
         )
         result = await session.execute(stmt)
         accepted = result.scalar() or 0
