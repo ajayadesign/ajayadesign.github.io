@@ -1,0 +1,55 @@
+/* 3D Print Academy — Mobile Responsiveness Overrides
+   Added by mobile audit (2026-04-05)
+   Ensures usability on phones at the printer */
+
+/* Bump small Tailwind font classes on mobile */
+@media (max-width: 640px) {
+  /* text-xs (12px) → 14px on mobile */
+  .text-xs {
+    font-size: 0.875rem !important; /* 14px */
+    line-height: 1.35 !important;
+  }
+
+  /* text-sm (14px) → 15px on mobile for better readability */
+  .text-sm {
+    font-size: 0.9375rem !important; /* 15px */
+    line-height: 1.4 !important;
+  }
+
+  /* Ensure tables scroll horizontally instead of breaking layout */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Ensure all images are responsive */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Ensure iframes (videos) are responsive */
+  iframe {
+    max-width: 100%;
+  }
+
+  /* Improve touch targets — minimum 44px as per WCAG */
+  a, button {
+    min-height: 44px;
+    /* Only for standalone nav links, not inline text links */
+  }
+
+  /* Ensure code blocks don't overflow */
+  pre, code {
+    overflow-x: auto;
+    max-width: 100%;
+    word-break: break-word;
+  }
+}
+
+/* Prevent horizontal overflow globally */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
