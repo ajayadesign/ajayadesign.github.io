@@ -53,6 +53,9 @@ async def execute_scout_cycle(
             return {
                 "count": 0,
                 "geo_ring": geo_ring,
+                "api_calls": 0,
+                "duplicates": 0,
+                "cost": 0.0,
                 "error": f"Ring '{geo_ring}' not found",
                 "log": f"Ring '{geo_ring}' not found in database",
             }

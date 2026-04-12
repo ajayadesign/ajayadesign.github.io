@@ -1,0 +1,110 @@
+wing: ajayadesign.github.io
+rooms:
+- name: insight_dashboard
+  description: Files from insight-dashboard/
+- name: ai_automation
+  description: Files from ai-automation/
+- name: compu_plus
+  description: Files from compu-plus/
+- name: magnetic_soul
+  description: Files from magnetic-soul/
+- name: case_studies
+  description: Files from case-studies/
+- name: isla_noor
+  description: Files from isla-noor/
+- name: test_results
+  description: Files from test-results/
+- name: skills
+  description: Files from skills/
+- name: contact
+  description: Files from contact/
+- name: snoball_dude
+  description: Files from snoball-dude/
+- name: free_audit
+  description: Files from free-audit/
+- name: industries
+  description: Files from industries/
+- name: blog
+  description: Files from blog/
+- name: magnets_in_a_snap
+  description: Files from magnets-in-a-snap/
+- name: scripts
+  description: Files from tools/
+- name: reviews
+  description: Files from reviews/
+- name: everest_phone
+  description: Files from everest-phone/
+- name: demo
+  description: Files from demo/
+- name: process
+  description: Files from process/
+- name: edge
+  description: Files from edge/
+- name: automation
+  description: Files from automation/
+- name: memory_magnets
+  description: Files from memory-magnets/
+- name: design
+  description: Files from assets/
+- name: playwright_report
+  description: Files from playwright-report/
+- name: magnetmomentsco
+  description: Files from magnetmomentsco/
+- name: zach_the_pilot
+  description: Files from zach-the-pilot/
+- name: apex_auto_collision
+  description: Files from apex-auto-collision/
+- name: austin_barbell
+  description: Files from austin-barbell/
+- name: testing
+  description: Files from tests/
+- name: admin
+  description: Files from admin/
+- name: nextstep_es
+  description: Files from nextstep-es/
+- name: faq
+  description: Files from faq/
+- name: enc_printing
+  description: Files from enc-printing/
+- name: works
+  description: Files from works/
+- name: quote
+  description: Files from quote/
+- name: picture_this_magnet
+  description: Files from picture-this-magnet/
+- name: monument_pilates
+  description: Files from monument-pilates/
+- name: css
+  description: Files from css/
+- name: before_after
+  description: Files from before-after/
+- name: about
+  description: Files from about/
+- name: memory_lane
+  description: Files from memory-lane/
+- name: ankita_dahal
+  description: Files from ankita-dahal/
+- name: onboarding
+  description: Files from onboarding/
+- name: radha_madhav
+  description: Files from radha-madhav/
+- name: resources
+  description: Files from resources/
+- name: velvet_bloom
+  description: Files from velvet-bloom/
+- name: track
+  description: Files from track/
+- name: flicks_by_riri
+  description: Files from flicks-by-riri/
+- name: the_magnet_guy
+  description: Files from the-magnet-guy/
+- name: grader
+  description: Files from grader/
+- name: sanskriti_chaulagain
+  description: Files from sanskriti-chaulagain/
+- name: apex_auto
+  description: Files from apex-auto/
+- name: backend
+  description: Files from api/
+- name: general
+  description: Files that don't fit other rooms

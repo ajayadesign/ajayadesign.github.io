@@ -88,8 +88,8 @@ async def scout_heartbeat(request: HeartbeatRequest) -> HeartbeatResponse:
             status="success",
             message=f"Discovered {result['count']} businesses in {result['geo_ring']}",
             metrics={
-                "businesses_discovered": result["count"],
-                "api_calls_made": result["api_calls"],
+                "businesses_discovered": result.get("count", 0),
+                "api_calls_made": result.get("api_calls", 0),
                 "duplicates_skipped": result.get("duplicates", 0),
             },
             next_heartbeat_in_seconds=21600,  # 6 hours
