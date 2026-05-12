@@ -42,7 +42,7 @@
     },
 
     "course_content": {
-      ".read": "auth != null && root.child('approved_users').child(auth.uid).exists()",
+      ".read": "auth != null && (auth.token.email === 'ajayadesign@gmail.com' || root.child('approved_users').child(auth.uid).exists())",
       ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
     },
 
@@ -152,6 +152,28 @@
     "outreach": {
       ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
       ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
+    "invoices": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": "auth != null && auth.token.email === 'ajayadesign@gmail.com'"
+    },
+
+    "tracking": {
+      ".read": "auth != null && auth.token.email === 'ajayadesign@gmail.com'",
+      ".write": true,
+      "clicks": {
+        ".indexOn": ["ts", "tracking_id"],
+        "$item": { ".validate": "newData.hasChildren(['tracking_id', 'ts'])" }
+      },
+      "opens": {
+        ".indexOn": ["ts", "tracking_id"],
+        "$item": { ".validate": "newData.hasChildren(['tracking_id', 'ts'])" }
+      },
+      "unsubscribes": {
+        ".indexOn": ["ts", "tracking_id"],
+        "$item": { ".validate": "newData.hasChildren(['tracking_id', 'ts'])" }
+      }
     },
 
     "drone": {
