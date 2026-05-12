@@ -3,12 +3,11 @@
  * Provides offline access to portal pages and module content.
  * Strategy: Network-first for HTML, cache-first for static assets.
  */
-var CACHE_NAME = 'ad3d-v1';
+var CACHE_NAME = 'ad3d-v2';
 var PRECACHE = [
   '/3D-print/portal/',
   '/3D-print/portal/index.html',
   '/3D-print/portal/portal-auth.js',
-  '/3D-print/portal/video-config.js',
   '/3D-print/portal/module-1.html',
   '/3D-print/portal/module-2.html',
   '/3D-print/portal/module-3.html',

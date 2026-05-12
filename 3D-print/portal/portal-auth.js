@@ -268,6 +268,12 @@
               db.ref('courses/' + user.uid + '/progress').once('value').then(function(progSnap) {
                 showDashboard(user, { tier: pre.tier || 'course', progress: progSnap.val() || {} });
               });
+            }).catch(function(err) {
+              // approved_users write denied (expected — only admin can write)
+              // Fall through to pending registration
+              console.warn('Auto-approve write failed (expected if not admin):', err.code);
+              registerPending(user);
+              showPending(user);
             });
             return;
           }
@@ -287,7 +293,29 @@
               });
             }
           });
+        }).catch(function(err) {
+          // pre_approved read denied (RTDB rules only allow admin to read pre_approved)
+          // Fall through gracefully to pending registration
+          console.warn('pre_approved query denied (expected for non-admin):', err.code);
+          registerPending(user);
+          showPending(user);
+
+          // Listen for admin approval
+          db.ref('approved_users/' + user.uid).on('value', function (liveSnap) {
+            var liveData = liveSnap.val();
+            if (liveData && liveData.tier) {
+              db.ref('approved_users/' + user.uid).off('value');
+              db.ref('courses/' + user.uid + '/progress').once('value').then(function (progSnap) {
+                liveData.progress = progSnap.val() || {};
+                showDashboard(user, liveData);
+              });
+            }
+          });
         });
+      }).catch(function(err) {
+        // approved_users read failed — show error to user
+        console.error('Failed to check approval status:', err);
+        showError($error, 'Unable to verify your account. Please try again or contact support.');
       });
     });
 
