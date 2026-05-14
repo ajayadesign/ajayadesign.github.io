@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ohanamagnetco.com/sitemap.xml

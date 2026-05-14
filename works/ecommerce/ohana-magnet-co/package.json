@@ -1,0 +1,16 @@
+{
+  "name": "ohana-magnet-co",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ohana Magnet Co — Custom Photo Magnets, Keychains & More",
+  "scripts": {
+    "dev": "npx serve . -l 9222",
+    "test": "npx playwright test",
+    "test:report": "npx playwright show-report"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
+    "@playwright/test": "^1.60.0",
+    "serve": "^14.2.0"
+  }
+}
